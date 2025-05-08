@@ -6,30 +6,20 @@ import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import type { Note } from "@/types/note"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { UserProfile } from "@/components/auth/user-profile"
-import type { Note } from "@/types/note"
 
 interface SidebarProps {
   notes: Note[]
   activeNoteId: string
   onSelectNote: (id: string) => void
-  onCreateNote: (parentId: string | null) => Note | null | Promise<Note | null>
+  onCreateNote: (parentId: string | null) => Note
   onDeleteNote: (id: string) => void
   onOpenSearch: () => void
-  isLoading?: boolean
 }
 
-export function Sidebar({
-  notes,
-  activeNoteId,
-  onSelectNote,
-  onCreateNote,
-  onDeleteNote,
-  onOpenSearch,
-  isLoading = false,
-}: SidebarProps) {
+export function Sidebar({ notes, activeNoteId, onSelectNote, onCreateNote, onDeleteNote, onOpenSearch }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({})
 
@@ -108,24 +98,21 @@ export function Sidebar({
       <div className="p-4 border-b">
         <div className="flex items-center mb-4">
           <span className="font-semibold text-lg">Notable</span>
-          <div className="ml-auto flex items-center space-x-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" onClick={onOpenSearch}>
-                    <Search className="h-4 w-4" />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div className="flex items-center">
-                    Search <kbd className="ml-2 px-1.5 py-0.5 text-xs border rounded-md bg-muted">Ctrl+K</kbd>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <UserProfile />
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="ml-auto" onClick={onOpenSearch}>
+                  <Search className="h-4 w-4" />
+                  <span className="sr-only">Search</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="flex items-center">
+                  Search <kbd className="ml-2 px-1.5 py-0.5 text-xs border rounded-md bg-muted">Ctrl+K</kbd>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -138,12 +125,7 @@ export function Sidebar({
         </div>
       </div>
       <div className="p-2">
-        <Button
-          variant="outline"
-          className="w-full justify-start"
-          onClick={() => onCreateNote(null)}
-          disabled={isLoading}
-        >
+        <Button variant="outline" className="w-full justify-start" onClick={() => onCreateNote(null)}>
           <Plus className="mr-2 h-4 w-4" />
           New Note
         </Button>
@@ -162,13 +144,7 @@ export function Sidebar({
           </div>
           <div className="mt-6">
             <h2 className="mb-2 px-2 text-xs font-semibold text-muted-foreground">Notes</h2>
-            {isLoading ? (
-              <div className="flex justify-center py-4">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-              </div>
-            ) : (
-              <ScrollArea className="h-[calc(100vh-240px)]">{renderNoteTree(null)}</ScrollArea>
-            )}
+            <ScrollArea className="h-[calc(100vh-240px)]">{renderNoteTree(null)}</ScrollArea>
           </div>
         </div>
       </nav>

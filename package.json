@@ -60,7 +60,6 @@
     "zod": "^3.24.1",
     "@tiptap/pm": "latest",
     "@tiptap/core": "latest",
-    "@supabase/supabase-js": "latest",
     "electron": "latest",
     "@tiptap/react": "latest",
     "@tiptap/starter-kit": "latest",
@@ -75,8 +74,7 @@
     "@tiptap/extension-image": "latest",
     "path": "latest",
     "url": "latest",
-    "fs": "latest",
-    "@supabase/auth-helpers-nextjs": "latest"
+    "fs": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

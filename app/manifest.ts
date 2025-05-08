@@ -1,8 +1,5 @@
 import type { MetadataRoute } from "next"
 
-// This makes the route compatible with static export
-export const dynamic = "force-static"
-
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Notable - Note Taking App",
