@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next"
 
+// This makes the route compatible with static export
+export const dynamic = "force-static"
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
