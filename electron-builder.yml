@@ -1,0 +1,25 @@
+appId: com.notable.app
+productName: Notable
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: out
+    to: out
+  - from: electron
+    to: .
+  - package.json
+mac:
+  category: public.app-category.productivity
+  target:
+    - dmg
+    - zip
+win:
+  target:
+    - nsis
+    - portable
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Office
