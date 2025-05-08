@@ -70,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     try {
       setStatus("loading")
+
+      // For static export, we need to use a client-side redirect
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
