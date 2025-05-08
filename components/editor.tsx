@@ -51,6 +51,7 @@ export function Editor({ note, onChange }: EditorProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Placeholder.configure({
