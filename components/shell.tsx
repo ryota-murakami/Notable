@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { Editor } from "@/components/editor"
 import type { Note } from "@/types/note"
@@ -57,68 +57,59 @@ export function Shell() {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
 
-  const handleNoteChange = useCallback(
-    (updatedNote: Note) => {
-      setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)))
-    },
-    [notes],
-  )
+  const handleNoteChange = (updatedNote: Note) => {
+    setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)))
+  }
 
-  const handleCreateNote = useCallback(
-    (parentId: string | null = null) => {
-      const newNote: Note = {
-        id: crypto.randomUUID(),
-        title: "Untitled",
-        content: "",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        parentId,
-        tags: [],
-      }
+  const handleCreateNote = (parentId: string | null = null) => {
+    const newNote: Note = {
+      id: crypto.randomUUID(),
+      title: "Untitled",
+      content: "",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      parentId,
+      tags: [],
+    }
 
-      setNotes((prevNotes) => [...prevNotes, newNote])
-      setActiveNoteId(newNote.id)
+    setNotes([...notes, newNote])
+    setActiveNoteId(newNote.id)
 
-      toast({
-        title: "Note created",
-        description: "Your new note has been created successfully.",
+    toast({
+      title: "Note created",
+      description: "Your new note has been created successfully.",
+    })
+
+    return newNote
+  }
+
+  const handleDeleteNote = (id: string) => {
+    // Also delete all children
+    const idsToDelete = [id]
+    const findChildren = (parentId: string) => {
+      notes.forEach((note) => {
+        if (note.parentId === parentId) {
+          idsToDelete.push(note.id)
+          findChildren(note.id)
+        }
       })
+    }
 
-      return newNote
-    },
-    [toast],
-  )
+    findChildren(id)
 
-  const handleDeleteNote = useCallback(
-    (id: string) => {
-      // Also delete all children
-      const idsToDelete = [id]
-      const findChildren = (parentId: string) => {
-        notes.forEach((note) => {
-          if (note.parentId === parentId) {
-            idsToDelete.push(note.id)
-            findChildren(note.id)
-          }
-        })
-      }
+    const filteredNotes = notes.filter((note) => !idsToDelete.includes(note.id))
+    setNotes(filteredNotes)
 
-      findChildren(id)
+    if (activeNoteId === id) {
+      setActiveNoteId(filteredNotes[0]?.id || "")
+    }
 
-      const filteredNotes = notes.filter((note) => !idsToDelete.includes(note.id))
-      setNotes(filteredNotes)
-
-      if (activeNoteId === id) {
-        setActiveNoteId(filteredNotes[0]?.id || "")
-      }
-
-      toast({
-        title: "Note deleted",
-        description: "Your note has been deleted successfully.",
-        variant: "destructive",
-      })
-    },
-    [notes, activeNoteId, toast],
-  )
+    toast({
+      title: "Note deleted",
+      description: "Your note has been deleted successfully.",
+      variant: "destructive",
+    })
+  }
 
   return (
     <div className="flex h-screen bg-background">

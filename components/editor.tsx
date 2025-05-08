@@ -1,6 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef, type ChangeEvent, type KeyboardEvent } from "react"
+import type React from "react"
+
+import { useState, useEffect, useRef } from "react"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Placeholder from "@tiptap/extension-placeholder"
@@ -90,7 +92,7 @@ export function Editor({ note, onChange }: EditorProps) {
     setTitle(note.title)
   }, [note.id, note.title])
 
-  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value
     setTitle(newTitle)
     onChange({
@@ -100,7 +102,7 @@ export function Editor({ note, onChange }: EditorProps) {
     })
   }
 
-  const handleTitleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault()
       editor?.commands.focus()

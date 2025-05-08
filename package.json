@@ -61,6 +61,10 @@
     "@tiptap/pm": "latest",
     "@tiptap/core": "latest",
     "electron": "latest",
+    "path": "latest",
+    "url": "latest",
+    "fs": "latest",
+    "@tailwindcss/typography": "latest",
     "@tiptap/react": "latest",
     "@tiptap/starter-kit": "latest",
     "@tiptap/extension-placeholder": "latest",
@@ -71,10 +75,7 @@
     "@tiptap/extension-task-list": "latest",
     "@tiptap/extension-task-item": "latest",
     "@tiptap/extension-link": "latest",
-    "@tiptap/extension-image": "latest",
-    "path": "latest",
-    "url": "latest",
-    "fs": "latest"
+    "@tiptap/extension-image": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

@@ -16,21 +16,11 @@ const createWindow = () => {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true, // Enable sandbox mode for better security
-      spellcheck: true, // Enable spellcheck
     },
-    // Add better security settings
-    autoHideMenuBar: false,
-    show: false, // Don't show until ready-to-show
   })
 
   const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "../out/index.html")}`
   mainWindow.loadURL(startUrl)
-
-  // Show window when ready
-  mainWindow.once("ready-to-show", () => {
-    mainWindow?.show()
-  })
 
   if (process.env.NODE_ENV === "development") {
     mainWindow.webContents.openDevTools()

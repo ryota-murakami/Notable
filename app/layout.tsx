@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import type React from "react"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: ReactNode
+  children: React.ReactNode
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
