@@ -1,0 +1,8 @@
+# Next.js App Router
+
+This project uses the Next.js App Router.
+
+- Use `'use server'` in files that must only run on the server.
+- Use `'use client'` **only** at the top of the boundary component for the client-side tree.
+- Do **not** reference the Next.js Pages Router.
+- Data fetching should be done using Server Components where possible.

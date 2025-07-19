@@ -1,61 +1,152 @@
-# Notable - Next.js 15 with Tailwind CSS v4.1
+# Notable - Premium Notion Clone
 
-## Recent Upgrades
+A top-tier freemium note-taking and knowledge management application built with modern technologies, offering a superior writing experience with Plate.js, real-time synchronization, and cross-platform support.
 
-### 1. Next.js 15 Upgrade
-- Next.js upgraded from 14.0.4 to 15.0.0
-- React upgraded from 18.x to 19.0.0
-- React DOM upgraded from 18.x to 19.0.0
-- TypeScript types updated for React 19
-- Electron upgraded from 28.0.0 to 29.0.0
-- Various other dependencies updated for compatibility
+## 🚀 Tech Stack
 
-### 2. Tailwind CSS v4.1 Upgrade
-- Tailwind CSS upgraded from v3.x to v4.1.0
-- Updated configuration format in tailwind.config.ts
-- Switched from HSL color format to direct CSS variables
-- Updated @tailwindcss/typography plugin to v0.6.0
-- Adjusted CSS variables in globals.css
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Editor**: Plate.js (migrating from TipTap)
+- **Styling**: Tailwind CSS v4.1
+- **State Management**: Zustand
+- **Database**: PostgreSQL with Prisma ORM
+- **Real-time**: Socket.io + Y.js for CRDT
+- **Authentication**: NextAuth.js
+- **Cache**: Redis
+- **Desktop**: Electron
+- **Mobile**: React Native with Expo
 
-## Running the Application
+## 📋 Features
 
-1. Install dependencies:
-\`\`\`bash
+### Core Features
+
+- 🔐 **Authentication**: Email/Password and Google OAuth
+- 📝 **Rich Text Editor**: Powered by Plate.js with Notion-like experience
+- 📁 **Note Management**: Hierarchical folders, tags, and favorites
+- 🔍 **Full-Text Search**: Instant search with advanced filters
+- 🔄 **Real-time Sync**: Cross-platform synchronization with conflict resolution
+- 📤 **Export Options**: Markdown, PDF, HTML, and React components
+- 🌓 **View Modes**: Edit and read-only modes
+- 🎨 **Themes**: Light/dark mode support
+
+### Editor Features
+
+- Block-based editing (paragraphs, headings, lists, code blocks, etc.)
+- Slash commands (/)
+- Markdown shortcuts
+- Drag-and-drop blocks
+- Image uploads
+- Math equations (LaTeX)
+- Tables
+- @mentions
+
+## 🛠️ Development Setup
+
+### Prerequisites
+
+- Node.js 22.15.0 (managed by Volta)
+- PostgreSQL
+- Redis
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/ryota-murakami/Notable.git
+cd Notable
+```
+
+2. Install dependencies:
+
+```bash
 npm install
-\`\`\`
+```
 
-2. Run in development mode:
-\`\`\`bash
+3. Set up environment variables:
+
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+4. Set up the database:
+
+```bash
+npm run prisma:generate
+npm run prisma:migrate
+```
+
+### Running the Application
+
+**Development mode:**
+
+```bash
+# Start the API server
+npm run api:dev
+
+# In another terminal, start Next.js
+npm run dev
+
+# For Electron development
 npm run electron:dev
-\`\`\`
+```
 
-3. Build for production:
-\`\`\`bash
+**Production build:**
+
+```bash
+npm run build
 npm run electron:build
-\`\`\`
+```
 
-## Features
+## 📁 Project Structure
 
-- Rich text editing with TipTap
-- Hierarchical note organization
-- Tag management
-- Dark mode support
-- Export functionality (Markdown, HTML, Plain text)
-- Image support
-- Full-text search
-- Electron desktop integration
+```
+Notable/
+├── app/              # Next.js app directory
+├── components/       # React components
+├── server/          # Express API server
+├── store/           # Zustand state management
+├── prisma/          # Database schema
+├── electron/        # Electron main process
+├── e2e/            # Playwright E2E tests
+├── types/          # TypeScript type definitions
+└── lib/            # Utility functions
+```
 
-## Tailwind CSS v4 Changes
+## 🧪 Testing
 
-Tailwind CSS v4 introduces several changes from v3:
+```bash
+# Unit tests
+npm test
 
-1. **Direct CSS Variables**: Uses CSS variables directly without hsl() function
-2. **Simplified Configuration**: More streamlined config structure
-3. **Improved Performance**: Faster build times and smaller CSS output
-4. **Better Dark Mode Support**: Enhanced dark mode implementation
-5. **Updated Plugin API**: Changes to how plugins are defined and used
+# E2E tests
+npm run test:e2e
 
-These changes have been implemented throughout the application to ensure compatibility and take advantage of the new features.
-\`\`\`
+# Type checking
+npm run typecheck
 
-Let's create a migration guide document to help with future upgrades:
+# Linting
+npm run lint
+```
+
+## 🚢 Deployment
+
+The application supports deployment to:
+
+- **Web**: Vercel (frontend) + AWS (backend)
+- **Desktop**: Electron builds for Windows, macOS, Linux
+- **Mobile**: iOS App Store and Google Play Store
+
+## 📖 Documentation
+
+- [Product Requirements Document](./PRD.md)
+- [API Documentation](./docs/api.md) (coming soon)
+- [Contributing Guide](./CONTRIBUTING.md) (coming soon)
+
+## 🤝 Contributing
+
+Please read our contributing guidelines before submitting PRs.
+
+## 📄 License
+
+MIT License - see [LICENSE](./LICENSE) file for details.

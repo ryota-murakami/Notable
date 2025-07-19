@@ -1,0 +1,323 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          # Generate changelog
+          if [ -z "$PREV_TAG" ]; then
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges ${PREV_TAG}..HEAD)
+          fi
+
+          # Save to file for multi-line output
+          echo "$CHANGELOG" > changelog.md
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: Release ${{ steps.get_version.outputs.version }}
+          body_path: changelog.md
+          draft: false
+          prerelease: false
+
+  build-web:
+    name: Build Web Application
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm run build
+        env:
+          NEXT_PUBLIC_APP_VERSION: ${{ needs.create-release.outputs.version }}
+
+      - name: Create build artifact
+        run: |
+          tar -czf notable-web-${{ needs.create-release.outputs.version }}.tar.gz \
+            .next \
+            public \
+            package.json \
+            pnpm-lock.yaml \
+            next.config.mjs
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./notable-web-${{ needs.create-release.outputs.version }}.tar.gz
+          asset_name: notable-web-${{ needs.create-release.outputs.version }}.tar.gz
+          asset_content_type: application/gzip
+
+  build-electron:
+    name: Build Electron App
+    runs-on: ${{ matrix.os }}
+    needs: create-release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: notable-linux
+            asset_extension: .AppImage
+          - os: windows-latest
+            artifact_name: notable-win
+            asset_extension: .exe
+          - os: macOS-latest
+            artifact_name: notable-mac
+            asset_extension: .dmg
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Electron app
+        run: pnpm run electron:build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.AppImage
+
+  build-mobile:
+    name: Build Mobile Apps
+    runs-on: ubuntu-latest
+    needs: create-release
+    strategy:
+      matrix:
+        platform: [ios, android]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        working-directory: ./mobile
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build on EAS
+        working-directory: ./mobile
+        run: |
+          # Update app version
+          jq '.expo.version = "${{ needs.create-release.outputs.version }}"' app.json > tmp.json && mv tmp.json app.json
+
+          # Build
+          eas build --platform ${{ matrix.platform }} --non-interactive --auto-submit
+
+  publish-docker:
+    name: Publish Docker Image
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/notable:${{ needs.create-release.outputs.version }}
+            ${{ secrets.DOCKER_USERNAME }}/notable:latest
+            ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}
+            ghcr.io/${{ github.repository }}:latest
+          build-args: |
+            VERSION=${{ needs.create-release.outputs.version }}
+
+  update-docs:
+    name: Update Documentation
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Update version in docs
+        run: |
+          # Update version references in documentation
+          find ./docs -type f -name "*.md" -exec sed -i "s/version: .*/version: ${{ needs.create-release.outputs.version }}/g" {} +
+
+      - name: Generate API documentation
+        run: |
+          npx typedoc --out docs/api src/lib
+
+      - name: Create PR for documentation updates
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'docs: update for release ${{ needs.create-release.outputs.version }}'
+          title: 'docs: update documentation for ${{ needs.create-release.outputs.version }}'
+          body: |
+            This PR updates the documentation for release ${{ needs.create-release.outputs.version }}.
+
+            Changes:
+            - Updated version references
+            - Regenerated API documentation
+          branch: docs/release-${{ needs.create-release.outputs.version }}
+          labels: |
+            documentation
+            release
+
+  notify-release:
+    name: Notify Release
+    runs-on: ubuntu-latest
+    needs:
+      [create-release, build-web, build-electron, build-mobile, publish-docker]
+    if: always()
+    steps:
+      - name: Send notification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ needs.create-release.outputs.version }}';
+            const status = '${{ job.status }}' === 'success' ? '✅' : '❌';
+
+            // Create issue to track release
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Release ${version} - Tracking`,
+              body: `## Release ${version} Status
+              
+              ### Build Status:
+              - Web Application: ${{ needs.build-web.result }}
+              - Electron Apps: ${{ needs.build-electron.result }}
+              - Mobile Apps: ${{ needs.build-mobile.result }}
+              - Docker Image: ${{ needs.publish-docker.result }}
+              
+              ### Release Notes:
+              See the [release page](https://github.com/${{ github.repository }}/releases/tag/${version})
+              
+              ### Post-Release Checklist:
+              - [ ] Verify production deployment
+              - [ ] Test critical user flows
+              - [ ] Monitor error rates
+              - [ ] Update status page
+              - [ ] Send release announcement
+              `,
+              labels: ['release', 'tracking']
+            });
+
+            console.log(`Created tracking issue #${issue.data.number}`);

@@ -1,0 +1,10 @@
+# Playwright Testing
+
+When running Playwright tests, ensure you use the `--reporter=list` option to prevent launching the HTML reporter.
+
+Example: `pnpm test -- --reporter=list`
+
+After fixing a bug, implementing a feature, or changing styles:
+1.  Use the `mcp` server to run Playwright and verify behavior.
+2.  Automatically generate Playwright code that replicates your exact actions.
+3.  For style changes, include screenshots to verify visual correctness.

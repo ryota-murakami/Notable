@@ -6,4 +6,5 @@ export interface Note {
   updatedAt: string
   parentId: string | null
   tags: string[]
+  isFolder: boolean
 }
