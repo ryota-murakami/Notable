@@ -8,7 +8,7 @@
     "types": ["node"],
     "outDir": "./dist",
     "allowSyntheticDefaultImports": true,
-    "strict": false
+    "strict": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
