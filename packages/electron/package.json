@@ -1,0 +1,52 @@
+{
+  "name": "@notable/electron",
+  "version": "1.0.0",
+  "description": "Notable Electron desktop application",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "build": "tsc && electron-builder",
+    "dev": "electron .",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "test": "jest",
+    "e2e": "echo 'E2E tests for electron'",
+    "clean": "rm -rf dist build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "electron": "^35.2.1",
+    "electron-store": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "electron-builder": "^26.0.12",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "typescript": "^5"
+  },
+  "build": {
+    "appId": "com.notable.electron",
+    "productName": "Notable",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

@@ -1,0 +1,509 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import { Sidebar } from '@/components/sidebar'
+import { PlateEditorComponent } from '@/components/plate-editor'
+import type { Note } from '@/types/note'
+import { useSupabaseNotes } from '@/hooks/use-supabase-notes'
+import { useSupabase } from '@/components/supabase-provider'
+import { SearchDialog } from '@/components/search-dialog'
+import { useToast } from '@/hooks/use-toast'
+import { WelcomeScreen } from '@/components/welcome-screen'
+import { Breadcrumb } from '@/components/breadcrumb'
+import {
+  EditorSkeleton,
+  SidebarSkeleton,
+  BreadcrumbSkeleton,
+  LoadingSpinner,
+} from '@/components/loading-states'
+import { ViewModeRenderer } from '@/components/view-mode-renderer'
+import { ModeToggle } from '@/components/mode-toggle'
+import { Badge } from '@/components/ui/badge'
+import { Wifi, WifiOff, Users, UserCheck } from 'lucide-react'
+
+export function Shell() {
+  const [activeNoteId, setActiveNoteId] = useState<string>('')
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isEditorLoading, setIsEditorLoading] = useState(false)
+  const [isViewMode, setIsViewMode] = useState(false)
+  const { toast } = useToast()
+  const { user, loading: authLoading } = useSupabase()
+
+  // Use Supabase notes hook with real-time sync
+  const {
+    notes,
+    isLoading,
+    isSaving,
+    error,
+    createNote,
+    createFolder,
+    saveNote,
+    deleteNote,
+    loadNotes,
+    // Real-time sync state
+    isConnected,
+    connectionError,
+    onlineUsers,
+    typingUsers,
+    startTyping,
+    stopTyping,
+  } = useSupabaseNotes({ user, activeNoteId })
+
+  const activeNote = notes.find((note) => note.id === activeNoteId) || notes[0]
+
+  // Set initial active note when notes load
+  useEffect(() => {
+    if (notes.length > 0 && !activeNoteId) {
+      setActiveNoteId(notes[0].id)
+    }
+  }, [notes, activeNoteId])
+
+  // Navigate between notes using keyboard
+  const navigateToNote = useCallback(
+    (direction: 'next' | 'previous') => {
+      const currentIndex = notes.findIndex((note) => note.id === activeNoteId)
+      if (currentIndex === -1) return
+
+      let newIndex: number
+      if (direction === 'next') {
+        newIndex = currentIndex + 1 >= notes.length ? 0 : currentIndex + 1
+      } else {
+        newIndex = currentIndex - 1 < 0 ? notes.length - 1 : currentIndex - 1
+      }
+
+      if (notes[newIndex]) {
+        setActiveNoteId(notes[newIndex].id)
+      }
+    },
+    [notes, activeNoteId],
+  )
+
+  // Show error toast if there's a connection error
+  useEffect(() => {
+    if (connectionError) {
+      toast({
+        title: 'Connection Error',
+        description: connectionError,
+        variant: 'destructive',
+      })
+    }
+  }, [connectionError, toast])
+
+  // Show error toast if there's a general error
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+      })
+    }
+  }, [error, toast])
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const handleNoteChange = async (updatedNote: Note) => {
+    // Save to Supabase
+    const success = await saveNote(updatedNote)
+    if (success) {
+      // Start typing indicator for real-time sync
+      startTyping()
+
+      // Stop typing after a delay
+      setTimeout(() => {
+        stopTyping()
+      }, 1000)
+    }
+  }
+
+  const handleExportNote = (note: Note, format: string) => {
+    // TODO: Implement export functionality
+    toast({
+      title: 'Export feature',
+      description: `Export to ${format} will be implemented soon.`,
+    })
+  }
+
+  const handleCreateNote = async (parentId: string | null = null) => {
+    setIsEditorLoading(true)
+
+    try {
+      const newNote = await createNote(parentId)
+      if (newNote) {
+        setActiveNoteId(newNote.id)
+        toast({
+          title: 'Note created',
+          description: 'Your new note has been created successfully.',
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to create note. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsEditorLoading(false)
+    }
+    return newNote
+  }
+
+  const handleCreateFolder = async (parentId: string | null = null) => {
+    try {
+      const newFolder = await createFolder(parentId)
+      if (newFolder) {
+        setActiveNoteId(newFolder.id)
+        toast({
+          title: 'Folder created',
+          description: 'Your new folder has been created successfully.',
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to create folder. Please try again.',
+        variant: 'destructive',
+      })
+    }
+    return newFolder
+  }
+
+  const handleDeleteNote = async (id: string) => {
+    try {
+      // Delete all children recursively
+      const idsToDelete = [id]
+      const findChildren = (parentId: string) => {
+        notes.forEach((note) => {
+          if (note.parentId === parentId) {
+            idsToDelete.push(note.id)
+            findChildren(note.id)
+          }
+        })
+      }
+
+      findChildren(id)
+
+      // Delete all notes
+      for (const noteId of idsToDelete) {
+        await deleteNote(noteId)
+      }
+
+      // Update active note if necessary
+      if (activeNoteId === id) {
+        const remainingNotes = notes.filter(
+          (note) => !idsToDelete.includes(note.id),
+        )
+        setActiveNoteId(remainingNotes[0]?.id || '')
+      }
+
+      toast({
+        title: 'Note deleted',
+        description: 'Your note has been deleted successfully.',
+        variant: 'destructive',
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete note. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  // Add comprehensive keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts when typing in input fields
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return
+      }
+
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey
+
+      if (isCtrlOrCmd) {
+        switch (e.key) {
+          case 'k':
+            e.preventDefault()
+            setIsSearchOpen(true)
+            break
+          case 'n':
+            e.preventDefault()
+            handleCreateNote(null)
+            break
+          case 's':
+            e.preventDefault()
+            // Show save indicator (already handled by auto-save)
+            toast({
+              title: 'Note saved',
+              description: 'Your note has been saved successfully.',
+            })
+            break
+          case 'd':
+            e.preventDefault()
+            if (activeNote) {
+              handleDeleteNote(activeNote.id)
+            }
+            break
+          case 'f':
+            e.preventDefault()
+            // Focus sidebar search
+            const sidebarSearch = document.querySelector(
+              '[placeholder="Filter"]',
+            ) as HTMLInputElement
+            if (sidebarSearch) {
+              sidebarSearch.focus()
+            }
+            break
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+            e.preventDefault()
+            const noteIndex = parseInt(e.key) - 1
+            if (notes[noteIndex]) {
+              setActiveNoteId(notes[noteIndex].id)
+            }
+            break
+          case ',':
+            e.preventDefault()
+            // Toggle sidebar collapse
+            setIsSidebarCollapsed(!isSidebarCollapsed)
+            break
+          case 'e':
+            e.preventDefault()
+            // Toggle view mode
+            setIsViewMode(!isViewMode)
+            toast({
+              title: isViewMode ? 'Edit Mode' : 'View Mode',
+              description: isViewMode
+                ? 'You can now edit this note'
+                : 'Now in read-only view mode',
+            })
+            break
+          default:
+            break
+        }
+      }
+
+      // Non-modifier key shortcuts
+      switch (e.key) {
+        case 'Escape':
+          // Close mobile menu and search
+          setIsMobileMenuOpen(false)
+          if (isSearchOpen) {
+            setIsSearchOpen(false)
+          }
+          break
+        case 'ArrowUp':
+          if (e.target === document.body) {
+            e.preventDefault()
+            navigateToNote('previous')
+          }
+          break
+        case 'ArrowDown':
+          if (e.target === document.body) {
+            e.preventDefault()
+            navigateToNote('next')
+          }
+          break
+        case 'j':
+          if (e.target === document.body) {
+            e.preventDefault()
+            navigateToNote('next')
+          }
+          break
+        case 'k':
+          if (e.target === document.body) {
+            e.preventDefault()
+            navigateToNote('previous')
+          }
+          break
+        default:
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [
+    isSearchOpen,
+    activeNote,
+    notes,
+    isSidebarCollapsed,
+    toast,
+    navigateToNote,
+    isViewMode,
+  ])
+
+  // Show loading screen while authenticating
+  if (authLoading) {
+    return (
+      <div className="flex h-screen bg-background">
+        <SidebarSkeleton className="w-64 border-r" />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <LoadingSpinner className="h-8 w-8 mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to auth if not authenticated
+  if (!user) {
+    return (
+      <div className="flex h-screen bg-background items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">
+            Please sign in to access your notes
+          </p>
+          <button
+            onClick={() => (window.location.href = '/auth')}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex h-screen bg-background">
+      {isLoading ? (
+        <SidebarSkeleton className="w-64 border-r" />
+      ) : (
+        <Sidebar
+          notes={notes}
+          activeNoteId={activeNoteId}
+          onSelectNote={(noteId) => setActiveNoteId(noteId)}
+          onCreateNote={handleCreateNote}
+          onCreateFolder={handleCreateFolder}
+          onDeleteNote={handleDeleteNote}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          isMobileMenuOpen={isMobileMenuOpen}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          isLoading={isLoading}
+        />
+      )}
+      <div
+        className={`flex-1 flex flex-col min-w-0 ${isSidebarCollapsed ? 'ml-0' : ''}`}
+      >
+        {isLoading ? (
+          <EditorSkeleton />
+        ) : notes.length === 0 ? (
+          <WelcomeScreen onCreateNote={() => handleCreateNote(null)} />
+        ) : activeNote ? (
+          <>
+            <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+                <Breadcrumb
+                  currentNote={activeNote}
+                  notes={notes}
+                  onNavigateToNote={setActiveNoteId}
+                />
+                <div className="flex items-center gap-3">
+                  {/* Real-time sync indicators */}
+                  <div className="flex items-center gap-2">
+                    {/* Connection status */}
+                    <Badge
+                      variant={isConnected ? 'default' : 'destructive'}
+                      className="text-xs"
+                    >
+                      {isConnected ? (
+                        <>
+                          <Wifi className="h-3 w-3 mr-1" />
+                          Connected
+                        </>
+                      ) : (
+                        <>
+                          <WifiOff className="h-3 w-3 mr-1" />
+                          Offline
+                        </>
+                      )}
+                    </Badge>
+
+                    {/* Online users count */}
+                    {onlineUsers.length > 0 && (
+                      <Badge variant="secondary" className="text-xs">
+                        <Users className="h-3 w-3 mr-1" />
+                        {onlineUsers.length}
+                      </Badge>
+                    )}
+
+                    {/* Typing indicators */}
+                    {typingUsers.length > 0 && (
+                      <Badge variant="outline" className="text-xs">
+                        <UserCheck className="h-3 w-3 mr-1" />
+                        {typingUsers.length} typing...
+                      </Badge>
+                    )}
+                  </div>
+
+                  <ModeToggle
+                    isViewMode={isViewMode}
+                    onToggle={() => setIsViewMode(!isViewMode)}
+                  />
+                  {(isSaving || isEditorLoading) && (
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <LoadingSpinner className="h-4 w-4" />
+                      <span>{isSaving ? 'Saving...' : 'Loading...'}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            {isEditorLoading ? (
+              <EditorSkeleton />
+            ) : isViewMode ? (
+              <ViewModeRenderer note={activeNote} className="flex-1" />
+            ) : (
+              <PlateEditorComponent
+                note={activeNote}
+                onUpdateNote={handleNoteChange}
+                onDeleteNote={handleDeleteNote}
+                onExportNote={handleExportNote}
+                onStartTyping={startTyping}
+                onStopTyping={stopTyping}
+              />
+            )}
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-muted-foreground">
+            Select a note or create a new one
+          </div>
+        )}
+      </div>
+      <SearchDialog
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        notes={notes}
+        onSelectNote={setActiveNoteId}
+        onCreateNote={() => handleCreateNote(null)}
+      />
+    </div>
+  )
+}
