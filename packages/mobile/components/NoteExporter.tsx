@@ -57,7 +57,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
   const [isExporting, setIsExporting] = useState(false)
   const [exportProgress, setExportProgress] = useState(0)
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat | null>(
-    null,
+    null
   )
   const theme = useTheme()
 
@@ -175,7 +175,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
         },
       },
       null,
-      2,
+      2
     )
   }
 
@@ -279,7 +279,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
         Alert.alert(
           'Export Complete',
           `Note exported successfully to: ${filename}`,
-          [{ text: 'OK' }],
+          [{ text: 'OK' }]
         )
       }
 
@@ -298,7 +298,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
       Alert.alert(
         'Export Failed',
         'An error occurred while exporting the note. Please try again.',
-        [{ text: 'OK' }],
+        [{ text: 'OK' }]
       )
     } finally {
       setTimeout(() => {
@@ -343,10 +343,10 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
   if (isExporting) {
     return (
       <View style={styles.exportingContainer}>
-        <Text variant="headlineSmall" style={styles.exportingTitle}>
+        <Text variant='headlineSmall' style={styles.exportingTitle}>
           Exporting Note...
         </Text>
-        <Text variant="bodyMedium" style={styles.exportingSubtitle}>
+        <Text variant='bodyMedium' style={styles.exportingSubtitle}>
           Preparing {selectedFormat?.toUpperCase()} export
         </Text>
         <ProgressBar
@@ -354,7 +354,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
           style={styles.progressBar}
           color={theme.colors.primary}
         />
-        <Text variant="bodySmall" style={styles.progressText}>
+        <Text variant='bodySmall' style={styles.progressText}>
           {Math.round(exportProgress * 100)}% complete
         </Text>
       </View>
@@ -363,7 +363,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
 
   return (
     <View style={styles.container}>
-      <Text variant="bodyMedium" style={styles.description}>
+      <Text variant='bodyMedium' style={styles.description}>
         Choose the format you'd like to export "{note.title}" to:
       </Text>
 
@@ -372,24 +372,24 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
           <Card key={option.format} style={styles.optionCard}>
             <Card.Content style={styles.optionContent}>
               <View style={styles.optionHeader}>
-                <Text variant="titleMedium" style={styles.optionTitle}>
+                <Text variant='titleMedium' style={styles.optionTitle}>
                   {option.label}
                 </Text>
-                <Chip mode="outlined" compact style={styles.formatChip}>
-                  .{getFileExtension(option.format)}
+                <Chip mode='outlined' compact style={styles.formatChip}>
+                  <Text>.{getFileExtension(option.format)}</Text>
                 </Chip>
               </View>
-              <Text variant="bodySmall" style={styles.optionDescription}>
+              <Text variant='bodySmall' style={styles.optionDescription}>
                 {option.description}
               </Text>
               <Button
-                mode="contained"
+                mode='contained'
                 onPress={() => exportNote(option.format)}
                 style={styles.exportButton}
                 contentStyle={styles.exportButtonContent}
                 disabled={isExporting}
               >
-                Export as {option.label}
+                <Text>Export as {option.label}</Text>
               </Button>
             </Card.Content>
           </Card>
@@ -397,12 +397,12 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
       </View>
 
       <Button
-        mode="outlined"
+        mode='outlined'
         onPress={onClose}
         style={styles.cancelButton}
         disabled={isExporting}
       >
-        Cancel
+        <Text>Cancel</Text>
       </Button>
     </View>
   )

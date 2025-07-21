@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Notable Electron desktop application",
   "private": true,
-  "main": "main.js",
+  "main": "build/main.js",
   "scripts": {
     "build": "tsc && electron-builder",
     "dev": "electron .",
@@ -35,8 +35,8 @@
       "output": "dist"
     },
     "files": [
-      "main.js",
-      "preload.js",
+      "build/main.js",
+      "build/preload.js",
       "package.json"
     ],
     "mac": {

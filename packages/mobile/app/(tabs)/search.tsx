@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { View, FlatList } from 'react-native'
+import { View, FlatList, Text } from 'react-native'
 import { Searchbar, Chip, useTheme } from 'react-native-paper'
 import Fuse from 'fuse.js'
 import { useNotes } from '@/hooks/useNotes'
@@ -33,7 +33,7 @@ export default function SearchScreen() {
         threshold: 0.3,
         includeScore: true,
       }),
-    [allItems],
+    [allItems]
   )
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function SearchScreen() {
       return results.filter(
         (result) =>
           Array.isArray(result.item.tags) &&
-          result.item.tags.includes(selectedTag),
+          result.item.tags.includes(selectedTag)
       )
     }
     return results
@@ -100,7 +100,7 @@ export default function SearchScreen() {
   return (
     <View style={{ flex: 1, padding: 16 }}>
       <Searchbar
-        placeholder="Search notes..."
+        placeholder='Search notes...'
         onChangeText={setSearchQuery}
         value={searchQuery}
         style={{ marginBottom: 16 }}
@@ -117,19 +117,19 @@ export default function SearchScreen() {
           selected={selectedFilter === 'all'}
           onPress={() => setSelectedFilter('all')}
         >
-          All
+          <Text>All</Text>
         </Chip>
         <Chip
           selected={selectedFilter === 'notes'}
           onPress={() => setSelectedFilter('notes')}
         >
-          Notes
+          <Text>Notes</Text>
         </Chip>
         <Chip
           selected={selectedFilter === 'folders'}
           onPress={() => setSelectedFilter('folders')}
         >
-          Folders
+          <Text>Folders</Text>
         </Chip>
       </View>
 
@@ -151,13 +151,13 @@ export default function SearchScreen() {
       )}
 
       {results.length === 0 && searchQuery ? (
-        <EmptyState title="No results found" />
+        <EmptyState title='No results found' />
       ) : (
         <FlatList
           data={filteredData}
           keyExtractor={({ item }) => item.id}
           renderItem={renderItem}
-          ListEmptyComponent={<EmptyState title="No notes to search" />}
+          ListEmptyComponent={<EmptyState title='No notes to search' />}
         />
       )}
     </View>

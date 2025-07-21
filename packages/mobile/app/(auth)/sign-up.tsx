@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Alert } from 'react-native'
+import { View, StyleSheet, Alert, Text } from 'react-native'
 import {
   TextInput,
   Button,
@@ -56,7 +56,7 @@ export default function SignUpScreen() {
         Alert.alert(
           'Success',
           'Please check your email for a verification link',
-          [{ text: 'OK' }],
+          [{ text: 'OK' }]
         )
       }
     } catch (_error) {
@@ -91,82 +91,82 @@ export default function SignUpScreen() {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={[styles.title, { color: theme.colors.primary }]}>
-            Create Account
+            <Text>Create Account</Text>
           </Title>
           <Paragraph
             style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
           >
-            Join Notable today
+            <Text>Join Notable today</Text>
           </Paragraph>
 
           <TextInput
-            label="Full Name"
+            label='Full Name'
             value={name}
             onChangeText={setName}
-            mode="outlined"
+            mode='outlined'
             style={styles.input}
             disabled={loading}
           />
 
           <TextInput
-            label="Email"
+            label='Email'
             value={email}
             onChangeText={setEmail}
-            mode="outlined"
-            keyboardType="email-address"
-            autoCapitalize="none"
+            mode='outlined'
+            keyboardType='email-address'
+            autoCapitalize='none'
             style={styles.input}
             disabled={loading}
           />
 
           <TextInput
-            label="Password"
+            label='Password'
             value={password}
             onChangeText={setPassword}
-            mode="outlined"
+            mode='outlined'
             secureTextEntry
             style={styles.input}
             disabled={loading}
           />
 
           <TextInput
-            label="Confirm Password"
+            label='Confirm Password'
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            mode="outlined"
+            mode='outlined'
             secureTextEntry
             style={styles.input}
             disabled={loading}
           />
 
           <Button
-            mode="contained"
+            mode='contained'
             onPress={handleSignUp}
             loading={loading}
             disabled={loading}
             style={styles.button}
           >
-            Sign Up
+            <Text>Sign Up</Text>
           </Button>
 
           <Divider style={styles.divider} />
 
           <Button
-            mode="outlined"
+            mode='outlined'
             onPress={handleGoogleSignUp}
             loading={loading}
             disabled={loading}
             style={styles.button}
-            icon="google"
+            icon='google'
           >
-            Continue with Google
+            <Text>Continue with Google</Text>
           </Button>
 
           <View style={styles.footer}>
             <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
-              Already have an account?{' '}
-              <Link href="/(auth)" style={{ color: theme.colors.primary }}>
-                Sign in
+              <Text>Already have an account? </Text>
+              <Link href='/(auth)' style={{ color: theme.colors.primary }}>
+                <Text>Sign in</Text>
               </Link>
             </Paragraph>
           </View>
