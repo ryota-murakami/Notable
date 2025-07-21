@@ -40,6 +40,6 @@
     "typescript": "^5"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "../configs/jest-config/react-native"
   }
 }

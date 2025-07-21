@@ -1,15 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../configs/tsconfig/node.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "es2020",
-    "moduleResolution": "node",
     "baseUrl": ".",
     "types": ["node"],
-    "outDir": "./dist",
-    "allowSyntheticDefaultImports": true,
-    "strict": true
+    "outDir": "./dist"
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["**/*.ts", "**/*.tsx", "../../types/**/*"]
 }
