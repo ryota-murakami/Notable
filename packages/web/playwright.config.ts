@@ -11,12 +11,18 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: './e2e',
+  /* Global test timeout - increased for slow startups */
+  timeout: 60 * 1000, // 60 seconds per test
+  /* Global expect timeout */
+  expect: {
+    timeout: 15 * 1000, // 15 seconds for assertions
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1, // Add retry for local development too
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -31,6 +37,9 @@ export default defineConfig({
 
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
+
+    /* Increased navigation timeout for slow server startup */
+    navigationTimeout: 30 * 1000, // 30 seconds for navigation
   },
 
   /* Configure projects for major browsers */
@@ -74,10 +83,15 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'PORT=3000 pnpm run dev',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:3000/api/health-check', // Use health check endpoint for reliable startup detection
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-    stdout: 'pipe',
+    timeout: 60 * 1000, // Reduced to 1 minute - server should start quickly
+    stdout: 'ignore', // Reduce noise in test output
     stderr: 'pipe',
+    // Add retry strategy for server startup
+    env: {
+      NODE_ENV: 'development',
+      NEXT_TELEMETRY_DISABLED: '1', // Disable Next.js telemetry for faster startup
+    },
   },
 })

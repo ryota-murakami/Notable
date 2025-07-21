@@ -9,6 +9,11 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
+  // Development performance optimizations for faster E2E test startup
+  experimental: {
+    // Keep experimental features minimal for stability
+  },
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],
@@ -30,43 +35,68 @@ const nextConfig = {
   },
 
   // Bundle optimization
-  webpack: (config, { isServer }) => {
-    // Optimize bundle size
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        commons: {
-          name: 'commons',
-          chunks: 'all',
-          minChunks: 2,
-        },
-        react: {
-          name: 'react',
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          chunks: 'all',
-          priority: 20,
-        },
-        supabase: {
-          name: 'supabase',
-          test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-          chunks: 'all',
-          priority: 15,
-        },
-        editor: {
-          name: 'editor',
-          test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
-          chunks: 'all',
-          priority: 10,
-        },
-      },
-    }
+  webpack: (config, { isServer, dev }) => {
+    // Development optimizations for faster E2E test startup
+    if (dev) {
+      // Reduce webpack noise and improve development performance
+      config.infrastructureLogging = {
+        level: 'error',
+      }
 
-    // Tree shaking for production
-    if (!isServer && process.env.NODE_ENV === 'production') {
-      config.optimization.usedExports = true
-      config.optimization.sideEffects = false
+      // Disable source maps in development for faster builds during E2E tests
+      config.devtool = false
+
+      // Simple chunk splitting for development
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: {
+            name: 'vendors',
+            test: /[\\/]node_modules[\\/]/,
+            chunks: 'all',
+            priority: 10,
+          },
+        },
+      }
+    } else {
+      // Production optimizations
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          commons: {
+            name: 'commons',
+            chunks: 'all',
+            minChunks: 2,
+          },
+          react: {
+            name: 'react',
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            chunks: 'all',
+            priority: 20,
+          },
+          supabase: {
+            name: 'supabase',
+            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+            chunks: 'all',
+            priority: 15,
+          },
+          editor: {
+            name: 'editor',
+            test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
+            chunks: 'all',
+            priority: 10,
+          },
+        },
+      }
+
+      // Tree shaking for production
+      if (!isServer) {
+        config.optimization.usedExports = true
+        config.optimization.sideEffects = false
+      }
     }
 
     return config
