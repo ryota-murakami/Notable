@@ -107,9 +107,9 @@ export async function POST(request: NextRequest) {
 }
 
 // Get analytics summary
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(_request.url)
     const period = searchParams.get('period') || '7d'
 
     // Calculate date range
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
       .limit(10)
 
     // Get page view counts
-    const { data: pageViews, count: totalPageViews } = await supabase
+    const { data: _pageViews, count: totalPageViews } = await supabase
       .from('analytics_page_views')
       .select('url', { count: 'exact' })
       .gte('timestamp', startDate.toISOString())

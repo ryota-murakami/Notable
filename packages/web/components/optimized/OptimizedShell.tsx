@@ -70,15 +70,15 @@ export function OptimizedShell() {
   const {
     notes,
     isLoading,
-    isSaving,
-    error,
+    isSaving: _isSaving,
+    error: _error,
     createNote,
-    updateNote,
+    updateNote: _updateNote,
     deleteNote,
     saveNote,
     // Real-time sync state
     isConnected,
-    connectionError,
+    connectionError: _connectionError,
     onlineUsers,
     typingUsers,
     startTyping,
@@ -121,7 +121,11 @@ export function OptimizedShell() {
   }, [])
 
   // Optimized search with debouncing and performance tracking
-  const { searchResults, isSearching, searchTime } = useOptimizedSearch({
+  const {
+    searchResults,
+    isSearching: _isSearching,
+    searchTime: _searchTime,
+  } = useOptimizedSearch({
     notes,
     searchQuery,
     debounceMs: 300,

@@ -45,8 +45,8 @@ const initialValue = [
 export function PlateEditorComponent({
   note,
   onUpdateNote,
-  onDeleteNote,
-  onExportNote,
+  onDeleteNote: _onDeleteNote,
+  onExportNote: _onExportNote,
   onStartTyping,
   onStopTyping,
 }: PlateEditorProps) {

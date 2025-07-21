@@ -29,7 +29,7 @@ const signUpSchema = z
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: 'Passwords don&apos;t match',
     path: ['confirmPassword'],
   })
 
@@ -72,7 +72,7 @@ export default function SignUpPage() {
       // Redirect to dashboard after successful registration
       router.push('/dashboard')
       router.refresh()
-    } catch (error) {
+    } catch {
       setError('Something went wrong. Please try again.')
     } finally {
       setIsLoading(false)
@@ -92,7 +92,7 @@ export default function SignUpPage() {
       if (error) {
         setError(error.message)
       }
-    } catch (error) {
+    } catch {
       setError('Failed to sign up with Google')
     } finally {
       setIsLoading(false)

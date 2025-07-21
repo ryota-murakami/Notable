@@ -42,7 +42,7 @@ async function checkDatabase(): Promise<
 
   try {
     // Simple query to check database connection
-    const { data, error } = await supabase
+    const { data: _data, error } = await supabase
       .from('notes')
       .select('count')
       .limit(1)
@@ -55,13 +55,13 @@ async function checkDatabase(): Promise<
       responseTime: Date.now() - start,
       message: 'Database connection successful',
     }
-  } catch (error) {
-    logger.error('Health check: Database connection failed', { error })
+  } catch {
+    logger.error('Health check: Database connection failed')
     return {
       status: 'fail',
       responseTime: Date.now() - start,
       message: 'Database connection failed',
-      details: error instanceof Error ? error.message : 'Unknown error',
+      details: 'Unknown error',
     }
   }
 }
@@ -85,13 +85,13 @@ async function checkRedis(): Promise<HealthCheckResponse['checks']['redis']> {
       responseTime: Date.now() - start,
       message: 'Redis connection successful',
     }
-  } catch (error) {
-    logger.error('Health check: Redis connection failed', { error })
+  } catch {
+    logger.error('Health check: Redis connection failed')
     return {
       status: 'fail',
       responseTime: Date.now() - start,
       message: 'Redis connection failed',
-      details: error instanceof Error ? error.message : 'Unknown error',
+      details: 'Unknown error',
     }
   }
 }
@@ -160,8 +160,8 @@ function checkMemory(): HealthCheckResponse['checks']['memory'] {
 }
 
 // Main health check endpoint
-export async function GET(request: NextRequest) {
-  const headersList = headers()
+export async function GET(_request: NextRequest) {
+  const _headersList = headers()
   const requestStart = Date.now()
 
   try {
@@ -220,8 +220,8 @@ export async function GET(request: NextRequest) {
       status === 'healthy' ? 200 : status === 'degraded' ? 200 : 503
 
     return NextResponse.json(response, { status: httpStatus })
-  } catch (error) {
-    logger.error('Health check failed', { error })
+  } catch {
+    logger.error('Health check failed')
 
     return NextResponse.json(
       {
@@ -233,7 +233,7 @@ export async function GET(request: NextRequest) {
           error: {
             status: 'fail',
             message: 'Health check failed',
-            details: error instanceof Error ? error.message : 'Unknown error',
+            details: 'Unknown error',
           },
         },
       } as HealthCheckResponse,

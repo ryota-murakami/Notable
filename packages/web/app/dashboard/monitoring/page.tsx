@@ -54,7 +54,7 @@ interface AlertData {
 export default function MonitoringDashboard() {
   const [services, setServices] = useState<ServiceStatus[]>([])
   const [alerts, setAlerts] = useState<AlertData[]>([])
-  const [metrics, setMetrics] = useState<Record<string, MetricData[]>>({})
+  const [_metrics, setMetrics] = useState<Record<string, MetricData[]>>({})
   const [loading, setLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
 

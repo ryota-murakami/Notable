@@ -62,7 +62,7 @@ export function ImageUpload({ isOpen, onClose, onInsert }: ImageUploadProps) {
         }
       }
       reader.readAsDataURL(file)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Upload failed',
         description: 'There was an error uploading your image.',

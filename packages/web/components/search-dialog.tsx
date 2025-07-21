@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -16,16 +16,7 @@ import { Separator } from '@/components/ui/separator'
 import type { Note } from '@/types/note'
 import { NoSearchResultsEmptyState } from '@/components/empty-states'
 import { LoadingSpinner } from '@/components/loading-states'
-import {
-  Calendar,
-  Clock,
-  File,
-  FolderClosed,
-  Search,
-  Tag,
-  X,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Clock, FolderClosed, Search, Tag } from 'lucide-react'
 import Fuse from 'fuse.js'
 
 interface SearchResult {
@@ -221,7 +212,7 @@ export function SearchDialog({
     const allIndices = matches.flatMap((match) => match.indices)
     allIndices.sort((a, b) => a[0] - b[0])
 
-    let result = []
+    const result = []
     let lastIndex = 0
 
     for (const [start, end] of allIndices) {
