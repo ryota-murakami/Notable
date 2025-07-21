@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
-import type { RealtimeChannel } from '@supabase/supabase-js'
+import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Note } from '../types'
 
@@ -77,7 +76,7 @@ const throttle = (func: (...args: any[]) => void, delay: number) => {
           func.apply(this, args)
           lastExecTime = Date.now()
         },
-        delay - (currentTime - lastExecTime),
+        delay - (currentTime - lastExecTime)
       )
     }
   }
@@ -149,7 +148,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
           if (payload.new) {
             onNoteUpdate(payload.new as Note)
           }
-        },
+        }
       )
     }
 
@@ -244,7 +243,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
   useEffect(() => {
     const interval = setInterval(() => {
       setTypingUsers(
-        (prev) => prev.filter((user) => Date.now() - user.lastTyped < 3000), // 3 seconds
+        (prev) => prev.filter((user) => Date.now() - user.lastTyped < 3000) // 3 seconds
       )
     }, 1000)
 
@@ -285,7 +284,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         },
       })
     }, 300), // 300ms throttle
-    [user],
+    [user]
   )
 
   // Method to broadcast note updates
@@ -303,7 +302,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         },
       })
     },
-    [user],
+    [user]
   )
 
   // Method to start typing

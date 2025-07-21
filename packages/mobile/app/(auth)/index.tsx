@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Alert } from 'react-native'
+import { View, StyleSheet, Alert, Text } from 'react-native'
 import {
   TextInput,
   Button,
@@ -68,12 +68,12 @@ export default function SignInScreen() {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={[styles.title, { color: theme.colors.primary }]}>
-            Welcome to Notable
+            <Text>Welcome to Notable</Text>
           </Title>
           <Paragraph
             style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
           >
-            Sign in to access your notes
+            <Text>Sign in to access your notes</Text>
           </Paragraph>
 
           <TextInput
@@ -104,7 +104,7 @@ export default function SignInScreen() {
             disabled={loading}
             style={styles.button}
           >
-            Sign In
+            <Text>Sign In</Text>
           </Button>
 
           <Divider style={styles.divider} />
@@ -117,7 +117,7 @@ export default function SignInScreen() {
             style={styles.button}
             icon='google'
           >
-            Continue with Google
+            <Text>Continue with Google</Text>
           </Button>
 
           <View style={styles.footer}>
