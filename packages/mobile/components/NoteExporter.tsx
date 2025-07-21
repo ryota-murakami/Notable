@@ -153,7 +153,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
       .replace(/\*(.*?)\*/g, '$1') // Remove italic
       .replace(/`(.*?)`/g, '$1') // Remove inline code
       .replace(/```[\s\S]*?```/g, '') // Remove code blocks
-      .replace(/^\s*[-\*\+]\s+/gm, '') // Remove list markers
+      .replace(/^\s*[-*+]\s+/gm, '') // Remove list markers
       .replace(/^\s*>\s+/gm, '') // Remove blockquotes
       .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links, keep text
       .replace(/^---\s*$/gm, '') // Remove horizontal rules
@@ -183,7 +183,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
     const markdown = convertToMarkdown()
 
     // Simple markdown to HTML conversion
-    let html = markdown
+    const html = markdown
       .replace(/^# (.*$)/gm, '<h1>$1</h1>')
       .replace(/^## (.*$)/gm, '<h2>$1</h2>')
       .replace(/^### (.*$)/gm, '<h3>$1</h3>')
@@ -194,7 +194,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/`(.*?)`/g, '<code>$1</code>')
       .replace(/^>\s+(.*$)/gm, '<blockquote>$1</blockquote>')
-      .replace(/^\s*[-\*\+]\s+(.*$)/gm, '<li>$1</li>')
+      .replace(/^\s*[-*+]\s+(.*$)/gm, '<li>$1</li>')
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
       .replace(/^---\s*$/gm, '<hr>')
       .replace(/\n\n/g, '</p><p>')

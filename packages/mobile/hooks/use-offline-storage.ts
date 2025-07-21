@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import NetInfo from '@react-native-community/netinfo'
-import { Note, NoteCreate, NoteUpdate } from '../types'
+import { Note } from '../types'
 
 export interface PendingSync {
   id: string
