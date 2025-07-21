@@ -34,5 +34,10 @@
   },
   "lint-staged": {
     "*": "prettier --ignore-unknown --write"
+  },
+  "pnpm": {
+    "overrides": {
+      "napi-postinstall": "0.3.2"
+    }
   }
 }
