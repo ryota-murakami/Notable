@@ -164,12 +164,14 @@ export function useOfflineNotes({
   const loadNotes = useCallback(async () => {
     if (!user) return
 
+    let cached: Note[] = []
+
     try {
       setIsLoading(true)
       setError(null)
 
       // Load from cache first for immediate display
-      const cached = await getCachedNotes()
+      cached = await getCachedNotes()
       if (cached.length > 0) {
         setNotes(cached)
         setIsLoading(false) // Show cached data immediately
