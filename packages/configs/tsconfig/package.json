@@ -1,18 +1,7 @@
 {
   "name": "@notable/tsconfig",
-  "version": "0.1.0",
-  "description": "Shared TypeScript configuration for Notable monorepo",
-  "private": true,
+  "version": "1.0.0",
   "files": [
-    "base.json",
-    "nextjs.json",
-    "react-native.json",
-    "node.json"
-  ],
-  "keywords": [
-    "typescript",
-    "config",
-    "notable",
-    "shared"
+    "*.json"
   ]
 }

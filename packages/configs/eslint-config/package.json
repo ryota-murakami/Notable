@@ -1,31 +1,14 @@
 {
   "name": "@notable/eslint-config",
   "version": "1.0.0",
-  "description": "Shared ESLint configuration for Notable monorepo",
-  "private": true,
   "main": "index.js",
-  "files": [
-    "index.js",
-    "next.js",
-    "react-native.js"
-  ],
-  "peerDependencies": {
-    "eslint": "^8.57.0",
-    "@typescript-eslint/eslint-plugin": "*",
-    "@typescript-eslint/parser": "*"
-  },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.18.1",
-    "@typescript-eslint/parser": "^8.18.1",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-native": "^5.0.0",
-    "eslint-config-next": "15.2.4"
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^8.57.1"
   },
-  "keywords": [
-    "eslint",
-    "config",
-    "notable",
-    "shared"
-  ]
+  "peerDependencies": {
+    "eslint": ">=8.0.0",
+    "typescript": ">=4.0.0"
+  }
 }

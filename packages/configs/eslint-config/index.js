@@ -9,7 +9,7 @@ module.exports = {
     },
   },
   plugins: ['@typescript-eslint'],
-  extends: ['eslint:recommended', '@typescript-eslint/recommended'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   rules: {
     // TypeScript specific rules
     '@typescript-eslint/no-unused-vars': 'error',
