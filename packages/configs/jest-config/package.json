@@ -1,0 +1,15 @@
+{
+  "name": "@notable/jest-config",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/preset-env": "^7.26.2",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
+    "babel-jest": "^30.0.4",
+    "identity-obj-proxy": "^3.0.0"
+  },
+  "peerDependencies": {
+    "jest": ">=30.0.0"
+  }
+}
