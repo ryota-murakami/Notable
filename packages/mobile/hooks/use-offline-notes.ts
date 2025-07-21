@@ -152,10 +152,10 @@ export function useOfflineNotes({
         ])
       }
     },
-    onUserTyping: (users) => {
+    onUserTyping: (_users) => {
       // Typing users are handled by the hook itself
     },
-    onPresenceChange: (users) => {
+    onPresenceChange: (_users) => {
       // Presence is handled by the hook itself
     },
   })

@@ -366,7 +366,7 @@ export async function GET(request: NextRequest) {
     // Build endpoint mapping with regional optimizations
     const endpoints: Record<string, string> = {}
 
-    for (const [service, baseEndpoint] of Object.entries(config.endpoints)) {
+    for (const [service, _baseEndpoint] of Object.entries(config.endpoints)) {
       endpoints[service] = getOptimalEndpoint(
         service as keyof RoutingConfig['endpoints'],
         userContext.tier,

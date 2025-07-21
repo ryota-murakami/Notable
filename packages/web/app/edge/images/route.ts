@@ -94,8 +94,8 @@ async function transformImage(params: ImageTransformParams): Promise<Response> {
     width,
     height,
     quality = 80,
-    format = 'webp',
-    fit = 'cover',
+    _format = 'webp',
+    _fit = 'cover',
   } = params
 
   // Build transformation URL (using Vercel's built-in image optimization)
@@ -294,7 +294,7 @@ export async function POST(request: NextRequest) {
       message: 'Prefetch completed',
       results,
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to prefetch images' },
       { status: 500 },

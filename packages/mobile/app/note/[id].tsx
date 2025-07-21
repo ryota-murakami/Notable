@@ -10,7 +10,6 @@ import {
 import {
   Appbar,
   TextInput,
-  useTheme,
   Text,
   ActivityIndicator,
   Menu,
@@ -22,7 +21,6 @@ import { useOfflineNotes } from '@/hooks/use-offline-notes'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { NoteExporter } from '@/components/NoteExporter'
 import { Note } from '@/types'
-import { TypingUser } from '@/hooks/use-realtime-sync'
 
 export default function NoteScreen() {
   const { id } = useLocalSearchParams()
@@ -41,7 +39,6 @@ export default function NoteScreen() {
   const [note, setNote] = useState<Note | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [menuVisible, setMenuVisible] = useState(false)
-  const theme = useTheme()
   const router = useRouter()
 
   useEffect(() => {

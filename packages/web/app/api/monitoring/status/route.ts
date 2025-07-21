@@ -21,7 +21,7 @@ interface StatusPageData {
   lastUpdate: string
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = createClient()
 
@@ -162,10 +162,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = createClient()
-    const body = await request.json()
+    const body = await _request.json()
 
     const { serviceName, status, responseTime, description } = body
 

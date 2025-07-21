@@ -1,9 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import type {
-  RealtimeChannel,
-  RealtimePresenceState,
-} from '@supabase/supabase-js'
+import type { RealtimeChannel } from '@supabase/supabase-js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Note } from '../types'
 
@@ -63,7 +60,7 @@ const generateUserColor = (userId: string): string => {
 }
 
 // Throttle function for performance
-const throttle = (func: Function, delay: number) => {
+const throttle = (func: (...args: any[]) => void, delay: number) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 

@@ -35,8 +35,8 @@ export default function Error({
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">Oops! Something went wrong</h1>
           <p className="text-muted-foreground">
-            We encountered an unexpected error. Don't worry, our team has been
-            notified.
+            We encountered an unexpected error. Don&apos;t worry, our team has
+            been notified.
           </p>
         </div>
 

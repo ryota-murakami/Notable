@@ -73,6 +73,9 @@ ipcMain.handle('save-notes', async (_, notes) => {
     return { success: true }
   } catch (error) {
     console.error('Failed to save notes:', error)
-    return { success: false, error: error.message }
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
   }
 })

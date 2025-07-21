@@ -132,7 +132,9 @@ export default function DashboardPage() {
                   <Search className="h-5 w-5 mr-2" />
                   Search Notes
                 </CardTitle>
-                <CardDescription>Find what you're looking for</CardDescription>
+                <CardDescription>
+                  Find what you&apos;re looking for
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" className="w-full">

@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, StyleSheet, Alert } from 'react-native'
-import { Card, Text, IconButton, useTheme, Chip } from 'react-native-paper'
+import { Card, Text, IconButton, Chip } from 'react-native-paper'
 import { Note } from '../types'
 
 interface NoteCardProps {
@@ -10,8 +10,6 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
-  const theme = useTheme()
-
   const handleDelete = () => {
     Alert.alert(
       'Delete Note',
@@ -58,7 +56,7 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
       .replace(/\*(.*?)\*/g, '$1') // Remove italic
       .replace(/`(.*?)`/g, '$1') // Remove inline code
       .replace(/```[\s\S]*?```/g, '[Code Block]') // Replace code blocks
-      .replace(/^\s*[-\*\+]\s+/gm, '') // Remove list markers
+      .replace(/^\s*[-*+]\s+/gm, '') // Remove list markers
       .replace(/^\s*>\s+/gm, '') // Remove blockquotes
       .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links, keep text
       .replace(/!\[.*?\]\(.*?\)/g, '[Image]') // Replace images

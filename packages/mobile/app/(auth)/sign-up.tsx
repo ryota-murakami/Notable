@@ -59,7 +59,7 @@ export default function SignUpScreen() {
           [{ text: 'OK' }],
         )
       }
-    } catch (error) {
+    } catch (_error) {
       Alert.alert('Error', 'An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -77,7 +77,7 @@ export default function SignUpScreen() {
       if (error) {
         Alert.alert('Error', error.message)
       }
-    } catch (error) {
+    } catch (_error) {
       Alert.alert('Error', 'An unexpected error occurred')
     } finally {
       setLoading(false)

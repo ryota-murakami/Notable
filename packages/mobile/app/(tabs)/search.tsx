@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { View, FlatList } from 'react-native'
-import { Searchbar, Chip, useTheme, Text } from 'react-native-paper'
+import { Searchbar, Chip, useTheme } from 'react-native-paper'
 import Fuse from 'fuse.js'
-import { useSupabase } from '@/components/SupabaseProvider'
 import { useNotes } from '@/hooks/useNotes'
 import { NoteCard } from '@/components/NoteCard'
 import { EmptyState } from '@/components/EmptyState'
@@ -22,7 +21,7 @@ export default function SearchScreen() {
   const [selectedFilter, setSelectedFilter] = useState<SearchFilter>('all')
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [results, setResults] = useState<SearchResultItem[]>([])
-  const theme = useTheme()
+  const _theme = useTheme()
   const router = useRouter()
 
   const allItems = useMemo(() => [...notes, ...folders], [notes, folders])

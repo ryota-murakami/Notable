@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import logger from '@/lib/logging'
 
 // Readiness check to determine if the app is ready to serve requests
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const checks = {
     environment: true,
     database: false,

@@ -144,7 +144,7 @@ async function checkRateLimit(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { endpoint, method = 'GET' } = body
+    const { endpoint, _method = 'GET' } = body
 
     if (!endpoint) {
       return NextResponse.json(
@@ -314,7 +314,7 @@ export async function DELETE(request: NextRequest) {
 }
 
 // Cleanup old rate limit entries (called periodically)
-export async function PUT(request: NextRequest) {
+export async function PUT(_request: NextRequest) {
   try {
     const now = Date.now()
     let cleaned = 0

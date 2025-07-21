@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
         Vary: 'X-Forwarded-For',
       },
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to get geo information' },
       { status: 500 },
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(response)
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to process request' },
       { status: 400 },

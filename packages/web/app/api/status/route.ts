@@ -54,8 +54,8 @@ async function checkService(
       lastChecked: new Date().toISOString(),
       responseTime: result.responseTime || Date.now() - startTime,
     }
-  } catch (error) {
-    logger.error(`Status check failed for ${name}`, { error })
+  } catch {
+    logger.error(`Status check failed for ${name}`)
     return {
       name,
       status: 'outage',
@@ -70,9 +70,9 @@ async function checkService(
 async function getUptimeStats(): Promise<StatusPageResponse['uptime']> {
   try {
     const now = new Date()
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    const _oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+    const _sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const _thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
     // In a real implementation, query your monitoring data
     // For now, return mock data
@@ -81,8 +81,8 @@ async function getUptimeStats(): Promise<StatusPageResponse['uptime']> {
       last7Days: 99.5,
       last30Days: 99.7,
     }
-  } catch (error) {
-    logger.error('Failed to get uptime stats', { error })
+  } catch {
+    logger.error('Failed to get uptime stats')
     return {
       last24Hours: 0,
       last7Days: 0,
@@ -113,14 +113,14 @@ async function getActiveIncidents(): Promise<any[]> {
       startedAt: incident.timestamp,
       affectedServices: [incident.component || 'Unknown'],
     }))
-  } catch (error) {
-    logger.error('Failed to get incidents', { error })
+  } catch {
+    logger.error('Failed to get incidents')
     return []
   }
 }
 
 // Main status endpoint
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Check all services in parallel
     const [webApp, database, authentication, search, realtime, storage] =
@@ -218,8 +218,8 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.json(response)
-  } catch (error) {
-    logger.error('Status page error', { error })
+  } catch {
+    logger.error('Status page error')
 
     return NextResponse.json(
       {

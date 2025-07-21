@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import type { Note } from '@/types/note'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Tag, Clock } from 'lucide-react'
 
@@ -73,7 +72,7 @@ export function ViewModeRenderer({ note, className }: ViewModeRendererProps) {
           .map((node) => extractTextFromNode(node))
           .join('\n\n')
       }
-    } catch (e) {
+    } catch {
       // If it's not JSON, assume it's already markdown text
       textContent = content
     }
@@ -114,7 +113,7 @@ export function ViewModeRenderer({ note, className }: ViewModeRendererProps) {
     )
 
     // Lists
-    html = html.replace(/^\- (.*$)/gm, '<li class="ml-4 mb-1">• $1</li>')
+    html = html.replace(/^- (.*$)/gm, '<li class="ml-4 mb-1">• $1</li>')
     html = html.replace(
       /^\d+\. (.*$)/gm,
       '<li class="ml-4 mb-1 list-decimal">$1</li>',

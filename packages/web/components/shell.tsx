@@ -13,7 +13,6 @@ import { Breadcrumb } from '@/components/breadcrumb'
 import {
   EditorSkeleton,
   SidebarSkeleton,
-  BreadcrumbSkeleton,
   LoadingSpinner,
 } from '@/components/loading-states'
 import { ViewModeRenderer } from '@/components/view-mode-renderer'
@@ -41,7 +40,7 @@ export function Shell() {
     createFolder,
     saveNote,
     deleteNote,
-    loadNotes,
+    loadNotes: _loadNotes,
     // Real-time sync state
     isConnected,
     connectionError,
@@ -148,7 +147,7 @@ export function Shell() {
           description: 'Your new note has been created successfully.',
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create note. Please try again.',
@@ -170,7 +169,7 @@ export function Shell() {
           description: 'Your new folder has been created successfully.',
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create folder. Please try again.',
@@ -213,7 +212,7 @@ export function Shell() {
         description: 'Your note has been deleted successfully.',
         variant: 'destructive',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete note. Please try again.',
@@ -259,7 +258,7 @@ export function Shell() {
               handleDeleteNote(activeNote.id)
             }
             break
-          case 'f':
+          case 'f': {
             e.preventDefault()
             // Focus sidebar search
             const sidebarSearch = document.querySelector(
@@ -269,6 +268,7 @@ export function Shell() {
               sidebarSearch.focus()
             }
             break
+          }
           case '1':
           case '2':
           case '3':
@@ -277,13 +277,14 @@ export function Shell() {
           case '6':
           case '7':
           case '8':
-          case '9':
+          case '9': {
             e.preventDefault()
             const noteIndex = parseInt(e.key) - 1
             if (notes[noteIndex]) {
               setActiveNoteId(notes[noteIndex].id)
             }
             break
+          }
           case ',':
             e.preventDefault()
             // Toggle sidebar collapse
