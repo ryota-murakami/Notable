@@ -10,7 +10,6 @@ import {
 import {
   Appbar,
   TextInput,
-  useTheme,
   Text,
   ActivityIndicator,
   Menu,
