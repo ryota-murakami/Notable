@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "types": ["node"],
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "rootDir": "."
   },
   "include": ["**/*.ts", "**/*.tsx", "../../types/**/*"]
 }
