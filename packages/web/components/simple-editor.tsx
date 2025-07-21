@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Popover,
@@ -23,8 +22,6 @@ import {
   Code,
   Link as LinkIcon,
   Tag,
-  Download,
-  Save,
   Eye,
   Edit,
 } from 'lucide-react'

@@ -72,7 +72,7 @@ export function ViewModeRenderer({ note, className }: ViewModeRendererProps) {
           .map((node) => extractTextFromNode(node))
           .join('\n\n')
       }
-    } catch (_e) {
+    } catch {
       // If it's not JSON, assume it's already markdown text
       textContent = content
     }

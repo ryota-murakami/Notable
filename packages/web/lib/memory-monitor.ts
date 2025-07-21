@@ -250,7 +250,7 @@ export class MemoryMonitor extends EventEmitter {
 
     // Check component trackers
     const now = Date.now()
-    for (const [_id, tracker] of this.componentTrackers) {
+    for (const [, tracker] of this.componentTrackers) {
       if (tracker.unmountTime && now - tracker.unmountTime > 60000) {
         suspects.push(
           `Component ${tracker.componentName} still tracked after unmount`,

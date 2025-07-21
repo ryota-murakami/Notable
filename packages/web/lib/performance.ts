@@ -205,7 +205,7 @@ export function observeWebVitals(
     })
     lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] })
     observers.push(lcpObserver)
-  } catch (_e) {
+  } catch {
     // LCP observer not supported
   }
 
@@ -223,7 +223,7 @@ export function observeWebVitals(
     })
     fidObserver.observe({ entryTypes: ['first-input'] })
     observers.push(fidObserver)
-  } catch (_e) {
+  } catch {
     // FID observer not supported
   }
 
@@ -245,7 +245,7 @@ export function observeWebVitals(
     })
     clsObserver.observe({ entryTypes: ['layout-shift'] })
     observers.push(clsObserver)
-  } catch (_e) {
+  } catch {
     // CLS observer not supported
   }
 
