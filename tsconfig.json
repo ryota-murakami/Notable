@@ -15,7 +15,7 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "types": ["jest", "node"],
+    "types": ["node"],
     "plugins": [
       {
         "name": "next"
