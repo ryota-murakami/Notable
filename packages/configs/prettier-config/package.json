@@ -1,0 +1,19 @@
+{
+  "name": "@notable/prettier-config",
+  "version": "0.1.0",
+  "description": "Shared Prettier configuration for Notable monorepo",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "peerDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "keywords": [
+    "prettier",
+    "config",
+    "notable",
+    "shared"
+  ]
+}

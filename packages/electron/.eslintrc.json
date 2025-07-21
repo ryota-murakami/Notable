@@ -1,8 +1,5 @@
 {
-  "extends": ["../../.eslintrc.json"],
-  "env": {
-    "node": true
-  },
+  "extends": ["../configs/eslint-config/index.js"],
   "rules": {
     "no-console": "off"
   }

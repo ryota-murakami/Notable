@@ -1,0 +1,28 @@
+{
+  "name": "@notable/jest-config",
+  "version": "0.1.0",
+  "description": "Shared Jest configuration for Notable monorepo",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "next.js",
+    "react-native.js"
+  ],
+  "dependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
+    "babel-jest": "^30.0.4",
+    "identity-obj-proxy": "^3.0.0"
+  },
+  "peerDependencies": {
+    "jest": "^30.0.0"
+  },
+  "keywords": [
+    "jest",
+    "config",
+    "notable",
+    "shared"
+  ]
+}
