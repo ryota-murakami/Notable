@@ -17,7 +17,7 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Delete', style: 'destructive', onPress: onDelete },
-      ],
+      ]
     )
   }
 
@@ -92,24 +92,24 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
     <Card style={styles.card} onPress={onPress}>
       <Card.Content style={styles.content}>
         <View style={styles.header}>
-          <Text variant="titleMedium" style={styles.title} numberOfLines={1}>
+          <Text variant='titleMedium' style={styles.title} numberOfLines={1}>
             {note.title || 'Untitled'}
           </Text>
           <IconButton
-            icon="delete"
+            icon='delete'
             size={20}
             onPress={handleDelete}
             style={styles.deleteButton}
           />
         </View>
 
-        <Text variant="bodyMedium" style={styles.preview} numberOfLines={3}>
+        <Text variant='bodyMedium' style={styles.preview} numberOfLines={3}>
           {getPreviewText(note.content)}
         </Text>
 
         <View style={styles.footer}>
           <Chip
-            mode="outlined"
+            mode='outlined'
             compact
             style={styles.dateChip}
             textStyle={styles.dateText}
@@ -119,13 +119,13 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
 
           {note.folder_id && (
             <Chip
-              mode="outlined"
+              mode='outlined'
               compact
               style={styles.folderChip}
               textStyle={styles.folderText}
-              icon="folder"
+              icon='folder'
             >
-              Folder
+              <Text>Folder</Text>
             </Chip>
           )}
         </View>

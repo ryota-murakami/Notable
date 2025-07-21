@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Alert } from 'react-native'
+import { View, StyleSheet, Alert, Text } from 'react-native'
 import {
   TextInput,
   Button,
@@ -68,66 +68,66 @@ export default function SignInScreen() {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={[styles.title, { color: theme.colors.primary }]}>
-            Welcome to Notable
+            <Text>Welcome to Notable</Text>
           </Title>
           <Paragraph
             style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
           >
-            Sign in to access your notes
+            <Text>Sign in to access your notes</Text>
           </Paragraph>
 
           <TextInput
-            label="Email"
+            label='Email'
             value={email}
             onChangeText={setEmail}
-            mode="outlined"
-            keyboardType="email-address"
-            autoCapitalize="none"
+            mode='outlined'
+            keyboardType='email-address'
+            autoCapitalize='none'
             style={styles.input}
             disabled={loading}
           />
 
           <TextInput
-            label="Password"
+            label='Password'
             value={password}
             onChangeText={setPassword}
-            mode="outlined"
+            mode='outlined'
             secureTextEntry
             style={styles.input}
             disabled={loading}
           />
 
           <Button
-            mode="contained"
+            mode='contained'
             onPress={handleSignIn}
             loading={loading}
             disabled={loading}
             style={styles.button}
           >
-            Sign In
+            <Text>Sign In</Text>
           </Button>
 
           <Divider style={styles.divider} />
 
           <Button
-            mode="outlined"
+            mode='outlined'
             onPress={handleGoogleSignIn}
             loading={loading}
             disabled={loading}
             style={styles.button}
-            icon="google"
+            icon='google'
           >
-            Continue with Google
+            <Text>Continue with Google</Text>
           </Button>
 
           <View style={styles.footer}>
             <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
-              Don't have an account?{' '}
+              <Text>Don't have an account? </Text>
               <Link
-                href="/(auth)/sign-up"
+                href='/(auth)/sign-up'
                 style={{ color: theme.colors.primary }}
               >
-                Sign up
+                <Text>Sign up</Text>
               </Link>
             </Paragraph>
           </View>
