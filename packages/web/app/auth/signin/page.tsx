@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, Mail } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -59,7 +59,7 @@ export default function SignInPage() {
 
       router.push('/dashboard')
       router.refresh()
-    } catch (error) {
+    } catch {
       setError('Something went wrong. Please try again.')
     } finally {
       setIsLoading(false)
@@ -79,7 +79,7 @@ export default function SignInPage() {
       if (error) {
         setError(error.message)
       }
-    } catch (error) {
+    } catch {
       setError('Failed to sign in with Google')
     } finally {
       setIsLoading(false)
@@ -188,7 +188,7 @@ export default function SignInPage() {
         </CardContent>
         <CardFooter>
           <p className="text-center text-sm text-muted-foreground w-full">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link
               href="/auth/signup"
               className="font-medium text-primary hover:underline"

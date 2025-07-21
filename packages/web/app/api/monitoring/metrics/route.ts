@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     const startTime = searchParams.get('start')
     const endTime = searchParams.get('end')
     const format = searchParams.get('format') || 'json' // 'json' | 'prometheus'
-    const step = searchParams.get('step') || '5m' // aggregation interval
+    const _step = searchParams.get('step') || '5m' // aggregation interval
 
     const supabase = createClient()
 
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    const { data, error } = await supabase
+    const { data: _data, error } = await supabase
       .from('metrics_snapshots')
       .insert(insertData)
       .select()
@@ -280,7 +280,7 @@ async function handlePrometheusFormat(
 async function getCurrentMetrics(supabase: any) {
   try {
     // Simulate current metrics - in a real app, these would come from various sources
-    const currentTime = Date.now()
+    const _currentTime = Date.now()
 
     // Get some real data from the database
     const { data: notes } = await supabase

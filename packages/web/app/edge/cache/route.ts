@@ -58,7 +58,7 @@ const CACHE_PATTERNS = {
 }
 
 // Generate cache key with pattern
-function generateCacheKey(
+function _generateCacheKey(
   pattern: string,
   params: Record<string, string>,
 ): string {

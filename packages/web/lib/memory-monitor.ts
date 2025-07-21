@@ -173,7 +173,7 @@ export class MemoryMonitor extends EventEmitter {
     }
   }
 
-  trackComponent(componentName: string, componentInstance?: any): () => void {
+  trackComponent(componentName: string, _componentInstance?: any): () => void {
     const trackerId = `${componentName}_${Date.now()}_${Math.random()}`
     const memory = (performance as any).memory
 
@@ -250,7 +250,7 @@ export class MemoryMonitor extends EventEmitter {
 
     // Check component trackers
     const now = Date.now()
-    for (const [id, tracker] of this.componentTrackers) {
+    for (const [, tracker] of this.componentTrackers) {
       if (tracker.unmountTime && now - tracker.unmountTime > 60000) {
         suspects.push(
           `Component ${tracker.componentName} still tracked after unmount`,

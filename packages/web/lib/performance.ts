@@ -205,7 +205,9 @@ export function observeWebVitals(
     })
     lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] })
     observers.push(lcpObserver)
-  } catch (e) {}
+  } catch {
+    // LCP observer not supported
+  }
 
   // Observe First Input Delay
   try {
@@ -221,7 +223,9 @@ export function observeWebVitals(
     })
     fidObserver.observe({ entryTypes: ['first-input'] })
     observers.push(fidObserver)
-  } catch (e) {}
+  } catch {
+    // FID observer not supported
+  }
 
   // Observe Cumulative Layout Shift
   try {
@@ -241,7 +245,9 @@ export function observeWebVitals(
     })
     clsObserver.observe({ entryTypes: ['layout-shift'] })
     observers.push(clsObserver)
-  } catch (e) {}
+  } catch {
+    // CLS observer not supported
+  }
 
   // Return cleanup function
   return () => {

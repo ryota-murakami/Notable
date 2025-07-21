@@ -1,7 +1,16 @@
 {
-  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  "root": true,
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
+  "env": {
+    "node": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -15,9 +24,6 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
-    "react/display-name": "off",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "prefer-const": "error",
     "no-var": "error"
@@ -28,6 +34,21 @@
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
       }
+    },
+    {
+      "files": ["**/*.config.js", "**/*.config.ts"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
     }
+  ],
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    ".turbo",
+    "coverage",
+    "*.min.js"
   ]
 }

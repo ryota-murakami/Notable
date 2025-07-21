@@ -34,7 +34,7 @@ async function sendSlackNotification(
 
   const fields = payload.alerts.map((alert) => {
     const severity = alert.labels.severity || 'unknown'
-    const service = alert.labels.service || 'unknown'
+    const _service = alert.labels.service || 'unknown'
 
     return {
       title: `${severity.toUpperCase()}: ${alert.annotations.summary}`,
@@ -74,8 +74,8 @@ async function sendSlackNotification(
       status: payload.status,
       alertCount: payload.alerts.length,
     })
-  } catch (error) {
-    logger.error('Failed to send Slack notification', { error })
+  } catch {
+    logger.error('Failed to send Slack notification')
   }
 }
 
@@ -146,8 +146,8 @@ async function sendEmailNotification(
       status: payload.status,
       alertCount: payload.alerts.length,
     })
-  } catch (error) {
-    logger.error('Failed to send email notification', { error })
+  } catch {
+    logger.error('Failed to send email notification')
   }
 }
 
@@ -180,17 +180,17 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
         logger.error('Failed to store alert in database', { error, alert })
       }
     }
-  } catch (error) {
-    logger.error('Failed to store alerts', { error })
+  } catch {
+    logger.error('Failed to store alerts')
   }
 }
 
 // Main webhook handler
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     // Verify webhook signature if configured
-    const headersList = headers()
-    const signature = headersList.get('x-alertmanager-signature')
+    const _headersList = headers()
+    const signature = _headersList.get('x-alertmanager-signature')
     const webhookSecret = process.env.ALERTMANAGER_WEBHOOK_SECRET
 
     if (webhookSecret && signature) {
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
       // For production, verify the HMAC signature
     }
 
-    const payload: AlertWebhookPayload = await request.json()
+    const payload: AlertWebhookPayload = await _request.json()
 
     logger.info('Alert webhook received', {
       status: payload.status,
@@ -217,8 +217,8 @@ export async function POST(request: NextRequest) {
       success: true,
       processed: payload.alerts.length,
     })
-  } catch (error) {
-    logger.error('Alert webhook error', { error })
+  } catch {
+    logger.error('Alert webhook error')
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

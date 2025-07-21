@@ -5,10 +5,10 @@ import { useEffect } from 'react'
 
 export default function GlobalError({
   error,
-  reset,
+  _reset,
 }: {
   error: Error & { digest?: string }
-  reset: () => void
+  _reset: () => void
 }) {
   useEffect(() => {
     Sentry.captureException(error, {

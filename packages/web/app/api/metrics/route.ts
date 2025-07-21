@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import logger from '@/lib/logging'
 
 // Metrics storage (in production, use a proper metrics library like prom-client)
-let metrics = {
+const metrics = {
   httpRequestsTotal: 0,
   httpRequestDuration: [] as number[],
   activeConnections: 0,
@@ -42,7 +42,7 @@ function calculatePercentile(arr: number[], percentile: number): number {
 // Format metrics in Prometheus format
 function formatPrometheusMetrics(): string {
   const uptime = (Date.now() - metrics.startTime) / 1000
-  const avgDuration =
+  const _avgDuration =
     metrics.httpRequestDuration.length > 0
       ? metrics.httpRequestDuration.reduce((a, b) => a + b, 0) /
         metrics.httpRequestDuration.length
@@ -114,7 +114,7 @@ notable_nodejs_memory_usage_bytes{type="external"} ${process.memoryUsage().exter
 }
 
 // Metrics endpoint
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Check if request is from allowed sources (basic security)
     const headersList = headers()
@@ -148,8 +148,8 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     })
-  } catch (error) {
-    logger.error('Metrics endpoint error', { error })
+  } catch {
+    logger.error('Metrics endpoint error')
     return new Response('Internal Server Error', { status: 500 })
   }
 }
@@ -168,8 +168,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    logger.error('Metrics update error', { error })
+  } catch {
+    logger.error('Metrics update error')
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },
