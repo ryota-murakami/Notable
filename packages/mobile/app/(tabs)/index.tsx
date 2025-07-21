@@ -13,8 +13,8 @@ export default function NotesScreen() {
   const { notes, isLoading, createNote, deleteNote } = useOfflineNotes({
     user_id: user?.id,
   })
-  const [filter, setFilter] = useState<'all' | 'folders' | 'notes'>('all')
-  const theme = useTheme()
+  const [filter, _setFilter] = useState<'all' | 'folders' | 'notes'>('all')
+  const _theme = useTheme()
   const router = useRouter()
 
   const handleCreateNote = async (isFolder = false) => {
