@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
+import logger from '@/lib/logging'
 import type { AnalyticsBuffer } from '@/lib/analytics/custom'
 
 // Initialize Supabase client with service role key for analytics
@@ -12,13 +13,13 @@ const supabase = createClient(
       persistSession: false,
       autoRefreshToken: false,
     },
-  },
+  }
 )
 
 export async function POST(request: NextRequest) {
   try {
     // Verify request is from our app
-    const headersList = headers()
+    const headersList = await headers()
     const origin = headersList.get('origin')
     const referer = headersList.get('referer')
 
@@ -44,11 +45,14 @@ export async function POST(request: NextRequest) {
             user_id: event.userId,
             session_id: event.sessionId,
             timestamp: new Date(event.timestamp || Date.now()).toISOString(),
-          })),
+          }))
         )
 
       if (eventsError) {
-        console.error('Failed to insert events:', eventsError)
+        logger.error('Failed to insert analytics events', {
+          error: eventsError,
+          eventCount: data.events.length,
+        })
       }
     }
 
@@ -63,11 +67,14 @@ export async function POST(request: NextRequest) {
             title: pageView.title,
             properties: pageView.properties,
             timestamp: new Date().toISOString(),
-          })),
+          }))
         )
 
       if (pageViewsError) {
-        console.error('Failed to insert page views:', pageViewsError)
+        logger.error('Failed to insert page views', {
+          error: pageViewsError,
+          pageViewCount: data.pageViews.length,
+        })
       }
     }
 
@@ -87,21 +94,24 @@ export async function POST(request: NextRequest) {
             },
             {
               onConflict: 'id',
-            },
+            }
           )
 
         if (userError) {
-          console.error('Failed to update user profile:', userError)
+          logger.error('Failed to update user profile', {
+            error: userError,
+            userId: user.id,
+          })
         }
       }
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Analytics error:', error)
+    logger.error('Analytics processing error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -160,10 +170,10 @@ export async function GET(_request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Analytics summary error:', error)
+    logger.error('Analytics summary error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

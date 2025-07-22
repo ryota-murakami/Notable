@@ -14,7 +14,9 @@ import {
   ActivityIndicator,
   Menu,
   Divider,
+  useTheme,
 } from 'react-native-paper'
+import type { MD3Theme } from 'react-native-paper'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSupabase } from '@/components/SupabaseProvider'
 import { useOfflineNotes } from '@/hooks/use-offline-notes'
@@ -25,6 +27,7 @@ import { Note } from '@/types'
 export default function NoteScreen() {
   const { id } = useLocalSearchParams()
   const { user } = useSupabase()
+  const theme = useTheme()
   const {
     notes,
     updateNote,
@@ -40,6 +43,7 @@ export default function NoteScreen() {
   const [isEditing, setIsEditing] = useState(false)
   const [menuVisible, setMenuVisible] = useState(false)
   const router = useRouter()
+  const styles = createStyles(theme)
 
   useEffect(() => {
     const foundNote = notes.find((n) => n.id === id)
@@ -71,7 +75,7 @@ export default function NoteScreen() {
   if (isLoading || !note) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator animating={true} size="large" />
+        <ActivityIndicator animating={true} size='large' />
       </View>
     )
   }
@@ -88,21 +92,21 @@ export default function NoteScreen() {
           subtitle={isSaving ? 'Saving...' : 'Saved'}
         />
         {isEditing ? (
-          <Appbar.Action icon="check" onPress={handleSave} />
+          <Appbar.Action icon='check' onPress={handleSave} />
         ) : (
-          <Appbar.Action icon="pencil" onPress={() => setIsEditing(true)} />
+          <Appbar.Action icon='pencil' onPress={() => setIsEditing(true)} />
         )}
         <Menu
           visible={menuVisible}
           onDismiss={() => setMenuVisible(false)}
           anchor={
             <Appbar.Action
-              icon="dots-vertical"
+              icon='dots-vertical'
               onPress={() => setMenuVisible(true)}
             />
           }
         >
-          <Menu.Item onPress={handleShare} title="Share" />
+          <Menu.Item onPress={handleShare} title='Share' />
           <Divider />
           <NoteExporter note={note} />
         </Menu>
@@ -114,8 +118,8 @@ export default function NoteScreen() {
             value={note.title}
             onChangeText={(text) => setNote({ ...note, title: text })}
             style={styles.titleInput}
-            mode="outlined"
-            label="Title"
+            mode='outlined'
+            label='Title'
             onFocus={startTyping}
             onBlur={stopTyping}
           />
@@ -129,8 +133,8 @@ export default function NoteScreen() {
             onChangeText={(text) => setNote({ ...note, content: text })}
             style={styles.contentInput}
             multiline
-            mode="outlined"
-            label="Content"
+            mode='outlined'
+            label='Content'
             onFocus={startTyping}
             onBlur={stopTyping}
           />
@@ -153,41 +157,42 @@ export default function NoteScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  titleInput: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
-  contentInput: {
-    flex: 1,
-    fontSize: 16,
-    textAlignVertical: 'top',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-  },
-  footerText: {
-    fontSize: 12,
-    color: '#888',
-  },
-})
+const createStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    center: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    content: {
+      padding: 16,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 16,
+    },
+    titleInput: {
+      fontSize: 24,
+      marginBottom: 16,
+    },
+    contentInput: {
+      flex: 1,
+      fontSize: 16,
+      textAlignVertical: 'top',
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: 8,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.outline,
+    },
+    footerText: {
+      fontSize: 12,
+      color: theme.colors.onSurfaceVariant,
+    },
+  })
