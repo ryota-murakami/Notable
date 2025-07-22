@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v3.json
+reviews:
+  request_changes_workflow: true
+  sequence_diagrams: true
+  poem: true
+  estimate_code_review_effort: false
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: false
+  suggested_reviewers: false
+  high_level_summary: false
+  high_level_summary_in_walkthrough: false
+  changed_files_summary: false
+  profile: 'assertive'
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
