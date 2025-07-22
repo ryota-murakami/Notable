@@ -35,7 +35,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
         `vercel alias set ${config.deploymentId} ${config.environment}.notable.com --yes`,
         {
           stdio: 'inherit',
-        },
+        }
       )
     } else if (config.version) {
       // Find deployment by version and rollback
@@ -43,7 +43,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
       const deployment = deployments.find(
         (d) =>
           d.meta?.version === config.version ||
-          d.meta?.commit?.message?.includes(config.version),
+          d.meta?.commit?.message?.includes(config.version)
       )
 
       if (!deployment) {
@@ -54,7 +54,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
         `vercel alias set ${deployment.url} ${config.environment}.notable.com --yes`,
         {
           stdio: 'inherit',
-        },
+        }
       )
     }
 
@@ -139,7 +139,7 @@ async function rollback(): Promise<void> {
     ],
   })
 
-  let config: RollbackConfig = {
+  const config: RollbackConfig = {
     environment,
     skipHealthCheck: false,
   }
@@ -215,8 +215,8 @@ async function rollback(): Promise<void> {
     if (!healthCheckPassed && !config.skipHealthCheck) {
       console.log(
         chalk.yellow(
-          '\n⚠️  Rollback completed but health check failed. Please investigate.\n',
-        ),
+          '\n⚠️  Rollback completed but health check failed. Please investigate.\n'
+        )
       )
     }
   } catch (error) {
