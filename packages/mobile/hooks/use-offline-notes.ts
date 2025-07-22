@@ -200,7 +200,7 @@ export function useOfflineNotes({
           isFavorite: note.is_favorite || false,
           viewCount: note.view_count || 0,
           wordCount: note.word_count || 0,
-          tags: [],
+          tags: note.tags || [],
           folder: note.folder || null,
           permissions: note.permissions || [],
           createdAt: new Date(note.created_at),
@@ -285,7 +285,15 @@ export function useOfflineNotes({
           isFavorite: noteData?.isFavorite || false,
           viewCount: 0,
           wordCount: 0,
-          tags: [],
+          tags:
+            noteData?.tags?.map((tagId) => ({
+              id: tagId,
+              name: '',
+              color: '',
+              userId: user.id,
+              createdAt: now,
+              updatedAt: now,
+            })) || [],
           folder: null,
           permissions: [],
           createdAt: now,
@@ -388,7 +396,17 @@ export function useOfflineNotes({
         const updatedNote: Note = {
           ...existingNote,
           ...updates,
-          tags: [],
+          tags:
+            updates.tags?.map((tagId) => ({
+              id: tagId,
+              name: '',
+              color: '',
+              userId: user.id,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })) ||
+            existingNote.tags ||
+            [],
           updatedAt: new Date(),
         }
 
@@ -419,7 +437,7 @@ export function useOfflineNotes({
             const serverNote: Note = {
               ...existingNote,
               ...updates,
-              tags: [],
+              tags: (data as any).tags || existingNote.tags || [],
               id: (data as any).id,
               createdAt: new Date((data as any).created_at),
               updatedAt: new Date((data as any).updated_at),

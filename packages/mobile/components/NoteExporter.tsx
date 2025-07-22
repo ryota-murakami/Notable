@@ -12,6 +12,17 @@ import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
 import { Note } from '@/types'
 
+interface PlateNode {
+  type?: string
+  text?: string
+  children?: PlateNode[]
+  bold?: boolean
+  italic?: boolean
+  code?: boolean
+  url?: string
+  alt?: string
+}
+
 export interface NoteExporterProps {
   note: Note
   onClose: () => void
@@ -89,7 +100,7 @@ export function NoteExporter({ note, onClose }: NoteExporterProps) {
           ? JSON.parse(note.content)
           : note.content
 
-      const convertNode = (node: any): string => {
+      const convertNode = (node: PlateNode): string => {
         if (typeof node === 'string') return node
         if (!node.type) return node.text || ''
 

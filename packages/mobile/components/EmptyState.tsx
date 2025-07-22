@@ -2,10 +2,12 @@ import { View, StyleSheet } from 'react-native'
 import { Text, Button, useTheme } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
+type IconName = keyof typeof MaterialCommunityIcons.glyphMap
+
 interface EmptyStateProps {
   title: string
   description: string
-  icon: string
+  icon: IconName
   actionLabel?: string
   onAction?: () => void
 }
@@ -22,7 +24,7 @@ export function EmptyState({
   return (
     <View style={styles.container}>
       <MaterialCommunityIcons
-        name={icon as any}
+        name={icon}
         size={64}
         color={theme.colors.onSurfaceVariant}
         style={styles.icon}

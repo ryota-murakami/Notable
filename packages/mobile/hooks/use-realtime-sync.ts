@@ -160,6 +160,11 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
       channel.on('broadcast', { event: 'typing' }, ({ payload }) => {
         const { userId, isTyping, userName, userColor } = payload
 
+        if (!userId || !userName) {
+          console.warn('Invalid typing payload received:', payload)
+          return
+        }
+
         setTypingUsers((prev) => {
           const filtered = prev.filter((u) => u.id !== userId)
 
@@ -169,7 +174,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
               {
                 id: userId,
                 name: userName,
-                color: userColor,
+                color: userColor || generateUserColor(userId),
                 isTyping: true,
                 lastTyped: Date.now(),
               },
@@ -187,14 +192,15 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         const state = channel.presenceState()
         const users = Object.values(state)
           .flat()
+          .filter((presence: any) => presence && presence.id && presence.name)
           .map((presence: any) => ({
             id: presence.id,
             name: presence.name,
-            color: presence.color,
+            color: presence.color || generateUserColor(presence.id),
             avatar: presence.avatar,
-            joinedAt: presence.joinedAt,
-            lastSeen: presence.lastSeen,
-            isActive: Date.now() - presence.lastSeen < 30000, // 30 seconds
+            joinedAt: presence.joinedAt || Date.now(),
+            lastSeen: presence.lastSeen || Date.now(),
+            isActive: Date.now() - (presence.lastSeen || Date.now()) < 30000, // 30 seconds
           }))
 
         setOnlineUsers(users)
@@ -293,7 +299,10 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
   // Method to broadcast note updates
   const broadcastNoteUpdate = useCallback(
     (note: Note) => {
-      if (!channelRef.current) return
+      if (!channelRef.current || !note?.id) {
+        console.warn('Cannot broadcast note update: missing channel or note ID')
+        return
+      }
 
       channelRef.current.send({
         type: 'broadcast',

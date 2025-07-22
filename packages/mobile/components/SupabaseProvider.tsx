@@ -94,7 +94,7 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     initializeSupabase()
 
     return () => {
-      subscription?.unsubscribe()
+      subscription?.unsubscribe?.()
     }
   }, [])
 

@@ -156,7 +156,7 @@ export default function SearchScreen() {
         <EmptyState
           title='No results found'
           description='Try searching with different keywords'
-          icon='search'
+          icon='magnify'
         />
       ) : (
         <FlatList
