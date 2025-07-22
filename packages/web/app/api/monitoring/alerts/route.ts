@@ -4,7 +4,7 @@ import { logger } from '@/lib/logging'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') // 'firing' | 'resolved' | null (all)
     const severity = searchParams.get('severity') // 'critical' | 'warning' | 'info' | null (all)
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
 
     // Validate required fields
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const fingerprint = searchParams.get('fingerprint')
     const olderThan = searchParams.get('olderThan') // ISO date string

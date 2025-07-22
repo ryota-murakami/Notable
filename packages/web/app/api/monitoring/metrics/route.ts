@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     const format = searchParams.get('format') || 'json' // 'json' | 'prometheus'
     const _step = searchParams.get('step') || '5m' // aggregation interval
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     if (format === 'prometheus') {
       return handlePrometheusFormat(supabase, metricName)
@@ -154,7 +154,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
 
     // Support both single metric and batch metrics
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       message: 'Metrics recorded successfully',
-      count: data.length,
+      count: _data?.length || 0,
       timestamp: new Date().toISOString(),
     })
   } catch (error) {

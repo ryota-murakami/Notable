@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
   let apiKey: string
   try {
     apiKey = key || validateOpenAIKey()
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Missing OpenAI API key.' },
       { status: 401 }
