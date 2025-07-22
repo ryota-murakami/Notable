@@ -10,6 +10,25 @@ import {
 } from './use-realtime-sync'
 import { useOfflineStorage } from './use-offline-storage'
 
+interface DatabaseNote {
+  id: string
+  title: string
+  content: string
+  content_text?: string | null
+  user_id: string
+  folder_id?: string | null
+  is_archived?: boolean
+  is_deleted?: boolean
+  is_favorite?: boolean
+  view_count?: number
+  word_count?: number
+  tags?: any[]
+  folder?: any
+  permissions?: any[]
+  created_at: string
+  updated_at: string
+}
+
 export interface UseOfflineNotesOptions {
   user?: {
     id: string
@@ -188,7 +207,9 @@ export function useOfflineNotes({
           throw fetchError
         }
 
-        const serverNotes: Note[] = (data || []).map((note: any) => ({
+        const serverNotes: Note[] = (
+          (data || []) as unknown as DatabaseNote[]
+        ).map((note) => ({
           id: note.id,
           title: note.title,
           content: note.content,
@@ -325,11 +346,15 @@ export function useOfflineNotes({
               throw createError
             }
 
+            if (!data) {
+              throw new Error('No data returned from create')
+            }
+            const dbNote = data as unknown as DatabaseNote
             const createdNote: Note = {
               ...newNote,
-              id: (data as any).id,
-              createdAt: new Date((data as any).created_at),
-              updatedAt: new Date((data as any).updated_at),
+              id: dbNote.id,
+              createdAt: new Date(dbNote.created_at),
+              updatedAt: new Date(dbNote.updated_at),
             }
 
             // Replace temp note with real note
@@ -434,13 +459,17 @@ export function useOfflineNotes({
               throw updateError
             }
 
+            if (!data) {
+              throw new Error('No data returned from update')
+            }
+            const dbNote = data as unknown as DatabaseNote
             const serverNote: Note = {
               ...existingNote,
               ...updates,
-              tags: (data as any).tags || existingNote.tags || [],
-              id: (data as any).id,
-              createdAt: new Date((data as any).created_at),
-              updatedAt: new Date((data as any).updated_at),
+              tags: dbNote.tags || existingNote.tags || [],
+              id: dbNote.id,
+              createdAt: new Date(dbNote.created_at),
+              updatedAt: new Date(dbNote.updated_at),
             }
             await updateNoteInCache(id, serverNote)
             setNotes((prev) =>

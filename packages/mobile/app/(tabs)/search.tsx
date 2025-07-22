@@ -20,7 +20,7 @@ export default function SearchScreen() {
   const router = useRouter()
 
   // Folders are not available in mobile app, using empty array
-  const folders: Note[] = []
+  const folders = useMemo(() => [], [])
 
   const allItems = useMemo(() => [...notes, ...folders], [notes, folders])
 
@@ -83,7 +83,9 @@ export default function SearchScreen() {
       <NoteCard
         note={item.item}
         onPress={() => handleNotePress(item.item)}
-        onDelete={() => {}}
+        onDelete={() => {
+          // Delete functionality not implemented in search view
+        }}
       />
     )
   }
