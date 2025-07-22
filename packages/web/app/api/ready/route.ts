@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
   ]
 
   const missingEnvVars = requiredEnvVars.filter(
-    (envVar) => !process.env[envVar],
+    (envVar) => !process.env[envVar]
   )
 
   if (missingEnvVars.length > 0) {
@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest) {
             persistSession: false,
             autoRefreshToken: false,
           },
-        },
+        }
       )
 
       // Simple ping to check connection
@@ -50,7 +50,9 @@ export async function GET(_request: NextRequest) {
         logger.error('Readiness check: Database not ready', { error })
       }
     } catch (error) {
-      logger.error('Readiness check: Database connection failed', { error })
+      logger.error('Readiness check: Database connection failed', {
+        error: error instanceof Error ? error : new Error(String(error)),
+      })
     }
   }
 
@@ -62,6 +64,6 @@ export async function GET(_request: NextRequest) {
       checks,
       timestamp: new Date().toISOString(),
     },
-    { status: isReady ? 200 : 503 },
+    { status: isReady ? 200 : 503 }
   )
 }

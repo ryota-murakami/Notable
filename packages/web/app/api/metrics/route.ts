@@ -18,8 +18,8 @@ const metrics = {
   startTime: Date.now(),
 }
 
-// Export function to update metrics from other parts of the app
-export function updateMetric(metric: keyof typeof metrics, value: number = 1) {
+// Function to update metrics (internal use only)
+function updateMetric(metric: keyof typeof metrics, value = 1) {
   if (Array.isArray(metrics[metric])) {
     ;(metrics[metric] as number[]).push(value)
     // Keep only last 1000 entries to prevent memory issues
@@ -36,17 +36,12 @@ function calculatePercentile(arr: number[], percentile: number): number {
   if (arr.length === 0) return 0
   const sorted = [...arr].sort((a, b) => a - b)
   const index = Math.ceil((percentile / 100) * sorted.length) - 1
-  return sorted[index]
+  return sorted[index] || 0
 }
 
 // Format metrics in Prometheus format
 function formatPrometheusMetrics(): string {
   const uptime = (Date.now() - metrics.startTime) / 1000
-  const _avgDuration =
-    metrics.httpRequestDuration.length > 0
-      ? metrics.httpRequestDuration.reduce((a, b) => a + b, 0) /
-        metrics.httpRequestDuration.length
-      : 0
 
   const p50 = calculatePercentile(metrics.httpRequestDuration, 50)
   const p95 = calculatePercentile(metrics.httpRequestDuration, 95)
@@ -117,7 +112,7 @@ notable_nodejs_memory_usage_bytes{type="external"} ${process.memoryUsage().exter
 export async function GET(_request: NextRequest) {
   try {
     // Check if request is from allowed sources (basic security)
-    const headersList = headers()
+    const headersList = await headers()
     const userAgent = headersList.get('user-agent') || ''
 
     // In production, implement proper authentication for metrics endpoint
@@ -172,7 +167,7 @@ export async function POST(request: NextRequest) {
     logger.error('Metrics update error')
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

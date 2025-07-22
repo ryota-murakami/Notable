@@ -1,57 +1,61 @@
 import * as Sentry from '@sentry/nextjs'
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN
 
-  // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: false,
+    // Adjust this value in production, or use tracesSampler for greater control
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
-  replaysOnErrorSampleRate: 1.0,
+    // Setting this option to true will print useful information to the console while you're setting up Sentry.
+    debug: false,
 
-  // This is the default value, but we're being explicit
-  replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
 
-  // You can remove this option if you're not planning to use the Sentry Session Replay feature:
-  integrations: [
-    Sentry.replayIntegration({
-      // Additional Replay configuration goes in here
-      maskAllText: false,
-      blockAllMedia: false,
-    }),
-  ],
+    // This is the default value, but we're being explicit
+    replaysSessionSampleRate: 0.1,
 
-  // Filter local errors in development
-  beforeSend(event, hint) {
-    if (process.env.NODE_ENV === 'development') {
-      // Log to console in development instead of sending to Sentry
-      console.error('Sentry Event:', event)
-      console.error('Error:', hint.originalException)
-      return null
-    }
+    // You can remove this option if you're not planning to use the Sentry Session Replay feature:
+    integrations: [
+      Sentry.replayIntegration({
+        // Additional Replay configuration goes in here
+        maskAllText: false,
+        blockAllMedia: false,
+      }),
+    ],
 
-    // Filter out specific errors
-    const error = hint.originalException
-
-    // Ignore network errors that are expected
-    if (error instanceof Error) {
-      if (
-        error.message?.includes('NetworkError') ||
-        error.message?.includes('Failed to fetch')
-      ) {
+    // Filter local errors in development
+    beforeSend(event, hint) {
+      if (process.env.NODE_ENV === 'development') {
+        // Log to console in development instead of sending to Sentry
+        console.error('Sentry Event:', event)
+        console.error('Error:', hint.originalException)
         return null
       }
-    }
 
-    return event
-  },
+      // Filter out specific errors
+      const error = hint.originalException
 
-  // Set user context
-  initialScope: {
-    tags: {
-      component: 'client',
+      // Ignore network errors that are expected
+      if (error instanceof Error) {
+        if (
+          error.message?.includes('NetworkError') ||
+          error.message?.includes('Failed to fetch')
+        ) {
+          return null
+        }
+      }
+
+      return event
     },
-  },
-})
+
+    // Set user context
+    initialScope: {
+      tags: {
+        component: 'client',
+      },
+    },
+  })
+}

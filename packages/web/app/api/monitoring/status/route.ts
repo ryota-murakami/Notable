@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@/lib/supabase/server'
+
+interface ServiceStatusRecord {
+  service_name: string
+  status: 'operational' | 'degraded' | 'outage'
+  response_time?: number
+  description?: string
+  last_checked: string
+}
 
 interface ServiceCheck {
   name: string
@@ -23,7 +31,7 @@ interface StatusPageData {
 
 export async function GET(_request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createServerClient()
 
     // Get service status from the database
     const { data: serviceStatuses, error: statusError } = await supabase
@@ -46,7 +54,7 @@ export async function GET(_request: NextRequest) {
           status,
           created_at
         )
-      `,
+      `
       )
       .neq('status', 'resolved')
       .order('started_at', { ascending: false })
@@ -71,13 +79,15 @@ export async function GET(_request: NextRequest) {
     const [uptime24h, uptime7d, uptime30d] = await Promise.all(uptimePromises)
 
     // Transform service status data
-    const services: ServiceCheck[] = (serviceStatuses || []).map((service) => ({
-      name: service.service_name,
-      status: service.status,
-      responseTime: service.response_time || 0,
-      description: service.description,
-      lastChecked: service.last_checked,
-    }))
+    const services: ServiceCheck[] = (serviceStatuses || []).map(
+      (service: ServiceStatusRecord) => ({
+        name: service.service_name,
+        status: service.status,
+        responseTime: service.response_time || 0,
+        description: service.description,
+        lastChecked: service.last_checked,
+      })
+    )
 
     // Add mock services if no data exists
     if (services.length === 0) {
@@ -123,7 +133,7 @@ export async function GET(_request: NextRequest) {
           responseTime: 89,
           description: 'File upload and storage',
           lastChecked: new Date().toISOString(),
-        },
+        }
       )
     }
 
@@ -157,14 +167,14 @@ export async function GET(_request: NextRequest) {
     console.error('Status API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 export async function POST(_request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createServerClient()
     const body = await _request.json()
 
     const { serviceName, status, responseTime, description } = body
@@ -172,7 +182,7 @@ export async function POST(_request: NextRequest) {
     if (!serviceName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields: serviceName and status' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -194,7 +204,7 @@ export async function POST(_request: NextRequest) {
       console.error('Failed to update service status:', error)
       return NextResponse.json(
         { error: 'Failed to update service status' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -221,12 +231,15 @@ export async function POST(_request: NextRequest) {
     console.error('Update service status error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
-async function calculateUptime(supabase: any, since: Date): Promise<number> {
+async function calculateUptime(
+  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  since: Date
+): Promise<number> {
   try {
     const { data: records, error } = await supabase
       .from('uptime_records')
@@ -238,7 +251,9 @@ async function calculateUptime(supabase: any, since: Date): Promise<number> {
     }
 
     const totalChecks = records.length
-    const successfulChecks = records.filter((r) => r.is_up).length
+    const successfulChecks = records.filter(
+      (r: { is_up: boolean }) => r.is_up
+    ).length
 
     return (successfulChecks / totalChecks) * 100
   } catch (error) {
