@@ -22,6 +22,8 @@
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
     "electron": "^35.2.1",
     "electron-builder": "^26.0.12",
     "eslint": "^8.57.0",
