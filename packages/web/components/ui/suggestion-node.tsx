@@ -1,12 +1,16 @@
 'use client'
 
 import * as React from 'react'
+import { CornerDownLeftIcon } from 'lucide-react'
 
 import type { TSuggestionData, TSuggestionText } from 'platejs'
-import type { PlateLeafProps, RenderNodeWrapper } from 'platejs/react'
-
-import { CornerDownLeftIcon } from 'lucide-react'
-import { PlateLeaf, useEditorPlugin, usePluginOption } from 'platejs/react'
+import {
+  PlateLeaf,
+  useEditorPlugin,
+  usePluginOption,
+  type PlateLeafProps,
+  type RenderNodeWrapper,
+} from 'platejs/react'
 
 import { cn } from '@/lib/utils'
 import {
@@ -41,7 +45,7 @@ export function SuggestionLeaf(props: PlateLeafProps<TSuggestionText>) {
         'bg-emerald-100 text-emerald-700 no-underline transition-colors duration-200',
         (hasActive || hasHover) && 'bg-emerald-200/80',
         hasRemove && 'bg-red-100 text-red-700',
-        (hasActive || hasHover) && hasRemove && 'bg-red-200/80 no-underline',
+        (hasActive || hasHover) && hasRemove && 'bg-red-200/80 no-underline'
       )}
       attributes={{
         ...props.attributes,
@@ -103,7 +107,7 @@ function SuggestionLineBreakContent({
           'border-b-gray-300 bg-gray-300/25 text-gray-400 line-through',
         isRemove &&
           (isActive || isHover) &&
-          'border-b-gray-500 bg-gray-400/25 text-gray-500 no-underline',
+          'border-b-gray-500 bg-gray-400/25 text-gray-500 no-underline'
       )}
       style={{
         bottom: 4.5,
@@ -111,7 +115,7 @@ function SuggestionLineBreakContent({
       }}
       contentEditable={false}
     >
-      <CornerDownLeftIcon className="mt-0.5 size-4" />
+      <CornerDownLeftIcon className='mt-0.5 size-4' />
     </span>
   )
 }

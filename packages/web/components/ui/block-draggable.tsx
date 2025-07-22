@@ -14,8 +14,8 @@ import {
   useEditorRef,
   useElement,
   usePluginOption,
+  useSelected,
 } from 'platejs/react'
-import { useSelected } from 'platejs/react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -113,7 +113,7 @@ function Draggable(props: PlateElementProps) {
         isDragging && 'opacity-50',
         getPluginByType(editor, element.type)?.node.isContainer
           ? 'group/container'
-          : 'group',
+          : 'group'
       )}
       onMouseEnter={() => {
         if (isDragging) return
@@ -126,20 +126,20 @@ function Draggable(props: PlateElementProps) {
             className={cn(
               'slate-blockToolbarWrapper',
               'flex h-[1.5em]',
-              isInColumn && 'h-4',
+              isInColumn && 'h-4'
             )}
           >
             <div
               className={cn(
                 'slate-blockToolbar relative w-4.5',
                 'pointer-events-auto mr-1 flex items-center',
-                isInColumn && 'mr-1.5',
+                isInColumn && 'mr-1.5'
               )}
             >
               <Button
                 ref={handleRef}
-                variant="ghost"
-                className="absolute -left-0 h-6 w-full p-0"
+                variant='ghost'
+                className='absolute -left-0 h-6 w-full p-0'
                 style={{ top: `${dragButtonTop + 3}px` }}
                 data-plate-prevent-deselect
               >
@@ -164,7 +164,7 @@ function Draggable(props: PlateElementProps) {
 
       <div
         ref={nodeRef}
-        className="slate-blockWrapper flow-root"
+        className='slate-blockWrapper flow-root'
         onContextMenu={() =>
           editor
             .getApi(BlockSelectionPlugin)
@@ -187,7 +187,7 @@ function Gutter({
   const element = useElement()
   const isSelectionAreaVisible = usePluginOption(
     BlockSelectionPlugin,
-    'isSelectionAreaVisible',
+    'isSelectionAreaVisible'
   )
   const selected = useSelected()
 
@@ -202,7 +202,7 @@ function Gutter({
           : 'group-hover:opacity-100',
         isSelectionAreaVisible && 'hidden',
         !selected && 'opacity-0',
-        className,
+        className
       )}
       contentEditable={false}
     >
@@ -229,7 +229,7 @@ const DragHandle = React.memo(function DragHandle({
     <Tooltip>
       <TooltipTrigger asChild>
         <div
-          className="flex size-full items-center justify-center"
+          className='flex size-full items-center justify-center'
           onClick={() => {
             editor
               .getApi(BlockSelectionPlugin)
@@ -270,9 +270,9 @@ const DragHandle = React.memo(function DragHandle({
               setPreviewTop(0)
             }
           }}
-          role="button"
+          role='button'
         >
-          <GripVertical className="text-muted-foreground" />
+          <GripVertical className='text-muted-foreground' />
         </div>
       </TooltipTrigger>
       <TooltipContent>Drag to move</TooltipContent>
@@ -297,7 +297,7 @@ const DropLine = React.memo(function DropLine({
         'bg-brand/50',
         dropLine === 'top' && '-top-px',
         dropLine === 'bottom' && '-bottom-px',
-        className,
+        className
       )}
     />
   )
@@ -305,7 +305,7 @@ const DropLine = React.memo(function DropLine({
 
 const createDragPreviewElements = (
   editor: PlateEditor,
-  { currentBlock }: { currentBlock: TElement },
+  { currentBlock }: { currentBlock: TElement }
 ): HTMLElement[] => {
   const blockSelection = editor
     .getApi(BlockSelectionPlugin)
@@ -395,7 +395,7 @@ const calculatePreviewTop = (
   }: {
     blocks: TElement[]
     element: TElement
-  },
+  }
 ): number => {
   const child = editor.api.toDOMNode(element)!
   const editable = editor.api.toDOMNode(editor)!
@@ -404,7 +404,7 @@ const calculatePreviewTop = (
   const firstDomNode = editor.api.toDOMNode(firstSelectedChild)!
   // Get editor's top padding
   const editorPaddingTop = Number(
-    window.getComputedStyle(editable).paddingTop.replace('px', ''),
+    window.getComputedStyle(editable).paddingTop.replace('px', '')
   )
 
   // Calculate distance from first selected node to editor top

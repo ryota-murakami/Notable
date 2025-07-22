@@ -1,7 +1,5 @@
 'use client'
 
-import type { AutoformatRule } from '@platejs/autoformat'
-
 import {
   autoformatArrow,
   autoformatLegal,
@@ -10,6 +8,7 @@ import {
   AutoformatPlugin,
   autoformatPunctuation,
   autoformatSmartQuotes,
+  type AutoformatRule,
 } from '@platejs/autoformat'
 import { insertEmptyCodeBlock } from '@platejs/code-block'
 import { toggleList } from '@platejs/list'
@@ -229,7 +228,7 @@ export const AutoformatKit = [
             !editor.api.some({
               match: { type: editor.getType(KEYS.codeBlock) },
             }),
-        }),
+        })
       ),
     },
   }),
