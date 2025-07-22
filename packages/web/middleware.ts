@@ -1,7 +1,6 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import * as Sentry from '@sentry/nextjs'
 
 export async function middleware(req: NextRequest) {
   const startTime = Date.now()
@@ -27,15 +26,22 @@ export async function middleware(req: NextRequest) {
     } = await supabase.auth.getSession()
 
     if (error) {
-      Sentry.captureException(error, {
-        tags: {
-          middleware: true,
-          path: req.nextUrl.pathname,
-        },
-        extra: {
-          requestId,
-        },
-      })
+      // Dynamic import to avoid build issues with Sentry
+      import('@sentry/nextjs')
+        .then((Sentry) => {
+          Sentry.captureException(error, {
+            tags: {
+              middleware: true,
+              path: req.nextUrl.pathname,
+            },
+            extra: {
+              requestId,
+            },
+          })
+        })
+        .catch(() => {
+          // Sentry not available, skip error reporting
+        })
     }
 
     // Log request details (in production, this would go to a logging service)
@@ -51,7 +57,7 @@ export async function middleware(req: NextRequest) {
           userId: session?.user?.id,
           duration,
           timestamp: new Date().toISOString(),
-        }),
+        })
       )
     }
 
@@ -67,21 +73,27 @@ export async function middleware(req: NextRequest) {
 
     return res
   } catch (error) {
-    // Capture any middleware errors
-    Sentry.captureException(error, {
-      tags: {
-        middleware: true,
-        path: req.nextUrl.pathname,
-      },
-      extra: {
-        requestId,
-      },
-    })
+    // Capture any middleware errors with dynamic import
+    import('@sentry/nextjs')
+      .then((Sentry) => {
+        Sentry.captureException(error, {
+          tags: {
+            middleware: true,
+            path: req.nextUrl.pathname,
+          },
+          extra: {
+            requestId,
+          },
+        })
+      })
+      .catch(() => {
+        // Sentry not available, skip error reporting
+      })
 
     // Return error response
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

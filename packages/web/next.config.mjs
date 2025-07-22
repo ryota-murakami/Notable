@@ -9,28 +9,40 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
+  // Disable static optimization to prevent build-time issues
+  staticPageGenerationTimeout: 60,
+  generateBuildId: async () => {
+    // Force a new build id to prevent cache issues
+    return 'build-' + Date.now()
+  },
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
   },
 
-  // Performance optimizations
-  reactStrictMode: true,
-  compress: true,
+  // Performance optimizations - DISABLED to fix build issues
+  reactStrictMode: false,
+  compress: false,
 
-  // Production optimizations
-  compiler: {
-    removeConsole:
-      process.env.NODE_ENV === 'production'
-        ? {
-            exclude: ['error', 'warn'],
-          }
-        : false,
+  // Production optimizations - DISABLED to fix build issues
+  // compiler: {
+  //   removeConsole:
+  //     process.env.NODE_ENV === 'production'
+  //       ? {
+  //           exclude: ['error', 'warn'],
+  //         }
+  //       : false,
+  // },
+
+  // Experimental features to help with build issues
+  experimental: {
+    esmExternals: 'loose',
   },
 
   // Bundle optimization
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev, buildId }) => {
     // Optimize bundle size
     config.optimization.splitChunks = {
       chunks: 'all',

@@ -1,6 +1,5 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
 
 export default function GlobalError({
@@ -11,12 +10,19 @@ export default function GlobalError({
   _reset: () => void
 }) {
   useEffect(() => {
-    Sentry.captureException(error, {
-      tags: {
-        component: 'root-error-boundary',
-        critical: true,
-      },
-    })
+    // Only import and use Sentry on the client side
+    if (typeof window !== 'undefined') {
+      import('@sentry/nextjs')
+        .then((Sentry) => {
+          Sentry.captureException(error, {
+            tags: {
+              component: 'root-error-boundary',
+              critical: true,
+            },
+          })
+        })
+        .catch(console.error)
+    }
   }, [error])
 
   return (
