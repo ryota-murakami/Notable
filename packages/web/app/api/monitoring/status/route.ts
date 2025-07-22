@@ -46,7 +46,7 @@ export async function GET(_request: NextRequest) {
           status,
           created_at
         )
-      `,
+      `
       )
       .neq('status', 'resolved')
       .order('started_at', { ascending: false })
@@ -123,7 +123,7 @@ export async function GET(_request: NextRequest) {
           responseTime: 89,
           description: 'File upload and storage',
           lastChecked: new Date().toISOString(),
-        },
+        }
       )
     }
 
@@ -141,9 +141,9 @@ export async function GET(_request: NextRequest) {
       services,
       incidents: incidents || [],
       uptime: {
-        last24h: uptime24h,
-        last7d: uptime7d,
-        last30d: uptime30d,
+        last24h: uptime24h || 99.9,
+        last7d: uptime7d || 99.9,
+        last30d: uptime30d || 99.9,
       },
       lastUpdate: new Date().toISOString(),
     }
@@ -157,7 +157,7 @@ export async function GET(_request: NextRequest) {
     console.error('Status API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -172,7 +172,7 @@ export async function POST(_request: NextRequest) {
     if (!serviceName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields: serviceName and status' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -194,7 +194,7 @@ export async function POST(_request: NextRequest) {
       console.error('Failed to update service status:', error)
       return NextResponse.json(
         { error: 'Failed to update service status' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -221,7 +221,7 @@ export async function POST(_request: NextRequest) {
     console.error('Update service status error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -238,7 +238,7 @@ async function calculateUptime(supabase: any, since: Date): Promise<number> {
     }
 
     const totalChecks = records.length
-    const successfulChecks = records.filter((r) => r.is_up).length
+    const successfulChecks = records.filter((r: any) => r.is_up).length
 
     return (successfulChecks / totalChecks) * 100
   } catch (error) {

@@ -34,7 +34,6 @@ async function sendSlackNotification(
 
   const fields = payload.alerts.map((alert) => {
     const severity = alert.labels.severity || 'unknown'
-    const _service = alert.labels.service || 'unknown'
 
     return {
       title: `${severity.toUpperCase()}: ${alert.annotations.summary}`,
@@ -197,8 +196,8 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
 export async function POST(_request: NextRequest) {
   try {
     // Verify webhook signature if configured
-    const _headersList = headers()
-    const signature = _headersList.get('x-alertmanager-signature')
+    const headersList = await headers()
+    const signature = headersList.get('x-alertmanager-signature')
     const webhookSecret = process.env.ALERTMANAGER_WEBHOOK_SECRET
 
     if (webhookSecret && signature) {

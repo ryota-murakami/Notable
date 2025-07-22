@@ -3,22 +3,30 @@ import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import type { AnalyticsBuffer } from '@/lib/analytics/custom'
 
+function getRequiredEnvVar(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`)
+  }
+  return value
+}
+
 // Initialize Supabase client with service role key for analytics
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_URL'),
+  getRequiredEnvVar('SUPABASE_SERVICE_ROLE_KEY'),
   {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
-  },
+  }
 )
 
 export async function POST(request: NextRequest) {
   try {
     // Verify request is from our app
-    const headersList = headers()
+    const headersList = await headers()
     const origin = headersList.get('origin')
     const referer = headersList.get('referer')
 
@@ -26,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (
       process.env.NODE_ENV === 'production' &&
       origin !== process.env.NEXT_PUBLIC_APP_URL &&
-      !referer?.startsWith(process.env.NEXT_PUBLIC_APP_URL!)
+      !referer?.startsWith(getRequiredEnvVar('NEXT_PUBLIC_APP_URL'))
     ) {
       return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
     }
@@ -44,7 +52,7 @@ export async function POST(request: NextRequest) {
             user_id: event.userId,
             session_id: event.sessionId,
             timestamp: new Date(event.timestamp || Date.now()).toISOString(),
-          })),
+          }))
         )
 
       if (eventsError) {
@@ -63,7 +71,7 @@ export async function POST(request: NextRequest) {
             title: pageView.title,
             properties: pageView.properties,
             timestamp: new Date().toISOString(),
-          })),
+          }))
         )
 
       if (pageViewsError) {
@@ -87,7 +95,7 @@ export async function POST(request: NextRequest) {
             },
             {
               onConflict: 'id',
-            },
+            }
           )
 
         if (userError) {
@@ -101,7 +109,7 @@ export async function POST(request: NextRequest) {
     console.error('Analytics error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -163,7 +171,7 @@ export async function GET(_request: NextRequest) {
     console.error('Analytics summary error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

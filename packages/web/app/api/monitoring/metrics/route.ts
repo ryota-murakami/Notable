@@ -72,7 +72,6 @@ export async function GET(request: NextRequest) {
     const startTime = searchParams.get('start')
     const endTime = searchParams.get('end')
     const format = searchParams.get('format') || 'json' // 'json' | 'prometheus'
-    const _step = searchParams.get('step') || '5m' // aggregation interval
 
     const supabase = createClient()
 
@@ -107,22 +106,24 @@ export async function GET(request: NextRequest) {
       console.error('Failed to fetch metrics:', error)
       return NextResponse.json(
         { error: 'Failed to fetch metrics' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
     // Group metrics by name
     const groupedMetrics: Record<string, any[]> = {}
-    metricsData?.forEach((metric) => {
-      if (!groupedMetrics[metric.metric_name]) {
-        groupedMetrics[metric.metric_name] = []
-      }
-      groupedMetrics[metric.metric_name].push({
-        timestamp: metric.timestamp,
-        value: metric.metric_value,
-        labels: metric.labels,
+    if (metricsData) {
+      metricsData.forEach((metric) => {
+        if (!groupedMetrics[metric.metric_name]) {
+          groupedMetrics[metric.metric_name] = []
+        }
+        groupedMetrics[metric.metric_name].push({
+          timestamp: metric.timestamp,
+          value: metric.metric_value,
+          labels: metric.labels,
+        })
       })
-    })
+    }
 
     // Calculate current values and trends
     const currentMetrics = await getCurrentMetrics(supabase)
@@ -137,7 +138,7 @@ export async function GET(request: NextRequest) {
     console.error('Metrics API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -174,27 +175,27 @@ export async function POST(request: NextRequest) {
       console.error('Failed to insert metrics:', error)
       return NextResponse.json(
         { error: 'Failed to insert metrics' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
     return NextResponse.json({
       message: 'Metrics recorded successfully',
-      count: data.length,
+      count: _data?.length || 0,
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
     console.error('Record metrics error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 async function handlePrometheusFormat(
   supabase: any,
-  metricName?: string | null,
+  metricName?: string | null
 ) {
   try {
     let query = supabase
@@ -218,12 +219,14 @@ async function handlePrometheusFormat(
 
     // Group by metric name
     const metricGroups: Record<string, any[]> = {}
-    metrics?.forEach((metric) => {
-      if (!metricGroups[metric.metric_name]) {
-        metricGroups[metric.metric_name] = []
-      }
-      metricGroups[metric.metric_name].push(metric)
-    })
+    if (metrics) {
+      metrics.forEach((metric: any) => {
+        if (!metricGroups[metric.metric_name]) {
+          metricGroups[metric.metric_name] = []
+        }
+        metricGroups[metric.metric_name].push(metric)
+      })
+    }
 
     // Generate Prometheus format for each metric
     Object.entries(metricGroups).forEach(([name, metricData]) => {
@@ -272,7 +275,7 @@ async function handlePrometheusFormat(
     console.error('Prometheus format error:', error)
     return NextResponse.json(
       { error: 'Failed to generate Prometheus format' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -280,7 +283,6 @@ async function handlePrometheusFormat(
 async function getCurrentMetrics(supabase: any) {
   try {
     // Simulate current metrics - in a real app, these would come from various sources
-    const _currentTime = Date.now()
 
     // Get some real data from the database
     const { data: notes } = await supabase

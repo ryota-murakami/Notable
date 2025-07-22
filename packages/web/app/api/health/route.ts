@@ -28,7 +28,7 @@ const supabase = createClient(
       persistSession: false,
       autoRefreshToken: false,
     },
-  },
+  }
 )
 
 // Track application start time
@@ -161,7 +161,6 @@ function checkMemory(): HealthCheckResponse['checks']['memory'] {
 
 // Main health check endpoint
 export async function GET(_request: NextRequest) {
-  const _headersList = headers()
   const requestStart = Date.now()
 
   try {
@@ -182,10 +181,10 @@ export async function GET(_request: NextRequest) {
 
     // Determine overall status
     const hasFailure = Object.values(checks).some(
-      (check) => check.status === 'fail',
+      (check) => check.status === 'fail'
     )
     const hasWarning = Object.values(checks).some(
-      (check) => check.status === 'warn',
+      (check) => check.status === 'warn'
     )
 
     const status = hasFailure
@@ -211,7 +210,7 @@ export async function GET(_request: NextRequest) {
           ...acc,
           [key]: value.status,
         }),
-        {},
+        {}
       ),
     })
 
@@ -237,7 +236,7 @@ export async function GET(_request: NextRequest) {
           },
         },
       } as HealthCheckResponse,
-      { status: 503 },
+      { status: 503 }
     )
   }
 }

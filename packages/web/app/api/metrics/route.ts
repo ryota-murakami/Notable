@@ -1,54 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import logger from '@/lib/logging'
-
-// Metrics storage (in production, use a proper metrics library like prom-client)
-const metrics = {
-  httpRequestsTotal: 0,
-  httpRequestDuration: [] as number[],
-  activeConnections: 0,
-  notesCreated: 0,
-  notesUpdated: 0,
-  notesDeleted: 0,
-  searchQueries: 0,
-  authAttempts: 0,
-  authSuccesses: 0,
-  authFailures: 0,
-  errors: 0,
-  startTime: Date.now(),
-}
-
-// Export function to update metrics from other parts of the app
-export function updateMetric(metric: keyof typeof metrics, value: number = 1) {
-  if (Array.isArray(metrics[metric])) {
-    const arr = metrics[metric] as number[]
-    arr.push(value)
-    // Keep only last 1000 entries to prevent memory issues
-    if (arr.length > 1000) {
-      arr.shift()
-    }
-  } else {
-    const num = metrics[metric] as number
-    metrics[metric] = (num + value) as (typeof metrics)[typeof metric]
-  }
-}
+import { metrics, updateMetric } from '@/lib/metrics-utils'
 
 // Calculate percentiles
 function calculatePercentile(arr: number[], percentile: number): number {
   if (arr.length === 0) return 0
   const sorted = [...arr].sort((a, b) => a - b)
   const index = Math.ceil((percentile / 100) * sorted.length) - 1
-  return sorted[index]
+  return sorted[Math.max(0, index)] || 0
 }
 
 // Format metrics in Prometheus format
 function formatPrometheusMetrics(): string {
   const uptime = (Date.now() - metrics.startTime) / 1000
-  const _avgDuration =
-    metrics.httpRequestDuration.length > 0
-      ? metrics.httpRequestDuration.reduce((a, b) => a + b, 0) /
-        metrics.httpRequestDuration.length
-      : 0
 
   const p50 = calculatePercentile(metrics.httpRequestDuration, 50)
   const p95 = calculatePercentile(metrics.httpRequestDuration, 95)
@@ -119,7 +84,7 @@ notable_nodejs_memory_usage_bytes{type="external"} ${process.memoryUsage().exter
 export async function GET(_request: NextRequest) {
   try {
     // Check if request is from allowed sources (basic security)
-    const headersList = headers()
+    const headersList = await headers()
     const userAgent = headersList.get('user-agent') || ''
 
     // In production, implement proper authentication for metrics endpoint
