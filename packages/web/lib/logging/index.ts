@@ -1,9 +1,12 @@
-import { createServerLogger } from './server'
-import { createClientLogger } from './client'
-
-// Export appropriate logger based on environment
-export const logger =
-  typeof window === 'undefined' ? createServerLogger() : createClientLogger()
+// Type definitions for our logging interface
+export interface Logger {
+  error: (message: string, metadata?: LogMetadata) => void
+  warn: (message: string, metadata?: LogMetadata) => void
+  info: (message: string, metadata?: LogMetadata) => void
+  debug: (message: string, metadata?: LogMetadata) => void
+  verbose: (message: string, metadata?: LogMetadata) => void
+  log: (level: LogLevel, message: string, metadata?: LogMetadata) => void
+}
 
 // Log levels
 export enum LogLevel {
@@ -61,15 +64,20 @@ export function formatError(error: unknown): {
 export function logPerformance(
   operation: string,
   duration: number,
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
   const level = duration > 1000 ? LogLevel.WARN : LogLevel.INFO
-  logger.log(level, `Performance: ${operation} took ${duration}ms`, {
+  const message = `Performance: ${operation} took ${duration}ms`
+  const data = {
     ...metadata,
     operation,
     duration,
     performanceWarning: duration > 1000,
-  })
+  }
+
+  if (typeof window === 'undefined') {
+    console.log(`[${level}] ${message}`, data)
+  }
 }
 
 // API logging helper
@@ -78,67 +86,64 @@ export function logApiCall(
   path: string,
   statusCode: number,
   duration: number,
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
   const level = statusCode >= 400 ? LogLevel.ERROR : LogLevel.INFO
-  logger.log(level, `${method} ${path} - ${statusCode} (${duration}ms)`, {
+  const message = `${method} ${path} - ${statusCode} (${duration}ms)`
+  const data = {
     ...metadata,
     method,
     path,
     statusCode,
     duration,
-  })
+  }
+
+  if (typeof window === 'undefined') {
+    const logMethod = statusCode >= 400 ? 'error' : 'log'
+    console[logMethod](`[${level}] ${message}`, data)
+  }
 }
 
 // User action logging helper
 export function logUserAction(
   action: string,
   userId?: string,
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
-  logger.info(`User action: ${action}`, {
+  const message = `User action: ${action}`
+  const data = {
     ...metadata,
     action,
     userId,
     timestamp: new Date().toISOString(),
-  })
+  }
+
+  if (typeof window === 'undefined') {
+    console.log(`[${LogLevel.INFO}] ${message}`, data)
+  }
 }
 
 // Security event logging helper
 export function logSecurityEvent(
   event: string,
   severity: 'low' | 'medium' | 'high' | 'critical',
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
   const level =
     severity === 'critical' || severity === 'high'
       ? LogLevel.ERROR
       : LogLevel.WARN
 
-  logger.log(level, `Security event: ${event}`, {
+  const message = `Security event: ${event}`
+  const data = {
     ...metadata,
     securityEvent: event,
     severity,
     timestamp: new Date().toISOString(),
-  })
-}
+  }
 
-// Export convenience methods
-export default {
-  error: (message: string, metadata?: LogMetadata) =>
-    logger.error(message, metadata),
-  warn: (message: string, metadata?: LogMetadata) =>
-    logger.warn(message, metadata),
-  info: (message: string, metadata?: LogMetadata) =>
-    logger.info(message, metadata),
-  debug: (message: string, metadata?: LogMetadata) =>
-    logger.debug(message, metadata),
-  verbose: (message: string, metadata?: LogMetadata) =>
-    logger.verbose(message, metadata),
-
-  // Specialized loggers
-  performance: logPerformance,
-  api: logApiCall,
-  userAction: logUserAction,
-  security: logSecurityEvent,
+  if (typeof window === 'undefined') {
+    const logMethod = level === LogLevel.ERROR ? 'error' : 'warn'
+    console[logMethod](`[${level}] ${message}`, data)
+  }
 }

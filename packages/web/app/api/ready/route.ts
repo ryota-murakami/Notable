@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import logger from '@/lib/logging'
+import { logger } from '@/lib/logging/logger.server'
 
 // Readiness check to determine if the app is ready to serve requests
 export async function GET(_request: NextRequest) {

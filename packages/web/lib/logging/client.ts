@@ -1,5 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
-import { LogLevel, LogMetadata, formatError } from './index'
+import type { LogLevel, LogMetadata } from './index'
 
 interface LogBuffer {
   entries: Array<{
@@ -8,7 +7,7 @@ interface LogBuffer {
     metadata?: LogMetadata
     timestamp: Date
   }>
-  timer: NodeJS.Timeout | null
+  timer: ReturnType<typeof setTimeout> | null
 }
 
 export function createClientLogger() {
@@ -83,22 +82,12 @@ export function createClientLogger() {
       console.log(
         `%c[${level.toUpperCase()}] ${message}`,
         style[level] || '',
-        metadata || '',
+        metadata || ''
       )
     }
 
-    // Send errors to Sentry
-    if (level === LogLevel.ERROR) {
-      if (metadata?.error instanceof Error) {
-        Sentry.captureException(metadata.error, {
-          extra: metadata,
-        })
-      } else {
-        Sentry.captureMessage(message, 'error')
-      }
-    } else if (level === LogLevel.WARN && !isDevelopment) {
-      Sentry.captureMessage(message, 'warning')
-    }
+    // In production, critical errors could be sent to error tracking service
+    // For now, just ensure they're logged
 
     // Add to buffer for server logging (skip in development)
     if (
@@ -134,7 +123,17 @@ export function createClientLogger() {
   return {
     error: (message: string, metadata?: LogMetadata) => {
       if (metadata?.error) {
-        metadata = { ...metadata, error: formatError(metadata.error) }
+        metadata = {
+          ...metadata,
+          error:
+            metadata.error instanceof Error
+              ? {
+                  message: metadata.error.message,
+                  stack: metadata.error.stack,
+                  name: metadata.error.name,
+                }
+              : metadata.error,
+        }
       }
       log(LogLevel.ERROR, message, metadata)
     },

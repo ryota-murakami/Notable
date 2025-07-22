@@ -1,7 +1,6 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import * as Sentry from '@sentry/nextjs'
 
 export async function middleware(req: NextRequest) {
   const startTime = Date.now()
@@ -27,14 +26,9 @@ export async function middleware(req: NextRequest) {
     } = await supabase.auth.getSession()
 
     if (error) {
-      Sentry.captureException(error, {
-        tags: {
-          middleware: true,
-          path: req.nextUrl.pathname,
-        },
-        extra: {
-          requestId,
-        },
+      console.error('Middleware auth error:', error, {
+        path: req.nextUrl.pathname,
+        requestId,
       })
     }
 
@@ -51,7 +45,7 @@ export async function middleware(req: NextRequest) {
           userId: session?.user?.id,
           duration,
           timestamp: new Date().toISOString(),
-        }),
+        })
       )
     }
 
@@ -67,21 +61,16 @@ export async function middleware(req: NextRequest) {
 
     return res
   } catch (error) {
-    // Capture any middleware errors
-    Sentry.captureException(error, {
-      tags: {
-        middleware: true,
-        path: req.nextUrl.pathname,
-      },
-      extra: {
-        requestId,
-      },
+    // Log middleware errors
+    console.error('Middleware error:', error, {
+      path: req.nextUrl.pathname,
+      requestId,
     })
 
     // Return error response
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

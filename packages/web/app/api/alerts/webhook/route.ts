@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
-import logger from '@/lib/logging'
+import { logger } from '@/lib/logging/logger.server'
 
 interface AlertWebhookPayload {
   version: string

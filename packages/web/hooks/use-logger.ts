@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useUser } from '@/hooks/use-user'
-import logger, { LogMetadata } from '@/lib/logging'
+import { logger } from '@/lib/logging/logger.client'
+import type { LogMetadata } from '@/lib/logging'
 
 export function useLogger(componentName?: string) {
   const { user } = useUser()
@@ -33,7 +34,7 @@ export function useLogger(componentName?: string) {
         context,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Warning logging
@@ -44,7 +45,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Info logging
@@ -55,7 +56,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Debug logging
@@ -66,29 +67,30 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // User action logging
   const logAction = useCallback(
     (action: string, metadata?: LogMetadata) => {
-      logger.userAction(action, user?.id, {
+      logger.info(`User action: ${action}`, {
         ...baseMetadata,
         ...metadata,
       })
     },
-    [baseMetadata, user?.id],
+    [baseMetadata, user?.id]
   )
 
   // Performance logging
   const logPerformance = useCallback(
     (operation: string, duration: number, metadata?: LogMetadata) => {
-      logger.performance(operation, duration, {
+      const level = duration > 1000 ? 'warn' : 'info'
+      logger[level](`Performance: ${operation} took ${duration}ms`, {
         ...baseMetadata,
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Time tracking helper
@@ -101,7 +103,7 @@ export function useLogger(componentName?: string) {
         logPerformance(operation, duration)
       }
     },
-    [logPerformance],
+    [logPerformance]
   )
 
   return {
@@ -127,7 +129,7 @@ export function useAsyncLogger() {
       options?: {
         onSuccess?: (result: T) => void
         onError?: (error: Error) => void
-      },
+      }
     ): Promise<T> => {
       const endTimer = startTimer(operation)
 
@@ -145,7 +147,7 @@ export function useAsyncLogger() {
         endTimer()
       }
     },
-    [error, info, startTimer],
+    [error, info, startTimer]
   )
 
   return { logAsync }
@@ -162,7 +164,7 @@ export function useFormLogger(formName: string) {
         fields: Object.keys(data),
       })
     },
-    [action, formName],
+    [action, formName]
   )
 
   const logValidationError = useCallback(
@@ -172,14 +174,14 @@ export function useFormLogger(formName: string) {
         errors: Object.keys(errors),
       })
     },
-    [action, formName],
+    [action, formName]
   )
 
   const logSubmitError = useCallback(
     (err: Error) => {
       error(err, 'Form submission failed')
     },
-    [error],
+    [error]
   )
 
   const logSubmitSuccess = useCallback(() => {
