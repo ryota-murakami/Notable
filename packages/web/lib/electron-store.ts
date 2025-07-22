@@ -2,13 +2,14 @@
 
 import type { Note } from '@/types/note'
 import { defaultNotes } from './default-notes'
+import { logger } from '@/lib/logging'
 
 declare global {
   interface Window {
     electronAPI?: {
       loadNotes: () => Promise<Note[]>
       saveNotes: (
-        notes: Note[],
+        notes: Note[]
       ) => Promise<{ success: boolean; error?: string }>
     }
   }
@@ -20,7 +21,7 @@ export async function loadNotes(): Promise<Note[]> {
       const notes = await window.electronAPI.loadNotes()
       return notes.length > 0 ? notes : defaultNotes
     } catch (error) {
-      console.error('Failed to load notes:', error)
+      logger.error('Failed to load notes from Electron API', { error })
       return defaultNotes
     }
   }
@@ -35,7 +36,7 @@ export async function saveNotes(notes: Note[]): Promise<boolean> {
       const result = await window.electronAPI.saveNotes(notes)
       return result.success
     } catch (error) {
-      console.error('Failed to save notes:', error)
+      logger.error('Failed to save notes to Electron API', { error })
       return false
     }
   }
@@ -46,7 +47,7 @@ export async function saveNotes(notes: Note[]): Promise<boolean> {
       localStorage.setItem('notable-notes', JSON.stringify(notes))
       return true
     } catch (error) {
-      console.error('Failed to save notes to localStorage:', error)
+      logger.error('Failed to save notes to localStorage', { error })
       return false
     }
   }

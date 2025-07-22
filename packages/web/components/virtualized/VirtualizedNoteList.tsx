@@ -63,11 +63,11 @@ const NoteItem = React.memo<{
       e.stopPropagation()
       onNoteDelete?.(note.id)
     },
-    [note.id, onNoteDelete],
+    [note.id, onNoteDelete]
   )
 
   // Get preview text from content
-  const getPreviewText = (content: any): string => {
+  const getPreviewText = (content: unknown): string => {
     if (typeof content === 'string') {
       return content.slice(0, 150)
     }
@@ -93,52 +93,52 @@ const NoteItem = React.memo<{
 
     return parts.map((part, index) =>
       regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800">
+        <mark key={index} className='bg-yellow-200 dark:bg-yellow-800'>
           {part}
         </mark>
       ) : (
         part
-      ),
+      )
     )
   }
 
   return (
-    <div ref={rowRef} style={style} className="px-4 py-2">
+    <div ref={rowRef} style={style} className='px-4 py-2'>
       <Card
         className={cn(
           'cursor-pointer transition-all hover:shadow-md',
-          isActive && 'ring-2 ring-primary',
+          isActive && 'ring-2 ring-primary'
         )}
         onClick={handleClick}
       >
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <CardTitle className="text-lg line-clamp-1">
+        <CardHeader className='pb-3'>
+          <div className='flex items-start justify-between'>
+            <CardTitle className='text-lg line-clamp-1'>
               {highlightText(note.title, searchQuery)}
             </CardTitle>
-            <div className="flex items-center gap-2">
+            <div className='flex items-center gap-2'>
               {note.tags && note.tags.length > 0 && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant='secondary' className='text-xs'>
                   {note.tags.length} tags
                 </Badge>
               )}
               <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
+                variant='ghost'
+                size='icon'
+                className='h-8 w-8'
                 onClick={handleDelete}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className='h-4 w-4' />
               </Button>
             </div>
           </div>
-          <CardDescription className="text-sm">
+          <CardDescription className='text-sm'>
             {formatDistanceToNow(new Date(note.updatedAt), { addSuffix: true })}
           </CardDescription>
         </CardHeader>
         {previewText && (
           <CardContent>
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            <p className='text-sm text-muted-foreground line-clamp-2'>
               {highlightText(previewText, searchQuery)}
             </p>
           </CardContent>
@@ -170,7 +170,7 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
         DEFAULT_ITEM_SIZE
       )
     },
-    [notes],
+    [notes]
   )
 
   // Set item size and cache it
@@ -182,7 +182,7 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
       }
       listRef.current?.resetAfterIndex(index)
     },
-    [notes],
+    [notes]
   )
 
   // Clear cache on unmount
@@ -216,9 +216,9 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
           listRef.current?.resetAfterIndex(0)
         },
         300,
-        'virtualized-note-list-reset',
+        'virtualized-note-list-reset'
       ),
-    [],
+    []
   )
 
   useEffect(() => {

@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
   ]
 
   const missingEnvVars = requiredEnvVars.filter(
-    (envVar) => !process.env[envVar],
+    (envVar) => !process.env[envVar]
   )
 
   if (missingEnvVars.length > 0) {
@@ -30,24 +30,28 @@ export async function GET(_request: NextRequest) {
   // Check database connectivity
   if (checks.environment) {
     try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+      if (!supabaseUrl || !supabaseKey) {
+        checks.database = false
+        logger.error('Readiness check: Missing Supabase configuration')
+      } else {
+        const supabase = createClient(supabaseUrl, supabaseKey, {
           auth: {
             persistSession: false,
             autoRefreshToken: false,
           },
-        },
-      )
+        })
 
-      // Simple ping to check connection
-      const { error } = await supabase.from('notes').select('count').limit(1)
+        // Simple ping to check connection
+        const { error } = await supabase.from('notes').select('count').limit(1)
 
-      if (!error) {
-        checks.database = true
-      } else {
-        logger.error('Readiness check: Database not ready', { error })
+        if (!error) {
+          checks.database = true
+        } else {
+          logger.error('Readiness check: Database not ready', { error })
+        }
       }
     } catch (error) {
       logger.error('Readiness check: Database connection failed', { error })
@@ -62,6 +66,6 @@ export async function GET(_request: NextRequest) {
       checks,
       timestamp: new Date().toISOString(),
     },
-    { status: isReady ? 200 : 503 },
+    { status: isReady ? 200 : 503 }
   )
 }

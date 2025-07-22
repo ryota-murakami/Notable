@@ -2,8 +2,6 @@
 
 import * as React from 'react'
 
-import type { PlateEditor, PlateElementProps } from 'platejs/react'
-
 import { AIChatPlugin } from '@platejs/ai/react'
 import {
   CalendarIcon,
@@ -25,7 +23,11 @@ import {
   TableOfContentsIcon,
 } from 'lucide-react'
 import { type TComboboxInputElement, KEYS } from 'platejs'
-import { PlateElement } from 'platejs/react'
+import {
+  type PlateEditor,
+  type PlateElementProps,
+  PlateElement,
+} from 'platejs/react'
 
 import {
   insertBlock,
@@ -204,13 +206,13 @@ const groups: Group[] = [
 ]
 
 export function SlashInputElement(
-  props: PlateElementProps<TComboboxInputElement>,
+  props: PlateElementProps<TComboboxInputElement>
 ) {
   const { editor, element } = props
 
   return (
-    <PlateElement {...props} as="span">
-      <InlineCombobox element={element} trigger="/">
+    <PlateElement {...props} as='span'>
+      <InlineCombobox element={element} trigger='/'>
         <InlineComboboxInput />
 
         <InlineComboboxContent>
@@ -231,10 +233,10 @@ export function SlashInputElement(
                     group={group}
                     keywords={keywords}
                   >
-                    <div className="mr-2 text-muted-foreground">{icon}</div>
+                    <div className='mr-2 text-muted-foreground'>{icon}</div>
                     {label ?? value}
                   </InlineComboboxItem>
-                ),
+                )
               )}
             </InlineComboboxGroup>
           ))}

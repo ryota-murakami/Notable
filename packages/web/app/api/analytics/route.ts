@@ -2,18 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import type { AnalyticsBuffer } from '@/lib/analytics/custom'
+import logger from '@/lib/logging'
 
 // Initialize Supabase client with service role key for analytics
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase configuration for analytics')
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
   },
-)
+})
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,10 +27,12 @@ export async function POST(request: NextRequest) {
     const referer = headersList.get('referer')
 
     // Basic origin check
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL
     if (
       process.env.NODE_ENV === 'production' &&
-      origin !== process.env.NEXT_PUBLIC_APP_URL &&
-      !referer?.startsWith(process.env.NEXT_PUBLIC_APP_URL!)
+      appUrl &&
+      origin !== appUrl &&
+      !referer?.startsWith(appUrl)
     ) {
       return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
     }
@@ -44,11 +50,13 @@ export async function POST(request: NextRequest) {
             user_id: event.userId,
             session_id: event.sessionId,
             timestamp: new Date(event.timestamp || Date.now()).toISOString(),
-          })),
+          }))
         )
 
       if (eventsError) {
-        console.error('Failed to insert events:', eventsError)
+        logger.error('Failed to insert analytics events', {
+          error: eventsError,
+        })
       }
     }
 
@@ -63,11 +71,13 @@ export async function POST(request: NextRequest) {
             title: pageView.title,
             properties: pageView.properties,
             timestamp: new Date().toISOString(),
-          })),
+          }))
         )
 
       if (pageViewsError) {
-        console.error('Failed to insert page views:', pageViewsError)
+        logger.error('Failed to insert analytics page views', {
+          error: pageViewsError,
+        })
       }
     }
 
@@ -87,29 +97,35 @@ export async function POST(request: NextRequest) {
             },
             {
               onConflict: 'id',
-            },
+            }
           )
 
         if (userError) {
-          console.error('Failed to update user profile:', userError)
+          logger.error('Failed to update user profile', {
+            error: userError,
+            userId: user.id,
+          })
         }
       }
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Analytics error:', error)
+    logger.error('Analytics error', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 // Get analytics summary
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(_request.url)
+    const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || '7d'
 
     // Calculate date range
@@ -160,10 +176,10 @@ export async function GET(_request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Analytics summary error:', error)
+    logger.error('Analytics summary API error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

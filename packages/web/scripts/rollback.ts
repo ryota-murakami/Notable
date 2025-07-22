@@ -12,12 +12,16 @@ interface RollbackConfig {
 }
 
 // Get recent deployments from Vercel
-function getRecentDeployments(environment: string): any[] {
+function getRecentDeployments(
+  environment: string
+): Array<{ target: string; [key: string]: unknown }> {
   try {
     const output = execSync('vercel list --json', { encoding: 'utf-8' })
     const deployments = JSON.parse(output)
 
-    return deployments.filter((d: any) => d.target === environment).slice(0, 10) // Last 10 deployments
+    return deployments
+      .filter((d: { target: string }) => d.target === environment)
+      .slice(0, 10) // Last 10 deployments
   } catch (error) {
     console.error(chalk.red('Failed to fetch deployments'))
     return []
@@ -35,7 +39,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
         `vercel alias set ${config.deploymentId} ${config.environment}.notable.com --yes`,
         {
           stdio: 'inherit',
-        },
+        }
       )
     } else if (config.version) {
       // Find deployment by version and rollback
@@ -43,7 +47,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
       const deployment = deployments.find(
         (d) =>
           d.meta?.version === config.version ||
-          d.meta?.commit?.message?.includes(config.version),
+          d.meta?.commit?.message?.includes(config.version)
       )
 
       if (!deployment) {
@@ -54,7 +58,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
         `vercel alias set ${deployment.url} ${config.environment}.notable.com --yes`,
         {
           stdio: 'inherit',
-        },
+        }
       )
     }
 
@@ -215,8 +219,8 @@ async function rollback(): Promise<void> {
     if (!healthCheckPassed && !config.skipHealthCheck) {
       console.log(
         chalk.yellow(
-          '\n⚠️  Rollback completed but health check failed. Please investigate.\n',
-        ),
+          '\n⚠️  Rollback completed but health check failed. Please investigate.\n'
+        )
       )
     }
   } catch (error) {

@@ -18,17 +18,18 @@ import { Sidebar } from '@/components/sidebar'
 import { LazyPlateEditor } from './LazyPlateEditor'
 import { cn } from '@/lib/utils'
 import { PerformanceMonitor, observeWebVitals } from '@/lib/performance'
+import { logger } from '@/lib/logging'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorBoundary } from 'react-error-boundary'
 
 // Lazy load heavy components
 const ViewMode = lazy(() =>
-  import('@/components/view-mode').then((mod) => ({ default: mod.ViewMode })),
+  import('@/components/view-mode').then((mod) => ({ default: mod.ViewMode }))
 )
 const SearchDialog = lazy(() =>
   import('@/components/search-dialog').then((mod) => ({
     default: mod.SearchDialog,
-  })),
+  }))
 )
 
 // Memoized sidebar component
@@ -53,12 +54,12 @@ const ErrorFallback = ({
   error: Error
   resetErrorBoundary: () => void
 }) => (
-  <div className="flex flex-col items-center justify-center h-full p-8">
-    <h2 className="text-xl font-semibold mb-4">Something went wrong</h2>
-    <pre className="text-sm text-muted-foreground mb-4">{error.message}</pre>
+  <div className='flex flex-col items-center justify-center h-full p-8'>
+    <h2 className='text-xl font-semibold mb-4'>Something went wrong</h2>
+    <pre className='text-sm text-muted-foreground mb-4'>{error.message}</pre>
     <button
       onClick={resetErrorBoundary}
-      className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+      className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90'
     >
       Try again
     </button>
@@ -99,13 +100,17 @@ export function OptimizedShell() {
 
     // Monitor web vitals
     const unsubscribe = observeWebVitals((metric) => {
-      console.log(`${metric.name}: ${metric.value} (${metric.rating})`)
+      logger.info('Web Vitals metric recorded', {
+        name: metric.name,
+        value: metric.value,
+        rating: metric.rating,
+      })
 
       // Send to analytics if needed
       if (window.gtag) {
         window.gtag('event', metric.name, {
           value: Math.round(
-            metric.name === 'CLS' ? metric.value * 1000 : metric.value,
+            metric.name === 'CLS' ? metric.value * 1000 : metric.value
           ),
           metric_rating: metric.rating,
           non_interaction: true,
@@ -116,7 +121,9 @@ export function OptimizedShell() {
     return () => {
       unsubscribe()
       // Log performance report on unmount
-      console.log('Performance Report:', monitor.getReport())
+      logger.info('Performance report on component unmount', {
+        report: monitor.getReport(),
+      })
     }
   }, [])
 
@@ -134,13 +141,13 @@ export function OptimizedShell() {
   // Memoized active note to prevent unnecessary re-renders
   const activeNote = useMemo(
     () => notes.find((note) => note.id === activeNoteId) || null,
-    [notes, activeNoteId],
+    [notes, activeNoteId]
   )
 
   // Memoized filtered notes based on search
   const filteredNotes = useMemo(
     () => (searchQuery ? searchResults : notes),
-    [searchQuery, searchResults, notes],
+    [searchQuery, searchResults, notes]
   )
 
   // Optimized callbacks with useCallback
@@ -152,7 +159,7 @@ export function OptimizedShell() {
   const handleCreateNote = useCallback(async () => {
     const monitor = PerformanceMonitor.getInstance()
     const newNote = await monitor.measureAsync('create-note', () =>
-      createNote(),
+      createNote()
     )
     if (newNote) {
       setActiveNoteId(newNote.id)
@@ -168,7 +175,7 @@ export function OptimizedShell() {
         setActiveNoteId(null)
       }
     },
-    [deleteNote, activeNoteId],
+    [deleteNote, activeNoteId]
   )
 
   const handleSaveNote = useCallback(
@@ -176,19 +183,19 @@ export function OptimizedShell() {
       const monitor = PerformanceMonitor.getInstance()
       await monitor.measureAsync('save-note', () => saveNote(note))
     },
-    [saveNote],
+    [saveNote]
   )
 
   const handleExportNote = useCallback(
-    async (format: any) => {
+    async (format: string) => {
       if (activeNote) {
         const monitor = PerformanceMonitor.getInstance()
         await monitor.measureAsync('export-note', () =>
-          exportNote(activeNote, format),
+          exportNote(activeNote, format)
         )
       }
     },
-    [activeNote, exportNote],
+    [activeNote, exportNote]
   )
 
   const handleToggleSidebar = useCallback(() => {
@@ -220,7 +227,7 @@ export function OptimizedShell() {
               handleToggleViewMode()
             }
           },
-          { timeout: 50 },
+          { timeout: 50 }
         )
       } else {
         // Fallback for browsers without requestIdleCallback
@@ -236,7 +243,7 @@ export function OptimizedShell() {
   }, [handleCreateNote, handleToggleSidebar, handleToggleViewMode])
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className='flex h-screen bg-background'>
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
         onReset={() => window.location.reload()}
@@ -262,15 +269,15 @@ export function OptimizedShell() {
         <main
           className={cn(
             'flex-1 flex flex-col transition-all duration-300',
-            isSidebarCollapsed ? 'ml-16' : 'ml-64',
+            isSidebarCollapsed ? 'ml-16' : 'ml-64'
           )}
         >
           {activeNote ? (
             <Suspense
               fallback={
-                <div className="flex-1 p-8">
-                  <Skeleton className="h-12 w-1/2 mb-4" />
-                  <Skeleton className="h-96 w-full" />
+                <div className='flex-1 p-8'>
+                  <Skeleton className='h-12 w-1/2 mb-4' />
+                  <Skeleton className='h-96 w-full' />
                 </div>
               }
             >
@@ -295,17 +302,17 @@ export function OptimizedShell() {
               )}
             </Suspense>
           ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <h2 className="text-2xl font-semibold mb-2">
+            <div className='flex-1 flex items-center justify-center'>
+              <div className='text-center'>
+                <h2 className='text-2xl font-semibold mb-2'>
                   No note selected
                 </h2>
-                <p className="text-muted-foreground mb-4">
+                <p className='text-muted-foreground mb-4'>
                   Select a note from the sidebar or create a new one
                 </p>
                 <button
                   onClick={handleCreateNote}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                  className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90'
                 >
                   Create New Note
                 </button>

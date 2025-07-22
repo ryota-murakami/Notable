@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/logging'
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,10 +32,10 @@ export async function GET(request: NextRequest) {
     const { data: alerts, error } = await query
 
     if (error) {
-      console.error('Failed to fetch alerts:', error)
+      logger.error('Failed to fetch monitoring alerts', { error })
       return NextResponse.json(
         { error: 'Failed to fetch alerts' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       .select('status, severity')
       .gte(
         'starts_at',
-        new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
       ) // Last 24 hours
 
     const statistics = {
@@ -65,10 +66,10 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Monitoring alerts API error:', error)
+    logger.error('Monitoring alerts API error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -139,10 +140,10 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (error) {
-        console.error('Failed to update alert:', error)
+        logger.error('Failed to update monitoring alert', { error })
         return NextResponse.json(
           { error: 'Failed to update alert' },
-          { status: 500 },
+          { status: 500 }
         )
       }
 
@@ -169,10 +170,10 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (error) {
-        console.error('Failed to create alert:', error)
+        logger.error('Failed to create monitoring alert', { error })
         return NextResponse.json(
           { error: 'Failed to create alert' },
-          { status: 500 },
+          { status: 500 }
         )
       }
 
@@ -185,10 +186,10 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Create/update alert error:', error)
+    logger.error('Create/update alert error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -208,10 +209,10 @@ export async function DELETE(request: NextRequest) {
         .eq('fingerprint', fingerprint)
 
       if (error) {
-        console.error('Failed to delete alert:', error)
+        logger.error('Failed to delete monitoring alert', { error })
         return NextResponse.json(
           { error: 'Failed to delete alert' },
-          { status: 500 },
+          { status: 500 }
         )
       }
 
@@ -229,10 +230,10 @@ export async function DELETE(request: NextRequest) {
         .lt('starts_at', olderThan)
 
       if (error) {
-        console.error('Failed to delete old alerts:', error)
+        logger.error('Failed to delete old monitoring alerts', { error })
         return NextResponse.json(
           { error: 'Failed to delete old alerts' },
-          { status: 500 },
+          { status: 500 }
         )
       }
 
@@ -244,13 +245,13 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Missing fingerprint or olderThan parameter' },
-      { status: 400 },
+      { status: 400 }
     )
   } catch (error) {
-    console.error('Delete alert error:', error)
+    logger.error('Delete alert error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

@@ -139,7 +139,7 @@ function checkDatabaseConnection(databaseUrl: string): Promise<boolean> {
 
 async function checkSupabaseConnection(
   url: string,
-  anonKey: string,
+  anonKey: string
 ): Promise<boolean> {
   try {
     const response = await fetch(`${url}/rest/v1/`, {
@@ -195,7 +195,12 @@ async function main() {
 
   log('✅ Environment schema validation passed', 'green')
 
-  const config = validation.data!
+  if (!validation.data) {
+    log('❌ No configuration data available', 'red')
+    process.exit(1)
+  }
+
+  const config = validation.data
 
   // Connection tests
   log('\n🔌 Testing connections...\n', 'cyan')
@@ -213,7 +218,7 @@ async function main() {
   log('  Testing Supabase connection...', 'yellow')
   const supabaseConnected = await checkSupabaseConnection(
     config.NEXT_PUBLIC_SUPABASE_URL,
-    config.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    config.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
   if (supabaseConnected) {
     log('  ✅ Supabase connection successful', 'green')
@@ -251,10 +256,10 @@ async function main() {
   log('\n🚩 Feature flags:\n', 'cyan')
   log(`  • PWA: ${config.NEXT_PUBLIC_ENABLE_PWA ? 'Enabled' : 'Disabled'}`)
   log(
-    `  • Offline Mode: ${config.NEXT_PUBLIC_ENABLE_OFFLINE_MODE ? 'Enabled' : 'Disabled'}`,
+    `  • Offline Mode: ${config.NEXT_PUBLIC_ENABLE_OFFLINE_MODE ? 'Enabled' : 'Disabled'}`
   )
   log(
-    `  • AI Features: ${config.NEXT_PUBLIC_ENABLE_AI_FEATURES ? 'Enabled' : 'Disabled'}`,
+    `  • AI Features: ${config.NEXT_PUBLIC_ENABLE_AI_FEATURES ? 'Enabled' : 'Disabled'}`
   )
 
   // Analytics configuration

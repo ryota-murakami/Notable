@@ -19,16 +19,18 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react'
+import { logger } from '@/lib/logging'
 
 export default function DashboardPage() {
   const { user, supabase, loading } = useSupabase()
-  const [notes, setNotes] = useState<any[]>([])
+  const [notes, setNotes] = useState<Array<Record<string, unknown>>>([])
   const [isLoadingNotes, setIsLoadingNotes] = useState(true)
 
   useEffect(() => {
     if (user) {
       loadNotes()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   const loadNotes = async () => {
@@ -41,12 +43,18 @@ export default function DashboardPage() {
         .order('updated_at', { ascending: false })
 
       if (error) {
-        console.error('Error loading notes:', error)
+        logger.error('Error loading notes from dashboard', {
+          error,
+          userId: user?.id,
+        })
       } else {
         setNotes(data || [])
       }
     } catch (error) {
-      console.error('Error loading notes:', error)
+      logger.error('Error loading notes from dashboard', {
+        error,
+        userId: user?.id,
+      })
     } finally {
       setIsLoadingNotes(false)
     }
@@ -58,16 +66,16 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className='flex min-h-screen items-center justify-center'>
+        <Loader2 className='h-8 w-8 animate-spin' />
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
+      <div className='flex min-h-screen items-center justify-center'>
+        <Card className='w-full max-w-md'>
           <CardHeader>
             <CardTitle>Access Denied</CardTitle>
             <CardDescription>
@@ -80,24 +88,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className='min-h-screen bg-background'>
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold">Notable</h1>
-              <p className="text-muted-foreground">
+      <header className='border-b bg-card/50 backdrop-blur'>
+        <div className='container mx-auto px-4 py-4'>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center space-x-4'>
+              <h1 className='text-2xl font-bold'>Notable</h1>
+              <p className='text-muted-foreground'>
                 Welcome back, {user.user_metadata?.name || user.email}
               </p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
+            <div className='flex items-center space-x-4'>
+              <Button variant='outline' size='sm'>
+                <Settings className='h-4 w-4 mr-2' />
                 Settings
               </Button>
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
+              <Button variant='outline' size='sm' onClick={handleSignOut}>
+                <LogOut className='h-4 w-4 mr-2' />
                 Sign Out
               </Button>
             </div>
@@ -106,30 +114,30 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid gap-6">
+      <main className='container mx-auto px-4 py-8'>
+        <div className='grid gap-6'>
           {/* Quick Actions */}
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className='grid md:grid-cols-3 gap-4'>
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center">
-                  <Plus className="h-5 w-5 mr-2" />
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-lg flex items-center'>
+                  <Plus className='h-5 w-5 mr-2' />
                   Create Note
                 </CardTitle>
                 <CardDescription>Start writing your thoughts</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Button className='w-full'>
+                  <Plus className='h-4 w-4 mr-2' />
                   New Note
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center">
-                  <Search className="h-5 w-5 mr-2" />
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-lg flex items-center'>
+                  <Search className='h-5 w-5 mr-2' />
                   Search Notes
                 </CardTitle>
                 <CardDescription>
@@ -137,24 +145,24 @@ export default function DashboardPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">
-                  <Search className="h-4 w-4 mr-2" />
+                <Button variant='outline' className='w-full'>
+                  <Search className='h-4 w-4 mr-2' />
                   Search
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center">
-                  <FolderOpen className="h-5 w-5 mr-2" />
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-lg flex items-center'>
+                  <FolderOpen className='h-5 w-5 mr-2' />
                   Organize
                 </CardTitle>
                 <CardDescription>Manage folders and tags</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">
-                  <FolderOpen className="h-4 w-4 mr-2" />
+                <Button variant='outline' className='w-full'>
+                  <FolderOpen className='h-4 w-4 mr-2' />
                   Folders
                 </Button>
               </CardContent>
@@ -164,33 +172,33 @@ export default function DashboardPage() {
           {/* Recent Notes */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
+              <CardTitle className='flex items-center'>
+                <FileText className='h-5 w-5 mr-2' />
                 Recent Notes
               </CardTitle>
               <CardDescription>Your latest notes and thoughts</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoadingNotes ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin" />
+                <div className='flex items-center justify-center py-8'>
+                  <Loader2 className='h-6 w-6 animate-spin' />
                 </div>
               ) : notes.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <div className='text-center py-8 text-muted-foreground'>
+                  <FileText className='h-12 w-12 mx-auto mb-4 opacity-50' />
                   <p>No notes yet. Create your first note to get started!</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className='space-y-4'>
                   {notes.slice(0, 5).map((note) => (
                     <div
                       key={note.id}
-                      className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                      className='flex items-center space-x-4 p-4 border rounded-lg hover:bg-muted/50 cursor-pointer'
                     >
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                      <div className="flex-1">
-                        <h3 className="font-medium">{note.title}</h3>
-                        <p className="text-sm text-muted-foreground">
+                      <FileText className='h-5 w-5 text-muted-foreground' />
+                      <div className='flex-1'>
+                        <h3 className='font-medium'>{note.title}</h3>
+                        <p className='text-sm text-muted-foreground'>
                           {new Date(note.updated_at).toLocaleDateString()}
                         </p>
                       </div>

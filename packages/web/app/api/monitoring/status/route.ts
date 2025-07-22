@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logging'
+
+interface Incident {
+  id: string
+  title: string
+  status: string
+  severity: string
+  created_at: string
+  [key: string]: unknown
+}
 
 interface ServiceCheck {
   name: string
@@ -12,7 +23,7 @@ interface ServiceCheck {
 interface StatusPageData {
   overallStatus: 'operational' | 'degraded' | 'outage'
   services: ServiceCheck[]
-  incidents: any[]
+  incidents: Incident[]
   uptime: {
     last24h: number
     last7d: number
@@ -32,7 +43,7 @@ export async function GET(_request: NextRequest) {
       .order('service_name')
 
     if (statusError) {
-      console.error('Failed to fetch service status:', statusError)
+      logger.error('Failed to fetch service status', { error: statusError })
     }
 
     // Get recent incidents
@@ -46,14 +57,14 @@ export async function GET(_request: NextRequest) {
           status,
           created_at
         )
-      `,
+      `
       )
       .neq('status', 'resolved')
       .order('started_at', { ascending: false })
       .limit(5)
 
     if (incidentsError) {
-      console.error('Failed to fetch incidents:', incidentsError)
+      logger.error('Failed to fetch incidents', { error: incidentsError })
     }
 
     // Calculate uptime percentages
@@ -123,7 +134,7 @@ export async function GET(_request: NextRequest) {
           responseTime: 89,
           description: 'File upload and storage',
           lastChecked: new Date().toISOString(),
-        },
+        }
       )
     }
 
@@ -154,10 +165,10 @@ export async function GET(_request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Status API error:', error)
+    logger.error('Status API error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -172,7 +183,7 @@ export async function POST(_request: NextRequest) {
     if (!serviceName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields: serviceName and status' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -191,10 +202,10 @@ export async function POST(_request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Failed to update service status:', error)
+      logger.error('Failed to update service status', { error })
       return NextResponse.json(
         { error: 'Failed to update service status' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -209,7 +220,7 @@ export async function POST(_request: NextRequest) {
       })
 
     if (uptimeError) {
-      console.error('Failed to record uptime:', uptimeError)
+      logger.error('Failed to record uptime', { error: uptimeError })
     }
 
     return NextResponse.json({
@@ -218,15 +229,18 @@ export async function POST(_request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Update service status error:', error)
+    logger.error('Update service status error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
-async function calculateUptime(supabase: any, since: Date): Promise<number> {
+async function calculateUptime(
+  supabase: SupabaseClient,
+  since: Date
+): Promise<number> {
   try {
     const { data: records, error } = await supabase
       .from('uptime_records')
@@ -242,7 +256,7 @@ async function calculateUptime(supabase: any, since: Date): Promise<number> {
 
     return (successfulChecks / totalChecks) * 100
   } catch (error) {
-    console.error('Failed to calculate uptime:', error)
+    logger.error('Failed to calculate uptime', { error })
     return 99.9
   }
 }

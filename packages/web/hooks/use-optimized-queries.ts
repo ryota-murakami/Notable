@@ -3,9 +3,10 @@ import { createClient } from '@supabase/supabase-js'
 import { useSupabase } from '@/components/supabase-provider'
 import { Note } from '@/types/note'
 import { usePerformanceMonitor } from './use-performance-monitor'
+import { logger } from '@/lib/logging'
 
 interface QueryCache {
-  data: any
+  data: unknown
   timestamp: number
   expiresAt: number
 }
@@ -58,7 +59,7 @@ export function useOptimizedQueries() {
 
   // Get from cache if valid
   const getFromCache = useCallback(
-    (key: string, staleTime: number): any | null => {
+    (key: string, staleTime: number): unknown => {
       const cached = QUERY_CACHE.get(key)
       if (!cached) return null
 
@@ -71,24 +72,27 @@ export function useOptimizedQueries() {
 
       return cached.data
     },
-    [],
+    []
   )
 
   // Set cache with expiration
-  const setCache = useCallback((key: string, data: any, cacheTime: number) => {
-    const now = Date.now()
-    QUERY_CACHE.set(key, {
-      data,
-      timestamp: now,
-      expiresAt: now + cacheTime,
-    })
-  }, [])
+  const setCache = useCallback(
+    (key: string, data: unknown, cacheTime: number) => {
+      const now = Date.now()
+      QUERY_CACHE.set(key, {
+        data,
+        timestamp: now,
+        expiresAt: now + cacheTime,
+      })
+    },
+    []
+  )
 
   // Optimized note fetching with pagination
   const fetchNotesPaginated = useCallback(
     async (
       page: number = 1,
-      options: QueryOptions = {},
+      options: QueryOptions = {}
     ): Promise<{ notes: Note[]; hasMore: boolean; total: number }> => {
       const {
         cacheTime = DEFAULT_CACHE_TIME,
@@ -129,10 +133,10 @@ export function useOptimizedQueries() {
 
           setCache(cacheKey, result, cacheTime)
           return result
-        },
+        }
       )
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache, performanceMonitor]
   )
 
   // Batch note fetching for multiple IDs
@@ -175,10 +179,10 @@ export function useOptimizedQueries() {
           }
 
           return results
-        },
+        }
       )
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache, performanceMonitor]
   )
 
   // Optimized search with debounced queries
@@ -189,7 +193,7 @@ export function useOptimizedQueries() {
       const cacheKey = `search:${query}`
       const cached = getFromCache(
         cacheKey,
-        options.staleTime || DEFAULT_STALE_TIME,
+        options.staleTime || DEFAULT_STALE_TIME
       )
 
       if (cached) {
@@ -209,10 +213,10 @@ export function useOptimizedQueries() {
           const results = data || []
           setCache(cacheKey, results, options.cacheTime || DEFAULT_CACHE_TIME)
           return results
-        },
+        }
       )
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache, performanceMonitor]
   )
 
   // Prefetch next page of data
@@ -224,14 +228,20 @@ export function useOptimizedQueries() {
       // Only prefetch if not already cached
       const cached = getFromCache(
         cacheKey,
-        options.staleTime || DEFAULT_STALE_TIME,
+        options.staleTime || DEFAULT_STALE_TIME
       )
       if (!cached) {
         // Prefetch in background without waiting
-        fetchNotesPaginated(nextPage, options).catch(console.error)
+        fetchNotesPaginated(nextPage, options).catch((error) => {
+          logger.error('Failed to prefetch notes in background', {
+            error,
+            nextPage,
+            options,
+          })
+        })
       }
     },
-    [fetchNotesPaginated, getFromCache],
+    [fetchNotesPaginated, getFromCache]
   )
 
   // Invalidate cache for specific queries
@@ -262,7 +272,10 @@ export function useOptimizedQueries() {
             if (!groupedUpdates.has(key)) {
               groupedUpdates.set(key, [])
             }
-            groupedUpdates.get(key)!.push(update.id)
+            const group = groupedUpdates.get(key)
+            if (group) {
+              group.push(update.id)
+            }
           }
 
           // Execute grouped updates
@@ -289,10 +302,10 @@ export function useOptimizedQueries() {
           invalidateCache('notes:page:')
 
           return results
-        },
+        }
       )
     },
-    [supabase, performanceMonitor, invalidateCache],
+    [supabase, performanceMonitor, invalidateCache]
   )
 
   // Connection pooling for real-time subscriptions
@@ -319,7 +332,7 @@ export function useOptimizedQueries() {
 
             // Invalidate list caches
             invalidateCache('notes:page:')
-          },
+          }
         )
         .subscribe()
 
@@ -327,7 +340,7 @@ export function useOptimizedQueries() {
         supabase.removeChannel(channel)
       }
     },
-    [supabase, setCache, invalidateCache],
+    [supabase, setCache, invalidateCache]
   )
 
   return {

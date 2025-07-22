@@ -76,7 +76,7 @@ export function Shell() {
         setActiveNoteId(notes[newIndex].id)
       }
     },
-    [notes, activeNoteId],
+    [notes, activeNoteId]
   )
 
   // Show error toast if there's a connection error
@@ -202,7 +202,7 @@ export function Shell() {
       // Update active note if necessary
       if (activeNoteId === id) {
         const remainingNotes = notes.filter(
-          (note) => !idsToDelete.includes(note.id),
+          (note) => !idsToDelete.includes(note.id)
         )
         setActiveNoteId(remainingNotes[0]?.id || '')
       }
@@ -262,7 +262,7 @@ export function Shell() {
             e.preventDefault()
             // Focus sidebar search
             const sidebarSearch = document.querySelector(
-              '[placeholder="Filter"]',
+              '[placeholder="Filter"]'
             ) as HTMLInputElement
             if (sidebarSearch) {
               sidebarSearch.focus()
@@ -346,6 +346,7 @@ export function Shell() {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isSearchOpen,
     activeNote,
@@ -359,12 +360,12 @@ export function Shell() {
   // Show loading screen while authenticating
   if (authLoading) {
     return (
-      <div className="flex h-screen bg-background">
-        <SidebarSkeleton className="w-64 border-r" />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <LoadingSpinner className="h-8 w-8 mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading...</p>
+      <div className='flex h-screen bg-background'>
+        <SidebarSkeleton className='w-64 border-r' />
+        <div className='flex-1 flex items-center justify-center'>
+          <div className='text-center'>
+            <LoadingSpinner className='h-8 w-8 mx-auto mb-4' />
+            <p className='text-muted-foreground'>Loading...</p>
           </div>
         </div>
       </div>
@@ -374,14 +375,14 @@ export function Shell() {
   // Redirect to auth if not authenticated
   if (!user) {
     return (
-      <div className="flex h-screen bg-background items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground mb-4">
+      <div className='flex h-screen bg-background items-center justify-center'>
+        <div className='text-center'>
+          <p className='text-muted-foreground mb-4'>
             Please sign in to access your notes
           </p>
           <button
             onClick={() => (window.location.href = '/auth')}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+            className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90'
           >
             Sign In
           </button>
@@ -391,9 +392,9 @@ export function Shell() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className='flex h-screen bg-background'>
       {isLoading ? (
-        <SidebarSkeleton className="w-64 border-r" />
+        <SidebarSkeleton className='w-64 border-r' />
       ) : (
         <Sidebar
           notes={notes}
@@ -419,29 +420,29 @@ export function Shell() {
           <WelcomeScreen onCreateNote={() => handleCreateNote(null)} />
         ) : activeNote ? (
           <>
-            <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div className='border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+              <div className='container mx-auto px-4 py-3 flex items-center justify-between'>
                 <Breadcrumb
                   currentNote={activeNote}
                   notes={notes}
                   onNavigateToNote={setActiveNoteId}
                 />
-                <div className="flex items-center gap-3">
+                <div className='flex items-center gap-3'>
                   {/* Real-time sync indicators */}
-                  <div className="flex items-center gap-2">
+                  <div className='flex items-center gap-2'>
                     {/* Connection status */}
                     <Badge
                       variant={isConnected ? 'default' : 'destructive'}
-                      className="text-xs"
+                      className='text-xs'
                     >
                       {isConnected ? (
                         <>
-                          <Wifi className="h-3 w-3 mr-1" />
+                          <Wifi className='h-3 w-3 mr-1' />
                           Connected
                         </>
                       ) : (
                         <>
-                          <WifiOff className="h-3 w-3 mr-1" />
+                          <WifiOff className='h-3 w-3 mr-1' />
                           Offline
                         </>
                       )}
@@ -449,16 +450,16 @@ export function Shell() {
 
                     {/* Online users count */}
                     {onlineUsers.length > 0 && (
-                      <Badge variant="secondary" className="text-xs">
-                        <Users className="h-3 w-3 mr-1" />
+                      <Badge variant='secondary' className='text-xs'>
+                        <Users className='h-3 w-3 mr-1' />
                         {onlineUsers.length}
                       </Badge>
                     )}
 
                     {/* Typing indicators */}
                     {typingUsers.length > 0 && (
-                      <Badge variant="outline" className="text-xs">
-                        <UserCheck className="h-3 w-3 mr-1" />
+                      <Badge variant='outline' className='text-xs'>
+                        <UserCheck className='h-3 w-3 mr-1' />
                         {typingUsers.length} typing...
                       </Badge>
                     )}
@@ -469,8 +470,8 @@ export function Shell() {
                     onToggle={() => setIsViewMode(!isViewMode)}
                   />
                   {(isSaving || isEditorLoading) && (
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <LoadingSpinner className="h-4 w-4" />
+                    <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+                      <LoadingSpinner className='h-4 w-4' />
                       <span>{isSaving ? 'Saving...' : 'Loading...'}</span>
                     </div>
                   )}
@@ -480,7 +481,7 @@ export function Shell() {
             {isEditorLoading ? (
               <EditorSkeleton />
             ) : isViewMode ? (
-              <ViewModeRenderer note={activeNote} className="flex-1" />
+              <ViewModeRenderer note={activeNote} className='flex-1' />
             ) : (
               <PlateEditorComponent
                 note={activeNote}
@@ -493,7 +494,7 @@ export function Shell() {
             )}
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          <div className='flex-1 flex items-center justify-center text-muted-foreground'>
             Select a note or create a new one
           </div>
         )}

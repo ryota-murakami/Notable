@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logging'
+
+interface MetricData {
+  name: string
+  value: number
+  timestamp: string
+  labels?: Record<string, string>
+  [key: string]: unknown
+}
 
 interface MetricDefinition {
   name: string
@@ -104,15 +114,15 @@ export async function GET(request: NextRequest) {
     const { data: metricsData, error } = await query
 
     if (error) {
-      console.error('Failed to fetch metrics:', error)
+      logger.error('Failed to fetch metrics', { error })
       return NextResponse.json(
         { error: 'Failed to fetch metrics' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
     // Group metrics by name
-    const groupedMetrics: Record<string, any[]> = {}
+    const groupedMetrics: Record<string, MetricData[]> = {}
     metricsData?.forEach((metric) => {
       if (!groupedMetrics[metric.metric_name]) {
         groupedMetrics[metric.metric_name] = []
@@ -134,10 +144,10 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Metrics API error:', error)
+    logger.error('Metrics API error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -171,10 +181,10 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (error) {
-      console.error('Failed to insert metrics:', error)
+      logger.error('Failed to insert metrics', { error })
       return NextResponse.json(
         { error: 'Failed to insert metrics' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -184,17 +194,17 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Record metrics error:', error)
+    logger.error('Record metrics error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 async function handlePrometheusFormat(
-  supabase: any,
-  metricName?: string | null,
+  supabase: SupabaseClient,
+  metricName?: string | null
 ) {
   try {
     let query = supabase
@@ -217,7 +227,7 @@ async function handlePrometheusFormat(
     let prometheusOutput = ''
 
     // Group by metric name
-    const metricGroups: Record<string, any[]> = {}
+    const metricGroups: Record<string, MetricData[]> = {}
     metrics?.forEach((metric) => {
       if (!metricGroups[metric.metric_name]) {
         metricGroups[metric.metric_name] = []
@@ -234,7 +244,7 @@ async function handlePrometheusFormat(
       }
 
       // Get the latest value for each unique label combination
-      const latestValues: Record<string, any> = {}
+      const latestValues: Record<string, MetricData> = {}
       metricData.forEach((metric) => {
         const labelKey = JSON.stringify(metric.labels || {})
         if (
@@ -246,7 +256,7 @@ async function handlePrometheusFormat(
         }
       })
 
-      Object.values(latestValues).forEach((metric: any) => {
+      Object.values(latestValues).forEach((metric: MetricData) => {
         const labels = metric.labels || {}
         const labelString = Object.entries(labels)
           .map(([key, value]) => `${key}="${value}"`)
@@ -269,15 +279,15 @@ async function handlePrometheusFormat(
       },
     })
   } catch (error) {
-    console.error('Prometheus format error:', error)
+    logger.error('Prometheus format error', { error })
     return NextResponse.json(
       { error: 'Failed to generate Prometheus format' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
-async function getCurrentMetrics(supabase: any) {
+async function getCurrentMetrics(supabase: SupabaseClient) {
   try {
     // Simulate current metrics - in a real app, these would come from various sources
     const _currentTime = Date.now()
@@ -306,7 +316,7 @@ async function getCurrentMetrics(supabase: any) {
 
     return metrics
   } catch (error) {
-    console.error('Failed to get current metrics:', error)
+    logger.error('Failed to get current metrics', { error })
     return {}
   }
 }

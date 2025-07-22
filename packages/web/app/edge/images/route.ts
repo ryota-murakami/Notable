@@ -42,7 +42,7 @@ function generateCacheKey(params: ImageTransformParams): string {
 function getOptimizedDimensions(
   request: NextRequest,
   width?: number,
-  height?: number,
+  height?: number
 ): { width?: number; height?: number } {
   const userAgent = request.headers.get('user-agent') || ''
   const isMobile = /mobile|android|iphone/i.test(userAgent)
@@ -65,7 +65,7 @@ function getOptimizedDimensions(
 // Check if browser supports modern image formats
 function getSupportedFormat(
   request: NextRequest,
-  preferredFormat?: string,
+  preferredFormat?: string
 ): string {
   const accept = request.headers.get('accept') || ''
 
@@ -123,15 +123,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
 
     const url = searchParams.get('url')
-    const width = searchParams.get('w')
-      ? parseInt(searchParams.get('w')!)
-      : undefined
-    const height = searchParams.get('h')
-      ? parseInt(searchParams.get('h')!)
-      : undefined
-    const quality = searchParams.get('q')
-      ? parseInt(searchParams.get('q')!)
-      : 80
+    const widthParam = searchParams.get('w')
+    const width = widthParam ? parseInt(widthParam) : undefined
+    const heightParam = searchParams.get('h')
+    const height = heightParam ? parseInt(heightParam) : undefined
+    const qualityParam = searchParams.get('q')
+    const quality = qualityParam ? parseInt(qualityParam) : 80
     const format = searchParams.get('f') as ImageTransformParams['format']
     const fit =
       (searchParams.get('fit') as ImageTransformParams['fit']) || 'cover'
@@ -141,14 +138,14 @@ export async function GET(request: NextRequest) {
     if (!url) {
       return NextResponse.json(
         { error: 'Missing url parameter' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (!isValidImageUrl(url)) {
       return NextResponse.json(
         { error: 'Invalid or unauthorized image URL' },
-        { status: 403 },
+        { status: 403 }
       )
     }
 
@@ -156,14 +153,14 @@ export async function GET(request: NextRequest) {
     if (width && (width < 1 || width > 3840)) {
       return NextResponse.json(
         { error: 'Width must be between 1 and 3840 pixels' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (height && (height < 1 || height > 2160)) {
       return NextResponse.json(
         { error: 'Height must be between 1 and 2160 pixels' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -226,7 +223,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to process image' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -244,7 +241,7 @@ export async function POST(request: NextRequest) {
     if (urls.length > 10) {
       return NextResponse.json(
         { error: 'Maximum 10 URLs per request' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -297,7 +294,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to prefetch images' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

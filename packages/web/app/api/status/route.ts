@@ -14,7 +14,7 @@ interface ServiceStatus {
 interface StatusPageResponse {
   status: 'operational' | 'degraded' | 'outage'
   services: ServiceStatus[]
-  incidents: any[]
+  incidents: unknown[]
   lastUpdated: string
   uptime: {
     last24Hours: number
@@ -24,16 +24,19 @@ interface StatusPageResponse {
 }
 
 // Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase configuration for status checks')
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
   },
-)
+})
 
 // Check individual service status
 async function checkService(
@@ -41,7 +44,7 @@ async function checkService(
   checkFn: () => Promise<{
     status: ServiceStatus['status']
     responseTime?: number
-  }>,
+  }>
 ): Promise<ServiceStatus> {
   const startTime = Date.now()
 
@@ -92,7 +95,7 @@ async function getUptimeStats(): Promise<StatusPageResponse['uptime']> {
 }
 
 // Get active incidents
-async function getActiveIncidents(): Promise<any[]> {
+async function getActiveIncidents(): Promise<Array<Record<string, unknown>>> {
   try {
     // In production, query your incident management system
     // For now, check for recent errors in logs
@@ -213,7 +216,7 @@ export async function GET(_request: NextRequest) {
           ...acc,
           [service.name]: service.status,
         }),
-        {},
+        {}
       ),
     })
 
@@ -242,7 +245,7 @@ export async function GET(_request: NextRequest) {
           last30Days: 0,
         },
       } as StatusPageResponse,
-      { status: 503 },
+      { status: 503 }
     )
   }
 }

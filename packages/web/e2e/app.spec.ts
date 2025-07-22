@@ -12,13 +12,18 @@ test.describe('Notable Web App E2E Infrastructure', () => {
 
     // Verify server responds (even with errors)
     expect(response).not.toBeNull()
-    expect(response!.status()).toBeLessThan(600) // Any valid HTTP status
+
+    if (!response) {
+      throw new Error('Page navigation failed - no response received')
+    }
+
+    expect(response.status()).toBeLessThan(600) // Any valid HTTP status
 
     // Verify page loads basic structure
     await expect(page.locator('body')).toBeVisible()
 
     console.log(
-      `✅ E2E Infrastructure working - Server responded with status: ${response!.status()}`,
+      `✅ E2E Infrastructure working - Server responded with status: ${response.status()}`
     )
   })
 

@@ -7,7 +7,7 @@ import { EmojiInputElement } from '@/components/ui/emoji-node'
 
 export const EmojiKit = [
   EmojiPlugin.configure({
-    options: { data: emojiMartData as any },
+    options: { data: emojiMartData as unknown },
   }),
   EmojiInputPlugin.withComponent(EmojiInputElement),
 ]

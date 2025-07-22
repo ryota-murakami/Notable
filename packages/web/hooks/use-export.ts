@@ -13,6 +13,18 @@ interface ExportOptions {
   templateName?: string
 }
 
+// Types for Plate.js content structure
+type PlateNode =
+  | {
+      type?: string
+      text?: string
+      children?: PlateNode[]
+      [key: string]: unknown
+    }
+  | string
+
+type PlateContent = PlateNode[]
+
 export function useExport() {
   const [isExporting, setIsExporting] = useState(false)
   const [exportProgress, setExportProgress] = useState(0)
@@ -20,8 +32,8 @@ export function useExport() {
 
   // Convert Plate.js content to Markdown
   const convertToMarkdown = useCallback(
-    (content: any, title?: string): string => {
-      const convertNode = (node: any): string => {
+    (content: PlateContent, title?: string): string => {
+      const convertNode = (node: PlateNode): string => {
         if (typeof node === 'string') return node
         if (!node.type) return node.text || ''
 
@@ -78,15 +90,15 @@ export function useExport() {
         }
       }
 
-      const convertTableToMarkdown = (table: any): string => {
+      const convertTableToMarkdown = (table: PlateNode): string => {
         const rows = table.children || []
         if (rows.length === 0) return ''
 
         let markdown = ''
-        rows.forEach((row: any, index: number) => {
+        rows.forEach((row: PlateNode, index: number) => {
           const cells = row.children || []
           const rowText = cells
-            .map((cell: any) => convertNode(cell))
+            .map((cell: PlateNode) => convertNode(cell))
             .join(' | ')
           markdown += `| ${rowText} |\n`
 
@@ -112,15 +124,19 @@ export function useExport() {
 
       return markdown.trim()
     },
-    [],
+    []
   )
 
   // Convert Plate.js content to HTML
   const convertToHTML = useCallback(
-    (content: any, title?: string, options: ExportOptions = {}): string => {
+    (
+      content: PlateContent,
+      title?: string,
+      options: ExportOptions = {}
+    ): string => {
       const { includeStyles = true, includeMetadata = true } = options
 
-      const convertNode = (node: any): string => {
+      const convertNode = (node: PlateNode): string => {
         if (typeof node === 'string') return node
         if (!node.type) return node.text || ''
 
@@ -263,87 +279,90 @@ export function useExport() {
 </body>
 </html>`
     },
-    [],
+    []
   )
 
   // Convert Plate.js content to React component
-  const convertToReact = useCallback((content: any, title?: string): string => {
-    const convertNode = (node: any, key: number = 0): string => {
-      if (typeof node === 'string') return node
-      if (!node.type) return node.text || ''
+  const convertToReact = useCallback(
+    (content: PlateContent, title?: string): string => {
+      const convertNode = (node: PlateNode, key: number = 0): string => {
+        if (typeof node === 'string') return node
+        if (!node.type) return node.text || ''
 
-      const text =
-        node.children
-          ?.map((child: any, index: number) => convertNode(child, index))
-          .join('') || ''
+        const text =
+          node.children
+            ?.map((child: PlateNode, index: number) =>
+              convertNode(child, index)
+            )
+            .join('') || ''
 
-      switch (node.type) {
-        case 'h1':
-          return `<h1 key={${key}}>${text}</h1>`
-        case 'h2':
-          return `<h2 key={${key}}>${text}</h2>`
-        case 'h3':
-          return `<h3 key={${key}}>${text}</h3>`
-        case 'h4':
-          return `<h4 key={${key}}>${text}</h4>`
-        case 'h5':
-          return `<h5 key={${key}}>${text}</h5>`
-        case 'h6':
-          return `<h6 key={${key}}>${text}</h6>`
-        case 'p':
-          return `<p key={${key}}>${text}</p>`
-        case 'blockquote':
-          return `<blockquote key={${key}}>${text}</blockquote>`
-        case 'ul':
-          return `<ul key={${key}}>${text}</ul>`
-        case 'ol':
-          return `<ol key={${key}}>${text}</ol>`
-        case 'li':
-          return `<li key={${key}}>${text}</li>`
-        case 'code_block':
-          return `<pre key={${key}}><code className="language-${node.lang || ''}">${text}</code></pre>`
-        case 'hr':
-          return `<hr key={${key}} />`
-        case 'br':
-          return `<br key={${key}} />`
-        case 'a':
-          return `<a key={${key}} href="${node.url}">${text}</a>`
-        case 'img':
-          return `<img key={${key}} src="${node.url}" alt="${node.alt || ''}" />`
-        case 'table':
-          return `<table key={${key}}>${text}</table>`
-        case 'tr':
-          return `<tr key={${key}}>${text}</tr>`
-        case 'td':
-          return `<td key={${key}}>${text}</td>`
-        case 'th':
-          return `<th key={${key}}>${text}</th>`
-        default:
-          // Handle text formatting
-          let formattedText = text
-          if (node.bold) formattedText = `<strong>${formattedText}</strong>`
-          if (node.italic) formattedText = `<em>${formattedText}</em>`
-          if (node.underline) formattedText = `<u>${formattedText}</u>`
-          if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
-          if (node.code) formattedText = `<code>${formattedText}</code>`
-          return formattedText
+        switch (node.type) {
+          case 'h1':
+            return `<h1 key={${key}}>${text}</h1>`
+          case 'h2':
+            return `<h2 key={${key}}>${text}</h2>`
+          case 'h3':
+            return `<h3 key={${key}}>${text}</h3>`
+          case 'h4':
+            return `<h4 key={${key}}>${text}</h4>`
+          case 'h5':
+            return `<h5 key={${key}}>${text}</h5>`
+          case 'h6':
+            return `<h6 key={${key}}>${text}</h6>`
+          case 'p':
+            return `<p key={${key}}>${text}</p>`
+          case 'blockquote':
+            return `<blockquote key={${key}}>${text}</blockquote>`
+          case 'ul':
+            return `<ul key={${key}}>${text}</ul>`
+          case 'ol':
+            return `<ol key={${key}}>${text}</ol>`
+          case 'li':
+            return `<li key={${key}}>${text}</li>`
+          case 'code_block':
+            return `<pre key={${key}}><code className="language-${node.lang || ''}">${text}</code></pre>`
+          case 'hr':
+            return `<hr key={${key}} />`
+          case 'br':
+            return `<br key={${key}} />`
+          case 'a':
+            return `<a key={${key}} href="${node.url}">${text}</a>`
+          case 'img':
+            return `<img key={${key}} src="${node.url}" alt="${node.alt || ''}" />`
+          case 'table':
+            return `<table key={${key}}>${text}</table>`
+          case 'tr':
+            return `<tr key={${key}}>${text}</tr>`
+          case 'td':
+            return `<td key={${key}}>${text}</td>`
+          case 'th':
+            return `<th key={${key}}>${text}</th>`
+          default:
+            // Handle text formatting
+            let formattedText = text
+            if (node.bold) formattedText = `<strong>${formattedText}</strong>`
+            if (node.italic) formattedText = `<em>${formattedText}</em>`
+            if (node.underline) formattedText = `<u>${formattedText}</u>`
+            if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
+            if (node.code) formattedText = `<code>${formattedText}</code>`
+            return formattedText
+        }
       }
-    }
 
-    let body = ''
-    if (Array.isArray(content)) {
-      body = content
-        .map((node, index) => convertNode(node, index))
-        .join('\n      ')
-    } else {
-      body = convertNode(content)
-    }
+      let body = ''
+      if (Array.isArray(content)) {
+        body = content
+          .map((node, index) => convertNode(node, index))
+          .join('\n      ')
+      } else {
+        body = convertNode(content)
+      }
 
-    const componentName = title
-      ? title.replace(/[^a-zA-Z0-9]/g, '')
-      : 'UntitledNote'
+      const componentName = title
+        ? title.replace(/[^a-zA-Z0-9]/g, '')
+        : 'UntitledNote'
 
-    return `import React from 'react'
+      return `import React from 'react'
 
 interface ${componentName}Props {
   className?: string
@@ -359,11 +378,13 @@ export function ${componentName}({ className }: ${componentName}Props) {
 }
 
 export default ${componentName}`
-  }, [])
+    },
+    []
+  )
 
   // Generate PDF using browser printing
   const generatePDF = useCallback(
-    async (content: any, title?: string): Promise<void> => {
+    async (content: PlateContent, title?: string): Promise<void> => {
       const htmlContent = convertToHTML(content, title, {
         includeStyles: true,
         includeMetadata: true,
@@ -384,7 +405,7 @@ export default ${componentName}`
       printWindow.print()
       printWindow.close()
     },
-    [convertToHTML],
+    [convertToHTML]
   )
 
   // Main export function
@@ -392,7 +413,7 @@ export default ${componentName}`
     async (
       note: Note,
       format: ExportFormat,
-      options: ExportOptions = {},
+      options: ExportOptions = {}
     ): Promise<void> => {
       if (isExporting) return
 
@@ -486,7 +507,7 @@ export default ${componentName}`
       convertToReact,
       generatePDF,
       toast,
-    ],
+    ]
   )
 
   return {

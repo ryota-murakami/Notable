@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logging'
 
 export const runtime = 'edge'
 
@@ -9,7 +10,7 @@ interface Experiment {
     id: string
     name: string
     weight: number
-    config: Record<string, any>
+    config: Record<string, unknown>
   }[]
   enabled: boolean
   targetingRules?: {
@@ -124,7 +125,7 @@ function getUserIdentifier(request: NextRequest): string {
 // Check if user meets targeting rules
 function matchesTargeting(
   request: NextRequest,
-  rules?: Experiment['targetingRules'],
+  rules?: Experiment['targetingRules']
 ): boolean {
   if (!rules) return true
 
@@ -140,7 +141,7 @@ function matchesTargeting(
   if (rules.userAgent) {
     const userAgent = request.headers.get('user-agent') || ''
     const matches = rules.userAgent.some((pattern) =>
-      userAgent.toLowerCase().includes(pattern.toLowerCase()),
+      userAgent.toLowerCase().includes(pattern.toLowerCase())
     )
     if (!matches) return false
   }
@@ -179,7 +180,7 @@ function assignVariant(experiment: Experiment, userIdentifier: string) {
 export async function GET(request: NextRequest) {
   try {
     const userIdentifier = getUserIdentifier(request)
-    const experiments: Record<string, any> = {}
+    const experiments: Record<string, unknown> = {}
 
     // Process A/B tests
     for (const experiment of EXPERIMENTS) {
@@ -212,7 +213,7 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to get experiments' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -226,7 +227,7 @@ export async function POST(request: NextRequest) {
     if (!event || !experimentId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -245,13 +246,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Log for debugging (in production, send to analytics)
-    console.log('Experiment event:', eventData)
+    logger.info('Experiment event:', eventData)
 
     return NextResponse.json({ success: true })
   } catch {
     return NextResponse.json(
       { error: 'Failed to track event' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

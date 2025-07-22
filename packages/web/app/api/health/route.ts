@@ -14,22 +14,25 @@ interface HealthCheckResponse {
       status: 'pass' | 'fail' | 'warn'
       message?: string
       responseTime?: number
-      details?: any
+      details?: unknown
     }
   }
 }
 
 // Initialize Supabase client for health checks
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase configuration for health checks')
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
   },
-)
+})
 
 // Track application start time
 const startTime = Date.now()
@@ -182,10 +185,10 @@ export async function GET(_request: NextRequest) {
 
     // Determine overall status
     const hasFailure = Object.values(checks).some(
-      (check) => check.status === 'fail',
+      (check) => check.status === 'fail'
     )
     const hasWarning = Object.values(checks).some(
-      (check) => check.status === 'warn',
+      (check) => check.status === 'warn'
     )
 
     const status = hasFailure
@@ -211,7 +214,7 @@ export async function GET(_request: NextRequest) {
           ...acc,
           [key]: value.status,
         }),
-        {},
+        {}
       ),
     })
 
@@ -237,7 +240,7 @@ export async function GET(_request: NextRequest) {
           },
         },
       } as HealthCheckResponse,
-      { status: 503 },
+      { status: 503 }
     )
   }
 }

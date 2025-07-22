@@ -33,7 +33,12 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
     const style = document.createElement('style')
     document.head.append(style)
 
-    const canvas = await html2canvas(editor.api.toDOMNode(editor)!, {
+    const editorDOMNode = editor.api.toDOMNode(editor)
+    if (!editorDOMNode) {
+      throw new Error('Could not find editor DOM node')
+    }
+
+    const canvas = await html2canvas(editorDOMNode, {
       onclone: (document: Document) => {
         const editorElement = document.querySelector('[contenteditable="true"]')
         if (editorElement) {
@@ -41,7 +46,7 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
             const existingStyle = element.getAttribute('style') || ''
             element.setAttribute(
               'style',
-              `${existingStyle}; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important`,
+              `${existingStyle}; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important`
             )
           })
         }
@@ -147,12 +152,12 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Export" isDropdown>
-          <ArrowDownToLineIcon className="size-4" />
+        <ToolbarButton pressed={open} tooltip='Export' isDropdown>
+          <ArrowDownToLineIcon className='size-4' />
         </ToolbarButton>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align='start'>
         <DropdownMenuGroup>
           <DropdownMenuItem onSelect={exportToHtml}>
             Export as HTML

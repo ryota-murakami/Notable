@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logging'
 import type {
   RealtimeChannel,
   RealtimePresenceState,
@@ -43,7 +44,7 @@ const throttle = (func: Function, delay: number) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 
-  return function (...args: any[]) {
+  return function (...args: unknown[]) {
     const currentTime = Date.now()
 
     if (currentTime - lastExecTime > delay) {
@@ -56,7 +57,7 @@ const throttle = (func: Function, delay: number) => {
           func.apply(this, args)
           lastExecTime = Date.now()
         },
-        delay - (currentTime - lastExecTime),
+        delay - (currentTime - lastExecTime)
       )
     }
   }
@@ -108,7 +109,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
           if (payload.new) {
             onNoteUpdate(payload.new as Note)
           }
-        },
+        }
       )
     }
 
@@ -144,26 +145,35 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         const state = channel.presenceState()
         const users = Object.values(state)
           .flat()
-          .map((presence: any) => ({
-            id: presence.id,
-            name: presence.name,
-            color: presence.color,
-            avatar: presence.avatar,
-            joinedAt: presence.joinedAt,
-            lastSeen: presence.lastSeen,
-            isActive: Date.now() - presence.lastSeen < 30000, // 30 seconds
-          }))
+          .map(
+            (presence: {
+              id: string
+              name: string
+              color: string
+              avatar?: string
+              joinedAt: number
+              lastSeen: number
+            }) => ({
+              id: presence.id,
+              name: presence.name,
+              color: presence.color,
+              avatar: presence.avatar,
+              joinedAt: presence.joinedAt,
+              lastSeen: presence.lastSeen,
+              isActive: Date.now() - presence.lastSeen < 30000, // 30 seconds
+            })
+          )
 
         setOnlineUsers(users)
         onPresenceChange(users)
       })
 
       channel.on('presence', { event: 'join' }, ({ newPresences }) => {
-        console.log('User joined:', newPresences)
+        logger.debug('User joined real-time channel', { newPresences, noteId })
       })
 
       channel.on('presence', { event: 'leave' }, ({ leftPresences }) => {
-        console.log('User left:', leftPresences)
+        logger.debug('User left real-time channel', { leftPresences, noteId })
       })
     }
 
@@ -203,7 +213,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
   useEffect(() => {
     const interval = setInterval(() => {
       setTypingUsers(
-        (prev) => prev.filter((user) => Date.now() - user.lastTyped < 3000), // 3 seconds
+        (prev) => prev.filter((user) => Date.now() - user.lastTyped < 3000) // 3 seconds
       )
     }, 1000)
 
@@ -244,7 +254,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         },
       })
     }, 300), // 300ms throttle
-    [user],
+    [user]
   )
 
   // Method to broadcast note updates
@@ -262,7 +272,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         },
       })
     },
-    [user],
+    [user]
   )
 
   // Method to start typing

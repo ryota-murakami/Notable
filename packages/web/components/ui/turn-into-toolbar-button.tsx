@@ -2,10 +2,11 @@
 
 import * as React from 'react'
 
-import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu'
-import type { TElement } from 'platejs'
-
-import { DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu'
+import {
+  DropdownMenuItemIndicator,
+  type DropdownMenuProps,
+} from '@radix-ui/react-dropdown-menu'
+import { KEYS, type TElement } from 'platejs'
 import {
   CheckIcon,
   ChevronRightIcon,
@@ -23,7 +24,6 @@ import {
   QuoteIcon,
   SquareIcon,
 } from 'lucide-react'
-import { KEYS } from 'platejs'
 import { useEditorRef, useSelectionFragmentProp } from 'platejs/react'
 
 import {
@@ -134,16 +134,16 @@ export function TurnIntoToolbarButton(props: DropdownMenuProps) {
     () =>
       turnIntoItems.find((item) => item.value === (value ?? KEYS.p)) ??
       turnIntoItems[0],
-    [value],
+    [value]
   )
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
         <ToolbarButton
-          className="min-w-[125px]"
+          className='min-w-[125px]'
           pressed={open}
-          tooltip="Turn into"
+          tooltip='Turn into'
           isDropdown
         >
           {selectedItem.label}
@@ -151,27 +151,27 @@ export function TurnIntoToolbarButton(props: DropdownMenuProps) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="ignore-click-outside/toolbar min-w-0"
+        className='ignore-click-outside/toolbar min-w-0'
         onCloseAutoFocus={(e) => {
           e.preventDefault()
           editor.tf.focus()
         }}
-        align="start"
+        align='start'
       >
         <ToolbarMenuGroup
           value={value}
           onValueChange={(type) => {
             setBlockType(editor, type)
           }}
-          label="Turn into"
+          label='Turn into'
         >
           {turnIntoItems.map(({ icon, label, value: itemValue }) => (
             <DropdownMenuRadioItem
               key={itemValue}
-              className="min-w-[180px] pl-2 *:first:[span]:hidden"
+              className='min-w-[180px] pl-2 *:first:[span]:hidden'
               value={itemValue}
             >
-              <span className="pointer-events-none absolute right-2 flex size-3.5 items-center justify-center">
+              <span className='pointer-events-none absolute right-2 flex size-3.5 items-center justify-center'>
                 <DropdownMenuItemIndicator>
                   <CheckIcon />
                 </DropdownMenuItemIndicator>

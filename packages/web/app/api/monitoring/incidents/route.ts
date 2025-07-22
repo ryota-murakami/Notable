@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/logging'
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
         )`
             : ''
         }
-      `,
+      `
       )
       .order('started_at', { ascending: false })
       .limit(limit)
@@ -43,10 +44,10 @@ export async function GET(request: NextRequest) {
     const { data: incidents, error } = await query
 
     if (error) {
-      console.error('Failed to fetch incidents:', error)
+      logger.error('Failed to fetch incidents from monitoring API', { error })
       return NextResponse.json(
         { error: 'Failed to fetch incidents' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
       .select('status, severity')
       .gte(
         'started_at',
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
       ) // Last 30 days
 
     const statistics = {
@@ -74,10 +75,10 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Incidents API error:', error)
+    logger.error('Incidents API error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -100,20 +101,20 @@ export async function POST(request: NextRequest) {
     if (!title || !severity) {
       return NextResponse.json(
         { error: 'Missing required fields: title and severity' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (!['minor', 'major', 'critical'].includes(severity)) {
       return NextResponse.json(
         { error: 'Invalid severity. Must be: minor, major, or critical' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (
       !['investigating', 'identified', 'monitoring', 'resolved'].includes(
-        status,
+        status
       )
     ) {
       return NextResponse.json(
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
           error:
             'Invalid status. Must be: investigating, identified, monitoring, or resolved',
         },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -142,10 +143,12 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (createError) {
-      console.error('Failed to create incident:', createError)
+      logger.error('Failed to create incident in monitoring API', {
+        error: createError,
+      })
       return NextResponse.json(
         { error: 'Failed to create incident' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -160,7 +163,9 @@ export async function POST(request: NextRequest) {
       })
 
     if (updateError) {
-      console.error('Failed to create initial incident update:', updateError)
+      logger.error('Failed to create initial incident update', {
+        error: updateError,
+      })
     }
 
     // Update affected service statuses
@@ -184,13 +189,13 @@ export async function POST(request: NextRequest) {
         message: 'Incident created successfully',
         timestamp: new Date().toISOString(),
       },
-      { status: 201 },
+      { status: 201 }
     )
   } catch (error) {
-    console.error('Create incident error:', error)
+    logger.error('Create incident error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -205,7 +210,7 @@ export async function PATCH(request: NextRequest) {
     if (!incidentId) {
       return NextResponse.json(
         { error: 'Missing incident ID' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -232,7 +237,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Prepare update data
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
     }
 
@@ -260,10 +265,12 @@ export async function PATCH(request: NextRequest) {
       .single()
 
     if (updateError) {
-      console.error('Failed to update incident:', updateError)
+      logger.error('Failed to update incident in monitoring API', {
+        error: updateError,
+      })
       return NextResponse.json(
         { error: 'Failed to update incident' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -279,7 +286,9 @@ export async function PATCH(request: NextRequest) {
         })
 
       if (updateInsertError) {
-        console.error('Failed to create incident update:', updateInsertError)
+        logger.error('Failed to create incident update', {
+          error: updateInsertError,
+        })
       }
     }
 
@@ -302,10 +311,10 @@ export async function PATCH(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Update incident error:', error)
+    logger.error('Update incident error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -319,7 +328,7 @@ export async function DELETE(request: NextRequest) {
     if (!incidentId) {
       return NextResponse.json(
         { error: 'Missing incident ID' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -330,10 +339,10 @@ export async function DELETE(request: NextRequest) {
       .eq('id', incidentId)
 
     if (error) {
-      console.error('Failed to delete incident:', error)
+      logger.error('Failed to delete incident from monitoring API', { error })
       return NextResponse.json(
         { error: 'Failed to delete incident' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
@@ -343,10 +352,10 @@ export async function DELETE(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error('Delete incident error:', error)
+    logger.error('Delete incident error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

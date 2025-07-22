@@ -2,6 +2,7 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import * as Sentry from '@sentry/nextjs'
+import { logger } from '@/lib/logging'
 
 export async function middleware(req: NextRequest) {
   const startTime = Date.now()
@@ -38,22 +39,18 @@ export async function middleware(req: NextRequest) {
       })
     }
 
-    // Log request details (in production, this would go to a logging service)
+    // Log request details using structured logging
     const duration = Date.now() - startTime
-    if (process.env.NODE_ENV === 'production') {
-      console.log(
-        JSON.stringify({
-          type: 'request',
-          requestId,
-          method: req.method,
-          path: req.nextUrl.pathname,
-          userAgent: req.headers.get('user-agent'),
-          userId: session?.user?.id,
-          duration,
-          timestamp: new Date().toISOString(),
-        }),
-      )
-    }
+    logger.info('Middleware request processed', {
+      type: 'request',
+      requestId,
+      method: req.method,
+      path: req.nextUrl.pathname,
+      userAgent: req.headers.get('user-agent'),
+      userId: session?.user?.id,
+      duration,
+      timestamp: new Date().toISOString(),
+    })
 
     // If user is not signed in and accessing a protected route, redirect to login
     if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
@@ -81,7 +78,7 @@ export async function middleware(req: NextRequest) {
     // Return error response
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

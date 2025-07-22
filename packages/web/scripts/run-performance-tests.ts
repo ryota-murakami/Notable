@@ -7,6 +7,17 @@ import { memoryMonitor } from '../lib/memory-monitor'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
+interface BenchmarkResult {
+  name: string
+  averageTime?: number
+  minTime?: number
+  maxTime?: number
+  iterations?: number
+  throughput?: number
+  memoryUsage?: number
+  [key: string]: unknown
+}
+
 interface PerformanceReport {
   timestamp: string
   environment: {
@@ -19,10 +30,10 @@ interface PerformanceReport {
     }
   }
   benchmarks: {
-    noteOperations?: any
-    componentRendering?: any
-    webVitals?: any
-    memoryProfile?: any
+    noteOperations?: BenchmarkResult[]
+    componentRendering?: BenchmarkResult[]
+    webVitals?: BenchmarkResult[]
+    memoryProfile?: Record<string, unknown>
   }
   recommendations: string[]
 }
@@ -57,11 +68,11 @@ async function generatePerformanceReport(): Promise<PerformanceReport> {
       console.log('📊 Running database operation benchmarks...\n')
       report.benchmarks.noteOperations = await runNoteBenchmarks(
         process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       )
     } else {
       console.log(
-        '⚠️  Skipping database benchmarks (Supabase credentials not found)\n',
+        '⚠️  Skipping database benchmarks (Supabase credentials not found)\n'
       )
     }
 
@@ -96,29 +107,31 @@ function generateRecommendations(report: PerformanceReport): string[] {
 
     // Check single note creation performance
     const createSingle = noteOps.find(
-      (op: any) => op.name === 'Create Single Note',
+      (op: BenchmarkResult) => op.name === 'Create Single Note'
     )
     if (createSingle && createSingle.averageTime > 100) {
       recommendations.push(
-        `Consider optimizing single note creation (current: ${createSingle.averageTime.toFixed(2)}ms avg). Target: <100ms`,
+        `Consider optimizing single note creation (current: ${createSingle.averageTime.toFixed(2)}ms avg). Target: <100ms`
       )
     }
 
     // Check search performance
-    const search = noteOps.find((op: any) =>
-      op.name.includes('Full-text Search'),
+    const search = noteOps.find((op: BenchmarkResult) =>
+      op.name.includes('Full-text Search')
     )
     if (search && search.averageTime > 200) {
       recommendations.push(
-        `Full-text search is slow (${search.averageTime.toFixed(2)}ms). Consider adding search indexes or using dedicated search service.`,
+        `Full-text search is slow (${search.averageTime.toFixed(2)}ms). Consider adding search indexes or using dedicated search service.`
       )
     }
 
     // Check large note handling
-    const largeNote = noteOps.find((op: any) => op.name.includes('Large Note'))
+    const largeNote = noteOps.find((op: BenchmarkResult) =>
+      op.name.includes('Large Note')
+    )
     if (largeNote && largeNote.averageTime > 500) {
       recommendations.push(
-        `Large note operations are slow (${largeNote.averageTime.toFixed(2)}ms). Consider chunking or streaming for large content.`,
+        `Large note operations are slow (${largeNote.averageTime.toFixed(2)}ms). Consider chunking or streaming for large content.`
       )
     }
   }
@@ -128,20 +141,22 @@ function generateRecommendations(report: PerformanceReport): string[] {
     const rendering = report.benchmarks.componentRendering.rendering
 
     // Check virtualized list performance
-    const largeList = rendering.find((r: any) => r.name.includes('5000 notes'))
+    const largeList = rendering.find((r: BenchmarkResult) =>
+      r.name.includes('5000 notes')
+    )
     if (largeList && largeList.averageTime > 50) {
       recommendations.push(
-        `Large list rendering needs optimization (${largeList.averageTime.toFixed(2)}ms for 5000 items).`,
+        `Large list rendering needs optimization (${largeList.averageTime.toFixed(2)}ms for 5000 items).`
       )
     }
 
     // Check editor initialization
-    const editorInit = rendering.find((r: any) =>
-      r.name.includes('Initialize Plate Editor'),
+    const editorInit = rendering.find((r: BenchmarkResult) =>
+      r.name.includes('Initialize Plate Editor')
     )
     if (editorInit && editorInit.averageTime > 100) {
       recommendations.push(
-        `Editor initialization is slow (${editorInit.averageTime.toFixed(2)}ms). Consider lazy loading editor plugins.`,
+        `Editor initialization is slow (${editorInit.averageTime.toFixed(2)}ms). Consider lazy loading editor plugins.`
       )
     }
   }
@@ -162,7 +177,7 @@ function generateRecommendations(report: PerformanceReport): string[] {
 
     if (leakDetection.leakRate && leakDetection.leakRate > 1) {
       recommendations.push(
-        `High memory growth rate detected: ${leakDetection.leakRate.toFixed(2)} MB/min`,
+        `High memory growth rate detected: ${leakDetection.leakRate.toFixed(2)} MB/min`
       )
     }
   }
@@ -170,13 +185,13 @@ function generateRecommendations(report: PerformanceReport): string[] {
   // General recommendations
   if (report.environment.memory.free < 2) {
     recommendations.push(
-      '⚠️  Low system memory available. This may affect benchmark accuracy.',
+      '⚠️  Low system memory available. This may affect benchmark accuracy.'
     )
   }
 
   if (recommendations.length === 0) {
     recommendations.push(
-      '✅ All performance metrics are within acceptable ranges!',
+      '✅ All performance metrics are within acceptable ranges!'
     )
   }
 
@@ -307,7 +322,7 @@ function generateHTMLReport(report: PerformanceReport): string {
             <tbody>
                 ${report.benchmarks.noteOperations
                   .map(
-                    (op: any) => `
+                    (op: BenchmarkResult) => `
                 <tr>
                     <td>${op.name}</td>
                     <td>${op.averageTime.toFixed(2)}</td>
@@ -317,7 +332,7 @@ function generateHTMLReport(report: PerformanceReport): string {
                         ${getPerformanceStatus(op)}
                     </td>
                 </tr>
-                `,
+                `
                   )
                   .join('')}
             </tbody>
@@ -345,7 +360,7 @@ function generateHTMLReport(report: PerformanceReport): string {
             <tbody>
                 ${report.benchmarks.componentRendering.rendering
                   ?.map(
-                    (r: any) => `
+                    (r: BenchmarkResult) => `
                 <tr>
                     <td>${r.name}</td>
                     <td>${r.averageTime.toFixed(2)}</td>
@@ -355,7 +370,7 @@ function generateHTMLReport(report: PerformanceReport): string {
                         ${getComponentPerformanceStatus(r)}
                     </td>
                 </tr>
-                `,
+                `
                   )
                   .join('')}
             </tbody>
@@ -409,27 +424,27 @@ function generateHTMLReport(report: PerformanceReport): string {
 </html>`
 }
 
-function getPerformanceClass(op: any): string {
+function getPerformanceClass(op: BenchmarkResult): string {
   if (op.name.includes('Single') && op.averageTime < 50) return 'good'
   if (op.name.includes('Batch') && op.averageTime < 200) return 'good'
   if (op.averageTime > 500) return 'bad'
   return 'warning'
 }
 
-function getPerformanceStatus(op: any): string {
+function getPerformanceStatus(op: BenchmarkResult): string {
   const cls = getPerformanceClass(op)
   if (cls === 'good') return '✅ Good'
   if (cls === 'bad') return '❌ Needs Optimization'
   return '⚠️ Acceptable'
 }
 
-function getComponentPerformanceClass(r: any): string {
+function getComponentPerformanceClass(r: BenchmarkResult): string {
   if (r.averageTime < 50) return 'good'
   if (r.averageTime > 200) return 'bad'
   return 'warning'
 }
 
-function getComponentPerformanceStatus(r: any): string {
+function getComponentPerformanceStatus(r: BenchmarkResult): string {
   const cls = getComponentPerformanceClass(r)
   if (cls === 'good') return '✅ Fast'
   if (cls === 'bad') return '❌ Slow'

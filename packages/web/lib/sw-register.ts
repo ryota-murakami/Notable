@@ -1,4 +1,5 @@
 // Service Worker Registration with Performance Monitoring
+import { logger } from '@/lib/logging'
 
 export async function registerServiceWorker() {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
@@ -11,7 +12,9 @@ export async function registerServiceWorker() {
       scope: '/',
     })
 
-    console.log('Service Worker registered successfully:', registration.scope)
+    logger.info('Service Worker registered successfully', {
+      scope: registration.scope,
+    })
 
     // Handle service worker updates
     registration.addEventListener('updatefound', () => {
@@ -24,7 +27,7 @@ export async function registerServiceWorker() {
           navigator.serviceWorker.controller
         ) {
           // New content is available
-          console.log('New content available - refresh to update')
+          logger.info('New content available - refresh to update')
 
           // Show update notification to user
           if (window.confirm('New version available! Refresh to update?')) {
@@ -44,9 +47,9 @@ export async function registerServiceWorker() {
     if ('sync' in registration) {
       try {
         await registration.sync.register('sync-notes')
-        console.log('Background sync registered')
+        logger.info('Background sync registered')
       } catch (err) {
-        console.log('Background sync registration failed:', err)
+        logger.error('Background sync registration failed', { error: err })
       }
     }
 
@@ -55,14 +58,14 @@ export async function registerServiceWorker() {
       if (event.data && event.data.type === 'SYNC_NOTES') {
         // Trigger note sync in the app
         window.dispatchEvent(
-          new CustomEvent('sw-sync-notes', { detail: event.data }),
+          new CustomEvent('sw-sync-notes', { detail: event.data })
         )
       }
     })
 
     return registration
   } catch (error) {
-    console.error('Service Worker registration failed:', error)
+    logger.error('Service Worker registration failed', { error })
   }
 }
 

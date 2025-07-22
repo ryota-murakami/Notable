@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { useToast } from '@/hooks/use-toast'
+import { logger } from '@/lib/logging'
 import type { Note } from '@/types/note'
 import type { User } from '@supabase/supabase-js'
 import type { RealtimeUser } from '@/types/realtime'
@@ -47,20 +48,18 @@ export function useSupabaseNotes({
     onNoteUpdate: handleRealtimeNoteUpdate,
     onUserTyping: (users) => {
       // Handle typing indicators
-      console.log('Users typing:', users)
+      logger.debug('Users typing in real-time', { users, activeNoteId })
     },
     onPresenceChange: (users) => {
       // Handle presence changes
-      console.log('Online users:', users)
+      logger.debug('Online users presence changed', { users, activeNoteId })
     },
   })
 
   // Handle real-time note updates
   function handleRealtimeNoteUpdate(updatedNote: Note) {
     setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === updatedNote.id ? updatedNote : note,
-      ),
+      prevNotes.map((note) => (note.id === updatedNote.id ? updatedNote : note))
     )
 
     toast({
@@ -86,7 +85,7 @@ export function useSupabaseNotes({
           note_tags(
             tags(id, name, color)
           )
-        `,
+        `
         )
         .eq('user_id', user.id)
         .is('deleted_at', null)
@@ -230,8 +229,8 @@ export function useSupabaseNotes({
           prevNotes.map((n) =>
             n.id === note.id
               ? { ...note, updatedAt: new Date().toISOString() }
-              : n,
-          ),
+              : n
+          )
         )
 
         return true
@@ -249,7 +248,7 @@ export function useSupabaseNotes({
         setIsSaving(false)
       }
     },
-    [user, toast, broadcastNoteUpdate],
+    [user, toast, broadcastNoteUpdate]
   )
 
   // Create new note
@@ -292,7 +291,7 @@ export function useSupabaseNotes({
         setIsLoading(false)
       }
     },
-    [user, toast],
+    [user, toast]
   )
 
   // Create new folder
@@ -337,7 +336,7 @@ export function useSupabaseNotes({
         setIsLoading(false)
       }
     },
-    [user, toast],
+    [user, toast]
   )
 
   // Delete note
@@ -384,7 +383,7 @@ export function useSupabaseNotes({
         return false
       }
     },
-    [user, notes, toast],
+    [user, notes, toast]
   )
 
   // Load notes when user changes

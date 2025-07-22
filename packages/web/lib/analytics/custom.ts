@@ -1,5 +1,6 @@
 import { AnalyticsProvider } from './provider'
 import { AnalyticsEvent, AnalyticsUser, PageViewEvent } from './index'
+import { logger } from '@/lib/logging'
 
 interface AnalyticsBuffer {
   events: AnalyticsEvent[]
@@ -91,7 +92,7 @@ class CustomAnalyticsProvider implements AnalyticsProvider {
       this.buffer.pageViews.push(...data.pageViews)
       this.buffer.users.push(...data.users)
 
-      console.error('Failed to send analytics:', error)
+      logger.error('Failed to send analytics data', { error })
     }
   }
 

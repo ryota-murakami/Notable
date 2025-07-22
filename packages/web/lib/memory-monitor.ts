@@ -1,4 +1,19 @@
 import { EventEmitter } from 'events'
+import { useEffect } from 'react'
+import { logger } from '@/lib/logging'
+
+// Extend Performance API type
+interface PerformanceMemory {
+  usedJSHeapSize: number
+  totalJSHeapSize: number
+  jsHeapSizeLimit: number
+  externalSize?: number
+}
+
+interface WindowWithGC extends Window {
+  gc?: () => void
+  __activeTimerCount?: () => number
+}
 
 interface MemorySnapshot {
   timestamp: number
@@ -48,13 +63,19 @@ export class MemoryMonitor extends EventEmitter {
     const originalAddEventListener = window.addEventListener
     const originalRemoveEventListener = window.removeEventListener
 
-    window.addEventListener = (type: string, ...args: any[]) => {
+    window.addEventListener = (
+      type: string,
+      ...args: Parameters<typeof originalAddEventListener>
+    ) => {
       const count = this.globalListeners.get(type) || 0
       this.globalListeners.set(type, count + 1)
       return originalAddEventListener.call(window, type, ...args)
     }
 
-    window.removeEventListener = (type: string, ...args: any[]) => {
+    window.removeEventListener = (
+      type: string,
+      ...args: Parameters<typeof originalRemoveEventListener>
+    ) => {
       const count = this.globalListeners.get(type) || 0
       if (count > 0) {
         this.globalListeners.set(type, count - 1)
@@ -70,13 +91,13 @@ export class MemoryMonitor extends EventEmitter {
 
     const activeTimers = new Set<number>()
 
-    window.setTimeout = (...args: any[]) => {
+    window.setTimeout = (...args: Parameters<typeof originalSetTimeout>) => {
       const id = originalSetTimeout.apply(window, args)
       activeTimers.add(id)
       return id
     }
 
-    window.setInterval = (...args: any[]) => {
+    window.setInterval = (...args: Parameters<typeof originalSetInterval>) => {
       const id = originalSetInterval.apply(window, args)
       activeTimers.add(id)
       return id
@@ -93,7 +114,7 @@ export class MemoryMonitor extends EventEmitter {
     }
 
     // Expose timer count for debugging
-    ;(window as any).__activeTimerCount = () => activeTimers.size
+    ;(window as WindowWithGC).__activeTimerCount = () => activeTimers.size
   }
 
   startMonitoring(intervalMs: number = 10000) {
@@ -117,10 +138,11 @@ export class MemoryMonitor extends EventEmitter {
   }
 
   private takeSnapshot(): MemorySnapshot {
-    const memory = (performance as any).memory
+    const memory = (performance as Performance & { memory?: PerformanceMemory })
+      .memory
 
     if (!memory) {
-      console.warn('Performance.memory API not available')
+      logger.warn('Performance.memory API not available')
       return {
         timestamp: Date.now(),
         heapUsed: 0,
@@ -173,9 +195,13 @@ export class MemoryMonitor extends EventEmitter {
     }
   }
 
-  trackComponent(componentName: string, _componentInstance?: any): () => void {
+  trackComponent(
+    componentName: string,
+    _componentInstance?: unknown
+  ): () => void {
     const trackerId = `${componentName}_${Date.now()}_${Math.random()}`
-    const memory = (performance as any).memory
+    const memory = (performance as Performance & { memory?: PerformanceMemory })
+      .memory
 
     const tracker: ComponentMemoryTracker = {
       componentName,
@@ -199,7 +225,8 @@ export class MemoryMonitor extends EventEmitter {
       const lifetimeMs = tracker.unmountTime - tracker.mountTime
 
       if (memoryRetained > 10 * 1024 * 1024 && lifetimeMs > 5000) {
-        console.warn(`Potential memory leak in ${componentName}:`, {
+        logger.warn(`Potential memory leak in ${componentName}`, {
+          componentName,
           retainedMB: memoryRetained / 1024 / 1024,
           lifetimeSeconds: lifetimeMs / 1000,
           subscriptions: tracker.subscriptions.size,
@@ -242,7 +269,7 @@ export class MemoryMonitor extends EventEmitter {
     }
 
     // Check active timers
-    const timerCount = (window as any).__activeTimerCount?.() || 0
+    const timerCount = (window as WindowWithGC).__activeTimerCount?.() || 0
     if (timerCount > 50) {
       suspects.push(`High number of active timers: ${timerCount}`)
       recommendations.push('Ensure setTimeout/setInterval are cleared')
@@ -253,7 +280,7 @@ export class MemoryMonitor extends EventEmitter {
     for (const [, tracker] of this.componentTrackers) {
       if (tracker.unmountTime && now - tracker.unmountTime > 60000) {
         suspects.push(
-          `Component ${tracker.componentName} still tracked after unmount`,
+          `Component ${tracker.componentName} still tracked after unmount`
         )
         recommendations.push(`Check cleanup in ${tracker.componentName}`)
       }
@@ -302,14 +329,16 @@ export class MemoryMonitor extends EventEmitter {
           name: t.componentName,
           lifetimeSeconds: (Date.now() - t.mountTime) / 1000,
           memoryGrowthMB:
-            ((performance as any).memory?.usedJSHeapSize - t.initialMemory) /
+            (((performance as Performance & { memory?: PerformanceMemory })
+              .memory?.usedJSHeapSize || 0) -
+              t.initialMemory) /
             1024 /
             1024,
         })),
       globalListeners: Object.fromEntries(
         Array.from(this.globalListeners.entries()).filter(
-          ([_, count]) => count > 0,
-        ),
+          ([_, count]) => count > 0
+        )
       ),
       leakDetection,
     }
@@ -322,7 +351,7 @@ export class MemoryMonitor extends EventEmitter {
     // Use FinalizationRegistry to detect when object is garbage collected
     if (typeof FinalizationRegistry !== 'undefined') {
       const registry = new FinalizationRegistry((heldValue: string) => {
-        console.log(`Object garbage collected: ${heldValue}`)
+        logger.debug('Object garbage collected', { objectLabel: heldValue })
       })
 
       registry.register(obj, label)
@@ -331,12 +360,12 @@ export class MemoryMonitor extends EventEmitter {
 
   // Force garbage collection (only works with --expose-gc flag)
   forceGC() {
-    if (typeof window !== 'undefined' && (window as any).gc) {
-      console.log('Forcing garbage collection...')
-      ;(window as any).gc()
+    if (typeof window !== 'undefined' && (window as WindowWithGC).gc) {
+      logger.debug('Forcing garbage collection')
+      ;(window as WindowWithGC).gc?.()
     } else {
-      console.warn(
-        'Garbage collection not available. Run with --expose-gc flag.',
+      logger.warn(
+        'Garbage collection not available. Run with --expose-gc flag.'
       )
     }
   }

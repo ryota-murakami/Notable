@@ -24,6 +24,7 @@ import { Tag, Download, FileText, Globe, Code, FileImage } from 'lucide-react'
 
 import type { Note } from '@/types/note'
 import { useExport } from '@/hooks/use-export'
+import { logger } from '@/lib/logging'
 
 interface PlateEditorProps {
   note: Note
@@ -115,6 +116,7 @@ export function PlateEditorComponent({
       const timeoutId = setTimeout(saveNote, 1000)
       return () => clearTimeout(timeoutId)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor?.children, title, tags, note, onUpdateNote])
 
   // Save note when title changes
@@ -154,7 +156,7 @@ export function PlateEditorComponent({
   }
 
   const handleExport = async (
-    format: 'markdown' | 'html' | 'pdf' | 'react',
+    format: 'markdown' | 'html' | 'pdf' | 'react'
   ) => {
     try {
       await exportNote(note, format, {
@@ -163,14 +165,14 @@ export function PlateEditorComponent({
         includeStyles: true,
       })
     } catch (error) {
-      console.error('Export failed:', error)
+      logger.error('Note export failed', { error, noteId: note.id, format })
     }
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex-1 flex flex-col min-h-0">
-        <div className="border-b border-border p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className='h-full flex flex-col'>
+      <div className='flex-1 flex flex-col min-h-0'>
+        <div className='border-b border-border p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
           <Input
             ref={titleInputRef}
             value={title}
@@ -178,17 +180,17 @@ export function PlateEditorComponent({
               setTitle(e.target.value)
               handleStartTyping()
             }}
-            placeholder="Untitled"
-            className="text-xl font-bold border-none px-0 focus-visible:ring-0 mb-2"
+            placeholder='Untitled'
+            className='text-xl font-bold border-none px-0 focus-visible:ring-0 mb-2'
           />
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
               {tags.map((tag) => (
                 <Badge
                   key={tag}
-                  variant="secondary"
-                  className="cursor-pointer hover:bg-destructive/10"
+                  variant='secondary'
+                  className='cursor-pointer hover:bg-destructive/10'
                   onClick={() => handleRemoveTag(tag)}
                 >
                   {tag} ×
@@ -196,27 +198,27 @@ export function PlateEditorComponent({
               ))}
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className='flex items-center space-x-2'>
               <Popover open={showTags} onOpenChange={setShowTags}>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Tag className="h-4 w-4" />
+                  <Button variant='ghost' size='sm'>
+                    <Tag className='h-4 w-4' />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-2">
-                    <div className="flex space-x-2">
+                <PopoverContent className='w-80'>
+                  <div className='space-y-2'>
+                    <div className='flex space-x-2'>
                       <Input
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
-                        placeholder="Add a tag..."
+                        placeholder='Add a tag...'
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             handleAddTag()
                           }
                         }}
                       />
-                      <Button onClick={handleAddTag} size="sm">
+                      <Button onClick={handleAddTag} size='sm'>
                         Add
                       </Button>
                     </div>
@@ -226,58 +228,58 @@ export function PlateEditorComponent({
 
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="sm" disabled={isExporting}>
-                    <Download className="h-4 w-4" />
+                  <Button variant='ghost' size='sm' disabled={isExporting}>
+                    <Download className='h-4 w-4' />
                     {isExporting && exportProgress > 0 && (
-                      <span className="ml-1 text-xs">{exportProgress}%</span>
+                      <span className='ml-1 text-xs'>{exportProgress}%</span>
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-56">
-                  <div className="space-y-2">
+                <PopoverContent className='w-56'>
+                  <div className='space-y-2'>
                     <Button
-                      variant="ghost"
-                      className="w-full justify-start"
+                      variant='ghost'
+                      className='w-full justify-start'
                       onClick={() => handleExport('markdown')}
                       disabled={isExporting}
                     >
-                      <FileText className="h-4 w-4 mr-2" />
+                      <FileText className='h-4 w-4 mr-2' />
                       Export as Markdown
                     </Button>
                     <Button
-                      variant="ghost"
-                      className="w-full justify-start"
+                      variant='ghost'
+                      className='w-full justify-start'
                       onClick={() => handleExport('html')}
                       disabled={isExporting}
                     >
-                      <Globe className="h-4 w-4 mr-2" />
+                      <Globe className='h-4 w-4 mr-2' />
                       Export as HTML
                     </Button>
                     <Button
-                      variant="ghost"
-                      className="w-full justify-start"
+                      variant='ghost'
+                      className='w-full justify-start'
                       onClick={() => handleExport('react')}
                       disabled={isExporting}
                     >
-                      <Code className="h-4 w-4 mr-2" />
+                      <Code className='h-4 w-4 mr-2' />
                       Export as React
                     </Button>
                     <Button
-                      variant="ghost"
-                      className="w-full justify-start"
+                      variant='ghost'
+                      className='w-full justify-start'
                       onClick={() => handleExport('pdf')}
                       disabled={isExporting}
                     >
-                      <FileImage className="h-4 w-4 mr-2" />
+                      <FileImage className='h-4 w-4 mr-2' />
                       Export as PDF
                     </Button>
                   </div>
                   {isExporting && (
-                    <div className="mt-3 pt-2 border-t">
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <div className="flex-1 bg-secondary rounded-full h-1.5">
+                    <div className='mt-3 pt-2 border-t'>
+                      <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+                        <div className='flex-1 bg-secondary rounded-full h-1.5'>
                           <div
-                            className="bg-primary h-1.5 rounded-full transition-all"
+                            className='bg-primary h-1.5 rounded-full transition-all'
                             style={{ width: `${exportProgress}%` }}
                           />
                         </div>
@@ -291,14 +293,14 @@ export function PlateEditorComponent({
           </div>
         </div>
 
-        <div className="flex-1 min-h-0">
+        <div className='flex-1 min-h-0'>
           <Plate editor={editor}>
-            <EditorContainer variant="default">
+            <EditorContainer variant='default'>
               <FixedToolbar>
                 <FixedToolbarButtons />
               </FixedToolbar>
               <Editor
-                variant="default"
+                variant='default'
                 onKeyDown={handleStartTyping}
                 onChange={handleStartTyping}
                 onPaste={handleStartTyping}

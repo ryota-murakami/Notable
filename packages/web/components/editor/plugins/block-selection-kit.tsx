@@ -22,7 +22,7 @@ export const BlockSelectionKit = [
         if (!props.attributes.className?.includes('slate-selectable'))
           return null
 
-        return <BlockSelection {...(props as any)} />
+        return <BlockSelection {...(props as Record<string, unknown>)} />
       },
     },
   })),

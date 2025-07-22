@@ -33,7 +33,7 @@ export function useLogger(componentName?: string) {
         context,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Warning logging
@@ -44,7 +44,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Info logging
@@ -55,7 +55,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Debug logging
@@ -66,7 +66,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // User action logging
@@ -77,7 +77,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata, user?.id],
+    [baseMetadata, user?.id]
   )
 
   // Performance logging
@@ -88,7 +88,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Time tracking helper
@@ -101,7 +101,7 @@ export function useLogger(componentName?: string) {
         logPerformance(operation, duration)
       }
     },
-    [logPerformance],
+    [logPerformance]
   )
 
   return {
@@ -127,7 +127,7 @@ export function useAsyncLogger() {
       options?: {
         onSuccess?: (result: T) => void
         onError?: (error: Error) => void
-      },
+      }
     ): Promise<T> => {
       const endTimer = startTimer(operation)
 
@@ -145,7 +145,7 @@ export function useAsyncLogger() {
         endTimer()
       }
     },
-    [error, info, startTimer],
+    [error, info, startTimer]
   )
 
   return { logAsync }
@@ -156,30 +156,30 @@ export function useFormLogger(formName: string) {
   const { action, error, startTimer } = useLogger(`Form:${formName}`)
 
   const logSubmit = useCallback(
-    (data: any) => {
+    (data: Record<string, unknown>) => {
       action('form_submit', {
         formName,
         fields: Object.keys(data),
       })
     },
-    [action, formName],
+    [action, formName]
   )
 
   const logValidationError = useCallback(
-    (errors: any) => {
+    (errors: Record<string, unknown>) => {
       action('form_validation_error', {
         formName,
         errors: Object.keys(errors),
       })
     },
-    [action, formName],
+    [action, formName]
   )
 
   const logSubmitError = useCallback(
     (err: Error) => {
       error(err, 'Form submission failed')
     },
-    [error],
+    [error]
   )
 
   const logSubmitSuccess = useCallback(() => {
