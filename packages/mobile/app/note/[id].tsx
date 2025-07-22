@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-unused-styles */
 import React, { useState, useEffect, useCallback } from 'react'
 import {
   View,
