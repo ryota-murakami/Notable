@@ -20,6 +20,7 @@ interface IncidentRecord extends IncidentStatus {
 }
 
 export async function GET(_request: NextRequest) {
+  // TODO: Implement real GET /api/monitoring/incidents handler
   // Incidents table doesn't exist in database types yet
   // Return mock data for now
   return NextResponse.json({
@@ -37,6 +38,7 @@ export async function GET(_request: NextRequest) {
 }
 
 // Original implementation (commented out)
+// TODO: Remove this export once the incidents table is available in database types
 export async function GET_ORIGINAL(request: NextRequest) {
   try {
     const supabase = await createServerClient()

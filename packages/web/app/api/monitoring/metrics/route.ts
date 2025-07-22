@@ -86,7 +86,6 @@ export async function GET(request: NextRequest) {
     const startTime = searchParams.get('start')
     const endTime = searchParams.get('end')
     const format = searchParams.get('format') || 'json' // 'json' | 'prometheus'
-    // const _step = searchParams.get('step') || '5m' // aggregation interval
 
     const supabase = await createServerClient()
 
@@ -296,7 +295,6 @@ async function getCurrentMetrics(
 ) {
   try {
     // Simulate current metrics - in a real app, these would come from various sources
-    // const _currentTime = Date.now()
 
     // Get some real data from the database
     const { data: notes } = await supabase
