@@ -25,7 +25,7 @@ export class PerformanceMonitor {
   // Measure async operation time
   async measureAsync<T>(
     operationName: string,
-    operation: () => Promise<T>,
+    operation: () => Promise<T>
   ): Promise<T> {
     const startTime = performance.now()
     try {
@@ -116,11 +116,25 @@ export interface PerformanceReport {
   }
 }
 
+interface LargestContentfulPaintEntry extends PerformanceEntry {
+  renderTime: number
+  loadTime: number
+}
+
+interface FirstInputEntry extends PerformanceEntry {
+  processingStart: number
+}
+
+interface LayoutShiftEntry extends PerformanceEntry {
+  value: number
+  hadRecentInput: boolean
+}
+
 // Debounce utility with performance tracking
-export function debounceWithMetrics<T extends (...args: any[]) => any>(
+export function debounceWithMetrics<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number,
-  metricName: string,
+  metricName: string
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout | null = null
   const monitor = PerformanceMonitor.getInstance()
@@ -138,10 +152,10 @@ export function debounceWithMetrics<T extends (...args: any[]) => any>(
 }
 
 // Throttle utility with performance tracking
-export function throttleWithMetrics<T extends (...args: any[]) => any>(
+export function throttleWithMetrics<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number,
-  metricName: string,
+  metricName: string
 ): (...args: Parameters<T>) => void {
   let inThrottle = false
   const monitor = PerformanceMonitor.getInstance()
@@ -158,10 +172,10 @@ export function throttleWithMetrics<T extends (...args: any[]) => any>(
 }
 
 // Memoize with performance tracking
-export function memoizeWithMetrics<T extends (...args: any[]) => any>(
+export function memoizeWithMetrics<T extends (...args: unknown[]) => unknown>(
   func: T,
   metricName: string,
-  resolver?: (...args: Parameters<T>) => string,
+  resolver?: (...args: Parameters<T>) => string
 ): T {
   const cache = new Map<string, ReturnType<T>>()
   const monitor = PerformanceMonitor.getInstance()
@@ -170,11 +184,14 @@ export function memoizeWithMetrics<T extends (...args: any[]) => any>(
     const key = resolver ? resolver(...args) : JSON.stringify(args)
 
     if (cache.has(key)) {
-      return cache.get(key)!
+      const cachedResult = cache.get(key)
+      if (cachedResult !== undefined) {
+        return cachedResult
+      }
     }
 
     const result = monitor.measureRender(`${metricName}-compute`, () =>
-      func(...args),
+      func(...args)
     )
     cache.set(key, result as ReturnType<T>)
 
@@ -184,7 +201,7 @@ export function memoizeWithMetrics<T extends (...args: any[]) => any>(
 
 // Performance observer for web vitals
 export function observeWebVitals(
-  callback: (metric: WebVitalMetric) => void,
+  callback: (metric: WebVitalMetric) => void
 ): () => void {
   if (typeof window === 'undefined' || !('PerformanceObserver' in window)) {
     return () => {}
@@ -196,7 +213,9 @@ export function observeWebVitals(
   try {
     const lcpObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
-      const lastEntry = entries[entries.length - 1] as any
+      const lastEntry = entries[
+        entries.length - 1
+      ] as LargestContentfulPaintEntry
       callback({
         name: 'LCP',
         value: lastEntry.renderTime || lastEntry.loadTime,
@@ -213,7 +232,7 @@ export function observeWebVitals(
   try {
     const fidObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
-      entries.forEach((entry: any) => {
+      entries.forEach((entry: FirstInputEntry) => {
         callback({
           name: 'FID',
           value: entry.processingStart - entry.startTime,
@@ -232,7 +251,7 @@ export function observeWebVitals(
     let clsValue = 0
     const clsObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
-      entries.forEach((entry: any) => {
+      entries.forEach((entry: LayoutShiftEntry) => {
         if (!entry.hadRecentInput) {
           clsValue += entry.value
         }

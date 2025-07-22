@@ -24,7 +24,7 @@ interface AlertWebhookPayload {
 
 // Send notification to Slack
 async function sendSlackNotification(
-  payload: AlertWebhookPayload,
+  payload: AlertWebhookPayload
 ): Promise<void> {
   const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
   if (!slackWebhookUrl) return
@@ -81,7 +81,7 @@ async function sendSlackNotification(
 
 // Send email notification
 async function sendEmailNotification(
-  payload: AlertWebhookPayload,
+  payload: AlertWebhookPayload
 ): Promise<void> {
   const resendApiKey = process.env.RESEND_API_KEY
   const emailFrom = process.env.EMAIL_FROM
@@ -102,7 +102,7 @@ async function sendEmailNotification(
       <p><strong>Started:</strong> ${new Date(alert.startsAt).toLocaleString()}</p>
       ${alert.endsAt ? `<p><strong>Ended:</strong> ${new Date(alert.endsAt).toLocaleString()}</p>` : ''}
     </div>
-  `,
+  `
     )
     .join('')
 
@@ -155,10 +155,18 @@ async function sendEmailNotification(
 async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
   try {
     const { createClient } = await import('@supabase/supabase-js')
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    )
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      logger.error(
+        'Missing required Supabase environment variables for alert storage'
+      )
+      return
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey)
 
     for (const alert of payload.alerts) {
       const { error } = await supabase.from('monitoring_alerts').insert({
@@ -221,7 +229,7 @@ export async function POST(_request: NextRequest) {
     logger.error('Alert webhook error')
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
