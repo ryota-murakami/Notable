@@ -46,6 +46,8 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let cleanup: (() => void) | undefined
+
     const initializeSupabase = async () => {
       try {
         const supabaseUrl =
@@ -75,14 +77,14 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
         // Listen for auth changes
         const {
           data: { subscription },
-        } = client.auth.onAuthStateChange(async (event, session) => {
+        } = client.auth.onAuthStateChange(async (_event, session) => {
           setSession(session)
           setUser(session?.user ?? null)
         })
 
         setLoading(false)
 
-        return () => {
+        cleanup = () => {
           subscription?.unsubscribe()
         }
       } catch (error) {
@@ -92,6 +94,10 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     }
 
     initializeSupabase()
+
+    return () => {
+      cleanup?.()
+    }
   }, [])
 
   const signIn = async (email: string, password: string) => {

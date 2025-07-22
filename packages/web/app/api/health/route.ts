@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { headers } from 'next/headers'
 import logger from '@/lib/logging'
 
 // Health check response interface

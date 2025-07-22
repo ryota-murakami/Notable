@@ -32,7 +32,7 @@ const supabase = createClient(
       persistSession: false,
       autoRefreshToken: false,
     },
-  },
+  }
 )
 
 // Check individual service status
@@ -41,7 +41,7 @@ async function checkService(
   checkFn: () => Promise<{
     status: ServiceStatus['status']
     responseTime?: number
-  }>,
+  }>
 ): Promise<ServiceStatus> {
   const startTime = Date.now()
 
@@ -69,11 +69,6 @@ async function checkService(
 // Get uptime statistics from logs
 async function getUptimeStats(): Promise<StatusPageResponse['uptime']> {
   try {
-    const now = new Date()
-    const _oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-    const _sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-    const _thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-
     // In a real implementation, query your monitoring data
     // For now, return mock data
     return {
@@ -213,7 +208,7 @@ export async function GET(_request: NextRequest) {
           ...acc,
           [service.name]: service.status,
         }),
-        {},
+        {}
       ),
     })
 
@@ -242,7 +237,7 @@ export async function GET(_request: NextRequest) {
           last30Days: 0,
         },
       } as StatusPageResponse,
-      { status: 503 },
+      { status: 503 }
     )
   }
 }
