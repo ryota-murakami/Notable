@@ -178,3 +178,23 @@ export interface UserSettings {
   showOutline: boolean
   keyboardShortcuts: Record<string, string>
 }
+
+// Note mutation types
+export interface NoteCreate {
+  title: string
+  content?: any
+  contentText?: string | null
+  folderId?: string | null
+  tags?: string[]
+  isFavorite?: boolean
+}
+
+export interface NoteUpdate {
+  title?: string
+  content?: any
+  contentText?: string | null
+  folderId?: string | null
+  isArchived?: boolean
+  isFavorite?: boolean
+  tags?: string[]
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import NetInfo from '@react-native-community/netinfo'
-import { Note } from '../types'
+import { Note } from '@/types'
 
 export interface PendingSync {
   id: string
@@ -26,7 +26,7 @@ export interface OfflineStorageState {
 
   // Sync queue management
   addToSyncQueue: (
-    sync: Omit<PendingSync, 'id' | 'timestamp' | 'retries'>,
+    sync: Omit<PendingSync, 'id' | 'timestamp' | 'retries'>
   ) => Promise<void>
   processSyncQueue: () => Promise<void>
   clearSyncQueue: () => Promise<void>
@@ -121,7 +121,7 @@ export function useOfflineStorage(): OfflineStorageState {
         console.error('Failed to add note to cache:', error)
       }
     },
-    [getCachedNotes, setCachedNotes],
+    [getCachedNotes, setCachedNotes]
   )
 
   const updateNoteInCache = useCallback(
@@ -130,15 +130,15 @@ export function useOfflineStorage(): OfflineStorageState {
         const notes = await getCachedNotes()
         const updatedNotes = notes.map((note) =>
           note.id === noteId
-            ? { ...note, ...updates, updatedAt: new Date().toISOString() }
-            : note,
+            ? { ...note, ...updates, updatedAt: new Date() }
+            : note
         )
         await setCachedNotes(updatedNotes)
       } catch (error) {
         console.error('Failed to update note in cache:', error)
       }
     },
-    [getCachedNotes, setCachedNotes],
+    [getCachedNotes, setCachedNotes]
   )
 
   const removeNoteFromCache = useCallback(
@@ -151,7 +151,7 @@ export function useOfflineStorage(): OfflineStorageState {
         console.error('Failed to remove note from cache:', error)
       }
     },
-    [getCachedNotes, setCachedNotes],
+    [getCachedNotes, setCachedNotes]
   )
 
   const saveSyncQueue = useCallback(
@@ -159,19 +159,19 @@ export function useOfflineStorage(): OfflineStorageState {
       try {
         await AsyncStorage.setItem(
           STORAGE_KEYS.SYNC_QUEUE,
-          JSON.stringify(syncs),
+          JSON.stringify(syncs)
         )
         setPendingSyncs(syncs)
       } catch (error) {
         console.error('Failed to save sync queue:', error)
       }
     },
-    [],
+    []
   )
 
   const addToSyncQueue = useCallback(
     async (
-      sync: Omit<PendingSync, 'id' | 'timestamp' | 'retries'>,
+      sync: Omit<PendingSync, 'id' | 'timestamp' | 'retries'>
     ): Promise<void> => {
       const newSync: PendingSync = {
         ...sync,
@@ -188,7 +188,7 @@ export function useOfflineStorage(): OfflineStorageState {
         processSyncQueue()
       }
     },
-    [pendingSyncs, saveSyncQueue, isOnline],
+    [pendingSyncs, saveSyncQueue, isOnline]
   )
 
   const processSyncQueue = useCallback(async (): Promise<void> => {
@@ -229,10 +229,13 @@ export function useOfflineStorage(): OfflineStorageState {
       // Schedule retry for failed syncs
       if (failedSyncs.length > 0) {
         const maxRetryDelay = Math.max(
-          ...failedSyncs.map(
-            (s) =>
-              RETRY_DELAYS[Math.min(s.retries - 1, RETRY_DELAYS.length - 1)],
-          ),
+          ...failedSyncs.map((s) => {
+            const index = Math.min(
+              (s.retries ?? 1) - 1,
+              RETRY_DELAYS.length - 1
+            )
+            return RETRY_DELAYS[index] ?? 1000
+          })
         )
         syncQueueRef.current = setTimeout(() => {
           processSyncQueue()
@@ -285,7 +288,7 @@ export function useOfflineStorage(): OfflineStorageState {
         return localNote
       }
     },
-    [],
+    []
   )
 
   // Cleanup on unmount

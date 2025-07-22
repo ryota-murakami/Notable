@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { View, StyleSheet, Alert, Text } from 'react-native'
 import {
   TextInput,
@@ -28,6 +28,9 @@ export default function SignInScreen() {
     setLoading(true)
 
     try {
+      if (!supabase) {
+        throw new Error('Supabase client not initialized')
+      }
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -47,6 +50,9 @@ export default function SignInScreen() {
     setLoading(true)
 
     try {
+      if (!supabase) {
+        throw new Error('Supabase client not initialized')
+      }
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
       })

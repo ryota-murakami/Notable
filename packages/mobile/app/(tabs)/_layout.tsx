@@ -1,4 +1,3 @@
-import React from 'react'
 import { Tabs, Redirect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from 'react-native-paper'
@@ -13,7 +12,7 @@ export default function TabLayout() {
   }
 
   if (!user) {
-    return <Redirect href="/(auth)" />
+    return <Redirect href='/(auth)' />
   }
 
   return (
@@ -32,29 +31,29 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
           title: 'Notes',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="document-text-outline" size={size} color={color} />
+            <Ionicons name='document-text-outline' size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="search"
+        name='search'
         options={{
           title: 'Search',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search-outline" size={size} color={color} />
+            <Ionicons name='search-outline' size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name='settings'
         options={{
           title: 'Settings',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <Ionicons name='settings-outline' size={size} color={color} />
           ),
         }}
       />

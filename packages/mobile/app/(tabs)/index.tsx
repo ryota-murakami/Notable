@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
-import { FAB, useTheme, Text, ActivityIndicator } from 'react-native-paper'
+import { FAB, Text, ActivityIndicator } from 'react-native-paper'
 import { useRouter } from 'expo-router'
 import { useSupabase } from '@/components/SupabaseProvider'
 import { useOfflineNotes } from '@/hooks/use-offline-notes'
@@ -10,18 +10,24 @@ import { Note } from '@/types'
 
 export default function NotesScreen() {
   const { user } = useSupabase()
-  const { notes, isLoading, createNote, deleteNote } = useOfflineNotes({
-    user_id: user?.id,
-  })
+  const { notes, isLoading, createNote, deleteNote } = useOfflineNotes(
+    user
+      ? {
+          user: {
+            id: user.id,
+            name: user.email || '',
+            email: user.email || '',
+          },
+        }
+      : {}
+  )
   const [filter, _setFilter] = useState<'all' | 'folders' | 'notes'>('all')
-  const _theme = useTheme()
   const router = useRouter()
 
   const handleCreateNote = async (isFolder = false) => {
     const newNote = await createNote({
       title: isFolder ? 'New Folder' : 'Untitled Note',
       content: '',
-      is_folder: isFolder,
     })
     if (newNote) {
       router.push(`/note/${newNote.id}`)
@@ -49,7 +55,7 @@ export default function NotesScreen() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator animating={true} size="large" />
+        <ActivityIndicator animating={true} size='large' />
         <Text style={{ marginTop: 8 }}>Loading notes...</Text>
       </View>
     )
@@ -59,9 +65,9 @@ export default function NotesScreen() {
     <View style={styles.container}>
       {notes.length === 0 ? (
         <EmptyState
-          title="No notes yet"
-          description="Create a new note to get started."
-          icon="note-plus-outline"
+          title='No notes yet'
+          description='Create a new note to get started.'
+          icon='note-plus-outline'
         />
       ) : (
         <FlatList
@@ -73,7 +79,8 @@ export default function NotesScreen() {
       )}
       <FAB.Group
         open={false}
-        icon="plus"
+        visible={true}
+        icon='plus'
         actions={[
           {
             icon: 'note-plus',

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Note } from '../types'
+import { Note } from '@/types'
 
 export interface TypingUser {
   id: string
@@ -37,7 +37,7 @@ export interface RealtimeSyncOptions {
 }
 
 // Utility to generate user colors
-const generateUserColor = (userId: string): string => {
+const generateUserColor = (userId: string | undefined): string => {
   const colors = [
     '#FF6B6B',
     '#4ECDC4',
@@ -51,11 +51,14 @@ const generateUserColor = (userId: string): string => {
     '#FA8072',
   ]
 
+  if (!userId) return colors[0] ?? '#FF6B6B'
+
   const hash = userId.split('').reduce((acc, char) => {
     return char.charCodeAt(0) + ((acc << 5) - acc)
   }, 0)
 
-  return colors[Math.abs(hash) % colors.length]
+  const index = Math.abs(hash) % colors.length
+  return colors[index] ?? '#FF6B6B'
 }
 
 // Throttle function for performance
@@ -63,7 +66,7 @@ const throttle = (func: (...args: any[]) => void, delay: number) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 
-  return function (...args: any[]) {
+  return function (this: any, ...args: any[]) {
     const currentTime = Date.now()
 
     if (currentTime - lastExecTime > delay) {
@@ -218,8 +221,8 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
           channel.track({
             id: user.id,
             name: user.name,
-            color: user.color || generateUserColor(user.id),
-            avatar: user.avatar,
+            color: user.color ?? generateUserColor(user.id),
+            avatar: user.avatar ?? undefined,
             joinedAt: Date.now(),
             lastSeen: Date.now(),
           })
@@ -258,8 +261,8 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
       channelRef.current?.track({
         id: user.id,
         name: user.name,
-        color: user.color || generateUserColor(user.id),
-        avatar: user.avatar,
+        color: user.color ?? generateUserColor(user.id),
+        avatar: user.avatar ?? undefined,
         joinedAt: Date.now(),
         lastSeen: Date.now(),
       })
@@ -279,7 +282,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         payload: {
           userId: user.id,
           userName: user.name,
-          userColor: user.color || generateUserColor(user.id),
+          userColor: user.color ?? generateUserColor(user.id),
           isTyping,
         },
       })

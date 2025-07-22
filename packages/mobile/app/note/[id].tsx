@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   View,
   ScrollView,
@@ -34,7 +34,18 @@ export default function NoteScreen() {
     typingUsers,
     startTyping,
     stopTyping,
-  } = useOfflineNotes({ user_id: user?.id, activeNoteId: id as string })
+  } = useOfflineNotes(
+    user
+      ? {
+          user: {
+            id: user.id,
+            name: user.email || '',
+            email: user.email || '',
+          },
+          activeNoteId: id as string,
+        }
+      : { activeNoteId: id as string }
+  )
 
   const [note, setNote] = useState<Note | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -71,7 +82,7 @@ export default function NoteScreen() {
   if (isLoading || !note) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator animating={true} size="large" />
+        <ActivityIndicator animating={true} size='large' />
       </View>
     )
   }
@@ -88,23 +99,23 @@ export default function NoteScreen() {
           subtitle={isSaving ? 'Saving...' : 'Saved'}
         />
         {isEditing ? (
-          <Appbar.Action icon="check" onPress={handleSave} />
+          <Appbar.Action icon='check' onPress={handleSave} />
         ) : (
-          <Appbar.Action icon="pencil" onPress={() => setIsEditing(true)} />
+          <Appbar.Action icon='pencil' onPress={() => setIsEditing(true)} />
         )}
         <Menu
           visible={menuVisible}
           onDismiss={() => setMenuVisible(false)}
           anchor={
             <Appbar.Action
-              icon="dots-vertical"
+              icon='dots-vertical'
               onPress={() => setMenuVisible(true)}
             />
           }
         >
-          <Menu.Item onPress={handleShare} title="Share" />
+          <Menu.Item onPress={handleShare} title='Share' />
           <Divider />
-          <NoteExporter note={note} />
+          <NoteExporter note={note} onClose={() => setMenuVisible(false)} />
         </Menu>
       </Appbar.Header>
 
@@ -114,8 +125,8 @@ export default function NoteScreen() {
             value={note.title}
             onChangeText={(text) => setNote({ ...note, title: text })}
             style={styles.titleInput}
-            mode="outlined"
-            label="Title"
+            mode='outlined'
+            label='Title'
             onFocus={startTyping}
             onBlur={stopTyping}
           />
@@ -129,8 +140,8 @@ export default function NoteScreen() {
             onChangeText={(text) => setNote({ ...note, content: text })}
             style={styles.contentInput}
             multiline
-            mode="outlined"
-            label="Content"
+            mode='outlined'
+            label='Content'
             onFocus={startTyping}
             onBlur={stopTyping}
           />

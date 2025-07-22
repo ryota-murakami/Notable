@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Note, NoteCreate, NoteUpdate } from '../types'
+import { Note, NoteCreate, NoteUpdate } from '@/types'
 import {
   useRealtimeSync,
   RealtimeUser,
@@ -117,7 +117,7 @@ export function useOfflineNotes({
     ? {
         id: user.id,
         name: user.name,
-        avatar: user.avatar,
+        ...(user.avatar !== undefined && { avatar: user.avatar }),
       }
     : undefined
 
@@ -130,8 +130,8 @@ export function useOfflineNotes({
     stopTyping,
     broadcastNoteUpdate,
   } = useRealtimeSync({
-    noteId: activeNoteId,
-    user: realtimeUser,
+    ...(activeNoteId !== undefined && { noteId: activeNoteId }),
+    ...(realtimeUser !== undefined && { user: realtimeUser }),
     onNoteUpdate: async (updatedNote) => {
       // Handle real-time note updates with conflict resolution
       const cachedNote = cachedNotes.find((n) => n.id === updatedNote.id)
@@ -140,9 +140,7 @@ export function useOfflineNotes({
         const resolvedNote = resolveConflict(cachedNote, updatedNote)
         await updateNoteInCache(updatedNote.id, resolvedNote)
         setNotes((prev) =>
-          prev.map((note) =>
-            note.id === updatedNote.id ? resolvedNote : note,
-          ),
+          prev.map((note) => (note.id === updatedNote.id ? resolvedNote : note))
         )
       } else {
         await addNoteToCache(updatedNote)
@@ -164,12 +162,14 @@ export function useOfflineNotes({
   const loadNotes = useCallback(async () => {
     if (!user) return
 
+    let cached: Note[] = []
+
     try {
       setIsLoading(true)
       setError(null)
 
       // Load from cache first for immediate display
-      const cached = await getCachedNotes()
+      cached = await getCachedNotes()
       if (cached.length > 0) {
         setNotes(cached)
         setIsLoading(false) // Show cached data immediately
@@ -188,12 +188,29 @@ export function useOfflineNotes({
           throw fetchError
         }
 
-        const serverNotes = data || []
+        const serverNotes: Note[] = (data || []).map((note: any) => ({
+          id: note.id,
+          title: note.title,
+          content: note.content,
+          contentText: note.content_text || null,
+          userId: note.user_id,
+          folderId: note.folder_id || null,
+          isArchived: note.is_archived || false,
+          isDeleted: note.is_deleted || false,
+          isFavorite: note.is_favorite || false,
+          viewCount: note.view_count || 0,
+          wordCount: note.word_count || 0,
+          tags: [],
+          folder: note.folder || null,
+          permissions: note.permissions || [],
+          createdAt: new Date(note.created_at),
+          updatedAt: new Date(note.updated_at),
+        }))
 
         // Merge with cached notes, resolving conflicts
         const mergedNotes = mergeNotesWithConflictResolution(
           cached,
-          serverNotes,
+          serverNotes
         )
 
         // Update cache and state
@@ -218,7 +235,7 @@ export function useOfflineNotes({
 
   const mergeNotesWithConflictResolution = (
     cachedNotes: Note[],
-    serverNotes: Note[],
+    serverNotes: Note[]
   ): Note[] => {
     const merged = new Map<string, Note>()
 
@@ -241,7 +258,7 @@ export function useOfflineNotes({
 
     return Array.from(merged.values()).sort(
       (a, b) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     )
   }
 
@@ -255,16 +272,24 @@ export function useOfflineNotes({
         setError(null)
 
         const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const now = new Date()
         const newNote: Note = {
           id: tempId,
           title: noteData?.title || 'Untitled',
           content: noteData?.content || '',
-          user_id: user.id,
-          folder_id: noteData?.folder_id || null,
-          is_public: noteData?.is_public || false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deleted_at: null,
+          contentText: noteData?.contentText || null,
+          userId: user.id,
+          folderId: noteData?.folderId || null,
+          isArchived: false,
+          isDeleted: false,
+          isFavorite: noteData?.isFavorite || false,
+          viewCount: 0,
+          wordCount: 0,
+          tags: [],
+          folder: null,
+          permissions: [],
+          createdAt: now,
+          updatedAt: now,
         }
 
         // Add to cache immediately
@@ -280,9 +305,9 @@ export function useOfflineNotes({
                 {
                   title: newNote.title,
                   content: newNote.content,
-                  user_id: newNote.user_id,
-                  folder_id: newNote.folder_id,
-                  is_public: newNote.is_public,
+                  user_id: newNote.userId,
+                  folder_id: newNote.folderId,
+                  is_public: false,
                 },
               ])
               .select()
@@ -292,12 +317,17 @@ export function useOfflineNotes({
               throw createError
             }
 
-            const createdNote = data as Note
+            const createdNote: Note = {
+              ...newNote,
+              id: (data as any).id,
+              createdAt: new Date((data as any).created_at),
+              updatedAt: new Date((data as any).updated_at),
+            }
 
             // Replace temp note with real note
             await updateNoteInCache(tempId, createdNote)
             setNotes((prev) =>
-              prev.map((note) => (note.id === tempId ? createdNote : note)),
+              prev.map((note) => (note.id === tempId ? createdNote : note))
             )
 
             broadcastNoteUpdate(createdNote)
@@ -305,7 +335,7 @@ export function useOfflineNotes({
           } catch (err) {
             console.error(
               'Failed to create note on server, adding to sync queue:',
-              err,
+              err
             )
             await addToSyncQueue({
               type: 'create',
@@ -338,7 +368,7 @@ export function useOfflineNotes({
       updateNoteInCache,
       addToSyncQueue,
       broadcastNoteUpdate,
-    ],
+    ]
   )
 
   // Update a note
@@ -358,13 +388,14 @@ export function useOfflineNotes({
         const updatedNote: Note = {
           ...existingNote,
           ...updates,
-          updatedAt: new Date().toISOString(),
+          tags: [],
+          updatedAt: new Date(),
         }
 
         // Update cache immediately
         await updateNoteInCache(id, updatedNote)
         setNotes((prev) =>
-          prev.map((note) => (note.id === id ? updatedNote : note)),
+          prev.map((note) => (note.id === id ? updatedNote : note))
         )
 
         if (isOnline && supabaseRef.current) {
@@ -385,10 +416,17 @@ export function useOfflineNotes({
               throw updateError
             }
 
-            const serverNote = data as Note
+            const serverNote: Note = {
+              ...existingNote,
+              ...updates,
+              tags: [],
+              id: (data as any).id,
+              createdAt: new Date((data as any).created_at),
+              updatedAt: new Date((data as any).updated_at),
+            }
             await updateNoteInCache(id, serverNote)
             setNotes((prev) =>
-              prev.map((note) => (note.id === id ? serverNote : note)),
+              prev.map((note) => (note.id === id ? serverNote : note))
             )
 
             broadcastNoteUpdate(serverNote)
@@ -396,7 +434,7 @@ export function useOfflineNotes({
           } catch (err) {
             console.error(
               'Failed to update note on server, adding to sync queue:',
-              err,
+              err
             )
             await addToSyncQueue({
               type: 'update',
@@ -429,7 +467,7 @@ export function useOfflineNotes({
       updateNoteInCache,
       addToSyncQueue,
       broadcastNoteUpdate,
-    ],
+    ]
   )
 
   // Delete a note
@@ -464,7 +502,7 @@ export function useOfflineNotes({
           } catch (err) {
             console.error(
               'Failed to delete note on server, adding to sync queue:',
-              err,
+              err
             )
             await addToSyncQueue({
               type: 'delete',
@@ -488,7 +526,7 @@ export function useOfflineNotes({
         setIsSaving(false)
       }
     },
-    [user, isOnline, removeNoteFromCache, addToSyncQueue],
+    [user, isOnline, removeNoteFromCache, addToSyncQueue]
   )
 
   // Save note with debouncing (used by auto-save)
@@ -501,7 +539,7 @@ export function useOfflineNotes({
         })) !== null
       )
     },
-    [updateNote],
+    [updateNote]
   )
 
   // Force sync all pending changes

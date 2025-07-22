@@ -1,7 +1,6 @@
-import React from 'react'
 import { View, StyleSheet, Alert } from 'react-native'
 import { Card, Text, IconButton, Chip } from 'react-native-paper'
-import { Note } from '../types'
+import { Note } from '@/types'
 
 interface NoteCardProps {
   note: Note
@@ -66,8 +65,8 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
     return plainText.substring(0, 150) + (plainText.length > 150 ? '...' : '')
   }
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString)
+  const formatDate = (dateInput: Date | string): string => {
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput
     const now = new Date()
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
@@ -117,7 +116,7 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
             {formatDate(note.updatedAt)}
           </Chip>
 
-          {note.folder_id && (
+          {note.folderId && (
             <Chip
               mode='outlined'
               compact

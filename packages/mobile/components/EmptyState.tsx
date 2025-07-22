@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { Text, Button, useTheme } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -30,21 +29,21 @@ export function EmptyState({
       />
 
       <Text
-        variant="headlineSmall"
+        variant='headlineSmall'
         style={[styles.title, { color: theme.colors.onSurface }]}
       >
         {title}
       </Text>
 
       <Text
-        variant="bodyMedium"
+        variant='bodyMedium'
         style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
       >
         {description}
       </Text>
 
       {actionLabel && onAction && (
-        <Button mode="contained" onPress={onAction} style={styles.actionButton}>
+        <Button mode='contained' onPress={onAction} style={styles.actionButton}>
           {actionLabel}
         </Button>
       )}

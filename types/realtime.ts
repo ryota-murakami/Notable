@@ -22,15 +22,15 @@ export interface RealtimeUser {
   id: string
   name: string
   color?: string
-  avatar?: string
+  avatar?: string | undefined
 }
 
 export interface RealtimeSyncOptions {
-  noteId?: string
+  noteId?: string | undefined
   onNoteUpdate?: (note: Note) => void
   onUserTyping?: (users: TypingUser[]) => void
   onPresenceChange?: (users: UserPresence[]) => void
-  user?: RealtimeUser
+  user?: RealtimeUser | undefined
 }
 
 export interface RealtimeSyncState {
