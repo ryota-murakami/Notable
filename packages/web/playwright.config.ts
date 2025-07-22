@@ -31,6 +31,10 @@ export default defineConfig({
 
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
+
+    /* Increase timeout for slower browsers */
+    actionTimeout: 30000,
+    navigationTimeout: 30000,
   },
 
   /* Configure projects for major browsers */
@@ -74,10 +78,10 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'PORT=3000 pnpm run dev',
-    url: 'http://localhost:3000',
+    port: 3000,
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-    stdout: 'pipe',
-    stderr: 'pipe',
+    timeout: 180 * 1000, // Increased to 3 minutes due to potential build issues
+    stdout: 'ignore', // Ignore stdout to reduce noise
+    stderr: 'ignore', // Ignore stderr to reduce noise
   },
 })

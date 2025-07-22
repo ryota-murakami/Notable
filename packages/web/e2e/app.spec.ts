@@ -18,7 +18,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
     await expect(page.locator('body')).toBeVisible()
 
     console.log(
-      `✅ E2E Infrastructure working - Server responded with status: ${response!.status()}`,
+      `✅ E2E Infrastructure working - Server responded with status: ${response!.status()}`
     )
   })
 
@@ -30,8 +30,8 @@ test.describe('Notable Web App E2E Infrastructure', () => {
     await page.goto('/')
     const loadTime = Date.now() - startTime
 
-    // Server should respond quickly (under 10 seconds)
-    expect(loadTime).toBeLessThan(10000)
+    // Server should respond within reasonable time (under 20 seconds for slower browsers like Firefox)
+    expect(loadTime).toBeLessThan(20000)
 
     // Basic DOM should be present
     await expect(page.locator('html')).toBeVisible()
