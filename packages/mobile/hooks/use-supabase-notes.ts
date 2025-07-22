@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Note, NoteCreate, NoteUpdate } from '@/types'
-import { useRealtimeSync } from './use-realtime-sync'
 
 interface UseSupabaseNotesOptions {
   user_id?: string
@@ -12,7 +11,7 @@ export const useSupabaseNotes = ({ user_id }: UseSupabaseNotesOptions) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { channel } = useRealtimeSync(user_id)
+  // Realtime sync is handled separately in useRealtimeSync hook
 
   const fetchNotes = useCallback(async () => {
     if (!user_id) return
@@ -34,32 +33,38 @@ export const useSupabaseNotes = ({ user_id }: UseSupabaseNotesOptions) => {
   }, [fetchNotes])
 
   useEffect(() => {
-    if (channel) {
-      const sub = channel
-        .on<Note>(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'notes' },
-          (payload) => {
-            if (payload.eventType === 'INSERT') {
-              setNotes((prev) => [...prev, payload.new])
-            }
-            if (payload.eventType === 'UPDATE') {
-              setNotes((prev) =>
-                prev.map((n) => (n.id === payload.new.id ? payload.new : n)),
-              )
-            }
-            if (payload.eventType === 'DELETE') {
-              setNotes((prev) => prev.filter((n) => n.id !== payload.old.id))
-            }
-          },
-        )
-        .subscribe()
+    if (!user_id) return
 
-      return () => {
-        sub.unsubscribe()
-      }
+    const channel = supabase
+      .channel(`notes:${user_id}`)
+      .on<Note>(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notes',
+          filter: `user_id=eq.${user_id}`,
+        },
+        (payload: any) => {
+          if (payload.eventType === 'INSERT') {
+            setNotes((prev) => [...prev, payload.new])
+          }
+          if (payload.eventType === 'UPDATE') {
+            setNotes((prev) =>
+              prev.map((n) => (n.id === payload.new.id ? payload.new : n))
+            )
+          }
+          if (payload.eventType === 'DELETE') {
+            setNotes((prev) => prev.filter((n) => n.id !== payload.old.id))
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      channel.unsubscribe()
     }
-  }, [channel])
+  }, [user_id])
 
   const createNote = async (note: NoteCreate) => {
     const { data, error } = await supabase.from('notes').insert(note).select()

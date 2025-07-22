@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import {
   createClient,
   SupabaseClient,
@@ -75,23 +75,26 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
         // Listen for auth changes
         const {
           data: { subscription },
-        } = client.auth.onAuthStateChange(async (event, session) => {
+        } = client.auth.onAuthStateChange(async (_event, session) => {
           setSession(session)
           setUser(session?.user ?? null)
         })
 
         setLoading(false)
 
-        return () => {
-          subscription?.unsubscribe()
-        }
+        return subscription
       } catch (error) {
         console.error('Failed to initialize Supabase:', error)
         setLoading(false)
+        return null
       }
     }
 
-    initializeSupabase()
+    const subscription = initializeSupabase()
+
+    return () => {
+      subscription.then((sub) => sub?.unsubscribe())
+    }
   }, [])
 
   const signIn = async (email: string, password: string) => {

@@ -55,7 +55,7 @@ const generateUserColor = (userId: string): string => {
     return char.charCodeAt(0) + ((acc << 5) - acc)
   }, 0)
 
-  return colors[Math.abs(hash) % colors.length]
+  return colors[Math.abs(hash) % colors.length] as string
 }
 
 // Throttle function for performance
@@ -63,7 +63,7 @@ const throttle = (func: (...args: any[]) => void, delay: number) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 
-  return function (...args: any[]) {
+  return function (this: any, ...args: any[]) {
     const currentTime = Date.now()
 
     if (currentTime - lastExecTime > delay) {

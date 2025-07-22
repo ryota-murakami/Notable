@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, StyleSheet, Alert } from 'react-native'
 import { Card, Text, IconButton, Chip } from 'react-native-paper'
 import { Note } from '../types'
@@ -117,7 +116,7 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
             {formatDate(note.updatedAt)}
           </Chip>
 
-          {note.folder_id && (
+          {note.parentId && (
             <Chip
               mode='outlined'
               compact
