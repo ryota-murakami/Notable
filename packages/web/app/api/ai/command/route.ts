@@ -8,6 +8,7 @@ import { createOpenAI } from '@ai-sdk/openai'
 import { InvalidArgumentError } from '@ai-sdk/provider'
 import { delay as originalDelay } from '@ai-sdk/provider-utils'
 import { NextResponse, type NextRequest } from 'next/server'
+import logger from '@/lib/logging'
 
 /**
  * Detects the first chunk in a buffer.
@@ -93,7 +94,10 @@ function smoothStream<TOOLS extends ToolSet>({
     return new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
       async transform(chunk, controller) {
         if (chunk.type !== 'text-delta') {
-          console.info(buffer, 'finished')
+          logger.debug('AI text stream buffer finished', {
+            bufferLength: buffer.length,
+            bufferPreview: buffer.substring(0, 100),
+          })
 
           if (buffer.length > 0) {
             controller.enqueue({ textDelta: buffer, type: 'text-delta' })
