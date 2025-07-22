@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
 import { FAB, useTheme, Text, ActivityIndicator } from 'react-native-paper'
 import { useRouter } from 'expo-router'
@@ -11,10 +11,19 @@ import { Note } from '@/types'
 export default function NotesScreen() {
   const { user } = useSupabase()
   const { notes, isLoading, createNote, deleteNote } = useOfflineNotes({
-    user_id: user?.id,
+    user: user
+      ? {
+          id: user.id,
+          name: user.user_metadata?.name || user.email || 'User',
+          email: user.email || '',
+          avatar: user.user_metadata?.avatar_url,
+        }
+      : undefined,
   })
   const [filter, _setFilter] = useState<'all' | 'folders' | 'notes'>('all')
-  const _theme = useTheme()
+  // theme is available but not used in this component
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const theme = useTheme()
   const router = useRouter()
 
   const handleCreateNote = async (isFolder = false) => {
@@ -49,7 +58,7 @@ export default function NotesScreen() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator animating={true} size="large" />
+        <ActivityIndicator animating={true} size='large' />
         <Text style={{ marginTop: 8 }}>Loading notes...</Text>
       </View>
     )
@@ -59,9 +68,9 @@ export default function NotesScreen() {
     <View style={styles.container}>
       {notes.length === 0 ? (
         <EmptyState
-          title="No notes yet"
-          description="Create a new note to get started."
-          icon="note-plus-outline"
+          title='No notes yet'
+          description='Create a new note to get started.'
+          icon='note-plus-outline'
         />
       ) : (
         <FlatList
@@ -73,7 +82,8 @@ export default function NotesScreen() {
       )}
       <FAB.Group
         open={false}
-        icon="plus"
+        visible={true}
+        icon='plus'
         actions={[
           {
             icon: 'note-plus',

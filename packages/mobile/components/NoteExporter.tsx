@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { View, StyleSheet, Alert } from 'react-native'
 import {
   Button,
@@ -10,7 +10,7 @@ import {
 } from 'react-native-paper'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
-import { Note } from '../types'
+import { Note } from '@/types'
 
 export interface NoteExporterProps {
   note: Note

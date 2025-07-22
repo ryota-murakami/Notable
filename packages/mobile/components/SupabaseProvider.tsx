@@ -46,6 +46,8 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let subscription: { unsubscribe: () => void } | undefined
+
     const initializeSupabase = async () => {
       try {
         const supabaseUrl =
@@ -73,18 +75,15 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
         setUser(initialSession?.user ?? null)
 
         // Listen for auth changes
-        const {
-          data: { subscription },
-        } = client.auth.onAuthStateChange(async (event, session) => {
-          setSession(session)
-          setUser(session?.user ?? null)
-        })
+        const authSubscription = client.auth.onAuthStateChange(
+          async (_event, session) => {
+            setSession(session)
+            setUser(session?.user ?? null)
+          }
+        )
 
+        subscription = authSubscription.data.subscription
         setLoading(false)
-
-        return () => {
-          subscription?.unsubscribe()
-        }
       } catch (error) {
         console.error('Failed to initialize Supabase:', error)
         setLoading(false)
@@ -92,6 +91,10 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     }
 
     initializeSupabase()
+
+    return () => {
+      subscription?.unsubscribe()
+    }
   }, [])
 
   const signIn = async (email: string, password: string) => {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Note } from '../types'
+import { Note } from '@/types'
 
 export interface TypingUser {
   id: string
@@ -63,7 +63,7 @@ const throttle = (func: (...args: any[]) => void, delay: number) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 
-  return function (...args: any[]) {
+  return function (this: any, ...args: any[]) {
     const currentTime = Date.now()
 
     if (currentTime - lastExecTime > delay) {
@@ -82,7 +82,7 @@ const throttle = (func: (...args: any[]) => void, delay: number) => {
   }
 }
 
-export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
+export function useRealtimeSync(options: RealtimeSyncOptions) {
   const { noteId, onNoteUpdate, onUserTyping, onPresenceChange, user } = options
 
   const [isConnected, setIsConnected] = useState(false)

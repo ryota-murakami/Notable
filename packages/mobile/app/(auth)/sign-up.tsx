@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { View, StyleSheet, Alert, Text } from 'react-native'
 import {
   TextInput,
@@ -37,6 +37,11 @@ export default function SignUpScreen() {
       return
     }
 
+    if (!supabase) {
+      Alert.alert('Error', 'Supabase client not initialized')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -67,6 +72,11 @@ export default function SignUpScreen() {
   }
 
   const handleGoogleSignUp = async () => {
+    if (!supabase) {
+      Alert.alert('Error', 'Supabase client not initialized')
+      return
+    }
+
     setLoading(true)
 
     try {
