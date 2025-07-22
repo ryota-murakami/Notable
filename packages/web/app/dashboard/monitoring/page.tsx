@@ -26,7 +26,6 @@ import {
   TrendingDown,
   RefreshCw,
 } from 'lucide-react'
-import { logger } from '@/lib/logging'
 
 interface ServiceStatus {
   name: string
@@ -140,7 +139,7 @@ export default function MonitoringDashboard() {
 
       setLastUpdate(new Date())
     } catch (error) {
-      logger.error('Failed to fetch monitoring data', { error })
+      console.error('Failed to fetch monitoring data', error)
     } finally {
       setLoading(false)
     }

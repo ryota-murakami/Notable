@@ -19,7 +19,6 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react'
-import { logger } from '@/lib/logging'
 
 export default function DashboardPage() {
   const { user, supabase, loading } = useSupabase()
@@ -43,10 +42,7 @@ export default function DashboardPage() {
         .order('updated_at', { ascending: false })
 
       if (error) {
-        logger.error('Error loading notes from dashboard', {
-          error,
-          userId: user?.id,
-        })
+        console.error('Error loading notes from dashboard:', error)
       } else {
         setNotes(data || [])
       }

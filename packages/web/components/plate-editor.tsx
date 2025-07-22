@@ -24,7 +24,6 @@ import { Tag, Download, FileText, Globe, Code, FileImage } from 'lucide-react'
 
 import type { Note } from '@/types/note'
 import { useExport } from '@/hooks/use-export'
-import { logger } from '@/lib/logging'
 
 interface PlateEditorProps {
   note: Note
@@ -165,7 +164,7 @@ export function PlateEditorComponent({
         includeStyles: true,
       })
     } catch (error) {
-      logger.error('Note export failed', { error, noteId: note.id, format })
+      console.error('Note export failed:', { error, noteId: note.id, format })
     }
   }
 

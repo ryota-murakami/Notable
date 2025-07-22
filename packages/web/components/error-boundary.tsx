@@ -4,7 +4,6 @@ import React, { Component, ReactNode } from 'react'
 import * as Sentry from '@sentry/nextjs'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, RefreshCw } from 'lucide-react'
-import { logger } from '@/lib/logging'
 
 interface Props {
   children: ReactNode
@@ -41,12 +40,10 @@ export class ErrorBoundary extends Component<Props, State> {
       this.props.onError(error, errorInfo)
     }
 
-    // Log error with structured logging
-    logger.error('Error caught by boundary', {
-      error,
-      errorInfo,
-      isDevelopment: process.env.NODE_ENV === 'development',
-    })
+    // Log error to console in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error caught by boundary:', error, errorInfo)
+    }
   }
 
   reset = () => {

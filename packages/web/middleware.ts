@@ -2,7 +2,6 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import * as Sentry from '@sentry/nextjs'
-import { logger } from '@/lib/logging'
 
 export async function middleware(req: NextRequest) {
   const startTime = Date.now()
@@ -41,7 +40,7 @@ export async function middleware(req: NextRequest) {
 
     // Log request details using structured logging
     const duration = Date.now() - startTime
-    logger.info('Middleware request processed', {
+    console.log('Middleware request processed', {
       type: 'request',
       requestId,
       method: req.method,

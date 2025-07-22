@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { logger } from '@/lib/logging'
 
 export const runtime = 'edge'
 
@@ -246,7 +245,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log for debugging (in production, send to analytics)
-    logger.info('Experiment event:', eventData)
+    console.log('Experiment event:', eventData)
 
     return NextResponse.json({ success: true })
   } catch {
