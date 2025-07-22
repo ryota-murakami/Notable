@@ -48,7 +48,7 @@ export const ImageElement = withHOC(
                 className={mediaResizeHandleVariants({ direction: 'left' })}
                 options={{ direction: 'left' }}
               />
-              <Image
+              <img
                 ref={handleRef}
                 className={cn(
                   'block w-full max-w-full cursor-pointer object-cover px-0',
@@ -57,6 +57,7 @@ export const ImageElement = withHOC(
                   isDragging && 'opacity-50'
                 )}
                 alt={props.attributes.alt as string | undefined}
+                src={props.element.url}
               />
               <ResizeHandle
                 className={mediaResizeHandleVariants({

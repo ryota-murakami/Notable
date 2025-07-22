@@ -7,6 +7,8 @@ import {
   usePluginOption,
   type PlateElementProps,
 } from 'platejs/react'
+import { EmojiPlugin, insertText, type PlateEditor } from 'platejs'
+import { EmojiInlineIndexSearch } from '@platejs/emoji'
 
 import { useDebounce } from '@/hooks/use-debounce'
 
@@ -18,6 +20,12 @@ import {
   InlineComboboxInput,
   InlineComboboxItem,
 } from './inline-combobox'
+
+// Helper function to insert emoji
+const insertEmoji = (editor: PlateEditor, emoji: any) => {
+  insertText(editor, emoji.skins[0].native)
+  editor.tf.focus()
+}
 
 export function EmojiInputElement(props: PlateElementProps) {
   const { children, editor, element } = props

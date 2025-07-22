@@ -23,6 +23,7 @@ import {
   QuoteIcon,
   SquareIcon,
 } from 'lucide-react'
+import { KEYS, type TElement } from 'platejs'
 import { useEditorRef, useSelectionFragmentProp } from 'platejs/react'
 
 import {
