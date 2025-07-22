@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 
+interface IncidentStatus {
+  status: 'investigating' | 'identified' | 'monitoring' | 'resolved'
+  severity: 'minor' | 'major' | 'critical'
+}
+
+interface IncidentRecord extends IncidentStatus {
+  id: string
+  title: string
+  description?: string
+  affected_services?: string[]
+  public_message?: string
+  created_by?: string
+  resolved_by?: string
+  started_at: string
+  resolved_at?: string
+  updated_at: string
+}
+
 export async function GET(_request: NextRequest) {
   // Incidents table doesn't exist in database types yet
   // Return mock data for now
@@ -51,11 +69,11 @@ export async function GET_ORIGINAL(request: NextRequest) {
       .limit(limit)
 
     if (status) {
-      query = query.eq('status', status as any)
+      query = query.eq('status', status as IncidentStatus['status'])
     }
 
     if (severity) {
-      query = query.eq('severity', severity as any)
+      query = query.eq('severity', severity as IncidentStatus['severity'])
     }
 
     const { data: incidents, error } = await query
@@ -80,13 +98,20 @@ export async function GET_ORIGINAL(request: NextRequest) {
     const statistics = {
       total: incidents?.length || 0,
       active:
-        stats?.filter((inc: any) => inc.status !== 'resolved').length || 0,
+        stats?.filter((inc: IncidentStatus) => inc.status !== 'resolved')
+          .length || 0,
       resolved:
-        stats?.filter((inc: any) => inc.status === 'resolved').length || 0,
+        stats?.filter((inc: IncidentStatus) => inc.status === 'resolved')
+          .length || 0,
       critical:
-        stats?.filter((inc: any) => inc.severity === 'critical').length || 0,
-      major: stats?.filter((inc: any) => inc.severity === 'major').length || 0,
-      minor: stats?.filter((inc: any) => inc.severity === 'minor').length || 0,
+        stats?.filter((inc: IncidentStatus) => inc.severity === 'critical')
+          .length || 0,
+      major:
+        stats?.filter((inc: IncidentStatus) => inc.severity === 'major')
+          .length || 0,
+      minor:
+        stats?.filter((inc: IncidentStatus) => inc.severity === 'minor')
+          .length || 0,
     }
 
     return NextResponse.json({
@@ -253,7 +278,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Prepare update data
-    const updateData: any = {
+    const updateData: Partial<IncidentRecord> = {
       updated_at: new Date().toISOString(),
     }
 

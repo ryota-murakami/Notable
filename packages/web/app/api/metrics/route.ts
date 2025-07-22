@@ -19,7 +19,7 @@ const metrics = {
 }
 
 // Function to update metrics (internal use only)
-function updateMetric(metric: keyof typeof metrics, value: number = 1) {
+function updateMetric(metric: keyof typeof metrics, value = 1) {
   if (Array.isArray(metrics[metric])) {
     ;(metrics[metric] as number[]).push(value)
     // Keep only last 1000 entries to prevent memory issues

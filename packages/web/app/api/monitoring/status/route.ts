@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 
+interface ServiceStatusRecord {
+  service_name: string
+  status: 'operational' | 'degraded' | 'outage'
+  response_time?: number
+  description?: string
+  last_checked: string
+}
+
 interface ServiceCheck {
   name: string
   status: 'operational' | 'degraded' | 'outage'
@@ -72,7 +80,7 @@ export async function GET(_request: NextRequest) {
 
     // Transform service status data
     const services: ServiceCheck[] = (serviceStatuses || []).map(
-      (service: any) => ({
+      (service: ServiceStatusRecord) => ({
         name: service.service_name,
         status: service.status,
         responseTime: service.response_time || 0,
@@ -166,7 +174,7 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(_request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createServerClient()
     const body = await _request.json()
 
     const { serviceName, status, responseTime, description } = body
@@ -243,7 +251,9 @@ async function calculateUptime(
     }
 
     const totalChecks = records.length
-    const successfulChecks = records.filter((r: any) => r.is_up).length
+    const successfulChecks = records.filter(
+      (r: { is_up: boolean }) => r.is_up
+    ).length
 
     return (successfulChecks / totalChecks) * 100
   } catch (error) {

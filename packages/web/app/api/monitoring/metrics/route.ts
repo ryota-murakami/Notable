@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 
+interface MetricSnapshot {
+  metric_name: string
+  metric_value: number
+  labels: Record<string, string>
+  timestamp: string
+}
+
+interface MetricInput {
+  name: string
+  value: number
+  labels?: Record<string, string>
+  timestamp?: string
+}
+
 interface MetricDefinition {
   name: string
   type: 'counter' | 'gauge' | 'histogram'
@@ -112,8 +126,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Group metrics by name
-    const groupedMetrics: Record<string, any[]> = {}
-    metricsData?.forEach((metric: any) => {
+    const groupedMetrics: Record<string, MetricSnapshot[]> = {}
+    metricsData?.forEach((metric: MetricSnapshot) => {
       if (!groupedMetrics[metric.metric_name]) {
         groupedMetrics[metric.metric_name] = []
       }
@@ -150,7 +164,7 @@ export async function POST(request: NextRequest) {
     // Support both single metric and batch metrics
     const metrics = Array.isArray(body) ? body : [body]
 
-    const insertData = metrics.map((metric: any) => {
+    const insertData = metrics.map((metric: MetricInput) => {
       const { name, value, labels = {}, timestamp } = metric
 
       if (!name || value === undefined) {
@@ -217,8 +231,8 @@ async function handlePrometheusFormat(
     let prometheusOutput = ''
 
     // Group by metric name
-    const metricGroups: Record<string, any[]> = {}
-    metrics?.forEach((metric: any) => {
+    const metricGroups: Record<string, MetricSnapshot[]> = {}
+    metrics?.forEach((metric: MetricSnapshot) => {
       if (!metricGroups[metric.metric_name]) {
         metricGroups[metric.metric_name] = []
       }
@@ -234,8 +248,8 @@ async function handlePrometheusFormat(
       }
 
       // Get the latest value for each unique label combination
-      const latestValues: Record<string, any> = {}
-      metricData.forEach((metric: any) => {
+      const latestValues: Record<string, MetricSnapshot> = {}
+      metricData.forEach((metric: MetricSnapshot) => {
         const labelKey = JSON.stringify(metric.labels || {})
         if (
           !latestValues[labelKey] ||
@@ -246,7 +260,7 @@ async function handlePrometheusFormat(
         }
       })
 
-      Object.values(latestValues).forEach((metric: any) => {
+      Object.values(latestValues).forEach((metric: MetricSnapshot) => {
         const labels = metric.labels || {}
         const labelString = Object.entries(labels)
           .map(([key, value]) => `${key}="${value}"`)
