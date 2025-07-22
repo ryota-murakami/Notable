@@ -61,7 +61,7 @@ export function formatError(error: unknown): {
 export function logPerformance(
   operation: string,
   duration: number,
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
   const level = duration > 1000 ? LogLevel.WARN : LogLevel.INFO
   logger.log(level, `Performance: ${operation} took ${duration}ms`, {
@@ -78,7 +78,7 @@ export function logApiCall(
   path: string,
   statusCode: number,
   duration: number,
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
   const level = statusCode >= 400 ? LogLevel.ERROR : LogLevel.INFO
   logger.log(level, `${method} ${path} - ${statusCode} (${duration}ms)`, {
@@ -94,7 +94,7 @@ export function logApiCall(
 export function logUserAction(
   action: string,
   userId?: string,
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
   logger.info(`User action: ${action}`, {
     ...metadata,
@@ -108,7 +108,7 @@ export function logUserAction(
 export function logSecurityEvent(
   event: string,
   severity: 'low' | 'medium' | 'high' | 'critical',
-  metadata?: LogMetadata,
+  metadata?: LogMetadata
 ) {
   const level =
     severity === 'critical' || severity === 'high'
@@ -124,7 +124,7 @@ export function logSecurityEvent(
 }
 
 // Export convenience methods
-export default {
+const log = {
   error: (message: string, metadata?: LogMetadata) =>
     logger.error(message, metadata),
   warn: (message: string, metadata?: LogMetadata) =>
@@ -142,3 +142,5 @@ export default {
   userAction: logUserAction,
   security: logSecurityEvent,
 }
+
+export default log

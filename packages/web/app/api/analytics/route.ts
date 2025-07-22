@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import type { AnalyticsBuffer } from '@/lib/analytics/custom'
+import logger from '@/lib/logging'
 
 // Initialize Supabase client with service role key for analytics
 const supabase = createClient(
@@ -48,7 +49,10 @@ export async function POST(request: NextRequest) {
         )
 
       if (eventsError) {
-        console.error('Failed to insert events:', eventsError)
+        logger.error('Failed to insert analytics events', {
+          error: eventsError,
+          eventCount: data.events.length,
+        })
       }
     }
 
@@ -67,7 +71,10 @@ export async function POST(request: NextRequest) {
         )
 
       if (pageViewsError) {
-        console.error('Failed to insert page views:', pageViewsError)
+        logger.error('Failed to insert page views', {
+          error: pageViewsError,
+          pageViewCount: data.pageViews.length,
+        })
       }
     }
 
@@ -91,14 +98,20 @@ export async function POST(request: NextRequest) {
           )
 
         if (userError) {
-          console.error('Failed to update user profile:', userError)
+          logger.error('Failed to update user profile', {
+            error: userError,
+            userId: user.id,
+          })
         }
       }
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Analytics error:', error)
+    logger.error('Analytics processing error', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -160,7 +173,10 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Analytics summary error:', error)
+    logger.error('Analytics summary error', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
