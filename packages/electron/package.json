@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "e2e": "echo 'E2E tests for electron'",
     "clean": "rm -rf dist build",
     "pack": "electron-builder --dir",

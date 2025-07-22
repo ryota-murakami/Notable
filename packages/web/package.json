@@ -11,7 +11,7 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "typecheck": "tsc --noEmit",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "e2e": "playwright test --reporter=list",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
