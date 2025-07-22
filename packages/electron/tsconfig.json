@@ -6,6 +6,6 @@
     "outDir": "./build",
     "noEmit": false
   },
-  "include": ["*.ts", "*.tsx", "../../types/**/*"],
+  "include": ["**/*.ts", "**/*.tsx", "../../types/**/*"],
   "exclude": ["build", "dist", "node_modules"]
 }

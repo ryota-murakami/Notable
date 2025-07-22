@@ -35,9 +35,9 @@
       "output": "dist"
     },
     "files": [
-      "build/main.js",
-      "build/preload.js",
-      "package.json"
+      "build/**/*",
+      "node_modules/**/*",
+      "!**/*.map"
     ],
     "mac": {
       "category": "public.app-category.productivity"

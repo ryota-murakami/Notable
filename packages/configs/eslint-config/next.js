@@ -1,7 +1,7 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
-  extends: ['./index.js', 'next/core-web-vitals', 'eslint-config-next'],
-  plugins: ['react', 'react-hooks'],
+  extends: ['./index.js', 'next/core-web-vitals'],
+  plugins: ['react', 'react-hooks', 'jsx-a11y'],
   rules: {
     // React specific rules
     'react/react-in-jsx-scope': 'off', // Next.js handles this
