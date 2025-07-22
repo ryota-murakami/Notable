@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
 import { LogLevel, LogMetadata, formatError } from './index'
 
 interface LogBuffer {
@@ -83,21 +82,35 @@ export function createClientLogger() {
       console.log(
         `%c[${level.toUpperCase()}] ${message}`,
         style[level] || '',
-        metadata || '',
+        metadata || ''
       )
     }
 
-    // Send errors to Sentry
-    if (level === LogLevel.ERROR) {
-      if (metadata?.error instanceof Error) {
-        Sentry.captureException(metadata.error, {
-          extra: metadata,
-        })
-      } else {
-        Sentry.captureMessage(message, 'error')
+    // Send errors to Sentry (client-side only)
+    if (typeof window !== 'undefined') {
+      if (level === LogLevel.ERROR) {
+        import('@sentry/nextjs')
+          .then((Sentry) => {
+            if (metadata?.error instanceof Error) {
+              Sentry.captureException(metadata.error, {
+                extra: metadata,
+              })
+            } else {
+              Sentry.captureMessage(message, 'error')
+            }
+          })
+          .catch(() => {
+            // Sentry import failed, skip error reporting
+          })
+      } else if (level === LogLevel.WARN && !isDevelopment) {
+        import('@sentry/nextjs')
+          .then((Sentry) => {
+            Sentry.captureMessage(message, 'warning')
+          })
+          .catch(() => {
+            // Sentry import failed, skip error reporting
+          })
       }
-    } else if (level === LogLevel.WARN && !isDevelopment) {
-      Sentry.captureMessage(message, 'warning')
     }
 
     // Add to buffer for server logging (skip in development)
