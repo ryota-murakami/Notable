@@ -24,7 +24,7 @@ interface AlertWebhookPayload {
 
 // Send notification to Slack
 async function sendSlackNotification(
-  payload: AlertWebhookPayload,
+  payload: AlertWebhookPayload
 ): Promise<void> {
   const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
   if (!slackWebhookUrl) return
@@ -74,14 +74,18 @@ async function sendSlackNotification(
       status: payload.status,
       alertCount: payload.alerts.length,
     })
-  } catch {
-    logger.error('Failed to send Slack notification')
+  } catch (error) {
+    logger.error('Failed to send Slack notification', {
+      error: error instanceof Error ? error.message : String(error),
+      status: payload.status,
+      alertCount: payload.alerts.length,
+    })
   }
 }
 
 // Send email notification
 async function sendEmailNotification(
-  payload: AlertWebhookPayload,
+  payload: AlertWebhookPayload
 ): Promise<void> {
   const resendApiKey = process.env.RESEND_API_KEY
   const emailFrom = process.env.EMAIL_FROM
@@ -102,7 +106,7 @@ async function sendEmailNotification(
       <p><strong>Started:</strong> ${new Date(alert.startsAt).toLocaleString()}</p>
       ${alert.endsAt ? `<p><strong>Ended:</strong> ${new Date(alert.endsAt).toLocaleString()}</p>` : ''}
     </div>
-  `,
+  `
     )
     .join('')
 
@@ -146,8 +150,12 @@ async function sendEmailNotification(
       status: payload.status,
       alertCount: payload.alerts.length,
     })
-  } catch {
-    logger.error('Failed to send email notification')
+  } catch (error) {
+    logger.error('Failed to send email notification', {
+      error: error instanceof Error ? error.message : String(error),
+      status: payload.status,
+      alertCount: payload.alerts.length,
+    })
   }
 }
 
@@ -157,7 +165,7 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
     const { createClient } = await import('@supabase/supabase-js')
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
     for (const alert of payload.alerts) {
@@ -180,8 +188,11 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
         logger.error('Failed to store alert in database', { error, alert })
       }
     }
-  } catch {
-    logger.error('Failed to store alerts')
+  } catch (error) {
+    logger.error('Failed to store alerts', {
+      error: error instanceof Error ? error.message : String(error),
+      alertCount: payload.alerts.length,
+    })
   }
 }
 
@@ -217,11 +228,14 @@ export async function POST(_request: NextRequest) {
       success: true,
       processed: payload.alerts.length,
     })
-  } catch {
-    logger.error('Alert webhook error')
+  } catch (error) {
+    logger.error('Alert webhook error', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
