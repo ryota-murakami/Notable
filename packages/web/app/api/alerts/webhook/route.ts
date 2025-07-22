@@ -24,7 +24,7 @@ interface AlertWebhookPayload {
 
 // Send notification to Slack
 async function sendSlackNotification(
-  payload: AlertWebhookPayload,
+  payload: AlertWebhookPayload
 ): Promise<void> {
   const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
   if (!slackWebhookUrl) return
@@ -34,7 +34,6 @@ async function sendSlackNotification(
 
   const fields = payload.alerts.map((alert) => {
     const severity = alert.labels.severity || 'unknown'
-    const _service = alert.labels.service || 'unknown'
 
     return {
       title: `${severity.toUpperCase()}: ${alert.annotations.summary}`,
@@ -81,7 +80,7 @@ async function sendSlackNotification(
 
 // Send email notification
 async function sendEmailNotification(
-  payload: AlertWebhookPayload,
+  payload: AlertWebhookPayload
 ): Promise<void> {
   const resendApiKey = process.env.RESEND_API_KEY
   const emailFrom = process.env.EMAIL_FROM
@@ -102,7 +101,7 @@ async function sendEmailNotification(
       <p><strong>Started:</strong> ${new Date(alert.startsAt).toLocaleString()}</p>
       ${alert.endsAt ? `<p><strong>Ended:</strong> ${new Date(alert.endsAt).toLocaleString()}</p>` : ''}
     </div>
-  `,
+  `
     )
     .join('')
 
@@ -157,7 +156,7 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
     const { createClient } = await import('@supabase/supabase-js')
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
     for (const alert of payload.alerts) {
@@ -189,7 +188,7 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
 export async function POST(_request: NextRequest) {
   try {
     // Verify webhook signature if configured
-    const _headersList = headers()
+    const _headersList = await headers()
     const signature = _headersList.get('x-alertmanager-signature')
     const webhookSecret = process.env.ALERTMANAGER_WEBHOOK_SECRET
 
@@ -221,7 +220,7 @@ export async function POST(_request: NextRequest) {
     logger.error('Alert webhook error')
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

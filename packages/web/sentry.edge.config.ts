@@ -1,21 +1,25 @@
 import * as Sentry from '@sentry/nextjs'
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN,
+const sentryDsn = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
 
-  // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: false,
+    // Adjust this value in production, or use tracesSampler for greater control
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
-  // Set context
-  initialScope: {
-    tags: {
-      component: 'edge',
+    // Setting this option to true will print useful information to the console while you're setting up Sentry.
+    debug: false,
+
+    // Set context
+    initialScope: {
+      tags: {
+        component: 'edge',
+      },
     },
-  },
 
-  // Disable in local development
-  enabled: process.env.NODE_ENV === 'production',
-})
+    // Disable in local development
+    enabled: process.env.NODE_ENV === 'production',
+  })
+}

@@ -1,33 +1,37 @@
 import * as Sentry from '@sentry/nextjs'
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN,
+const sentryDsn = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
 
-  // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: false,
+    // Adjust this value in production, or use tracesSampler for greater control
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
-  // Filter out certain errors
-  beforeSend(event, hint) {
-    if (process.env.NODE_ENV === 'development') {
-      // Log to console in development instead of sending to Sentry
-      console.error('Sentry Server Event:', event)
-      console.error('Error:', hint.originalException)
-      return null
-    }
+    // Setting this option to true will print useful information to the console while you're setting up Sentry.
+    debug: false,
 
-    return event
-  },
+    // Filter out certain errors
+    beforeSend(event, hint) {
+      if (process.env.NODE_ENV === 'development') {
+        // Log to console in development instead of sending to Sentry
+        console.error('Sentry Server Event:', event)
+        console.error('Error:', hint.originalException)
+        return null
+      }
 
-  // Set context
-  initialScope: {
-    tags: {
-      component: 'server',
+      return event
     },
-  },
 
-  // Disable in local development
-  enabled: process.env.NODE_ENV === 'production',
-})
+    // Set context
+    initialScope: {
+      tags: {
+        component: 'server',
+      },
+    },
+
+    // Disable in local development
+    enabled: process.env.NODE_ENV === 'production',
+  })
+}

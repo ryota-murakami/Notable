@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@/lib/supabase/server'
 
 interface MetricDefinition {
   name: string
@@ -72,9 +72,9 @@ export async function GET(request: NextRequest) {
     const startTime = searchParams.get('start')
     const endTime = searchParams.get('end')
     const format = searchParams.get('format') || 'json' // 'json' | 'prometheus'
-    const _step = searchParams.get('step') || '5m' // aggregation interval
+    // const _step = searchParams.get('step') || '5m' // aggregation interval
 
-    const supabase = createClient()
+    const supabase = await createServerClient()
 
     if (format === 'prometheus') {
       return handlePrometheusFormat(supabase, metricName)
@@ -107,13 +107,13 @@ export async function GET(request: NextRequest) {
       console.error('Failed to fetch metrics:', error)
       return NextResponse.json(
         { error: 'Failed to fetch metrics' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
     // Group metrics by name
     const groupedMetrics: Record<string, any[]> = {}
-    metricsData?.forEach((metric) => {
+    metricsData?.forEach((metric: any) => {
       if (!groupedMetrics[metric.metric_name]) {
         groupedMetrics[metric.metric_name] = []
       }
@@ -137,20 +137,20 @@ export async function GET(request: NextRequest) {
     console.error('Metrics API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createServerClient()
     const body = await request.json()
 
     // Support both single metric and batch metrics
     const metrics = Array.isArray(body) ? body : [body]
 
-    const insertData = metrics.map((metric) => {
+    const insertData = metrics.map((metric: any) => {
       const { name, value, labels = {}, timestamp } = metric
 
       if (!name || value === undefined) {
@@ -174,27 +174,27 @@ export async function POST(request: NextRequest) {
       console.error('Failed to insert metrics:', error)
       return NextResponse.json(
         { error: 'Failed to insert metrics' },
-        { status: 500 },
+        { status: 500 }
       )
     }
 
     return NextResponse.json({
       message: 'Metrics recorded successfully',
-      count: data.length,
+      count: insertData.length,
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
     console.error('Record metrics error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
 async function handlePrometheusFormat(
-  supabase: any,
-  metricName?: string | null,
+  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  metricName?: string | null
 ) {
   try {
     let query = supabase
@@ -218,7 +218,7 @@ async function handlePrometheusFormat(
 
     // Group by metric name
     const metricGroups: Record<string, any[]> = {}
-    metrics?.forEach((metric) => {
+    metrics?.forEach((metric: any) => {
       if (!metricGroups[metric.metric_name]) {
         metricGroups[metric.metric_name] = []
       }
@@ -235,7 +235,7 @@ async function handlePrometheusFormat(
 
       // Get the latest value for each unique label combination
       const latestValues: Record<string, any> = {}
-      metricData.forEach((metric) => {
+      metricData.forEach((metric: any) => {
         const labelKey = JSON.stringify(metric.labels || {})
         if (
           !latestValues[labelKey] ||
@@ -272,15 +272,17 @@ async function handlePrometheusFormat(
     console.error('Prometheus format error:', error)
     return NextResponse.json(
       { error: 'Failed to generate Prometheus format' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
 
-async function getCurrentMetrics(supabase: any) {
+async function getCurrentMetrics(
+  supabase: Awaited<ReturnType<typeof createServerClient>>
+) {
   try {
     // Simulate current metrics - in a real app, these would come from various sources
-    const _currentTime = Date.now()
+    // const _currentTime = Date.now()
 
     // Get some real data from the database
     const { data: notes } = await supabase
