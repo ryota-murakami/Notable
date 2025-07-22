@@ -49,8 +49,8 @@ export default function NotesScreen() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator animating={true} size="large" />
-        <Text style={{ marginTop: 8 }}>Loading notes...</Text>
+        <ActivityIndicator animating={true} size='large' />
+        <Text style={styles.loadingText}>Loading notes...</Text>
       </View>
     )
   }
@@ -59,9 +59,9 @@ export default function NotesScreen() {
     <View style={styles.container}>
       {notes.length === 0 ? (
         <EmptyState
-          title="No notes yet"
-          description="Create a new note to get started."
-          icon="note-plus-outline"
+          title='No notes yet'
+          description='Create a new note to get started.'
+          icon='note-plus-outline'
         />
       ) : (
         <FlatList
@@ -73,7 +73,7 @@ export default function NotesScreen() {
       )}
       <FAB.Group
         open={false}
-        icon="plus"
+        icon='plus'
         actions={[
           {
             icon: 'note-plus',
@@ -86,7 +86,9 @@ export default function NotesScreen() {
             onPress: () => handleCreateNote(true),
           },
         ]}
-        onStateChange={() => {}}
+        onStateChange={() => {
+          // FAB.Group requires this callback but we don't need to handle state changes
+        }}
       />
     </View>
   )
@@ -103,5 +105,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 8,
   },
 })

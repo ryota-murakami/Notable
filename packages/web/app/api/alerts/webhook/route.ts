@@ -197,11 +197,11 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
 }
 
 // Main webhook handler
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     // Verify webhook signature if configured
-    const _headersList = headers()
-    const signature = _headersList.get('x-alertmanager-signature')
+    const headersList = await headers()
+    const signature = headersList.get('x-alertmanager-signature')
     const webhookSecret = process.env.ALERTMANAGER_WEBHOOK_SECRET
 
     if (webhookSecret && signature) {
@@ -209,7 +209,7 @@ export async function POST(_request: NextRequest) {
       // For production, verify the HMAC signature
     }
 
-    const payload: AlertWebhookPayload = await _request.json()
+    const payload: AlertWebhookPayload = await request.json()
 
     logger.info('Alert webhook received', {
       status: payload.status,
