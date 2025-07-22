@@ -22,7 +22,7 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 export async function POST(request: NextRequest) {
   try {
     // Verify request is from our app
-    const headersList = headers()
+    const headersList = await headers()
     const origin = headersList.get('origin')
     const referer = headersList.get('referer')
 

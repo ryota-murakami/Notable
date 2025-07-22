@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
 import { LogLevel, LogMetadata, formatError } from './index'
 
 interface LogBuffer {
@@ -88,18 +87,8 @@ export function createClientLogger() {
       )
     }
 
-    // Send errors to Sentry
-    if (level === LogLevel.ERROR) {
-      if (metadata?.error instanceof Error) {
-        Sentry.captureException(metadata.error, {
-          extra: metadata,
-        })
-      } else {
-        Sentry.captureMessage(message, 'error')
-      }
-    } else if (level === LogLevel.WARN && !isDevelopment) {
-      Sentry.captureMessage(message, 'warning')
-    }
+    // In production, errors are sent to server which handles Sentry
+    // Client-side Sentry is handled separately via Sentry's own client integration
 
     // Add to buffer for server logging (skip in development)
     if (

@@ -8,6 +8,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { createOpenAI } from '@ai-sdk/openai'
 import { InvalidArgumentError } from '@ai-sdk/provider'
+import { validateOpenAIKey } from '@/lib/env-validation'
 import { delay as originalDelay } from '@ai-sdk/provider-utils'
 import { logger } from '@/lib/logging'
 
@@ -137,9 +138,10 @@ const CHUNKING_REGEXPS = {
 export async function POST(req: NextRequest) {
   const { apiKey: key, messages, system } = await req.json()
 
-  const apiKey = key || process.env.OPENAI_API_KEY
-
-  if (!apiKey) {
+  let apiKey: string
+  try {
+    apiKey = key || validateOpenAIKey()
+  } catch (error) {
     return NextResponse.json(
       { error: 'Missing OpenAI API key.' },
       { status: 401 }

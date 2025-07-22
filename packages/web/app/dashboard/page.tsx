@@ -3,6 +3,7 @@
 import { useSupabase } from '@/components/supabase-provider'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { logger } from '@/lib/logging'
 import {
   Card,
   CardContent,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import logger from '@/lib/logging'
+import { validateMetricsAuthToken } from '@/lib/env-validation'
 
 // Metrics storage (in production, use a proper metrics library like prom-client)
 const metrics = {
@@ -117,7 +118,7 @@ notable_nodejs_memory_usage_bytes{type="external"} ${process.memoryUsage().exter
 export async function GET(_request: NextRequest) {
   try {
     // Check if request is from allowed sources (basic security)
-    const headersList = headers()
+    const headersList = await headers()
     const userAgent = headersList.get('user-agent') || ''
 
     // In production, implement proper authentication for metrics endpoint
@@ -128,7 +129,7 @@ export async function GET(_request: NextRequest) {
     ) {
       // Check for metrics token
       const authHeader = headersList.get('authorization')
-      const metricsToken = process.env.METRICS_AUTH_TOKEN
+      const metricsToken = validateMetricsAuthToken()
 
       if (
         !authHeader ||

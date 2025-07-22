@@ -10,6 +10,11 @@ import {
   identifyUser,
 } from '@/lib/analytics'
 import { useUser } from '@/hooks/use-user'
+import type {
+  AnalyticsProperties,
+  AnalyticsContext,
+  ErrorContext,
+} from '@/types/analytics'
 
 export function useAnalytics() {
   const pathname = usePathname()
@@ -47,46 +52,46 @@ export function useAnalytics() {
 
   // Track feature usage
   const track = useCallback(
-    (event: string, properties?: Record<string, any>) => {
+    (event: string, properties?: AnalyticsProperties) => {
       trackEvent(event, properties)
     },
-    [],
+    []
   )
 
   // Track errors with context
   const trackErrorWithContext = useCallback(
-    (error: Error, context?: Record<string, any>) => {
+    (error: Error, context?: ErrorContext) => {
       trackError(error, {
         pathname,
         userId: user?.id,
         ...context,
       })
     },
-    [pathname, user],
+    [pathname, user]
   )
 
   // Track feature usage with automatic categorization
   const trackFeatureUsage = useCallback(
-    (feature: string, action: string, properties?: Record<string, any>) => {
+    (feature: string, action: string, properties?: AnalyticsProperties) => {
       trackFeature(feature, action, {
         pathname,
         userId: user?.id,
         ...properties,
       })
     },
-    [pathname, user],
+    [pathname, user]
   )
 
   // Track user interactions
   const trackAction = useCallback(
-    (action: string, target?: string, properties?: Record<string, any>) => {
+    (action: string, target?: string, properties?: AnalyticsProperties) => {
       trackUserAction(action, target, {
         pathname,
         userId: user?.id,
         ...properties,
       })
     },
-    [pathname, user],
+    [pathname, user]
   )
 
   return {
@@ -101,7 +106,7 @@ export function useAnalytics() {
 // Hook for tracking component mount/unmount
 export function useComponentTracking(
   componentName: string,
-  properties?: Record<string, any>,
+  properties?: AnalyticsProperties
 ) {
   const { trackFeature } = useAnalytics()
 
@@ -142,7 +147,7 @@ export function usePerformanceTracking(metricName: string) {
         unit,
       })
     },
-    [metricName, track],
+    [metricName, track]
   )
 
   return trackPerformance

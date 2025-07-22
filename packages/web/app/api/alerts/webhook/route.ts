@@ -1,26 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import logger from '@/lib/logging'
+import { validateAlertmanagerWebhookSecret } from '@/lib/env-validation'
+import type { AlertWebhookPayload } from '@/types/monitoring'
 
-interface AlertWebhookPayload {
-  version: string
-  groupKey: string
-  status: 'firing' | 'resolved'
-  receiver: string
-  groupLabels: Record<string, string>
-  commonLabels: Record<string, string>
-  commonAnnotations: Record<string, string>
-  externalURL: string
-  alerts: Array<{
-    status: 'firing' | 'resolved'
-    labels: Record<string, string>
-    annotations: Record<string, string>
-    startsAt: string
-    endsAt?: string
-    generatorURL: string
-    fingerprint: string
-  }>
-}
+// AlertWebhookPayload interface moved to types/monitoring.ts
 
 // Send notification to Slack
 async function sendSlackNotification(
@@ -206,7 +190,7 @@ export async function POST(request: NextRequest) {
     // Verify webhook signature if configured
     const headersList = await headers()
     const signature = headersList.get('x-alertmanager-signature')
-    const webhookSecret = process.env.ALERTMANAGER_WEBHOOK_SECRET
+    const webhookSecret = validateAlertmanagerWebhookSecret()
 
     if (webhookSecret && signature) {
       // Implement signature verification here

@@ -164,7 +164,7 @@ function checkMemory(): HealthCheckResponse['checks']['memory'] {
 
 // Main health check endpoint
 export async function GET(_request: NextRequest) {
-  const _headersList = headers()
+  const _headersList = await headers()
   const requestStart = Date.now()
 
   try {

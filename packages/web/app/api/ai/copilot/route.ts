@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { createOpenAI } from '@ai-sdk/openai'
 import { generateText } from 'ai'
+import { validateOpenAIKey } from '@/lib/env-validation'
 
 export async function POST(req: NextRequest) {
   const {
@@ -11,9 +12,10 @@ export async function POST(req: NextRequest) {
     system,
   } = await req.json()
 
-  const apiKey = key || process.env.OPENAI_API_KEY
-
-  if (!apiKey) {
+  let apiKey: string
+  try {
+    apiKey = key || validateOpenAIKey()
+  } catch (error) {
     return NextResponse.json(
       { error: 'Missing OpenAI API key.' },
       { status: 401 }
