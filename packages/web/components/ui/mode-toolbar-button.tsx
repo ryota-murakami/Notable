@@ -98,8 +98,8 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
             value='viewing'
           >
             <Indicator />
-            {item.viewing.icon}
-            {item.viewing.label}
+            {item.viewing?.icon}
+            {item.viewing?.label}
           </DropdownMenuRadioItem>
 
           <DropdownMenuRadioItem
@@ -107,8 +107,8 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
             value='suggestion'
           >
             <Indicator />
-            {item.suggestion.icon}
-            {item.suggestion.label}
+            {item.suggestion?.icon}
+            {item.suggestion?.label}
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

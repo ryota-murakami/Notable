@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import { useSupabase } from '@/components/supabase-provider'
 import { Note } from '@/types/note'
-import { usePerformanceMonitor } from './use-performance-monitor'
 
 interface QueryCache {
   data: any
@@ -25,12 +23,9 @@ const DEFAULT_BATCH_SIZE = 50
 const QUERY_CACHE = new Map<string, QueryCache>()
 
 // Batch query queue
-const BATCH_QUEUE = new Map<string, Set<string>>()
-const BATCH_TIMERS = new Map<string, NodeJS.Timeout>()
 
 export function useOptimizedQueries() {
   const { supabase } = useSupabase()
-  const performanceMonitor = usePerformanceMonitor()
   const abortControllerRef = useRef<AbortController | null>(null)
 
   // Clean up stale cache entries
@@ -71,7 +66,7 @@ export function useOptimizedQueries() {
 
       return cached.data
     },
-    [],
+    []
   )
 
   // Set cache with expiration
@@ -88,7 +83,7 @@ export function useOptimizedQueries() {
   const fetchNotesPaginated = useCallback(
     async (
       page: number = 1,
-      options: QueryOptions = {},
+      options: QueryOptions = {}
     ): Promise<{ notes: Note[]; hasMore: boolean; total: number }> => {
       const {
         cacheTime = DEFAULT_CACHE_TIME,
@@ -129,10 +124,10 @@ export function useOptimizedQueries() {
 
           setCache(cacheKey, result, cacheTime)
           return result
-        },
+        }
       )
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache, performanceMonitor]
   )
 
   // Batch note fetching for multiple IDs
@@ -175,10 +170,10 @@ export function useOptimizedQueries() {
           }
 
           return results
-        },
+        }
       )
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache, performanceMonitor]
   )
 
   // Optimized search with debounced queries
@@ -189,7 +184,7 @@ export function useOptimizedQueries() {
       const cacheKey = `search:${query}`
       const cached = getFromCache(
         cacheKey,
-        options.staleTime || DEFAULT_STALE_TIME,
+        options.staleTime || DEFAULT_STALE_TIME
       )
 
       if (cached) {
@@ -209,10 +204,10 @@ export function useOptimizedQueries() {
           const results = data || []
           setCache(cacheKey, results, options.cacheTime || DEFAULT_CACHE_TIME)
           return results
-        },
+        }
       )
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache, performanceMonitor]
   )
 
   // Prefetch next page of data
@@ -224,14 +219,14 @@ export function useOptimizedQueries() {
       // Only prefetch if not already cached
       const cached = getFromCache(
         cacheKey,
-        options.staleTime || DEFAULT_STALE_TIME,
+        options.staleTime || DEFAULT_STALE_TIME
       )
       if (!cached) {
         // Prefetch in background without waiting
         fetchNotesPaginated(nextPage, options).catch(console.error)
       }
     },
-    [fetchNotesPaginated, getFromCache],
+    [fetchNotesPaginated, getFromCache]
   )
 
   // Invalidate cache for specific queries
@@ -289,10 +284,10 @@ export function useOptimizedQueries() {
           invalidateCache('notes:page:')
 
           return results
-        },
+        }
       )
     },
-    [supabase, performanceMonitor, invalidateCache],
+    [supabase, performanceMonitor, invalidateCache]
   )
 
   // Connection pooling for real-time subscriptions
@@ -319,7 +314,7 @@ export function useOptimizedQueries() {
 
             // Invalidate list caches
             invalidateCache('notes:page:')
-          },
+          }
         )
         .subscribe()
 
@@ -327,7 +322,7 @@ export function useOptimizedQueries() {
         supabase.removeChannel(channel)
       }
     },
-    [supabase, setCache, invalidateCache],
+    [supabase, setCache, invalidateCache]
   )
 
   return {

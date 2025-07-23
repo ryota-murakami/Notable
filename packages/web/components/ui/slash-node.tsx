@@ -204,13 +204,13 @@ const groups: Group[] = [
 ]
 
 export function SlashInputElement(
-  props: PlateElementProps<TComboboxInputElement>,
+  props: PlateElementProps<TComboboxInputElement>
 ) {
   const { editor, element } = props
 
   return (
-    <PlateElement {...props} as="span">
-      <InlineCombobox element={element} trigger="/">
+    <PlateElement {...props} as='span'>
+      <InlineCombobox element={element} trigger='/'>
         <InlineComboboxInput />
 
         <InlineComboboxContent>
@@ -226,15 +226,15 @@ export function SlashInputElement(
                     key={value}
                     value={value}
                     onClick={() => onSelect(editor, value)}
-                    label={label}
-                    focusEditor={focusEditor}
+                    {...(label !== undefined && { label })}
+                    {...(focusEditor !== undefined && { focusEditor })}
                     group={group}
-                    keywords={keywords}
+                    {...(keywords !== undefined && { keywords })}
                   >
-                    <div className="mr-2 text-muted-foreground">{icon}</div>
+                    <div className='mr-2 text-muted-foreground'>{icon}</div>
                     {label ?? value}
                   </InlineComboboxItem>
-                ),
+                )
               )}
             </InlineComboboxGroup>
           ))}

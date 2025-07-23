@@ -7,8 +7,8 @@ export function useLogger(componentName?: string) {
 
   // Create base metadata
   const baseMetadata: LogMetadata = {
-    component: componentName,
-    userId: user?.id,
+    ...(componentName !== undefined && { component: componentName }),
+    ...(user?.id !== undefined && { userId: user.id }),
   }
 
   // Log component mount/unmount
@@ -20,6 +20,7 @@ export function useLogger(componentName?: string) {
         logger.debug(`Component unmounted: ${componentName}`, baseMetadata)
       }
     }
+    return undefined
   }, [componentName])
 
   // Error logging with context
@@ -33,7 +34,7 @@ export function useLogger(componentName?: string) {
         context,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Warning logging
@@ -44,7 +45,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Info logging
@@ -55,7 +56,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Debug logging
@@ -66,7 +67,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // User action logging
@@ -77,7 +78,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata, user?.id],
+    [baseMetadata, user?.id]
   )
 
   // Performance logging
@@ -88,7 +89,7 @@ export function useLogger(componentName?: string) {
         ...metadata,
       })
     },
-    [baseMetadata],
+    [baseMetadata]
   )
 
   // Time tracking helper
@@ -101,7 +102,7 @@ export function useLogger(componentName?: string) {
         logPerformance(operation, duration)
       }
     },
-    [logPerformance],
+    [logPerformance]
   )
 
   return {
@@ -127,7 +128,7 @@ export function useAsyncLogger() {
       options?: {
         onSuccess?: (result: T) => void
         onError?: (error: Error) => void
-      },
+      }
     ): Promise<T> => {
       const endTimer = startTimer(operation)
 
@@ -145,7 +146,7 @@ export function useAsyncLogger() {
         endTimer()
       }
     },
-    [error, info, startTimer],
+    [error, info, startTimer]
   )
 
   return { logAsync }
@@ -162,7 +163,7 @@ export function useFormLogger(formName: string) {
         fields: Object.keys(data),
       })
     },
-    [action, formName],
+    [action, formName]
   )
 
   const logValidationError = useCallback(
@@ -172,14 +173,14 @@ export function useFormLogger(formName: string) {
         errors: Object.keys(errors),
       })
     },
-    [action, formName],
+    [action, formName]
   )
 
   const logSubmitError = useCallback(
     (err: Error) => {
       error(err, 'Form submission failed')
     },
-    [error],
+    [error]
   )
 
   const logSubmitSuccess = useCallback(() => {
