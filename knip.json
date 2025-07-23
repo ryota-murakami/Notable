@@ -1,28 +1,31 @@
 {
-  "workspaces": {
-    ".": {
-      "ignoreBinaries": [],
-      "ignoreDependencies": []
-    },
-    "packages/web": {
-      "entry": ["app/**", "components/**", "lib/**", "hooks/**"],
-      "project": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
-    },
-    "packages/mobile": {
-      "entry": ["app/**", "components/**", "hooks/**"],
-      "project": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
-    },
-    "packages/electron": {
-      "entry": ["main.ts", "preload.ts"],
-      "project": ["**/*.ts", "**/*.tsx"]
-    }
-  },
+  "entry": [
+    "packages/*/app/**/*.{ts,tsx}",
+    "packages/mobile/app/**/*.tsx",
+    "packages/web/middleware.ts"
+  ],
+  "project": ["packages/**/*.{ts,tsx,js,jsx}"],
   "ignore": [
-    "packages/configs/**",
     "**/node_modules/**",
     "**/dist/**",
     "**/.next/**",
     "**/.expo/**",
-    "**/coverage/**"
-  ]
+    "**/coverage/**",
+    "packages/configs/**",
+    "**/*.test.{ts,tsx}",
+    "**/*.spec.{ts,tsx}",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/e2e/**"
+  ],
+  "ignoreDependencies": [
+    "@types/*",
+    "eslint*",
+    "prettier*",
+    "husky",
+    "lint-staged",
+    "turbo"
+  ],
+  "jest": false,
+  "next": false
 }

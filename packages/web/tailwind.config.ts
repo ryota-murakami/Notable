@@ -1,4 +1,3 @@
-// @ts-ignore - Tailwind CSS v4 types
 import type { Config } from 'tailwindcss'
 
 // Tailwind CSS v4.1 configuration

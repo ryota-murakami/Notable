@@ -1,6 +1,7 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 
 export async function middleware(req: NextRequest) {
   const startTime = Date.now()
@@ -26,9 +27,14 @@ export async function middleware(req: NextRequest) {
     } = await supabase.auth.getSession()
 
     if (error) {
-      console.error('Middleware auth error:', error, {
-        path: req.nextUrl.pathname,
-        requestId,
+      Sentry.captureException(error, {
+        tags: {
+          middleware: true,
+          path: req.nextUrl.pathname,
+        },
+        extra: {
+          requestId,
+        },
       })
     }
 
@@ -49,22 +55,27 @@ export async function middleware(req: NextRequest) {
       )
     }
 
-    // If user is not signed in and accessing the root route, redirect to login
-    if (!session && req.nextUrl.pathname === '/') {
+    // If user is not signed in and accessing a protected route, redirect to login
+    if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
       return NextResponse.redirect(new URL('/auth/signin', req.url))
     }
 
-    // If user is signed in and accessing auth pages, redirect to home
+    // If user is signed in and accessing auth pages, redirect to dashboard
     if (session && req.nextUrl.pathname.startsWith('/auth')) {
-      return NextResponse.redirect(new URL('/', req.url))
+      return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 
     return res
   } catch (error) {
-    // Log middleware errors
-    console.error('Middleware error:', error, {
-      path: req.nextUrl.pathname,
-      requestId,
+    // Capture any middleware errors
+    Sentry.captureException(error, {
+      tags: {
+        middleware: true,
+        path: req.nextUrl.pathname,
+      },
+      extra: {
+        requestId,
+      },
     })
 
     // Return error response
@@ -77,7 +88,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/',
+    '/dashboard/:path*',
     '/auth/:path*',
     '/((?!api|_next/static|_next/image|favicon.ico|edge).*)',
   ],
