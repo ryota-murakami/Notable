@@ -116,7 +116,7 @@ export function PlateEditorComponent({
       return () => clearTimeout(timeoutId)
     }
     return undefined
-  }, [editor?.children, title, tags, note, onUpdateNote])
+  }, [editor, editor?.children, title, tags, note, onUpdateNote])
 
   // Save note when title changes
   useEffect(() => {

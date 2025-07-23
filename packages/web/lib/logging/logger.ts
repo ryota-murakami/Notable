@@ -7,23 +7,18 @@ const createUniversalLogger = (): Logger => {
 
   const log = (level: LogLevel, message: string, metadata?: LogMetadata) => {
     const timestamp = new Date().toISOString()
-    const logData = {
-      timestamp,
-      level,
-      message,
-      ...metadata,
-    }
 
     if (isDevelopment || level === 'error' || level === 'warn') {
       const logMethod =
         level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log'
       if (metadata) {
         console[logMethod](
+          // eslint-disable-line no-console
           `[${timestamp}] [${level.toUpperCase()}] ${message}`,
           metadata
         )
       } else {
-        console[logMethod](`[${timestamp}] [${level.toUpperCase()}] ${message}`)
+        console[logMethod](`[${timestamp}] [${level.toUpperCase()}] ${message}`) // eslint-disable-line no-console
       }
     }
   }
