@@ -9,7 +9,6 @@ import {
   AutoformatPlugin,
   autoformatPunctuation,
   autoformatSmartQuotes,
-  type AutoformatRule,
 } from '@platejs/autoformat'
 import { insertEmptyCodeBlock } from '@platejs/code-block'
 import { toggleList } from '@platejs/list'

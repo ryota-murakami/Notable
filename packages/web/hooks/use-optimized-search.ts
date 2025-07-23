@@ -73,7 +73,7 @@ export function useOptimizedSearch({
             setSearchTime(duration)
             setIsSearching(false)
           },
-          { timeout: 100 },
+          { timeout: 100 }
         )
       } else {
         // Fallback for browsers without requestIdleCallback
@@ -88,13 +88,18 @@ export function useOptimizedSearch({
         }, 0)
       }
     },
-    [fuse, notes],
+    [fuse, notes]
   )
 
   // Debounced search with performance metrics
   const debouncedSearch = useMemo(
-    () => debounceWithMetrics(performSearch, debounceMs, 'search-notes'),
-    [performSearch, debounceMs],
+    () =>
+      debounceWithMetrics(
+        performSearch as (...args: unknown[]) => unknown,
+        debounceMs,
+        'search-notes'
+      ),
+    [performSearch, debounceMs]
   )
 
   // Effect to trigger search when query changes
