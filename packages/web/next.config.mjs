@@ -2,7 +2,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Removed output: 'export' to enable middleware for authentication
+  // output: 'export', // Disabled for development testing
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -17,7 +17,6 @@ const nextConfig = {
 
   // Performance optimizations
   reactStrictMode: true,
-  swcMinify: true,
   compress: true,
 
   // Production optimizations
@@ -32,9 +31,32 @@ const nextConfig = {
 
   // Bundle optimization
   webpack: (config, { isServer }) => {
-    // Optimize bundle size
+    // Fix CommonJS module issues
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      }
+    }
+
+    // Fix Supabase build issues by providing global polyfills
+    if (isServer) {
+      const webpack = config.plugins[0].constructor.webpack
+      if (webpack && webpack.DefinePlugin) {
+        config.plugins.push(
+          new webpack.DefinePlugin({
+            self: JSON.stringify('globalThis'),
+          })
+        )
+      }
+    }
+    // Enhanced code splitting with more granular chunks
     config.optimization.splitChunks = {
       chunks: 'all',
+      minSize: 20000,
+      maxSize: 244000,
       cacheGroups: {
         default: false,
         vendors: false,
@@ -42,32 +64,86 @@ const nextConfig = {
           name: 'commons',
           chunks: 'all',
           minChunks: 2,
+          priority: 5,
         },
         react: {
           name: 'react',
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
           chunks: 'all',
-          priority: 20,
+          priority: 25,
+        },
+        reactQuery: {
+          name: 'react-query',
+          test: /[\\/]node_modules[\\/]@tanstack[\\/]react-query/,
+          chunks: 'all',
+          priority: 24,
         },
         supabase: {
           name: 'supabase',
           test: /[\\/]node_modules[\\/]@supabase[\\/]/,
           chunks: 'all',
-          priority: 15,
+          priority: 20,
         },
         editor: {
           name: 'editor',
-          test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
+          test: /[\\/]node_modules[\\/](@udecode|@platejs|slate)[\\/]/,
+          chunks: 'all',
+          priority: 18,
+        },
+        radixUI: {
+          name: 'radix-ui',
+          test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+          chunks: 'all',
+          priority: 15,
+        },
+        billing: {
+          name: 'billing',
+          test: /[\\/]node_modules[\\/](stripe|@stripe)[\\/]/,
+          chunks: 'all',
+          priority: 12,
+        },
+        performance: {
+          name: 'performance',
+          test: /[\\/]node_modules[\\/](web-vitals|react-window|react-virtualized)[\\/]/,
           chunks: 'all',
           priority: 10,
+        },
+        ai: {
+          name: 'ai',
+          test: /[\\/]node_modules[\\/](@ai-sdk|ai)[\\/]/,
+          chunks: 'all',
+          priority: 8,
         },
       },
     }
 
-    // Tree shaking for production
-    if (!isServer && process.env.NODE_ENV === 'production') {
-      config.optimization.usedExports = true
-      config.optimization.sideEffects = false
+    // Optimize for performance
+    if (!isServer) {
+      // Tree shaking for production
+      if (process.env.NODE_ENV === 'production') {
+        config.optimization.usedExports = true
+        config.optimization.sideEffects = false
+        config.optimization.providedExports = true
+        config.optimization.concatenateModules = true
+      }
+
+      // Module resolution optimizations
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        // Reduce bundle size by using specific lodash imports
+        lodash: 'lodash-es',
+      }
+
+      // Performance monitoring for build analysis
+      if (process.env.ANALYZE_BUILD === 'true') {
+        config.plugins.push(
+          new config.plugins[0].constructor.webpack.BannerPlugin({
+            banner: 'Build analysis mode - chunks info logged',
+            raw: false,
+            entryOnly: true,
+          })
+        )
+      }
     }
 
     return config

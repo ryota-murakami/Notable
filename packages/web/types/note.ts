@@ -5,4 +5,7 @@ export interface Note {
   userId: string
   createdAt: string
   updatedAt: string
+  parentId?: string | null
+  tags?: string[]
+  isFolder?: boolean
 }

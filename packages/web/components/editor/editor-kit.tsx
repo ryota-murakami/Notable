@@ -36,7 +36,7 @@ import { SuggestionKit } from './plugins/suggestion-kit'
 import { TableKit } from './plugins/table-kit'
 import { TocKit } from './plugins/toc-kit'
 import { ToggleKit } from './plugins/toggle-kit'
-import { CollaborationKit } from './plugins/collaboration-kit'
+// import { CollaborationKit } from './plugins/collaboration-kit' // Temporarily disabled
 
 export const EditorKit = [
   ...AIKit,
@@ -66,7 +66,7 @@ export const EditorKit = [
   ...LineHeightKit,
 
   // Collaboration
-  ...CollaborationKit,
+  // ...CollaborationKit, // Temporarily disabled
   ...DiscussionKit,
   ...CommentKit,
   ...SuggestionKit,

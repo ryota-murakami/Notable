@@ -15,6 +15,7 @@ export function mapDatabaseNoteToNote(dbNote: DatabaseNote): Note {
       typeof dbNote.content === 'string'
         ? dbNote.content
         : JSON.stringify(dbNote.content),
+    userId: dbNote.user_id,
     createdAt: dbNote.created_at,
     updatedAt: dbNote.updated_at,
     parentId: dbNote.folder_id,

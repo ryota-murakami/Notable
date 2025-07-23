@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useUser } from './use-user'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/utils/supabase/client'
 import {
   SUBSCRIPTION_PLANS,
   SubscriptionPlan,

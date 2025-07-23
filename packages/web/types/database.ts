@@ -7,6 +7,7 @@ export interface Database {
           title: string
           content: string
           user_id: string
+          folder_id: string | null
           created_at: string
           updated_at: string
         }
@@ -15,6 +16,7 @@ export interface Database {
           title: string
           content: string
           user_id: string
+          folder_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -23,6 +25,7 @@ export interface Database {
           title?: string
           content?: string
           user_id?: string
+          folder_id?: string | null
           created_at?: string
           updated_at?: string
         }

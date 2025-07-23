@@ -95,10 +95,13 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
             typeof note.content === 'string'
               ? note.content
               : JSON.stringify(note.content),
+          userId: note.user_id,
           createdAt: note.created_at,
           updatedAt: note.updated_at,
           parentId: note.folder_id,
-          tags: note.note_tags?.map((nt) => nt.tags.name).filter(Boolean) || [],
+          tags:
+            note.note_tags?.map((nt: any) => nt.tags.name).filter(Boolean) ||
+            [],
           isFolder: false,
         })) || []
 
@@ -117,6 +120,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
           id: folder.id,
           title: folder.name,
           content: '',
+          userId: folder.user_id,
           createdAt: folder.created_at,
           updatedAt: folder.updated_at,
           parentId: folder.parent_id,
@@ -254,6 +258,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
         const newNote: Omit<Note, 'id' | 'createdAt' | 'updatedAt'> = {
           title: 'Untitled Note',
           content: '',
+          userId: user.id,
           parentId,
           isFolder: false,
           tags: [],

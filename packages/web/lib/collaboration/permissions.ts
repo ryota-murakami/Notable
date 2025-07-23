@@ -3,6 +3,7 @@
  * Handles sharing, access controls, and permission enforcement
  */
 
+import React from 'react'
 import { User } from './yjs-provider'
 
 export type Permission = 'owner' | 'editor' | 'commenter' | 'viewer'

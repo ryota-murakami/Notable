@@ -1,6 +1,10 @@
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
-import * as Sentry from '@sentry/nextjs'
+// Conditionally import Sentry to avoid build issues
+let Sentry: any = null
+if (typeof window === 'undefined' && process.env.VERCEL) {
+  Sentry = require('@sentry/nextjs')
+}
 import { formatError, type LogLevel, type LogMetadata } from './index'
 import { Transform } from 'stream'
 
@@ -19,8 +23,8 @@ class SentryTransport extends Transform {
       const info = JSON.parse(chunk.toString())
       const { level, message, ...metadata } = info
 
-      // Only send errors and warnings to Sentry
-      if (level === 'error') {
+      // Only send errors and warnings to Sentry if available
+      if (Sentry && level === 'error') {
         if (metadata.error instanceof Error) {
           Sentry.captureException(metadata.error, {
             extra: metadata,
@@ -28,7 +32,7 @@ class SentryTransport extends Transform {
         } else {
           Sentry.captureMessage(message, 'error')
         }
-      } else if (level === 'warn') {
+      } else if (Sentry && level === 'warn') {
         Sentry.captureMessage(message, 'warning')
       }
 
@@ -100,8 +104,10 @@ export function createServerLogger() {
       })
     )
 
-    // Sentry transport
-    transports.push(new SentryTransport())
+    // Sentry transport - only add if Sentry is available
+    if (Sentry) {
+      transports.push(new SentryTransport())
+    }
   }
 
   // Create logger instance
