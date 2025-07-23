@@ -2,17 +2,21 @@
 
 import * as React from 'react'
 
-import type { TComboboxInputElement, TMentionElement } from 'platejs'
-import type { PlateElementProps } from 'platejs/react'
-
-import { getMentionOnSelectItem } from '@platejs/mention'
-import { IS_APPLE, KEYS } from 'platejs'
 import {
+  IS_APPLE,
+  KEYS,
+  type TComboboxInputElement,
+  type TMentionElement,
+} from 'platejs'
+import {
+  type PlateElementProps,
   PlateElement,
   useFocused,
   useReadOnly,
   useSelected,
 } from 'platejs/react'
+
+import { getMentionOnSelectItem } from '@platejs/mention'
 
 import { cn } from '@/lib/utils'
 import { useMounted } from '@/hooks/use-mounted'

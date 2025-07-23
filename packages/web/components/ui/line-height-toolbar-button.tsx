@@ -2,10 +2,12 @@
 
 import * as React from 'react'
 
-import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu'
+import {
+  type DropdownMenuProps,
+  DropdownMenuItemIndicator,
+} from '@radix-ui/react-dropdown-menu'
 
 import { LineHeightPlugin } from '@platejs/basic-styles/react'
-import { DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu'
 import { CheckIcon, WrapText } from 'lucide-react'
 import { useEditorRef, useSelectionFragmentProp } from 'platejs/react'
 

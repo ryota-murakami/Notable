@@ -23,9 +23,9 @@ export function SuggestionLeaf(props: PlateLeafProps<TSuggestionText>) {
   const hoverSuggestionId = usePluginOption(suggestionPlugin, 'hoverId')
   const dataList = api.suggestion.dataList(leaf)
 
-  const hasRemove = dataList.some((data) => data.type === 'remove')
-  const hasActive = dataList.some((data) => data.id === activeSuggestionId)
-  const hasHover = dataList.some((data) => data.id === hoverSuggestionId)
+  const hasRemove = dataList.some((data: any) => data.type === 'remove')
+  const hasActive = dataList.some((data: any) => data.id === activeSuggestionId)
+  const hasHover = dataList.some((data: any) => data.id === hoverSuggestionId)
 
   const diffOperation = { type: hasRemove ? 'delete' : 'insert' } as const
 

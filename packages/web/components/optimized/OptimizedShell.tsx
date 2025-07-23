@@ -101,29 +101,32 @@ export function OptimizedShell() {
 
     // Monitor web vitals
     const unsubscribe = observeWebVitals((metric) => {
-      // eslint-disable-next-line no-console
-      console.log(`${metric.name}: ${metric.value} (${metric.rating})`)
+      // Log web vitals in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`${metric.name}: ${metric.value} (${metric.rating})`) // eslint-disable-line no-console
+      }
 
       // Send to analytics if needed
       if ((window as Window & { gtag?: (...args: unknown[]) => void }).gtag) {
-        ;(window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.(
-          'event',
-          metric.name,
-          {
-            value: Math.round(
-              metric.name === 'CLS' ? metric.value * 1000 : metric.value
-            ),
-            metric_rating: metric.rating,
-            non_interaction: true,
-          }
-        )
+        const gtag = (
+          window as Window & { gtag?: (...args: unknown[]) => void }
+        ).gtag
+        gtag?.('event', metric.name, {
+          value: Math.round(
+            metric.name === 'CLS' ? metric.value * 1000 : metric.value
+          ),
+          metric_rating: metric.rating,
+          non_interaction: true,
+        })
       }
     })
 
     return () => {
       unsubscribe()
       // Log performance report on unmount
-      console.log('Performance Report:', monitor.getReport())
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Performance Report:', monitor.getReport()) // eslint-disable-line no-console
+      }
     }
   }, [])
 

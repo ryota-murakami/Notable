@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import type { VariantProps } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 import {
   Caption as CaptionPrimitive,
@@ -11,7 +11,6 @@ import {
   useCaptionButtonState,
 } from '@platejs/caption/react'
 import { createPrimitiveComponent } from '@udecode/cn'
-import { cva } from 'class-variance-authority'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -44,7 +43,7 @@ export function Caption({
 }
 
 export function CaptionTextarea(
-  props: React.ComponentProps<typeof CaptionTextareaPrimitive>,
+  props: React.ComponentProps<typeof CaptionTextareaPrimitive>
 ) {
   return (
     <CaptionTextareaPrimitive
@@ -53,7 +52,7 @@ export function CaptionTextarea(
         'mt-2 w-full resize-none border-none bg-inherit p-0 font-[inherit] text-inherit',
         'focus:outline-none focus:[&::placeholder]:opacity-0',
         'text-center print:placeholder:text-transparent',
-        props.className,
+        props.className
       )}
     />
   )

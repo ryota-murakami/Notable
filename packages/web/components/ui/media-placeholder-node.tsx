@@ -2,8 +2,13 @@
 
 import * as React from 'react'
 
-import type { TPlaceholderElement } from 'platejs'
-import type { PlateElementProps } from 'platejs/react'
+import { KEYS, type TPlaceholderElement } from 'platejs'
+import {
+  PlateElement,
+  useEditorPlugin,
+  withHOC,
+  type PlateElementProps,
+} from 'platejs/react'
 
 import {
   PlaceholderPlugin,
@@ -11,8 +16,6 @@ import {
   updateUploadHistory,
 } from '@platejs/media/react'
 import { AudioLines, FileUp, Film, ImageIcon, Loader2Icon } from 'lucide-react'
-import { KEYS } from 'platejs'
-import { PlateElement, useEditorPlugin, withHOC } from 'platejs/react'
 import { useFilePicker } from 'use-file-picker'
 
 import { cn } from '@/lib/utils'

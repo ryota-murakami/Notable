@@ -28,8 +28,13 @@ import {
   X,
 } from 'lucide-react'
 import { type NodeEntry, type SlateEditor, isHotkey, NodeApi } from 'platejs'
-import { useEditorPlugin, useHotkeys, usePluginOption } from 'platejs/react'
-import { type PlateEditor, useEditorRef } from 'platejs/react'
+import {
+  useEditorPlugin,
+  useHotkeys,
+  usePluginOption,
+  type PlateEditor,
+  useEditorRef,
+} from 'platejs/react'
 
 import { Button } from '@/components/ui/button'
 import {

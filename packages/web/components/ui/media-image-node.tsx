@@ -3,12 +3,11 @@
 import * as React from 'react'
 
 import type { TImageElement } from 'platejs'
-import type { PlateElementProps } from 'platejs/react'
+import { PlateElement, withHOC, type PlateElementProps } from 'platejs/react'
 
 import { useDraggable } from '@platejs/dnd'
 import { Image, ImagePlugin, useMediaState } from '@platejs/media/react'
 import { ResizableProvider, useResizableValue } from '@platejs/resizable'
-import { PlateElement, withHOC } from 'platejs/react'
 
 import { cn } from '@/lib/utils'
 
@@ -32,8 +31,8 @@ export const ImageElement = withHOC(
 
     return (
       <MediaToolbar plugin={ImagePlugin}>
-        <PlateElement {...props} className="py-2.5">
-          <figure className="group relative m-0" contentEditable={false}>
+        <PlateElement {...props} className='py-2.5'>
+          <figure className='group relative m-0' contentEditable={false}>
             <Resizable
               align={align}
               options={{
@@ -51,7 +50,7 @@ export const ImageElement = withHOC(
                   'block w-full max-w-full cursor-pointer object-cover px-0',
                   'rounded-sm',
                   focused && selected && 'ring-2 ring-ring ring-offset-2',
-                  isDragging && 'opacity-50',
+                  isDragging && 'opacity-50'
                 )}
                 alt={props.attributes.alt as string | undefined}
               />
@@ -69,7 +68,7 @@ export const ImageElement = withHOC(
                 onFocus={(e) => {
                   e.preventDefault()
                 }}
-                placeholder="Write a caption..."
+                placeholder='Write a caption...'
               />
             </Caption>
           </figure>
@@ -78,5 +77,5 @@ export const ImageElement = withHOC(
         </PlateElement>
       </MediaToolbar>
     )
-  },
+  }
 )

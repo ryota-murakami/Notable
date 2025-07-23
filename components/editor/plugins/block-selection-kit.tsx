@@ -22,7 +22,10 @@ export const BlockSelectionKit = [
         if (!props.attributes.className?.includes('slate-selectable'))
           return null
 
-        return <BlockSelection {...(props as any)} />
+        // TODO: tighten typings once @platejs typings expose the correct prop interface
+        return (
+          <BlockSelection {...(props as unknown as Record<string, unknown>)} />
+        )
       },
     },
   })),
