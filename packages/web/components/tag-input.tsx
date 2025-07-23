@@ -36,50 +36,53 @@ export function TagInput({ tags, onChange }: TagInputProps) {
       e.preventDefault()
       handleAddTag()
     } else if (e.key === 'Backspace' && inputValue === '' && tags.length > 0) {
-      handleRemoveTag(tags[tags.length - 1])
+      const lastTag = tags[tags.length - 1]
+      if (lastTag) {
+        handleRemoveTag(lastTag)
+      }
     }
   }
 
   return (
-    <div className="flex flex-wrap gap-2 p-2 border rounded-md focus-within:ring-1 focus-within:ring-ring">
+    <div className='flex flex-wrap gap-2 p-2 border rounded-md focus-within:ring-1 focus-within:ring-ring'>
       {tags.map((tag) => (
         <Badge
           key={tag}
-          variant="secondary"
-          className="flex items-center gap-1"
+          variant='secondary'
+          className='flex items-center gap-1'
         >
           {tag}
           <Button
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4 p-0 hover:bg-transparent"
+            variant='ghost'
+            size='icon'
+            className='h-4 w-4 p-0 hover:bg-transparent'
             onClick={() => handleRemoveTag(tag)}
           >
-            <X className="h-3 w-3" />
-            <span className="sr-only">Remove {tag}</span>
+            <X className='h-3 w-3' />
+            <span className='sr-only'>Remove {tag}</span>
           </Button>
         </Badge>
       ))}
-      <div className="flex items-center gap-1 flex-1 min-w-[120px]">
+      <div className='flex items-center gap-1 flex-1 min-w-[120px]'>
         <Input
           ref={inputRef}
-          type="text"
+          type='text'
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Add tag..."
-          className="border-0 p-0 h-auto focus-visible:ring-0"
+          placeholder='Add tag...'
+          className='border-0 p-0 h-auto focus-visible:ring-0'
         />
         <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="h-5 w-5"
+          type='button'
+          variant='ghost'
+          size='icon'
+          className='h-5 w-5'
           onClick={handleAddTag}
           disabled={inputValue.trim() === ''}
         >
-          <Plus className="h-3 w-3" />
-          <span className="sr-only">Add tag</span>
+          <Plus className='h-3 w-3' />
+          <span className='sr-only'>Add tag</span>
         </Button>
       </div>
     </div>

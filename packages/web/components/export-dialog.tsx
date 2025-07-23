@@ -74,10 +74,10 @@ export function ExportDialog({ isOpen, onClose, note }: ExportDialogProps) {
       .replace(/<strong>(.*?)<\/strong>/g, '**$1**')
       .replace(/<em>(.*?)<\/em>/g, '*$1*')
       .replace(/<a href="(.*?)">(.*?)<\/a>/g, '[$2]($1)')
-      .replace(/<ul>(.*?)<\/ul>/gs, (_, list) => {
+      .replace(/<ul>([\s\S]*?)<\/ul>/g, (_, list) => {
         return list.replace(/<li>(.*?)<\/li>/g, '- $1\n')
       })
-      .replace(/<ol>(.*?)<\/ol>/gs, (_, list) => {
+      .replace(/<ol>([\s\S]*?)<\/ol>/g, (_, list) => {
         let index = 1
         return list.replace(/<li>(.*?)<\/li>/g, () => {
           return `${index++}. $1\n`
@@ -98,31 +98,31 @@ export function ExportDialog({ isOpen, onClose, note }: ExportDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Export Note</DialogTitle>
         </DialogHeader>
-        <div className="py-4">
+        <div className='py-4'>
           <RadioGroup
             value={format}
             onValueChange={(value) => setFormat(value as ExportFormat)}
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="markdown" id="markdown" />
-              <Label htmlFor="markdown">Markdown (.md)</Label>
+            <div className='flex items-center space-x-2'>
+              <RadioGroupItem value='markdown' id='markdown' />
+              <Label htmlFor='markdown'>Markdown (.md)</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="html" id="html" />
-              <Label htmlFor="html">HTML (.html)</Label>
+            <div className='flex items-center space-x-2'>
+              <RadioGroupItem value='html' id='html' />
+              <Label htmlFor='html'>HTML (.html)</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="text" id="text" />
-              <Label htmlFor="text">Plain Text (.txt)</Label>
+            <div className='flex items-center space-x-2'>
+              <RadioGroupItem value='text' id='text' />
+              <Label htmlFor='text'>Plain Text (.txt)</Label>
             </div>
           </RadioGroup>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant='outline' onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={handleExport}>Export</Button>

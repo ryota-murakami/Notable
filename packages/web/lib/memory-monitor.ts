@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { useEffect } from 'react'
 
 interface MemorySnapshot {
   timestamp: number
@@ -11,7 +12,7 @@ interface MemorySnapshot {
 
 interface LeakDetectionResult {
   hasLeak: boolean
-  leakRate?: number // MB per minute
+  leakRate: number | undefined // MB per minute
   suspects: string[]
   recommendations: string[]
 }
@@ -34,7 +35,7 @@ export class MemoryMonitor extends EventEmitter {
   private globalListeners = new Map<string, number>()
   private retainedObjects = new WeakMap<object, string>()
   private monitoring = false
-  private snapshotInterval?: NodeJS.Timeout
+  private snapshotInterval: number | undefined
 
   constructor() {
     super()
@@ -48,18 +49,26 @@ export class MemoryMonitor extends EventEmitter {
     const originalAddEventListener = window.addEventListener
     const originalRemoveEventListener = window.removeEventListener
 
-    window.addEventListener = (type: string, ...args: any[]) => {
+    window.addEventListener = (
+      type: string,
+      listener: EventListenerOrEventListenerObject,
+      options?: boolean | AddEventListenerOptions
+    ) => {
       const count = this.globalListeners.get(type) || 0
       this.globalListeners.set(type, count + 1)
-      return originalAddEventListener.call(window, type, ...args)
+      return originalAddEventListener.call(window, type, listener, options)
     }
 
-    window.removeEventListener = (type: string, ...args: any[]) => {
+    window.removeEventListener = (
+      type: string,
+      listener: EventListenerOrEventListenerObject,
+      options?: boolean | EventListenerOptions
+    ) => {
       const count = this.globalListeners.get(type) || 0
       if (count > 0) {
         this.globalListeners.set(type, count - 1)
       }
-      return originalRemoveEventListener.call(window, type, ...args)
+      return originalRemoveEventListener.call(window, type, listener, options)
     }
 
     // Track setTimeout/setInterval
@@ -70,30 +79,56 @@ export class MemoryMonitor extends EventEmitter {
 
     const activeTimers = new Set<number>()
 
-    window.setTimeout = (...args: any[]) => {
-      const id = originalSetTimeout.apply(window, args)
+    window.setTimeout = ((
+      handler: TimerHandler,
+      timeout?: number,
+      ...args: unknown[]
+    ) => {
+      const id = originalSetTimeout.call(
+        window,
+        handler as () => void,
+        timeout,
+        ...(args as [])
+      ) as unknown as number
       activeTimers.add(id)
       return id
-    }
+    }) as typeof setTimeout
 
-    window.setInterval = (...args: any[]) => {
-      const id = originalSetInterval.apply(window, args)
+    window.setInterval = ((
+      handler: TimerHandler,
+      timeout?: number,
+      ...args: unknown[]
+    ) => {
+      const id = originalSetInterval.call(
+        window,
+        handler as () => void,
+        timeout,
+        ...(args as [])
+      ) as unknown as number
       activeTimers.add(id)
       return id
-    }
+    }) as typeof setInterval
 
-    window.clearTimeout = (id: number) => {
-      activeTimers.delete(id)
+    window.clearTimeout = ((id?: number | NodeJS.Timeout) => {
+      if (id !== undefined) {
+        const numId = typeof id === 'number' ? id : Number(id)
+        activeTimers.delete(numId)
+      }
       return originalClearTimeout.call(window, id)
-    }
+    }) as typeof clearTimeout
 
-    window.clearInterval = (id: number) => {
-      activeTimers.delete(id)
+    window.clearInterval = ((id?: number | NodeJS.Timeout) => {
+      if (id !== undefined) {
+        const numId = typeof id === 'number' ? id : Number(id)
+        activeTimers.delete(numId)
+      }
       return originalClearInterval.call(window, id)
-    }
+    }) as typeof clearInterval
 
     // Expose timer count for debugging
-    ;(window as any).__activeTimerCount = () => activeTimers.size
+    ;(
+      window as Window & { __activeTimerCount?: () => number }
+    ).__activeTimerCount = () => activeTimers.size
   }
 
   startMonitoring(intervalMs: number = 10000) {
@@ -105,7 +140,7 @@ export class MemoryMonitor extends EventEmitter {
     this.snapshotInterval = setInterval(() => {
       this.takeSnapshot()
       this.analyzeMemoryTrends()
-    }, intervalMs)
+    }, intervalMs) as unknown as number
   }
 
   stopMonitoring() {
@@ -117,10 +152,19 @@ export class MemoryMonitor extends EventEmitter {
   }
 
   private takeSnapshot(): MemorySnapshot {
-    const memory = (performance as any).memory
+    const memory = (
+      performance as Performance & {
+        memory?: {
+          usedJSHeapSize: number
+          totalJSHeapSize: number
+          usedJSExternalMemory?: number
+          usedJSArrayBufferSize?: number
+        }
+      }
+    ).memory
 
     if (!memory) {
-      console.warn('Performance.memory API not available')
+      // Performance.memory API not available in some browsers
       return {
         timestamp: Date.now(),
         heapUsed: 0,
@@ -134,7 +178,7 @@ export class MemoryMonitor extends EventEmitter {
       timestamp: Date.now(),
       heapUsed: memory.usedJSHeapSize,
       heapTotal: memory.totalJSHeapSize,
-      external: memory.externalSize || 0,
+      external: memory.usedJSExternalMemory || 0,
       arrayBuffers: 0,
     }
 
@@ -158,11 +202,11 @@ export class MemoryMonitor extends EventEmitter {
     const oldAvg = old.reduce((sum, s) => sum + s.heapUsed, 0) / old.length
 
     const growthRate = (recentAvg - oldAvg) / oldAvg
+    const timeDiffMs =
+      (recent[recent.length - 1]?.timestamp || Date.now()) -
+      (old[0]?.timestamp || Date.now())
     const growthRateMBPerMinute =
-      (recentAvg - oldAvg) /
-      1024 /
-      1024 /
-      ((recent[recent.length - 1].timestamp - old[0].timestamp) / 60000)
+      (recentAvg - oldAvg) / 1024 / 1024 / (timeDiffMs / 60000)
 
     if (growthRate > 0.5 || growthRateMBPerMinute > 5) {
       this.emit('potential-leak', {
@@ -173,9 +217,14 @@ export class MemoryMonitor extends EventEmitter {
     }
   }
 
-  trackComponent(componentName: string, _componentInstance?: any): () => void {
+  trackComponent(
+    componentName: string,
+    _componentInstance?: unknown
+  ): () => void {
     const trackerId = `${componentName}_${Date.now()}_${Math.random()}`
-    const memory = (performance as any).memory
+    const memory = (
+      performance as Performance & { memory?: { usedJSHeapSize: number } }
+    ).memory
 
     const tracker: ComponentMemoryTracker = {
       componentName,
@@ -195,8 +244,8 @@ export class MemoryMonitor extends EventEmitter {
       tracker.finalMemory = memory?.usedJSHeapSize || 0
 
       // Check for potential leaks
-      const memoryRetained = tracker.finalMemory - tracker.initialMemory
-      const lifetimeMs = tracker.unmountTime - tracker.mountTime
+      const memoryRetained = (tracker.finalMemory || 0) - tracker.initialMemory
+      const lifetimeMs = (tracker.unmountTime || Date.now()) - tracker.mountTime
 
       if (memoryRetained > 10 * 1024 * 1024 && lifetimeMs > 5000) {
         console.warn(`Potential memory leak in ${componentName}:`, {
@@ -223,8 +272,10 @@ export class MemoryMonitor extends EventEmitter {
     if (this.snapshots.length >= 2) {
       const first = this.snapshots[0]
       const last = this.snapshots[this.snapshots.length - 1]
-      const growthMB = (last.heapUsed - first.heapUsed) / 1024 / 1024
-      const durationMinutes = (last.timestamp - first.timestamp) / 60000
+      const growthMB =
+        ((last?.heapUsed || 0) - (first?.heapUsed || 0)) / 1024 / 1024
+      const durationMinutes =
+        ((last?.timestamp || 0) - (first?.timestamp || 0)) / 60000
       const leakRate = growthMB / durationMinutes
 
       if (leakRate > 1) {
@@ -242,7 +293,10 @@ export class MemoryMonitor extends EventEmitter {
     }
 
     // Check active timers
-    const timerCount = (window as any).__activeTimerCount?.() || 0
+    const timerCount =
+      (
+        window as Window & { __activeTimerCount?: () => number }
+      ).__activeTimerCount?.() || 0
     if (timerCount > 50) {
       suspects.push(`High number of active timers: ${timerCount}`)
       recommendations.push('Ensure setTimeout/setInterval are cleared')
@@ -253,7 +307,7 @@ export class MemoryMonitor extends EventEmitter {
     for (const [, tracker] of this.componentTrackers) {
       if (tracker.unmountTime && now - tracker.unmountTime > 60000) {
         suspects.push(
-          `Component ${tracker.componentName} still tracked after unmount`,
+          `Component ${tracker.componentName} still tracked after unmount`
         )
         recommendations.push(`Check cleanup in ${tracker.componentName}`)
       }
@@ -291,8 +345,8 @@ export class MemoryMonitor extends EventEmitter {
         snapshots: this.snapshots.length,
         durationMinutes:
           this.snapshots.length >= 2
-            ? (this.snapshots[this.snapshots.length - 1].timestamp -
-                this.snapshots[0].timestamp) /
+            ? ((this.snapshots[this.snapshots.length - 1]?.timestamp || 0) -
+                (this.snapshots[0]?.timestamp || 0)) /
               60000
             : 0,
       },
@@ -302,14 +356,19 @@ export class MemoryMonitor extends EventEmitter {
           name: t.componentName,
           lifetimeSeconds: (Date.now() - t.mountTime) / 1000,
           memoryGrowthMB:
-            ((performance as any).memory?.usedJSHeapSize - t.initialMemory) /
+            (((
+              performance as Performance & {
+                memory?: { usedJSHeapSize: number }
+              }
+            ).memory?.usedJSHeapSize || 0) -
+              t.initialMemory) /
             1024 /
             1024,
         })),
       globalListeners: Object.fromEntries(
         Array.from(this.globalListeners.entries()).filter(
-          ([_, count]) => count > 0,
-        ),
+          ([_, count]) => count > 0
+        )
       ),
       leakDetection,
     }
@@ -322,7 +381,8 @@ export class MemoryMonitor extends EventEmitter {
     // Use FinalizationRegistry to detect when object is garbage collected
     if (typeof FinalizationRegistry !== 'undefined') {
       const registry = new FinalizationRegistry((heldValue: string) => {
-        console.log(`Object garbage collected: ${heldValue}`)
+        // Object garbage collected - memory monitoring
+        this.emit('object-gc', { label: heldValue })
       })
 
       registry.register(obj, label)
@@ -331,13 +391,17 @@ export class MemoryMonitor extends EventEmitter {
 
   // Force garbage collection (only works with --expose-gc flag)
   forceGC() {
-    if (typeof window !== 'undefined' && (window as any).gc) {
-      console.log('Forcing garbage collection...')
-      ;(window as any).gc()
+    if (
+      typeof window !== 'undefined' &&
+      (window as Window & { gc?: () => void }).gc
+    ) {
+      // Forcing garbage collection for memory debugging
+      this.emit('gc-requested')
+      ;(window as Window & { gc?: () => void }).gc?.()
     } else {
-      console.warn(
-        'Garbage collection not available. Run with --expose-gc flag.',
-      )
+      this.emit('gc-unavailable', {
+        message: 'Garbage collection not available. Run with --expose-gc flag.',
+      })
     }
   }
 }

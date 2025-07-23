@@ -39,13 +39,13 @@ export function CalloutElement({
       }}
       {...props}
     >
-      <div className="flex w-full gap-2 rounded-md">
+      <div className='flex w-full gap-2 rounded-md'>
         <EmojiPopover
           {...emojiToolbarDropdownProps}
           control={
             <Button
-              variant="ghost"
-              className="size-6 p-1 text-[18px] select-none hover:bg-muted-foreground/15"
+              variant='ghost'
+              className='size-6 p-1 text-[18px] select-none hover:bg-muted-foreground/15'
               style={{
                 fontFamily:
                   '"Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols',
@@ -56,9 +56,31 @@ export function CalloutElement({
             </Button>
           }
         >
-          <EmojiPicker {...emojiPickerState} {...calloutProps} />
+          <EmojiPicker
+            clearSearch={emojiPickerState.clearSearch}
+            emojiLibrary={emojiPickerState.emojiLibrary}
+            hasFound={emojiPickerState.hasFound}
+            i18n={emojiPickerState.i18n}
+            isSearching={emojiPickerState.isSearching}
+            refs={emojiPickerState.refs}
+            searchResult={emojiPickerState.searchResult}
+            searchValue={emojiPickerState.searchValue}
+            setSearch={emojiPickerState.setSearch}
+            visibleCategories={emojiPickerState.visibleCategories}
+            handleCategoryClick={emojiPickerState.handleCategoryClick}
+            onMouseOver={emojiPickerState.onMouseOver}
+            onSelectEmoji={calloutProps.onSelectEmoji}
+            {...(emojiPickerState.emoji !== undefined && {
+              emoji: emojiPickerState.emoji,
+            })}
+            {...(emojiPickerState.focusedCategory !== undefined && {
+              focusedCategory: emojiPickerState.focusedCategory,
+            })}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+          />
         </EmojiPopover>
-        <div className="w-full">{children}</div>
+        <div className='w-full'>{children}</div>
       </div>
     </PlateElement>
   )

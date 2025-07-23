@@ -20,11 +20,12 @@ function generateSecret(length: number = 32): string {
   return crypto.randomBytes(length).toString('base64url')
 }
 
-function generateApiKey(): string {
-  const prefix = 'sk_prod'
-  const secret = crypto.randomBytes(24).toString('base64url')
-  return `${prefix}_${secret}`
-}
+// Commented out as not currently used
+// function generateApiKey(): string {
+//   const prefix = 'sk_prod'
+//   const secret = crypto.randomBytes(24).toString('base64url')
+//   return `${prefix}_${secret}`
+// }
 
 function generateJWT(): string {
   return crypto.randomBytes(64).toString('base64url')
@@ -33,7 +34,7 @@ function generateJWT(): string {
 async function main() {
   console.log('\n🔐 Notable Secret Generator\n')
   console.log(
-    'This tool will help you generate secure secrets for your production environment.\n',
+    'This tool will help you generate secure secrets for your production environment.\n'
   )
 
   const secrets: Record<string, string> = {}
@@ -55,23 +56,23 @@ async function main() {
   }
 
   const useSentry = await question(
-    'Will you use Sentry for error tracking? (y/n): ',
+    'Will you use Sentry for error tracking? (y/n): '
   )
   if (useSentry.toLowerCase() === 'y') {
     console.log(
-      '\n🔗 Visit https://sentry.io to create a project and get your DSN',
+      '\n🔗 Visit https://sentry.io to create a project and get your DSN'
     )
     console.log(
-      "You'll need: DSN, Organization slug, Project name, and Auth token\n",
+      "You'll need: DSN, Organization slug, Project name, and Auth token\n"
     )
   }
 
   const usePostHog = await question(
-    'Will you use PostHog for analytics? (y/n): ',
+    'Will you use PostHog for analytics? (y/n): '
   )
   if (usePostHog.toLowerCase() === 'y') {
     console.log(
-      '\n📈 Visit https://posthog.com to create a project and get your API key\n',
+      '\n📈 Visit https://posthog.com to create a project and get your API key\n'
     )
   }
 

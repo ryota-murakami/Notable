@@ -6,7 +6,7 @@ import { customAnalytics } from './custom'
 
 export interface AnalyticsEvent {
   name: string
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
   timestamp?: number
   userId?: string
   sessionId?: string
@@ -16,14 +16,14 @@ export interface AnalyticsUser {
   id: string
   email?: string
   name?: string
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 }
 
 export interface PageViewEvent {
   url: string
   referrer?: string
   title?: string
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 }
 
 class Analytics {
@@ -68,14 +68,23 @@ class Analytics {
   // Track custom event
   track(
     event: string | AnalyticsEvent,
-    properties?: Record<string, any>,
+    properties?: Record<string, unknown>
   ): void {
     const eventData: AnalyticsEvent =
-      typeof event === 'string' ? { name: event, properties } : event
+      typeof event === 'string'
+        ? {
+            name: event,
+            ...(properties !== undefined && { properties }),
+          }
+        : event
 
     // Enrich with session data
-    eventData.userId = eventData.userId || this.userId || undefined
-    eventData.sessionId = eventData.sessionId || this.sessionId || undefined
+    if (!eventData.userId && this.userId) {
+      eventData.userId = this.userId
+    }
+    if (!eventData.sessionId && this.sessionId) {
+      eventData.sessionId = this.sessionId
+    }
     eventData.timestamp = eventData.timestamp || Date.now()
 
     this.providers.forEach((provider) => {
@@ -97,7 +106,7 @@ class Analytics {
   }
 
   // Track errors
-  error(error: Error, context?: Record<string, any>): void {
+  error(error: Error, context?: Record<string, unknown>): void {
     this.track('error', {
       message: error.message,
       stack: error.stack,
@@ -119,7 +128,7 @@ class Analytics {
   feature(
     feature: string,
     action: string,
-    properties?: Record<string, any>,
+    properties?: Record<string, unknown>
   ): void {
     this.track('feature_usage', {
       feature,
@@ -132,7 +141,7 @@ class Analytics {
   revenue(
     amount: number,
     currency: string = 'USD',
-    properties?: Record<string, any>,
+    properties?: Record<string, unknown>
   ): void {
     this.track('revenue', {
       amount,
@@ -145,7 +154,7 @@ class Analytics {
   userAction(
     action: string,
     target?: string,
-    properties?: Record<string, any>,
+    properties?: Record<string, unknown>
   ): void {
     this.track('user_action', {
       action,

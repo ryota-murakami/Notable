@@ -25,7 +25,7 @@ interface UserContext {
   tier: 'free' | 'pro' | 'business' | 'enterprise'
   region: string
   features: string[]
-  limits: Record<string, any>
+  limits: Record<string, unknown>
 }
 
 // Routing configurations by user tier
@@ -189,18 +189,19 @@ function getUserContext(request: NextRequest): UserContext {
 
   const config = ROUTING_CONFIGS[tier]
 
+  const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
   return {
     id: userId,
     tier,
     region,
-    features: config.features,
-    limits: config.limits,
+    features: config?.features || freeConfig.features,
+    limits: config?.limits || freeConfig.limits,
   }
 }
 
 // Get region from geo information
 function getRegionFromGeo(request: NextRequest): string {
-  const country = request.geo?.country || 'US'
+  const country = request.headers.get('x-vercel-ip-country') || 'US'
 
   // Map countries to regions
   if (['US', 'CA', 'MX'].includes(country)) {
@@ -220,7 +221,7 @@ function getRegionFromGeo(request: NextRequest): string {
 function getOptimalEndpoint(
   service: keyof RoutingConfig['endpoints'],
   tier: string,
-  region: string,
+  region: string
 ): string {
   const baseConfig = ROUTING_CONFIGS[tier]
   if (!baseConfig) {
@@ -252,7 +253,7 @@ function hasFeatureAccess(userContext: UserContext, feature: string): boolean {
 function checkLimits(
   userContext: UserContext,
   limitType: string,
-  currentUsage: number,
+  currentUsage: number
 ): boolean {
   const limit = userContext.limits[limitType]
 
@@ -272,7 +273,7 @@ export async function POST(request: NextRequest) {
     if (!service) {
       return NextResponse.json(
         { error: 'Missing service parameter' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -290,7 +291,7 @@ export async function POST(request: NextRequest) {
             upgradeUrl: `/upgrade?feature=${feature}`,
           },
         },
-        { status: 403 },
+        { status: 403 }
       )
     }
 
@@ -308,7 +309,7 @@ export async function POST(request: NextRequest) {
               upgradeUrl: `/upgrade?limit=${limitType}`,
             },
           },
-          { status: 429 },
+          { status: 429 }
         )
       }
     }
@@ -317,7 +318,7 @@ export async function POST(request: NextRequest) {
     const endpoint = getOptimalEndpoint(
       service as keyof RoutingConfig['endpoints'],
       userContext.tier,
-      userContext.region,
+      userContext.region
     )
 
     // Build full URL if targetPath provided
@@ -332,9 +333,9 @@ export async function POST(request: NextRequest) {
       routing: {
         service,
         originalEndpoint:
-          ROUTING_CONFIGS[userContext.tier].endpoints[
+          ROUTING_CONFIGS[userContext.tier]?.endpoints?.[
             service as keyof RoutingConfig['endpoints']
-          ],
+          ] || '',
         optimizedEndpoint: endpoint,
         region: userContext.region,
       },
@@ -352,7 +353,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to route request' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -366,20 +367,23 @@ export async function GET(request: NextRequest) {
     // Build endpoint mapping with regional optimizations
     const endpoints: Record<string, string> = {}
 
-    for (const [service, _baseEndpoint] of Object.entries(config.endpoints)) {
+    for (const [service, _baseEndpoint] of Object.entries(
+      config?.endpoints || {}
+    )) {
       endpoints[service] = getOptimalEndpoint(
         service as keyof RoutingConfig['endpoints'],
         userContext.tier,
-        userContext.region,
+        userContext.region
       )
     }
 
+    const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
     const response = {
       tier: userContext.tier,
       region: userContext.region,
       endpoints,
-      features: config.features,
-      limits: config.limits,
+      features: config?.features || freeConfig.features,
+      limits: config?.limits || freeConfig.limits,
       availableUpgrades: getAvailableUpgrades(userContext.tier),
     }
 
@@ -395,7 +399,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to get routing configuration' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

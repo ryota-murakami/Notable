@@ -33,7 +33,7 @@ const insertList = (editor: PlateEditor, type: string) => {
       indent: 1,
       listStyleType: type,
     }),
-    { select: true },
+    { select: true }
   )
 }
 
@@ -82,8 +82,9 @@ export const insertBlock = (editor: PlateEditor, type: string) => {
     const block = editor.api.block()
 
     if (!block) return
-    if (type in insertBlockMap) {
-      insertBlockMap[type](editor, type)
+    const insertFn = insertBlockMap[type]
+    if (insertFn) {
+      insertFn(editor, type)
     } else {
       editor.tf.insertNodes(editor.api.create.block({ type }), {
         at: PathApi.next(block[1]),
@@ -107,7 +108,7 @@ export const insertInlineElement = (editor: PlateEditor, type: string) => {
 const setList = (
   editor: PlateEditor,
   type: string,
-  entry: NodeEntry<TElement>,
+  entry: NodeEntry<TElement>
 ) => {
   editor.tf.setNodes(
     editor.api.create.block({
@@ -116,7 +117,7 @@ const setList = (
     }),
     {
       at: entry[1],
-    },
+    }
   )
 }
 
@@ -134,7 +135,7 @@ const setBlockMap: Record<
 export const setBlockType = (
   editor: PlateEditor,
   type: string,
-  { at }: { at?: Path } = {},
+  { at }: { at?: Path } = {}
 ) => {
   editor.tf.withoutNormalizing(() => {
     const setEntry = (entry: NodeEntry<TElement>) => {
@@ -143,8 +144,9 @@ export const setBlockType = (
       if (node[KEYS.listType]) {
         editor.tf.unsetNodes([KEYS.listType, 'indent'], { at: path })
       }
-      if (type in setBlockMap) {
-        return setBlockMap[type](editor, type, entry)
+      const setFn = setBlockMap[type]
+      if (setFn) {
+        return setFn(editor, type, entry)
       }
       if (node.type !== type) {
         editor.tf.setNodes({ type }, { at: path })
