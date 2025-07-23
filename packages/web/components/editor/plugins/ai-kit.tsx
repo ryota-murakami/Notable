@@ -1,7 +1,6 @@
 'use client'
 
-import type { AIChatPluginConfig } from '@platejs/ai/react'
-import type { UseChatOptions } from 'ai/react'
+import type { AIChatPluginConfig, UseChatOptions } from '@platejs/ai/react'
 
 import { streamInsertChunk, withAIBatch } from '@platejs/ai'
 import { AIChatPlugin, AIPlugin, useChatChunk } from '@platejs/ai/react'
@@ -44,7 +43,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
   useHooks: ({ editor, getOption }) => {
     const mode = usePluginOption(
       { key: KEYS.aiChat } as AIChatPluginConfig,
-      'mode',
+      'mode'
     )
 
     useChatChunk({
@@ -58,7 +57,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
               },
               {
                 at: PathApi.next(editor.selection!.focus.path.slice(0, 1)),
-              },
+              }
             )
           })
           editor.setOption(AIChatPlugin, 'streaming', true)
@@ -77,7 +76,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
                 })
               })
             },
-            { split: isFirst },
+            { split: isFirst }
           )
         }
       },
