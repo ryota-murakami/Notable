@@ -1,10 +1,10 @@
-import type { Logger } from './index'
+import type { Logger, LogMetadata } from './index'
 
 // Simple server logger to avoid build issues
 const createSimpleServerLogger = (): Logger => {
   const isDevelopment = process.env.NODE_ENV === 'development'
 
-  const log = (level: string, message: string, metadata?: any) => {
+  const log = (level: string, message: string, metadata?: LogMetadata) => {
     const timestamp = new Date().toISOString()
     const logData = {
       timestamp,
@@ -34,7 +34,7 @@ const createSimpleServerLogger = (): Logger => {
   }
 
   return {
-    error: (message: string, metadata?: any) => {
+    error: (message: string, metadata?: LogMetadata) => {
       let processedMetadata = metadata
       if (metadata?.error) {
         processedMetadata = {
@@ -51,19 +51,21 @@ const createSimpleServerLogger = (): Logger => {
       }
       log('error', message, processedMetadata)
     },
-    warn: (message: string, metadata?: any) => log('warn', message, metadata),
-    info: (message: string, metadata?: any) => log('info', message, metadata),
-    debug: (message: string, metadata?: any) => {
+    warn: (message: string, metadata?: LogMetadata) =>
+      log('warn', message, metadata),
+    info: (message: string, metadata?: LogMetadata) =>
+      log('info', message, metadata),
+    debug: (message: string, metadata?: LogMetadata) => {
       if (isDevelopment) {
         log('debug', message, metadata)
       }
     },
-    verbose: (message: string, metadata?: any) => {
+    verbose: (message: string, metadata?: LogMetadata) => {
       if (isDevelopment) {
         log('verbose', message, metadata)
       }
     },
-    log: (level: string, message: string, metadata?: any) =>
+    log: (level: string, message: string, metadata?: LogMetadata) =>
       log(level, message, metadata),
   }
 }

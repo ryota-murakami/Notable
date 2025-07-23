@@ -5,11 +5,12 @@ import {
   createClientComponentClient,
   type Session,
   type User,
+  type SupabaseClient,
 } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 
 type SupabaseContext = {
-  supabase: any
+  supabase: SupabaseClient
   user: User | null
   session: Session | null
   loading: boolean

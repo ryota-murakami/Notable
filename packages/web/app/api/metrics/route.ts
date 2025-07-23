@@ -29,7 +29,8 @@ function updateMetric(metric: keyof typeof metrics, value = 1) {
     }
   } else {
     const metricValue = metrics[metric] as number
-    ;(metrics as any)[metric] = metricValue + value
+    ;(metrics as Record<string, number | number[]>)[metric] =
+      metricValue + value
   }
 }
 
