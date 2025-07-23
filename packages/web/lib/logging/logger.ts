@@ -8,9 +8,13 @@ const createUniversalLogger = (): Logger => {
   const log = (level: LogLevel, message: string, metadata?: LogMetadata) => {
     const timestamp = new Date().toISOString()
 
-    if (isDevelopment || level === 'error' || level === 'warn') {
+    if (isDevelopment || level === LogLevel.ERROR || level === LogLevel.WARN) {
       const logMethod =
-        level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log'
+        level === LogLevel.ERROR
+          ? 'error'
+          : level === LogLevel.WARN
+            ? 'warn'
+            : 'log'
       if (metadata) {
         console[logMethod](
           // eslint-disable-line no-console
@@ -25,15 +29,15 @@ const createUniversalLogger = (): Logger => {
 
   return {
     error: (message: string, metadata?: LogMetadata) =>
-      log('error', message, metadata),
+      log(LogLevel.ERROR, message, metadata),
     warn: (message: string, metadata?: LogMetadata) =>
-      log('warn', message, metadata),
+      log(LogLevel.WARN, message, metadata),
     info: (message: string, metadata?: LogMetadata) =>
-      log('info', message, metadata),
+      log(LogLevel.INFO, message, metadata),
     debug: (message: string, metadata?: LogMetadata) =>
-      log('debug', message, metadata),
+      log(LogLevel.DEBUG, message, metadata),
     verbose: (message: string, metadata?: LogMetadata) =>
-      log('verbose', message, metadata),
+      log(LogLevel.VERBOSE, message, metadata),
     log: (level: LogLevel, message: string, metadata?: LogMetadata) =>
       log(level, message, metadata),
   }

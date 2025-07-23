@@ -22,10 +22,10 @@ export function createSimpleServerLogger(): Logger {
 
     // Use appropriate console method
     switch (level) {
-      case 'error':
+      case LogLevel.ERROR:
         console.error(logEntry)
         break
-      case 'warn':
+      case LogLevel.WARN:
         console.warn(logEntry)
         break
       default:
@@ -48,20 +48,20 @@ export function createSimpleServerLogger(): Logger {
                 : metadata.error,
           }
         : metadata
-      log('error', message, processedMetadata)
+      log(LogLevel.ERROR, message, processedMetadata)
     },
     warn: (message: string, metadata?: LogMetadata) =>
-      log('warn', message, metadata),
+      log(LogLevel.WARN, message, metadata),
     info: (message: string, metadata?: LogMetadata) =>
-      log('info', message, metadata),
+      log(LogLevel.INFO, message, metadata),
     debug: (message: string, metadata?: LogMetadata) => {
       if (isDevelopment) {
-        log('debug', message, metadata)
+        log(LogLevel.DEBUG, message, metadata)
       }
     },
     verbose: (message: string, metadata?: LogMetadata) => {
       if (isDevelopment) {
-        log('verbose', message, metadata)
+        log(LogLevel.VERBOSE, message, metadata)
       }
     },
     log: (level: LogLevel, message: string, metadata?: LogMetadata) =>
