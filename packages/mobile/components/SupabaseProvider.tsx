@@ -1,14 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import {
-  createClient,
-  SupabaseClient,
-  User,
-  Session,
-} from '@supabase/supabase-js'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { SupabaseClient, User, Session } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 
 interface SupabaseContextType {
-  supabase: SupabaseClient | null
+  supabase: SupabaseClient
   user: User | null
   session: Session | null
   loading: boolean
@@ -18,7 +13,7 @@ interface SupabaseContextType {
 }
 
 const SupabaseContext = createContext<SupabaseContextType>({
-  supabase: null,
+  supabase,
   user: null,
   session: null,
   loading: true,
@@ -40,45 +35,24 @@ interface SupabaseProviderProps {
 }
 
 export function SupabaseProvider({ children }: SupabaseProviderProps) {
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const initializeSupabase = async () => {
+    const initializeAuth = async () => {
       try {
-        const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
-        const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
-
-        if (!supabaseUrl || !supabaseKey) {
-          console.error('Missing required Supabase environment variables')
-          setLoading(false)
-          return
-        }
-
-        const client = createClient(supabaseUrl, supabaseKey, {
-          auth: {
-            storage: AsyncStorage,
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: false,
-          },
-        })
-
-        setSupabase(client)
-
         // Get initial session
         const {
           data: { session: initialSession },
-        } = await client.auth.getSession()
+        } = await supabase.auth.getSession()
         setSession(initialSession)
         setUser(initialSession?.user ?? null)
 
         // Listen for auth changes
         const {
           data: { subscription },
-        } = client.auth.onAuthStateChange(async (_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (_event, session) => {
           setSession(session)
           setUser(session?.user ?? null)
         })
@@ -87,13 +61,13 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
 
         return subscription
       } catch (error) {
-        console.error('Failed to initialize Supabase:', error)
+        console.error('Failed to initialize auth:', error)
         setLoading(false)
         return null
       }
     }
 
-    const subscription = initializeSupabase()
+    const subscription = initializeAuth()
 
     return () => {
       subscription.then((sub) => sub?.unsubscribe())
@@ -101,8 +75,6 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
   }, [])
 
   const signIn = async (email: string, password: string) => {
-    if (!supabase) return { error: new Error('Supabase not initialized') }
-
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -112,8 +84,6 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
   }
 
   const signUp = async (email: string, password: string) => {
-    if (!supabase) return { error: new Error('Supabase not initialized') }
-
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -123,8 +93,6 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
   }
 
   const signOut = async () => {
-    if (!supabase) return
-
     await supabase.auth.signOut()
   }
 

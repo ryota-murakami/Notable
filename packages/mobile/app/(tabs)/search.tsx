@@ -88,7 +88,9 @@ export default function SearchScreen() {
       <NoteCard
         note={item.item}
         onPress={() => handleNotePress(item.item)}
-        onDelete={() => console.log('Delete not implemented in search')}
+        onDelete={() => {
+          // TODO: Implement delete functionality for search results
+        }}
       />
     )
   }

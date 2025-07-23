@@ -55,7 +55,7 @@ const generateUserColor = (userId: string): string => {
     return char.charCodeAt(0) + ((acc << 5) - acc)
   }, 0)
 
-  return colors[Math.abs(hash) % colors.length] as string
+  return colors[Math.abs(hash) % colors.length]
 }
 
 // Throttle function for performance
