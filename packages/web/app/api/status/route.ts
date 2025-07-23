@@ -23,17 +23,22 @@ interface StatusPageResponse {
   }
 }
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  {
+// Helper function to get Supabase client
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
-  }
-)
+  })
+}
 
 // Check individual service status
 async function checkService(
@@ -89,6 +94,14 @@ async function getUptimeStats(): Promise<StatusPageResponse['uptime']> {
 // Get active incidents
 async function getActiveIncidents(): Promise<unknown[]> {
   try {
+    // Get Supabase client
+    let supabase
+    try {
+      supabase = getSupabaseClient()
+    } catch (error) {
+      return []
+    }
+
     // In production, query your incident management system
     // For now, check for recent errors in logs
     const { data, error } = await supabase
@@ -129,6 +142,15 @@ export async function GET(_request: NextRequest) {
         // Database
         checkService('Database', async () => {
           const start = Date.now()
+          let supabase
+          try {
+            supabase = getSupabaseClient()
+          } catch (error) {
+            return {
+              status: 'outage' as const,
+              responseTime: Date.now() - start,
+            }
+          }
           const { error } = await supabase
             .from('notes')
             .select('count')
@@ -142,6 +164,15 @@ export async function GET(_request: NextRequest) {
         // Authentication
         checkService('Authentication', async () => {
           const start = Date.now()
+          let supabase
+          try {
+            supabase = getSupabaseClient()
+          } catch (error) {
+            return {
+              status: 'outage' as const,
+              responseTime: Date.now() - start,
+            }
+          }
           const { error } = await supabase.auth.getSession()
           return {
             status: error ? 'degraded' : 'operational',

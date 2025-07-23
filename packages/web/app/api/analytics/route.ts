@@ -3,17 +3,22 @@ import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import type { AnalyticsBuffer } from '@/lib/analytics/custom'
 
-// Initialize Supabase client with service role key for analytics
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  {
+// Helper function to get Supabase client
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
-  }
-)
+  })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,6 +37,17 @@ export async function POST(request: NextRequest) {
     }
 
     const data: AnalyticsBuffer = await request.json()
+
+    // Get Supabase client
+    let supabase
+    try {
+      supabase = getSupabaseClient()
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Analytics service unavailable' },
+        { status: 503 }
+      )
+    }
 
     // Process events
     if (data.events.length > 0) {
@@ -133,6 +149,17 @@ export async function GET(request: NextRequest) {
         break
       default:
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    }
+
+    // Get Supabase client
+    let supabase
+    try {
+      supabase = getSupabaseClient()
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Analytics service unavailable' },
+        { status: 503 }
+      )
     }
 
     // Get event counts
