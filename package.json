@@ -16,7 +16,13 @@
     "prettier": "prettier --ignore-unknown --write ."
   },
   "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.26.2",
+    "@babel/preset-typescript": "^7.26.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22",
+    "babel-jest": "^30.0.4",
     "eslint": "^8.57.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",

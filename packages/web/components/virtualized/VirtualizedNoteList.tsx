@@ -27,10 +27,10 @@ interface VirtualizedNoteListProps {
 
 interface ItemData {
   notes: Note[]
-  activeNoteId?: string | null
+  activeNoteId: string | null
   onNoteSelect: (note: Note) => void
   onNoteDelete?: (noteId: string) => void
-  searchQuery?: string
+  searchQuery: string
 }
 
 const ITEM_SIZE_CACHE = new Map<string, number>()
@@ -55,34 +55,54 @@ const NoteItem = React.memo<{
   }, [index, setSize, note])
 
   const handleClick = useCallback(() => {
-    onNoteSelect(note)
+    if (note) {
+      onNoteSelect(note)
+    }
   }, [note, onNoteSelect])
 
   const handleDelete = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation()
-      onNoteDelete?.(note.id)
+      if (note) {
+        onNoteDelete?.(note.id)
+      }
     },
-    [note.id, onNoteDelete],
+    [note, onNoteDelete]
   )
 
   // Get preview text from content
-  const getPreviewText = (content: any): string => {
+  const getPreviewText = (content: unknown): string => {
     if (typeof content === 'string') {
       return content.slice(0, 150)
     }
     if (Array.isArray(content) && content.length > 0) {
       const textNodes = content
-        .flatMap((node) => node.children || [])
-        .filter((child) => child.text)
-        .map((child) => child.text)
+        .flatMap((node: unknown) => {
+          if (
+            node &&
+            typeof node === 'object' &&
+            'children' in node &&
+            Array.isArray(node.children)
+          ) {
+            return node.children
+          }
+          return []
+        })
+        .filter(
+          (child: unknown) =>
+            child &&
+            typeof child === 'object' &&
+            'text' in child &&
+            typeof child.text === 'string'
+        )
+        .map((child: unknown) => (child as { text: string }).text)
       return textNodes.join(' ').slice(0, 150)
     }
     return ''
   }
 
-  const previewText = getPreviewText(note.content)
-  const isActive = note.id === activeNoteId
+  const previewText = note ? getPreviewText(note.content) : ''
+  const isActive = note?.id === activeNoteId
 
   // Highlight search terms
   const highlightText = (text: string, query?: string): React.ReactNode => {
@@ -93,52 +113,56 @@ const NoteItem = React.memo<{
 
     return parts.map((part, index) =>
       regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800">
+        <mark key={index} className='bg-yellow-200 dark:bg-yellow-800'>
           {part}
         </mark>
       ) : (
         part
-      ),
+      )
     )
   }
 
   return (
-    <div ref={rowRef} style={style} className="px-4 py-2">
+    <div ref={rowRef} style={style} className='px-4 py-2'>
       <Card
         className={cn(
           'cursor-pointer transition-all hover:shadow-md',
-          isActive && 'ring-2 ring-primary',
+          isActive && 'ring-2 ring-primary'
         )}
         onClick={handleClick}
       >
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <CardTitle className="text-lg line-clamp-1">
-              {highlightText(note.title, searchQuery)}
+        <CardHeader className='pb-3'>
+          <div className='flex items-start justify-between'>
+            <CardTitle className='text-lg line-clamp-1'>
+              {note ? highlightText(note.title, searchQuery) : 'Loading...'}
             </CardTitle>
-            <div className="flex items-center gap-2">
-              {note.tags && note.tags.length > 0 && (
-                <Badge variant="secondary" className="text-xs">
+            <div className='flex items-center gap-2'>
+              {note?.tags && note.tags.length > 0 && (
+                <Badge variant='secondary' className='text-xs'>
                   {note.tags.length} tags
                 </Badge>
               )}
               <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
+                variant='ghost'
+                size='icon'
+                className='h-8 w-8'
                 onClick={handleDelete}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className='h-4 w-4' />
               </Button>
             </div>
           </div>
-          <CardDescription className="text-sm">
-            {formatDistanceToNow(new Date(note.updatedAt), { addSuffix: true })}
+          <CardDescription className='text-sm'>
+            {note
+              ? formatDistanceToNow(new Date(note.updatedAt), {
+                  addSuffix: true,
+                })
+              : ''}
           </CardDescription>
         </CardHeader>
         {previewText && (
           <CardContent>
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            <p className='text-sm text-muted-foreground line-clamp-2'>
               {highlightText(previewText, searchQuery)}
             </p>
           </CardContent>
@@ -166,11 +190,11 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
     (index: number) => {
       return (
         sizeMap.current.get(index) ||
-        ITEM_SIZE_CACHE.get(notes[index]?.id) ||
+        (notes[index]?.id ? ITEM_SIZE_CACHE.get(notes[index].id) : null) ||
         DEFAULT_ITEM_SIZE
       )
     },
-    [notes],
+    [notes]
   )
 
   // Set item size and cache it
@@ -182,7 +206,7 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
       }
       listRef.current?.resetAfterIndex(index)
     },
-    [notes],
+    [notes]
   )
 
   // Clear cache on unmount
@@ -216,9 +240,9 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
           listRef.current?.resetAfterIndex(0)
         },
         300,
-        'virtualized-note-list-reset',
+        'virtualized-note-list-reset'
       ),
-    [],
+    []
   )
 
   useEffect(() => {
@@ -227,10 +251,10 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
 
   const itemData: ItemData = {
     notes,
-    activeNoteId,
+    activeNoteId: activeNoteId ?? null,
     onNoteSelect,
-    onNoteDelete,
-    searchQuery,
+    ...(onNoteDelete !== undefined && { onNoteDelete }),
+    searchQuery: searchQuery ?? '',
   }
 
   return (

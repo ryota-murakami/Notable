@@ -1,4 +1,7 @@
-// Type definitions for our logging interface
+import { createServerLogger } from './server'
+import { createClientLogger } from './client'
+
+// Logger interface
 export interface Logger {
   error: (message: string, metadata?: LogMetadata) => void
   warn: (message: string, metadata?: LogMetadata) => void
@@ -7,6 +10,10 @@ export interface Logger {
   verbose: (message: string, metadata?: LogMetadata) => void
   log: (level: LogLevel, message: string, metadata?: LogMetadata) => void
 }
+
+// Export appropriate logger based on environment
+export const logger =
+  typeof window === 'undefined' ? createServerLogger() : createClientLogger()
 
 // Log levels
 export enum LogLevel {
@@ -25,8 +32,10 @@ export interface LogMetadata {
   action?: string
   component?: string
   duration?: number
-  error?: Error
-  [key: string]: any
+  error?:
+    | Error
+    | { message: string; stack?: string; name?: string; code?: string }
+  [key: string]: unknown
 }
 
 // Structured log entry
@@ -50,9 +59,11 @@ export function formatError(error: unknown): {
   if (error instanceof Error) {
     return {
       message: error.message,
-      stack: error.stack,
-      name: error.name,
-      code: (error as any).code,
+      ...(error.stack !== undefined && { stack: error.stack }),
+      ...(error.name !== undefined && { name: error.name }),
+      ...((error as Error & { code?: string }).code !== undefined && {
+        code: (error as Error & { code?: string }).code,
+      }),
     }
   }
 
@@ -117,7 +128,7 @@ export function logUserAction(
   const data = {
     ...metadata,
     action,
-    userId,
+    ...(userId !== undefined && { userId }),
     timestamp: new Date().toISOString(),
   }
 
@@ -150,3 +161,25 @@ export function logSecurityEvent(
     console[logMethod](`[${level}] ${message}`, data)
   }
 }
+
+// Export convenience methods
+const LoggingModule = {
+  error: (message: string, metadata?: LogMetadata) =>
+    logger.error(message, metadata),
+  warn: (message: string, metadata?: LogMetadata) =>
+    logger.warn(message, metadata),
+  info: (message: string, metadata?: LogMetadata) =>
+    logger.info(message, metadata),
+  debug: (message: string, metadata?: LogMetadata) =>
+    logger.debug(message, metadata),
+  verbose: (message: string, metadata?: LogMetadata) =>
+    logger.verbose(message, metadata),
+
+  // Specialized loggers
+  performance: logPerformance,
+  api: logApiCall,
+  userAction: logUserAction,
+  security: logSecurityEvent,
+}
+
+export default LoggingModule

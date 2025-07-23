@@ -26,7 +26,7 @@ export function Breadcrumb({
     while (current) {
       trail.unshift(current)
       if (current.parentId) {
-        current = notes.find((n) => n.id === current.parentId!)
+        current = notes.find((n) => n.id === current?.parentId)
       } else {
         current = undefined
       }
@@ -41,34 +41,34 @@ export function Breadcrumb({
     <nav
       className={cn(
         'flex items-center space-x-1 text-sm text-muted-foreground',
-        className,
+        className
       )}
     >
       <Button
-        variant="ghost"
-        size="sm"
-        className="h-6 px-2 text-muted-foreground hover:text-foreground"
+        variant='ghost'
+        size='sm'
+        className='h-6 px-2 text-muted-foreground hover:text-foreground'
         onClick={() =>
           onNavigateToNote(breadcrumbTrail[0]?.id || currentNote.id)
         }
       >
-        <Home className="h-3 w-3 mr-1" />
+        <Home className='h-3 w-3 mr-1' />
         Home
       </Button>
 
       {breadcrumbTrail.length > 1 && (
         <>
-          <ChevronRight className="h-3 w-3" />
+          <ChevronRight className='h-3 w-3' />
           {breadcrumbTrail.slice(1).map((note, index) => (
-            <div key={note.id} className="flex items-center space-x-1">
-              {index > 0 && <ChevronRight className="h-3 w-3" />}
+            <div key={note.id} className='flex items-center space-x-1'>
+              {index > 0 && <ChevronRight className='h-3 w-3' />}
               <Button
-                variant="ghost"
-                size="sm"
+                variant='ghost'
+                size='sm'
                 className={cn(
                   'h-6 px-2 text-muted-foreground hover:text-foreground',
                   index === breadcrumbTrail.length - 2 &&
-                    'text-foreground font-medium',
+                    'text-foreground font-medium'
                 )}
                 onClick={() => onNavigateToNote(note.id)}
               >

@@ -48,8 +48,8 @@ interface SidebarProps {
   notes: Note[]
   activeNoteId: string
   onSelectNote: (id: string) => void
-  onCreateNote: (parentId: string | null) => Note
-  onCreateFolder: (parentId: string | null) => Note
+  onCreateNote: (parentId: string | null) => Promise<Note | null>
+  onCreateFolder: (parentId: string | null) => Promise<Note | null>
   onDeleteNote: (id: string) => void
   onOpenSearch: () => void
   isCollapsed: boolean
@@ -65,7 +65,7 @@ export function Sidebar({
   onSelectNote,
   onCreateNote,
   onCreateFolder,
-  _onDeleteNote,
+  onDeleteNote: _onDeleteNote,
   onOpenSearch,
   isCollapsed,
   onToggleCollapse,
@@ -91,8 +91,8 @@ export function Sidebar({
           note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
           note.tags.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase()),
-          ),
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
+          )
       )
     : notes
 
@@ -118,26 +118,26 @@ export function Sidebar({
                   activeNoteId === note.id
                     ? 'bg-accent text-accent-foreground shadow-sm'
                     : 'hover:bg-accent/50',
-                  isFolder && 'font-medium',
+                  isFolder && 'font-medium'
                 )}
               >
                 {/* Folder/File Icon */}
-                <div className="flex items-center mr-2">
+                <div className='flex items-center mr-2'>
                   {isFolder ? (
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-4 w-4 p-0 hover:bg-transparent"
+                      variant='ghost'
+                      size='icon'
+                      className='h-4 w-4 p-0 hover:bg-transparent'
                       onClick={() => toggleFolder(note.id)}
                     >
                       {isExpanded ? (
-                        <FolderOpen className="h-4 w-4 text-blue-500" />
+                        <FolderOpen className='h-4 w-4 text-blue-500' />
                       ) : (
-                        <FolderClosed className="h-4 w-4 text-blue-500" />
+                        <FolderClosed className='h-4 w-4 text-blue-500' />
                       )}
                     </Button>
                   ) : (
-                    <File className="h-4 w-4 text-gray-500" />
+                    <File className='h-4 w-4 text-gray-500' />
                   )}
                 </div>
 
@@ -145,7 +145,7 @@ export function Sidebar({
                 <span
                   className={cn(
                     'flex-1 truncate cursor-pointer transition-colors',
-                    isFolder && 'text-blue-700 dark:text-blue-300',
+                    isFolder && 'text-blue-700 dark:text-blue-300'
                   )}
                   onClick={() => onSelectNote(note.id)}
                 >
@@ -153,22 +153,22 @@ export function Sidebar({
                 </span>
 
                 {/* Actions */}
-                <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className='flex opacity-0 group-hover:opacity-100 transition-opacity'>
                   <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-5 w-5 p-0 hover:bg-accent"
+                    variant='ghost'
+                    size='icon'
+                    className='h-5 w-5 p-0 hover:bg-accent'
                     onClick={() => onCreateNote(note.id)}
                     title={isFolder ? 'Add note to folder' : 'Add sub-note'}
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className='h-3 w-3' />
                   </Button>
                 </div>
               </div>
 
               {/* Nested Children */}
               {(isFolder || hasChildren) && isExpanded && (
-                <div className="ml-2 border-l border-border/50 pl-2 mt-1">
+                <div className='ml-2 border-l border-border/50 pl-2 mt-1'>
                   {renderNoteTree(note.id, depth + 1)}
                 </div>
               )}
@@ -182,17 +182,17 @@ export function Sidebar({
   return (
     <>
       {/* Mobile menu button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className='md:hidden fixed top-4 left-4 z-50'>
         <Button
-          variant="ghost"
-          size="icon"
+          variant='ghost'
+          size='icon'
           onClick={onToggleMobileMenu}
-          className="h-8 w-8"
+          className='h-8 w-8'
         >
           {isMobileMenuOpen ? (
-            <X className="h-4 w-4" />
+            <X className='h-4 w-4' />
           ) : (
-            <Menu className="h-4 w-4" />
+            <Menu className='h-4 w-4' />
           )}
         </Button>
       </div>
@@ -200,7 +200,7 @@ export function Sidebar({
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className='fixed inset-0 bg-black/50 z-40 md:hidden'
           onClick={onToggleMobileMenu}
         />
       )}
@@ -216,33 +216,33 @@ export function Sidebar({
           'md:relative md:translate-x-0',
           isMobileMenuOpen
             ? 'fixed inset-y-0 left-0 w-64 flex translate-x-0'
-            : 'fixed inset-y-0 left-0 w-64 -translate-x-full',
+            : 'fixed inset-y-0 left-0 w-64 -translate-x-full'
         )}
       >
         {/* Header */}
         <div className={cn('p-4 border-b', isCollapsed && 'p-2')}>
-          <div className="flex items-center mb-4">
+          <div className='flex items-center mb-4'>
             {!isCollapsed && (
-              <span className="font-semibold text-lg">Notable</span>
+              <span className='font-semibold text-lg'>Notable</span>
             )}
-            <div className="ml-auto flex items-center gap-1">
+            <div className='ml-auto flex items-center gap-1'>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
+                      variant='ghost'
+                      size='icon'
+                      className='h-8 w-8'
                       onClick={onOpenSearch}
                     >
-                      <Search className="h-4 w-4" />
-                      <span className="sr-only">Search</span>
+                      <Search className='h-4 w-4' />
+                      <span className='sr-only'>Search</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <div className="flex items-center">
+                    <div className='flex items-center'>
                       Search{' '}
-                      <kbd className="ml-2 px-1.5 py-0.5 text-xs border rounded-md bg-muted">
+                      <kbd className='ml-2 px-1.5 py-0.5 text-xs border rounded-md bg-muted'>
                         Ctrl+K
                       </kbd>
                     </div>
@@ -253,17 +253,17 @@ export function Sidebar({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hidden md:flex h-8 w-8"
+                      variant='ghost'
+                      size='icon'
+                      className='hidden md:flex h-8 w-8'
                       onClick={onToggleCollapse}
                     >
                       {isCollapsed ? (
-                        <PanelLeft className="h-4 w-4" />
+                        <PanelLeft className='h-4 w-4' />
                       ) : (
-                        <PanelLeftClose className="h-4 w-4" />
+                        <PanelLeftClose className='h-4 w-4' />
                       )}
-                      <span className="sr-only">Toggle sidebar</span>
+                      <span className='sr-only'>Toggle sidebar</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -274,11 +274,11 @@ export function Sidebar({
             </div>
           </div>
           {!isCollapsed && (
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <div className='relative'>
+              <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
               <Input
-                placeholder="Filter"
-                className="pl-8"
+                placeholder='Filter'
+                className='pl-8'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -295,19 +295,19 @@ export function Sidebar({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant="outline"
-                        className="w-full justify-center px-2"
+                        variant='outline'
+                        className='w-full justify-center px-2'
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className='h-4 w-4' />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuContent align='end' className='w-48'>
                       <DropdownMenuItem onClick={() => onCreateNote(null)}>
-                        <File className="mr-2 h-4 w-4" />
+                        <File className='mr-2 h-4 w-4' />
                         New Note
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onCreateFolder(null)}>
-                        <FolderPlus className="mr-2 h-4 w-4" />
+                        <FolderPlus className='mr-2 h-4 w-4' />
                         New Folder
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -316,20 +316,20 @@ export function Sidebar({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant="outline"
-                        className="w-full justify-start"
+                        variant='outline'
+                        className='w-full justify-start'
                       >
-                        <Plus className="h-4 w-4 mr-2" />
+                        <Plus className='h-4 w-4 mr-2' />
                         Create New
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-48">
+                    <DropdownMenuContent align='start' className='w-48'>
                       <DropdownMenuItem onClick={() => onCreateNote(null)}>
-                        <File className="mr-2 h-4 w-4" />
+                        <File className='mr-2 h-4 w-4' />
                         New Note
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onCreateFolder(null)}>
-                        <FolderPlus className="mr-2 h-4 w-4" />
+                        <FolderPlus className='mr-2 h-4 w-4' />
                         New Folder
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -342,17 +342,17 @@ export function Sidebar({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-auto">
+        <nav className='flex-1 overflow-auto'>
           <div className={cn('px-3 py-2', isCollapsed && 'px-1')}>
-            <div className="space-y-1">
+            <div className='space-y-1'>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="ghost"
+                      variant='ghost'
                       className={cn(
                         'w-full',
-                        isCollapsed ? 'justify-center px-2' : 'justify-start',
+                        isCollapsed ? 'justify-center px-2' : 'justify-start'
                       )}
                     >
                       <Home className={cn('h-4 w-4', !isCollapsed && 'mr-2')} />
@@ -366,10 +366,10 @@ export function Sidebar({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="ghost"
+                      variant='ghost'
                       className={cn(
                         'w-full',
-                        isCollapsed ? 'justify-center px-2' : 'justify-start',
+                        isCollapsed ? 'justify-center px-2' : 'justify-start'
                       )}
                     >
                       <Inbox
@@ -384,41 +384,41 @@ export function Sidebar({
             </div>
 
             {!isCollapsed && (
-              <div className="mt-6">
-                <h2 className="mb-2 px-2 text-xs font-semibold text-muted-foreground">
+              <div className='mt-6'>
+                <h2 className='mb-2 px-2 text-xs font-semibold text-muted-foreground'>
                   Notes
                 </h2>
-                <ScrollArea className="h-[calc(100vh-240px)]">
+                <ScrollArea className='h-[calc(100vh-240px)]'>
                   {isLoading ? (
                     <NoteListSkeleton />
                   ) : rootNotes.length === 0 ? (
                     searchQuery.trim() === '' ? (
                       <EmptyState
-                        title="No notes"
-                        description="Create your first note to get started"
+                        title='No notes'
+                        description='Create your first note to get started'
                         icon={
-                          <File className="h-6 w-6 text-muted-foreground" />
+                          <File className='h-6 w-6 text-muted-foreground' />
                         }
                         action={{
                           label: 'Create note',
                           onClick: () => onCreateNote(null),
                           variant: 'default',
                         }}
-                        className="py-8"
+                        className='py-8'
                       />
                     ) : (
                       <EmptyState
-                        title="No matches"
+                        title='No matches'
                         description={`No notes found for "${searchQuery}"`}
                         icon={
-                          <Search className="h-6 w-6 text-muted-foreground" />
+                          <Search className='h-6 w-6 text-muted-foreground' />
                         }
                         action={{
                           label: 'Clear filter',
                           onClick: () => setSearchQuery(''),
                           variant: 'outline',
                         }}
-                        className="py-8"
+                        className='py-8'
                       />
                     )
                   ) : (
@@ -439,32 +439,32 @@ export function Sidebar({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant="ghost"
-                        className="w-full justify-center px-2"
+                        variant='ghost'
+                        className='w-full justify-center px-2'
                       >
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage src="/placeholder-user.jpg" alt="User" />
+                        <Avatar className='h-6 w-6'>
+                          <AvatarImage src='/placeholder-user.jpg' alt='User' />
                           <AvatarFallback>
-                            <User className="h-4 w-4" />
+                            <User className='h-4 w-4' />
                           </AvatarFallback>
                         </Avatar>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuContent align='end' className='w-56'>
                       <DropdownMenuLabel>
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="h-8 w-8">
+                        <div className='flex items-center space-x-2'>
+                          <Avatar className='h-8 w-8'>
                             <AvatarImage
-                              src="/placeholder-user.jpg"
-                              alt="User"
+                              src='/placeholder-user.jpg'
+                              alt='User'
                             />
                             <AvatarFallback>
-                              <User className="h-4 w-4" />
+                              <User className='h-4 w-4' />
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="text-sm font-medium">John Doe</p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className='text-sm font-medium'>John Doe</p>
+                            <p className='text-xs text-muted-foreground'>
                               Premium User
                             </p>
                           </div>
@@ -472,16 +472,16 @@ export function Sidebar({
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
+                        <Settings className='mr-2 h-4 w-4' />
                         Settings
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <Crown className="mr-2 h-4 w-4" />
+                        <Crown className='mr-2 h-4 w-4' />
                         Upgrade Plan
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>
-                        <LogOut className="mr-2 h-4 w-4" />
+                        <LogOut className='mr-2 h-4 w-4' />
                         Sign Out
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -494,37 +494,37 @@ export function Sidebar({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
-                  className="w-full justify-start p-2 h-auto"
+                  variant='ghost'
+                  className='w-full justify-start p-2 h-auto'
                 >
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder-user.jpg" alt="User" />
+                  <div className='flex items-center space-x-3'>
+                    <Avatar className='h-8 w-8'>
+                      <AvatarImage src='/placeholder-user.jpg' alt='User' />
                       <AvatarFallback>
-                        <User className="h-4 w-4" />
+                        <User className='h-4 w-4' />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 text-left">
-                      <p className="text-sm font-medium">John Doe</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className='flex-1 text-left'>
+                      <p className='text-sm font-medium'>John Doe</p>
+                      <p className='text-xs text-muted-foreground'>
                         Premium User
                       </p>
                     </div>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align='end' className='w-56'>
                 <DropdownMenuLabel>
-                  <div className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder-user.jpg" alt="User" />
+                  <div className='flex items-center space-x-2'>
+                    <Avatar className='h-8 w-8'>
+                      <AvatarImage src='/placeholder-user.jpg' alt='User' />
                       <AvatarFallback>
-                        <User className="h-4 w-4" />
+                        <User className='h-4 w-4' />
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-sm font-medium">John Doe</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className='text-sm font-medium'>John Doe</p>
+                      <p className='text-xs text-muted-foreground'>
                         john.doe@example.com
                       </p>
                     </div>
@@ -532,16 +532,16 @@ export function Sidebar({
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
+                  <Settings className='mr-2 h-4 w-4' />
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Crown className="mr-2 h-4 w-4" />
+                  <Crown className='mr-2 h-4 w-4' />
                   Upgrade Plan
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className='mr-2 h-4 w-4' />
                   Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -551,15 +551,15 @@ export function Sidebar({
 
         {/* Footer */}
         <div className={cn('p-2 border-t', isCollapsed && 'p-1')}>
-          <div className="space-y-1">
+          <div className='space-y-1'>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="ghost"
+                    variant='ghost'
                     className={cn(
                       'w-full',
-                      isCollapsed ? 'justify-center px-2' : 'justify-start',
+                      isCollapsed ? 'justify-center px-2' : 'justify-start'
                     )}
                   >
                     <Trash className={cn('h-4 w-4', !isCollapsed && 'mr-2')} />
@@ -570,8 +570,8 @@ export function Sidebar({
               </Tooltip>
             </TooltipProvider>
             {!isCollapsed && (
-              <div className="flex items-center justify-between px-2 py-1">
-                <span className="text-xs text-muted-foreground">Theme</span>
+              <div className='flex items-center justify-between px-2 py-1'>
+                <span className='text-xs text-muted-foreground'>Theme</span>
                 <ThemeToggle />
               </div>
             )}

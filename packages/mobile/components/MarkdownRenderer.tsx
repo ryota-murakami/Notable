@@ -1,4 +1,3 @@
-import React from 'react'
 import { StyleSheet } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import Markdown from 'react-native-markdown-display'

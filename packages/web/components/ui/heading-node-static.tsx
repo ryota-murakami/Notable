@@ -1,9 +1,7 @@
 import * as React from 'react'
 
-import type { SlateElementProps } from 'platejs'
-
-import { type VariantProps, cva } from 'class-variance-authority'
-import { SlateElement } from 'platejs'
+import { SlateElement, type SlateElementProps } from 'platejs'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 const headingVariants = cva('relative mb-1', {
   variants: {
@@ -34,35 +32,35 @@ export function HeadingElementStatic({
 }
 
 export function H1ElementStatic(props: SlateElementProps) {
-  return <HeadingElementStatic variant="h1" {...props} />
+  return <HeadingElementStatic variant='h1' {...props} />
 }
 
 export function H2ElementStatic(
-  props: React.ComponentProps<typeof HeadingElementStatic>,
+  props: React.ComponentProps<typeof HeadingElementStatic>
 ) {
-  return <HeadingElementStatic variant="h2" {...props} />
+  return <HeadingElementStatic variant='h2' {...props} />
 }
 
 export function H3ElementStatic(
-  props: React.ComponentProps<typeof HeadingElementStatic>,
+  props: React.ComponentProps<typeof HeadingElementStatic>
 ) {
-  return <HeadingElementStatic variant="h3" {...props} />
+  return <HeadingElementStatic variant='h3' {...props} />
 }
 
 export function H4ElementStatic(
-  props: React.ComponentProps<typeof HeadingElementStatic>,
+  props: React.ComponentProps<typeof HeadingElementStatic>
 ) {
-  return <HeadingElementStatic variant="h4" {...props} />
+  return <HeadingElementStatic variant='h4' {...props} />
 }
 
 export function H5ElementStatic(
-  props: React.ComponentProps<typeof HeadingElementStatic>,
+  props: React.ComponentProps<typeof HeadingElementStatic>
 ) {
-  return <HeadingElementStatic variant="h5" {...props} />
+  return <HeadingElementStatic variant='h5' {...props} />
 }
 
 export function H6ElementStatic(
-  props: React.ComponentProps<typeof HeadingElementStatic>,
+  props: React.ComponentProps<typeof HeadingElementStatic>
 ) {
-  return <HeadingElementStatic variant="h6" {...props} />
+  return <HeadingElementStatic variant='h6' {...props} />
 }

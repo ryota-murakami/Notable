@@ -8,8 +8,8 @@ export function useLogger(componentName?: string) {
 
   // Create base metadata
   const baseMetadata: LogMetadata = {
-    component: componentName,
-    userId: user?.id,
+    ...(componentName !== undefined && { component: componentName }),
+    ...(user?.id !== undefined && { userId: user.id }),
   }
 
   // Log component mount/unmount
@@ -21,6 +21,7 @@ export function useLogger(componentName?: string) {
         logger.debug(`Component unmounted: ${componentName}`, baseMetadata)
       }
     }
+    return undefined
   }, [componentName])
 
   // Error logging with context

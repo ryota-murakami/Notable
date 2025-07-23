@@ -31,7 +31,7 @@ export const useChat = () => {
 
         try {
           const content = JSON.parse(init?.body as string).messages.at(
-            -1,
+            -1
           ).content
 
           if (content.includes('Generate a markdown sample')) {
@@ -123,6 +123,7 @@ const fakeStreamText = ({
 
       for (let i = 0; i < blocks.length; i++) {
         const block = blocks[i]
+        if (!block) continue
 
         // Stream the block content
         for (const chunk of block) {
@@ -132,7 +133,7 @@ const fakeStreamText = ({
             controller.enqueue(encoder.encode(chunk.texts))
           } else {
             controller.enqueue(
-              encoder.encode(`0:${JSON.stringify(chunk.texts)}\n`),
+              encoder.encode(`0:${JSON.stringify(chunk.texts)}\n`)
             )
           }
         }
@@ -151,8 +152,8 @@ const fakeStreamText = ({
         controller.enqueue(
           `d:{"finishReason":"stop","usage":{"promptTokens":0,"completionTokens":${blocks.reduce(
             (sum, block) => sum + block.length,
-            0,
-          )}}}\n`,
+            0
+          )}}}\n`
         )
       }
 

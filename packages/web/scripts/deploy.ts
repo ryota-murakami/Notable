@@ -2,7 +2,7 @@
 
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+// import { join } from 'path'
 import prompts from 'prompts'
 import chalk from 'chalk'
 
@@ -26,11 +26,11 @@ function bumpVersion(type: 'major' | 'minor' | 'patch'): string {
 
   switch (type) {
     case 'major':
-      return `${major + 1}.0.0`
+      return `${(major || 0) + 1}.0.0`
     case 'minor':
-      return `${major}.${minor + 1}.0`
+      return `${major || 0}.${(minor || 0) + 1}.0`
     case 'patch':
-      return `${major}.${minor}.${patch + 1}`
+      return `${major || 0}.${minor || 0}.${(patch || 0) + 1}`
   }
 }
 
@@ -73,8 +73,8 @@ async function runPreDeploymentChecks(config: DeployConfig): Promise<boolean> {
     if (config.environment === 'production' && currentBranch !== 'main') {
       console.log(
         chalk.red(
-          `❌ Production deployments must be from main branch (current: ${currentBranch})`,
-        ),
+          `❌ Production deployments must be from main branch (current: ${currentBranch})`
+        )
       )
       return false
     }
@@ -240,8 +240,8 @@ async function deploy(): Promise<void> {
 
   console.log(
     chalk.bold.green(
-      `\n✅ Deployment to ${config.environment} completed successfully!\n`,
-    ),
+      `\n✅ Deployment to ${config.environment} completed successfully!\n`
+    )
   )
 
   // Push tags for production

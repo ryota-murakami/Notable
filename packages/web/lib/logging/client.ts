@@ -79,6 +79,7 @@ export function createClientLogger() {
         [LogLevel.VERBOSE]: 'color: lightgray',
       }
 
+      // eslint-disable-next-line no-console
       console.log(
         `%c[${level.toUpperCase()}] ${message}`,
         style[level] || '',
@@ -156,7 +157,7 @@ export function createClientLogger() {
 // Console override for catching unhandled errors
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
   const originalConsoleError = console.error
-  console.error = (...args: any[]) => {
+  console.error = (...args: unknown[]) => {
     originalConsoleError.apply(console, args)
 
     // Send to logging system

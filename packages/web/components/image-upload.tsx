@@ -40,7 +40,7 @@ export function ImageUpload({ isOpen, onClose, onInsert }: ImageUploadProps) {
     }
 
     const file = fileInput.files[0]
-    if (!file.type.startsWith('image/')) {
+    if (!file || !file.type.startsWith('image/')) {
       toast({
         title: 'Invalid file type',
         description: 'Please select an image file.',
@@ -99,7 +99,7 @@ export function ImageUpload({ isOpen, onClose, onInsert }: ImageUploadProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>Insert Image</DialogTitle>
         </DialogHeader>
@@ -107,53 +107,53 @@ export function ImageUpload({ isOpen, onClose, onInsert }: ImageUploadProps) {
           value={tab}
           onValueChange={(value) => setTab(value as 'upload' | 'url')}
         >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="upload">Upload</TabsTrigger>
-            <TabsTrigger value="url">URL</TabsTrigger>
+          <TabsList className='grid w-full grid-cols-2'>
+            <TabsTrigger value='upload'>Upload</TabsTrigger>
+            <TabsTrigger value='url'>URL</TabsTrigger>
           </TabsList>
-          <TabsContent value="upload" className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="image-upload">Select Image</Label>
+          <TabsContent value='upload' className='space-y-4 py-4'>
+            <div className='space-y-2'>
+              <Label htmlFor='image-upload'>Select Image</Label>
               <Input
                 ref={fileInputRef}
-                id="image-upload"
-                type="file"
-                accept="image/*"
+                id='image-upload'
+                type='file'
+                accept='image/*'
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="alt-text-upload">Alt Text</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='alt-text-upload'>Alt Text</Label>
               <Input
-                id="alt-text-upload"
+                id='alt-text-upload'
                 value={altText}
                 onChange={(e) => setAltText(e.target.value)}
-                placeholder="Describe the image"
+                placeholder='Describe the image'
               />
             </div>
           </TabsContent>
-          <TabsContent value="url" className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="image-url">Image URL</Label>
+          <TabsContent value='url' className='space-y-4 py-4'>
+            <div className='space-y-2'>
+              <Label htmlFor='image-url'>Image URL</Label>
               <Input
-                id="image-url"
+                id='image-url'
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://example.com/image.jpg"
+                placeholder='https://example.com/image.jpg'
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="alt-text-url">Alt Text</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='alt-text-url'>Alt Text</Label>
               <Input
-                id="alt-text-url"
+                id='alt-text-url'
                 value={altText}
                 onChange={(e) => setAltText(e.target.value)}
-                placeholder="Describe the image"
+                placeholder='Describe the image'
               />
             </div>
           </TabsContent>
         </Tabs>
         <DialogFooter>
-          <Button variant="outline" onClick={resetAndClose}>
+          <Button variant='outline' onClick={resetAndClose}>
             Cancel
           </Button>
           <Button

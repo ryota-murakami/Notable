@@ -2,11 +2,14 @@
 
 import * as React from 'react'
 
-import type { PlateElementProps } from 'platejs/react'
+import {
+  PlateElement,
+  usePluginOption,
+  type PlateElementProps,
+} from 'platejs/react'
 
 import { EmojiInlineIndexSearch, insertEmoji } from '@platejs/emoji'
 import { EmojiPlugin } from '@platejs/emoji/react'
-import { PlateElement, usePluginOption } from 'platejs/react'
 
 import { useDebounce } from '@/hooks/use-debounce'
 
@@ -35,13 +38,13 @@ export function EmojiInputElement(props: PlateElementProps) {
   }, [data, debouncedValue])
 
   return (
-    <PlateElement as="span" {...props}>
+    <PlateElement as='span' {...props}>
       <InlineCombobox
         value={value}
         element={element}
         filter={false}
         setValue={setValue}
-        trigger=":"
+        trigger=':'
         hideWhenNoValue
       >
         <InlineComboboxInput />
@@ -56,7 +59,7 @@ export function EmojiInputElement(props: PlateElementProps) {
                 value={emoji.name}
                 onClick={() => insertEmoji(editor, emoji)}
               >
-                {emoji.skins[0].native} {emoji.name}
+                {emoji.skins[0]?.native} {emoji.name}
               </InlineComboboxItem>
             ))}
           </InlineComboboxGroup>

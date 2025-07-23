@@ -30,7 +30,7 @@ import { cn } from '@/lib/utils'
 
 type FilterFn = (
   item: { value: string; group?: string; keywords?: string[]; label?: string },
-  search: string,
+  search: string
 ) => boolean
 
 interface InlineComboboxContextValue {
@@ -44,19 +44,19 @@ interface InlineComboboxContextValue {
 }
 
 const InlineComboboxContext = React.createContext<InlineComboboxContextValue>(
-  null as unknown as InlineComboboxContextValue,
+  null as unknown as InlineComboboxContextValue
 )
 
 const defaultFilter: FilterFn = (
   { group, keywords = [], label, value },
-  search,
+  search
 ) => {
   const uniqueTerms = new Set(
-    [value, ...keywords, group, label].filter(Boolean),
+    [value, ...keywords, group, label].filter(Boolean)
   )
 
   return Array.from(uniqueTerms).some((keyword) =>
-    filterWords(keyword!, search),
+    filterWords(keyword!, search)
   )
 }
 
@@ -97,7 +97,7 @@ const InlineCombobox = ({
         setValueState(newValue)
       }
     },
-    [setValueProp, hasValueProp],
+    [setValueProp, hasValueProp]
   )
 
   /**
@@ -129,9 +129,12 @@ const InlineCombobox = ({
     ref: inputRef,
     onCancelInput: (cause) => {
       if (cause !== 'backspace') {
-        editor.tf.insertText(trigger + value, {
-          at: insertPoint?.current ?? undefined,
-        })
+        const atPoint = insertPoint?.current
+        if (atPoint !== undefined && atPoint !== null) {
+          editor.tf.insertText(trigger + value, { at: atPoint })
+        } else {
+          editor.tf.insertText(trigger + value)
+        }
       }
       if (cause === 'arrowLeft' || cause === 'arrowRight') {
         editor.tf.move({
@@ -162,7 +165,7 @@ const InlineCombobox = ({
       inputProps,
       removeInput,
       setHasEmpty,
-    ],
+    ]
   )
 
   const store = useComboboxStore({
@@ -226,10 +229,10 @@ const InlineComboboxInput = React.forwardRef<
     <>
       {showTrigger && trigger}
 
-      <span className="relative min-h-[1lh]">
+      <span className='relative min-h-[1lh]'>
         <span
-          className="invisible overflow-hidden text-nowrap"
-          aria-hidden="true"
+          className='invisible overflow-hidden text-nowrap'
+          aria-hidden='true'
         >
           {value || '\u200B'}
         </span>
@@ -238,12 +241,20 @@ const InlineComboboxInput = React.forwardRef<
           ref={ref}
           className={cn(
             'absolute top-0 left-0 size-full bg-transparent outline-none',
-            className,
+            className
           )}
           value={value}
           autoSelect
-          {...inputProps}
-          {...props}
+          {...Object.fromEntries(
+            Object.entries(inputProps || {}).filter(
+              ([, value]) => value !== undefined
+            )
+          )}
+          {...Object.fromEntries(
+            Object.entries(props || {}).filter(
+              ([, value]) => value !== undefined
+            )
+          )}
         />
       </span>
     </>
@@ -262,7 +273,7 @@ const InlineComboboxContent: typeof ComboboxPopover = ({
       <ComboboxPopover
         className={cn(
           'z-500 max-h-[288px] w-[300px] overflow-y-auto rounded-md bg-popover shadow-md',
-          className,
+          className
         )}
         {...props}
       />
@@ -282,7 +293,7 @@ const comboboxItemVariants = cva(
         true: 'cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground data-[active-item=true]:bg-accent data-[active-item=true]:text-accent-foreground',
       },
     },
-  },
+  }
 )
 
 const InlineComboboxItem = ({
@@ -311,8 +322,17 @@ const InlineComboboxItem = ({
 
   const visible = React.useMemo(
     () =>
-      !filter || filter({ group, keywords, label, value }, search as string),
-    [filter, group, keywords, label, value, search],
+      !filter ||
+      filter(
+        {
+          value,
+          ...(group !== undefined && { group }),
+          ...(keywords !== undefined && { keywords }),
+          ...(label !== undefined && { label }),
+        },
+        search as string
+      ),
+    [filter, group, keywords, label, value, search]
   )
 
   if (!visible) return null
@@ -367,7 +387,7 @@ function InlineComboboxGroup({
       {...props}
       className={cn(
         'hidden py-1.5 not-last:border-b [&:has([role=option])]:block',
-        className,
+        className
       )}
     />
   )
@@ -382,7 +402,7 @@ function InlineComboboxGroupLabel({
       {...props}
       className={cn(
         'mt-1.5 mb-2 px-3 text-xs font-medium text-muted-foreground',
-        className,
+        className
       )}
     />
   )

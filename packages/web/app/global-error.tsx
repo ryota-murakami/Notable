@@ -4,10 +4,9 @@ import { useEffect } from 'react'
 
 export default function GlobalError({
   error,
-  _reset,
 }: {
   error: Error & { digest?: string }
-  _reset: () => void
+  reset: () => void
 }) {
   useEffect(() => {
     // Log error to console in production
