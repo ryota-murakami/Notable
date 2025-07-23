@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSupabase } from '@/components/supabase-provider'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +20,7 @@ import { Loader2 } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { TwoFactorVerification } from '@/components/auth/two-factor-verification'
 
 const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -30,23 +31,12 @@ type SignInFormData = z.infer<typeof signInSchema>
 
 export default function SignInPage() {
   const router = useRouter()
-
-  // Lazily create the Supabase client only on the client side
-  const supabase = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return null
-    }
-
-    try {
-      return createClientComponentClient()
-    } catch (error) {
-      console.warn('Failed to create Supabase client:', error)
-      return null
-    }
-  }, [])
+  const { supabase } = useSupabase()
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [requires2FA, setRequires2FA] = useState(false)
+  const [tempSession, setTempSession] = useState<any>(null)
 
   const {
     register,
@@ -66,7 +56,7 @@ export default function SignInPage() {
       setIsLoading(true)
       setError(null)
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       })
@@ -76,7 +66,25 @@ export default function SignInPage() {
         return
       }
 
-      router.push('/dashboard')
+      // Check if user has 2FA enabled
+      if (authData.user) {
+        const { data: settings } = await supabase
+          .from('user_2fa_settings')
+          .select('totp_enabled')
+          .eq('user_id', authData.user.id)
+          .single()
+
+        if (settings?.totp_enabled) {
+          // Store session temporarily and require 2FA
+          setTempSession(authData.session)
+          setRequires2FA(true)
+          // Sign out to prevent access without 2FA
+          await supabase.auth.signOut()
+          return
+        }
+      }
+
+      router.push('/')
       router.refresh()
     } catch {
       setError('Something went wrong. Please try again.')
@@ -96,7 +104,7 @@ export default function SignInPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/`,
         },
       })
 
@@ -108,6 +116,49 @@ export default function SignInPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handle2FASuccess = async () => {
+    if (!tempSession || !supabase) return
+
+    try {
+      // Restore the session after successful 2FA
+      const { error } = await supabase.auth.setSession({
+        access_token: tempSession.access_token,
+        refresh_token: tempSession.refresh_token,
+      })
+
+      if (error) {
+        setError('Failed to restore session')
+        setRequires2FA(false)
+        setTempSession(null)
+        return
+      }
+
+      router.push('/')
+      router.refresh()
+    } catch {
+      setError('Something went wrong. Please try again.')
+      setRequires2FA(false)
+      setTempSession(null)
+    }
+  }
+
+  const handle2FACancel = () => {
+    setRequires2FA(false)
+    setTempSession(null)
+    setError(null)
+  }
+
+  if (requires2FA) {
+    return (
+      <div className='flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8'>
+        <TwoFactorVerification
+          onSuccess={handle2FASuccess}
+          onCancel={handle2FACancel}
+        />
+      </div>
+    )
   }
 
   return (
