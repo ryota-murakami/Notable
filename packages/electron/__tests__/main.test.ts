@@ -7,7 +7,7 @@ describe('Electron Main Process', () => {
 
   it('should create window when app is ready', async () => {
     expect(app.whenReady).toBeDefined()
-    await expect(app.whenReady()).resolves.toBeUndefined()
+    await expect(app.whenReady()).resolves.toBe(true)
   })
 
   it('should create BrowserWindow with correct options', () => {
