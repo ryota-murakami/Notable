@@ -21,12 +21,15 @@ const metrics = {
 // Function to update metrics (internal use only)
 function updateMetric(metric: keyof typeof metrics, value = 1) {
   if (Array.isArray(metrics[metric])) {
+    // eslint-disable-next-line no-extra-semi
     ;(metrics[metric] as number[]).push(value)
     // Keep only last 1000 entries to prevent memory issues
     if ((metrics[metric] as number[]).length > 1000) {
+      // eslint-disable-next-line no-extra-semi
       ;(metrics[metric] as number[]).shift()
     }
   } else {
+    // eslint-disable-next-line no-extra-semi
     ;(metrics[metric] as number) += value
   }
 }

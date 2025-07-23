@@ -106,6 +106,7 @@ export function OptimizedShell() {
 
       // Send to analytics if needed
       if ((window as Window & { gtag?: (...args: unknown[]) => void }).gtag) {
+        // eslint-disable-next-line no-extra-semi
         ;(window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.(
           'event',
           metric.name,
