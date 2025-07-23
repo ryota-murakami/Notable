@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import type { Session, User } from '@supabase/auth-helpers-nextjs'
 
 type SupabaseContext = {
-  supabase: ReturnType<typeof createClientComponentClient>
+  supabase: any
   user: User | null
   session: Session | null
   loading: boolean
