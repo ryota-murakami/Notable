@@ -98,7 +98,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Analytics error:', error)
+    // Use proper logging instead of console.error
+    const logger = (await import('@/lib/logging/logger.server')).logger
+    logger.error('Analytics processing failed', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -160,7 +166,13 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Analytics summary error:', error)
+    // Use proper logging instead of console.error
+    const logger = (await import('@/lib/logging/logger.server')).logger
+    logger.error('Analytics summary query failed', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
