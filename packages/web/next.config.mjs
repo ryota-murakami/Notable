@@ -38,6 +38,13 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
+        crypto: false,
+        stream: false,
+        http: false,
+        https: false,
+        zlib: false,
+        url: false,
+        buffer: 'buffer',
       }
     }
 
@@ -51,6 +58,17 @@ const nextConfig = {
           })
         )
       }
+    }
+
+    // Add webpack provide plugin for global variables
+    const webpack = config.plugins[0].constructor.webpack
+    if (webpack && webpack.ProvidePlugin) {
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
+          Buffer: ['buffer', 'Buffer'],
+        })
+      )
     }
     // Enhanced code splitting with more granular chunks
     config.optimization.splitChunks = {
