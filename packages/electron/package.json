@@ -36,8 +36,8 @@
     },
     "files": [
       "build/**/*",
-      "node_modules/**/*",
-      "!**/*.map"
+      "!build/**/*.map",
+      "package.json"
     ],
     "mac": {
       "category": "public.app-category.productivity"
