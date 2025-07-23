@@ -6,10 +6,8 @@ import TextareaAutosize, {
 } from 'react-textarea-autosize'
 
 import type { TEquationElement } from 'platejs'
-import { useEquationElement, useEquationInput } from '@platejs/math/react'
-import { BlockSelectionPlugin } from '@platejs/selection/react'
-import { CornerDownLeftIcon, RadicalIcon } from 'lucide-react'
 import {
+  type PlateElementProps,
   createPrimitiveComponent,
   PlateElement,
   useEditorRef,
@@ -17,8 +15,11 @@ import {
   useElement,
   useReadOnly,
   useSelected,
-  type PlateElementProps,
 } from 'platejs/react'
+
+import { useEquationElement, useEquationInput } from '@platejs/math/react'
+import { BlockSelectionPlugin } from '@platejs/selection/react'
+import { CornerDownLeftIcon, RadicalIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -53,7 +54,8 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
     <PlateElement className='my-1' {...props}>
       <Popover open={open} onOpenChange={setOpen} modal={false}>
         <PopoverTrigger asChild>
-          <div
+          <button
+            type='button'
             className={cn(
               'group flex cursor-pointer items-center justify-center rounded-sm select-none hover:bg-primary/10 data-[selected=true]:bg-primary/10',
               props.element.texExpression.length === 0
@@ -62,7 +64,6 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
             )}
             data-selected={selected}
             contentEditable={false}
-            role='button'
           >
             {props.element.texExpression.length > 0 ? (
               <span ref={katexRef} />
@@ -72,7 +73,7 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
                 <div>Add a Tex equation</div>
               </div>
             )}
-          </div>
+          </button>
         </PopoverTrigger>
 
         <EquationPopoverContent

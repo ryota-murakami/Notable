@@ -7,6 +7,10 @@ import { Tweet } from 'react-tweet'
 import type { TMediaEmbedElement } from 'platejs'
 import { PlateElement, withHOC, type PlateElementProps } from 'platejs/react'
 
+import { parseTwitterUrl, parseVideoUrl } from '@platejs/media'
+import { MediaEmbedPlugin, useMediaState } from '@platejs/media/react'
+import { ResizableProvider, useResizableValue } from '@platejs/resizable'
+
 import { cn } from '@/lib/utils'
 
 import { Caption, CaptionTextarea } from './caption'

@@ -55,15 +55,18 @@ const generateUserColor = (userId: string): string => {
     return char.charCodeAt(0) + ((acc << 5) - acc)
   }, 0)
 
-  return colors[Math.abs(hash) % colors.length]
+  return colors[Math.abs(hash) % colors.length] || '#FF6B6B'
 }
 
 // Throttle function for performance
-const throttle = (func: (...args: any[]) => void, delay: number) => {
+const throttle = <T extends unknown[]>(
+  func: (...args: T) => void,
+  delay: number
+) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 
-  return function (...args: any[]) {
+  return function (this: any, ...args: T) {
     const currentTime = Date.now()
 
     if (currentTime - lastExecTime > delay) {
@@ -99,14 +102,11 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
     const initializeSupabase = async () => {
       try {
         // In React Native, we might store credentials in AsyncStorage or environment
-        const supabaseUrl =
-          process.env.EXPO_PUBLIC_SUPABASE_URL ||
-          'https://your-project.supabase.co'
-        const supabaseKey =
-          process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
+        const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
+        const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
 
         if (!supabaseUrl || !supabaseKey) {
-          setConnectionError('Supabase configuration missing')
+          setConnectionError('Missing required Supabase environment variables')
           return
         }
 

@@ -14,9 +14,10 @@ interface GeoInfo {
 
 // Get geolocation information from request headers
 function getGeoInfo(request: NextRequest): GeoInfo {
-  const country = request.geo?.country || 'US'
-  const region = request.geo?.region || ''
-  const city = request.geo?.city || ''
+  // Edge runtime doesn't have geo property, use headers instead
+  const country = request.headers.get('x-vercel-ip-country') || 'US'
+  const region = request.headers.get('x-vercel-ip-country-region') || ''
+  const city = request.headers.get('x-vercel-ip-city') || ''
   const timezone = request.headers.get('x-vercel-ip-timezone') || 'UTC'
 
   // Map country codes to currencies and languages
@@ -131,7 +132,10 @@ export async function GET(request: NextRequest) {
       isGDPRRegion: isGDPRRegion(geoInfo.countryCode),
       cdnRegion: getCDNRegion(geoInfo.countryCode),
       timestamp: new Date().toISOString(),
-      ip: request.ip || 'unknown',
+      ip:
+        request.headers.get('x-forwarded-for') ||
+        request.headers.get('x-real-ip') ||
+        'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     }
 
@@ -144,7 +148,7 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to get geo information' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -167,7 +171,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to process request' },
-      { status: 400 },
+      { status: 400 }
     )
   }
 }

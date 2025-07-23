@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { View, FlatList, Text } from 'react-native'
-import { Searchbar, Chip, useTheme } from 'react-native-paper'
+import { Searchbar, Chip } from 'react-native-paper'
 import Fuse from 'fuse.js'
 import { useNotes } from '@/hooks/useNotes'
 import { NoteCard } from '@/components/NoteCard'
@@ -12,7 +12,7 @@ type SearchFilter = 'all' | 'notes' | 'folders'
 
 interface SearchResultItem {
   item: Note
-  score?: number
+  score: number
 }
 
 export default function SearchScreen() {
@@ -21,7 +21,6 @@ export default function SearchScreen() {
   const [selectedFilter, setSelectedFilter] = useState<SearchFilter>('all')
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [results, setResults] = useState<SearchResultItem[]>([])
-  const _theme = useTheme()
   const router = useRouter()
 
   const allItems = useMemo(() => [...notes, ...folders], [notes, folders])
@@ -41,10 +40,10 @@ export default function SearchScreen() {
     if (searchQuery) {
       searchResults = fuse.search(searchQuery).map((result) => ({
         item: result.item,
-        score: result.score,
+        score: result.score || 0,
       }))
     } else {
-      searchResults = allItems.map((item) => ({ item }))
+      searchResults = allItems.map((item) => ({ item, score: 0 }))
     }
 
     const filteredResults = searchResults.filter(({ item }) => {
@@ -61,10 +60,14 @@ export default function SearchScreen() {
   const tags = useMemo(() => {
     const allTags = new Set<string>()
     notes.forEach((note) => {
-      // Assuming tags are stored in a property, e.g., note.tags as string[]
+      // Assuming tags are stored in a property, e.g., note.tags as Tag[]
       if (Array.isArray(note.tags)) {
         note.tags.forEach((tag) => {
-          allTags.add(tag)
+          if (typeof tag === 'string') {
+            allTags.add(tag)
+          } else if (tag && typeof tag === 'object' && 'name' in tag) {
+            allTags.add(tag.name)
+          }
         })
       }
     })
@@ -82,7 +85,13 @@ export default function SearchScreen() {
 
   const renderItem = ({ item }: { item: SearchResultItem }) => {
     return (
-      <NoteCard note={item.item} onPress={() => handleNotePress(item.item)} />
+      <NoteCard
+        note={item.item}
+        onPress={() => handleNotePress(item.item)}
+        onDelete={() => {
+          // TODO: Implement delete functionality for search results
+        }}
+      />
     )
   }
 
@@ -91,7 +100,14 @@ export default function SearchScreen() {
       return results.filter(
         (result) =>
           Array.isArray(result.item.tags) &&
-          result.item.tags.includes(selectedTag)
+          result.item.tags.some((tag) =>
+            typeof tag === 'string'
+              ? tag === selectedTag
+              : tag &&
+                typeof tag === 'object' &&
+                'name' in tag &&
+                tag.name === selectedTag
+          )
       )
     }
     return results
@@ -151,13 +167,23 @@ export default function SearchScreen() {
       )}
 
       {results.length === 0 && searchQuery ? (
-        <EmptyState title='No results found' />
+        <EmptyState
+          title='No results found'
+          description='Try a different search term'
+          icon='magnify'
+        />
       ) : (
         <FlatList
           data={filteredData}
           keyExtractor={({ item }) => item.id}
           renderItem={renderItem}
-          ListEmptyComponent={<EmptyState title='No notes to search' />}
+          ListEmptyComponent={
+            <EmptyState
+              title='No notes to search'
+              description='Create some notes first'
+              icon='note-text-outline'
+            />
+          }
         />
       )}
     </View>

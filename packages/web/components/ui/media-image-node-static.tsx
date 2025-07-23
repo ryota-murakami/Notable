@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import {
-  NodeApi,
-  SlateElement,
   type SlateElementProps,
   type TCaptionProps,
   type TImageElement,
   type TResizableProps,
+  NodeApi,
+  SlateElement,
 } from 'platejs'
 
 import { cn } from '@/lib/utils'
@@ -33,7 +33,7 @@ export function ImageElementStatic(
           />
           {caption && (
             <figcaption className='mx-auto mt-2 h-[24px] max-w-full'>
-              {NodeApi.string(caption[0])}
+              {caption[0] ? NodeApi.string(caption[0]) : ''}
             </figcaption>
           )}
         </div>

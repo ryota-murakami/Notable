@@ -1,11 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import { Minus, Plus } from 'lucide-react'
 
-import { KEYS, type TElement } from 'platejs'
-import { useEditorPlugin, useEditorSelector } from 'platejs/react'
+import { type TElement, KEYS } from 'platejs'
+
+import { toUnitLess } from '@platejs/basic-styles'
 import { FontSizePlugin } from '@platejs/basic-styles/react'
+import { Minus, Plus } from 'lucide-react'
+import { useEditorPlugin, useEditorSelector } from 'platejs/react'
 
 import {
   Popover,
@@ -15,11 +17,6 @@ import {
 import { cn } from '@/lib/utils'
 
 import { ToolbarButton } from './toolbar'
-
-// Utility function to remove unit from font size
-function toUnitLess(value: string): string {
-  return value.replace(/px|em|rem|%/g, '')
-}
 
 const DEFAULT_FONT_SIZE = '16'
 

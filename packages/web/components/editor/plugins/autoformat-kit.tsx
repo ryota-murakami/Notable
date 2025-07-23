@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  type AutoformatRule,
   autoformatArrow,
   autoformatLegal,
   autoformatLegalHtml,

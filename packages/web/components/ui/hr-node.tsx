@@ -3,6 +3,7 @@
 import * as React from 'react'
 
 import {
+  type PlateElementProps,
   PlateElement,
   useFocused,
   useReadOnly,

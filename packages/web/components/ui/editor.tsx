@@ -1,15 +1,15 @@
 'use client'
 
 import * as React from 'react'
+
+import { type VariantProps, cva } from 'class-variance-authority'
 import {
   PlateContainer,
   PlateContent,
   PlateView,
   type PlateContentProps,
   type PlateViewProps,
-} from '@udecode/plate-common/react'
-
-import { cva, type VariantProps } from 'class-variance-authority'
+} from 'platejs/react'
 
 import { cn } from '@/lib/utils'
 
@@ -106,7 +106,7 @@ export const Editor = React.forwardRef<HTMLDivElement, EditorProps>(
           }),
           className
         )}
-        disabled={disabled}
+        {...(disabled !== undefined && { disabled })}
         disableDefaultStyles
         {...props}
       />

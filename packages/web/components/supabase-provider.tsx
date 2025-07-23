@@ -9,7 +9,7 @@ import {
 import { useRouter } from 'next/navigation'
 
 type SupabaseContext = {
-  supabase: ReturnType<typeof createClientComponentClient>
+  supabase: any
   user: User | null
   session: Session | null
   loading: boolean
@@ -40,7 +40,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
@@ -52,7 +52,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supabase.auth, router])
 
-  const value = {
+  const value: SupabaseContext = {
     supabase,
     user,
     session,

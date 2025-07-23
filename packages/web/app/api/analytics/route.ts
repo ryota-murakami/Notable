@@ -5,8 +5,8 @@ import type { AnalyticsBuffer } from '@/lib/analytics/custom'
 
 // Initialize Supabase client with service role key for analytics
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   {
     auth: {
       persistSession: false,
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (
       process.env.NODE_ENV === 'production' &&
       origin !== process.env.NEXT_PUBLIC_APP_URL &&
-      !referer?.startsWith(process.env.NEXT_PUBLIC_APP_URL!)
+      !referer?.startsWith(process.env.NEXT_PUBLIC_APP_URL || '')
     ) {
       return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
     }

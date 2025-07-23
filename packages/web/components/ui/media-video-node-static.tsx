@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import {
-  NodeApi,
-  SlateElement,
   type SlateElementProps,
   type TCaptionElement,
   type TResizableProps,
   type TVideoElement,
+  NodeApi,
+  SlateElement,
 } from 'platejs'
 
 export function VideoElementStatic(
@@ -26,7 +26,11 @@ export function VideoElementStatic(
             src={url}
             controls
           />
-          {caption && <figcaption>{NodeApi.string(caption[0])}</figcaption>}
+          {caption && (
+            <figcaption>
+              {caption[0] ? NodeApi.string(caption[0]) : ''}
+            </figcaption>
+          )}
         </figure>
       </div>
       {props.children}

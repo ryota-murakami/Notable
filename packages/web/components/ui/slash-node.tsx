@@ -1,6 +1,14 @@
 'use client'
 
 import * as React from 'react'
+
+import {
+  PlateElement,
+  type PlateEditor,
+  type PlateElementProps,
+} from 'platejs/react'
+
+import { AIChatPlugin } from '@platejs/ai/react'
 import {
   CalendarIcon,
   ChevronRightIcon,
@@ -20,15 +28,7 @@ import {
   Table,
   TableOfContentsIcon,
 } from 'lucide-react'
-
-import {
-  PlateElement,
-  type PlateEditor,
-  type PlateElementProps,
-} from 'platejs/react'
-import type { TComboboxInputElement } from '@platejs/combobox'
-import { AIChatPlugin } from '@platejs/ai/react'
-import { KEYS } from 'platejs'
+import { type TComboboxInputElement, KEYS } from 'platejs'
 
 import {
   insertBlock,
@@ -229,10 +229,10 @@ export function SlashInputElement(
                     key={value}
                     value={value}
                     onClick={() => onSelect(editor, value)}
-                    label={label}
-                    focusEditor={focusEditor}
+                    {...(label !== undefined && { label })}
+                    {...(focusEditor !== undefined && { focusEditor })}
                     group={group}
-                    keywords={keywords}
+                    {...(keywords !== undefined && { keywords })}
                   >
                     <div className='mr-2 text-muted-foreground'>{icon}</div>
                     {label ?? value}

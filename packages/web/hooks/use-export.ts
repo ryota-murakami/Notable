@@ -112,7 +112,7 @@ export function useExport() {
 
       return markdown.trim()
     },
-    [],
+    []
   )
 
   // Convert Plate.js content to HTML
@@ -263,7 +263,7 @@ export function useExport() {
 </body>
 </html>`
     },
-    [],
+    []
   )
 
   // Convert Plate.js content to React component
@@ -384,7 +384,7 @@ export default ${componentName}`
       printWindow.print()
       printWindow.close()
     },
-    [convertToHTML],
+    [convertToHTML]
   )
 
   // Main export function
@@ -392,7 +392,7 @@ export default ${componentName}`
     async (
       note: Note,
       format: ExportFormat,
-      options: ExportOptions = {},
+      options: ExportOptions = {}
     ): Promise<void> => {
       if (isExporting) return
 
@@ -400,7 +400,7 @@ export default ${componentName}`
       setExportProgress(0)
 
       try {
-        const { includeTitle = true, includeMetadata = true } = options
+        const { includeTitle = true } = options
         const content =
           typeof note.content === 'string'
             ? JSON.parse(note.content)
@@ -486,7 +486,7 @@ export default ${componentName}`
       convertToReact,
       generatePDF,
       toast,
-    ],
+    ]
   )
 
   return {

@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { supabase } from '@/lib/supabase'
 import { Note, NoteCreate, NoteUpdate } from '../types'
 import {
   useRealtimeSync,
@@ -17,6 +16,7 @@ export interface UseOfflineNotesOptions {
     email: string
     avatar?: string
   }
+  user_id?: string
   activeNoteId?: string
 }
 
@@ -61,40 +61,7 @@ export function useOfflineNotes({
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  // Initialize Supabase client
-  useEffect(() => {
-    const initializeSupabase = async () => {
-      try {
-        const supabaseUrl =
-          process.env.EXPO_PUBLIC_SUPABASE_URL ||
-          'https://your-project.supabase.co'
-        const supabaseKey =
-          process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
-
-        if (!supabaseUrl || !supabaseKey) {
-          setError('Supabase configuration missing')
-          return
-        }
-
-        supabaseRef.current = createClient(supabaseUrl, supabaseKey, {
-          auth: {
-            storage: AsyncStorage,
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: false,
-          },
-        })
-      } catch (err) {
-        console.error('Failed to initialize Supabase:', err)
-        setError('Failed to initialize Supabase client')
-      }
-    }
-
-    initializeSupabase()
-  }, [])
 
   // Offline storage integration
   const {
@@ -117,7 +84,7 @@ export function useOfflineNotes({
     ? {
         id: user.id,
         name: user.name,
-        avatar: user.avatar,
+        ...(user.avatar && { avatar: user.avatar }),
       }
     : undefined
 
@@ -130,8 +97,8 @@ export function useOfflineNotes({
     stopTyping,
     broadcastNoteUpdate,
   } = useRealtimeSync({
-    noteId: activeNoteId,
-    user: realtimeUser,
+    ...(activeNoteId && { noteId: activeNoteId }),
+    ...(realtimeUser && { user: realtimeUser }),
     onNoteUpdate: async (updatedNote) => {
       // Handle real-time note updates with conflict resolution
       const cachedNote = cachedNotes.find((n) => n.id === updatedNote.id)
@@ -140,9 +107,7 @@ export function useOfflineNotes({
         const resolvedNote = resolveConflict(cachedNote, updatedNote)
         await updateNoteInCache(updatedNote.id, resolvedNote)
         setNotes((prev) =>
-          prev.map((note) =>
-            note.id === updatedNote.id ? resolvedNote : note,
-          ),
+          prev.map((note) => (note.id === updatedNote.id ? resolvedNote : note))
         )
       } else {
         await addNoteToCache(updatedNote)
@@ -164,20 +129,22 @@ export function useOfflineNotes({
   const loadNotes = useCallback(async () => {
     if (!user) return
 
+    let cached: Note[] = []
+
     try {
       setIsLoading(true)
       setError(null)
 
       // Load from cache first for immediate display
-      const cached = await getCachedNotes()
+      cached = await getCachedNotes()
       if (cached.length > 0) {
         setNotes(cached)
         setIsLoading(false) // Show cached data immediately
       }
 
       // If online, fetch latest from server
-      if (isOnline && supabaseRef.current) {
-        const { data, error: fetchError } = await supabaseRef.current
+      if (isOnline && supabase) {
+        const { data, error: fetchError } = await supabase
           .from('notes')
           .select('*')
           .eq('user_id', user.id)
@@ -188,12 +155,12 @@ export function useOfflineNotes({
           throw fetchError
         }
 
-        const serverNotes = data || []
+        const serverNotes = (data || []) as unknown as Note[]
 
         // Merge with cached notes, resolving conflicts
         const mergedNotes = mergeNotesWithConflictResolution(
           cached,
-          serverNotes,
+          serverNotes
         )
 
         // Update cache and state
@@ -216,34 +183,34 @@ export function useOfflineNotes({
     }
   }, [user, isOnline, getCachedNotes, setCachedNotes, processSyncQueue])
 
-  const mergeNotesWithConflictResolution = (
-    cachedNotes: Note[],
-    serverNotes: Note[],
-  ): Note[] => {
-    const merged = new Map<string, Note>()
+  const mergeNotesWithConflictResolution = useCallback(
+    (cachedNotes: Note[], serverNotes: Note[]): Note[] => {
+      const merged = new Map<string, Note>()
 
-    // Add all server notes first
-    serverNotes.forEach((note) => {
-      merged.set(note.id, note)
-    })
+      // Add all server notes first
+      serverNotes.forEach((note) => {
+        merged.set(note.id, note)
+      })
 
-    // Merge cached notes, resolving conflicts
-    cachedNotes.forEach((cachedNote) => {
-      const serverNote = merged.get(cachedNote.id)
-      if (serverNote) {
-        const resolved = resolveConflict(cachedNote, serverNote)
-        merged.set(cachedNote.id, resolved)
-      } else {
-        // Note exists only in cache (likely pending sync)
-        merged.set(cachedNote.id, cachedNote)
-      }
-    })
+      // Merge cached notes, resolving conflicts
+      cachedNotes.forEach((cachedNote) => {
+        const serverNote = merged.get(cachedNote.id)
+        if (serverNote) {
+          const resolved = resolveConflict(cachedNote, serverNote)
+          merged.set(cachedNote.id, resolved)
+        } else {
+          // Note exists only in cache (likely pending sync)
+          merged.set(cachedNote.id, cachedNote)
+        }
+      })
 
-    return Array.from(merged.values()).sort(
-      (a, b) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-    )
-  }
+      return Array.from(merged.values()).sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+    },
+    [resolveConflict]
+  )
 
   // Create a new note
   const createNote = useCallback(
@@ -265,16 +232,26 @@ export function useOfflineNotes({
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deleted_at: null,
+          // Add missing required properties
+          parentId: null, // Keep for compatibility but use folder_id for actual logic
+          tags: [],
+          isFolder: noteData?.is_folder || false,
+          // Properties from base Note type
+          isArchived: false,
+          isDeleted: false,
+          isFavorite: false,
+          viewCount: 0,
+          wordCount: 0,
         }
 
         // Add to cache immediately
         await addNoteToCache(newNote)
         setNotes((prev) => [newNote, ...prev])
 
-        if (isOnline && supabaseRef.current) {
+        if (isOnline && supabase) {
           // Try to create on server immediately
           try {
-            const { data, error: createError } = await supabaseRef.current
+            const { data, error: createError } = await supabase
               .from('notes')
               .insert([
                 {
@@ -292,12 +269,12 @@ export function useOfflineNotes({
               throw createError
             }
 
-            const createdNote = data as Note
+            const createdNote = data as unknown as Note
 
             // Replace temp note with real note
             await updateNoteInCache(tempId, createdNote)
             setNotes((prev) =>
-              prev.map((note) => (note.id === tempId ? createdNote : note)),
+              prev.map((note) => (note.id === tempId ? createdNote : note))
             )
 
             broadcastNoteUpdate(createdNote)
@@ -305,7 +282,7 @@ export function useOfflineNotes({
           } catch (err) {
             console.error(
               'Failed to create note on server, adding to sync queue:',
-              err,
+              err
             )
             await addToSyncQueue({
               type: 'create',
@@ -338,7 +315,7 @@ export function useOfflineNotes({
       updateNoteInCache,
       addToSyncQueue,
       broadcastNoteUpdate,
-    ],
+    ]
   )
 
   // Update a note
@@ -364,13 +341,13 @@ export function useOfflineNotes({
         // Update cache immediately
         await updateNoteInCache(id, updatedNote)
         setNotes((prev) =>
-          prev.map((note) => (note.id === id ? updatedNote : note)),
+          prev.map((note) => (note.id === id ? updatedNote : note))
         )
 
-        if (isOnline && supabaseRef.current) {
+        if (isOnline && supabase) {
           // Try to update on server immediately
           try {
-            const { data, error: updateError } = await supabaseRef.current
+            const { data, error: updateError } = await supabase
               .from('notes')
               .update({
                 ...updates,
@@ -385,10 +362,10 @@ export function useOfflineNotes({
               throw updateError
             }
 
-            const serverNote = data as Note
+            const serverNote = data as unknown as Note
             await updateNoteInCache(id, serverNote)
             setNotes((prev) =>
-              prev.map((note) => (note.id === id ? serverNote : note)),
+              prev.map((note) => (note.id === id ? serverNote : note))
             )
 
             broadcastNoteUpdate(serverNote)
@@ -396,7 +373,7 @@ export function useOfflineNotes({
           } catch (err) {
             console.error(
               'Failed to update note on server, adding to sync queue:',
-              err,
+              err
             )
             await addToSyncQueue({
               type: 'update',
@@ -429,7 +406,7 @@ export function useOfflineNotes({
       updateNoteInCache,
       addToSyncQueue,
       broadcastNoteUpdate,
-    ],
+    ]
   )
 
   // Delete a note
@@ -445,10 +422,10 @@ export function useOfflineNotes({
         await removeNoteFromCache(id)
         setNotes((prev) => prev.filter((note) => note.id !== id))
 
-        if (isOnline && supabaseRef.current) {
+        if (isOnline && supabase) {
           // Try to delete on server immediately
           try {
-            const { error: deleteError } = await supabaseRef.current
+            const { error: deleteError } = await supabase
               .from('notes')
               .update({
                 deleted_at: new Date().toISOString(),
@@ -464,7 +441,7 @@ export function useOfflineNotes({
           } catch (err) {
             console.error(
               'Failed to delete note on server, adding to sync queue:',
-              err,
+              err
             )
             await addToSyncQueue({
               type: 'delete',
@@ -488,7 +465,7 @@ export function useOfflineNotes({
         setIsSaving(false)
       }
     },
-    [user, isOnline, removeNoteFromCache, addToSyncQueue],
+    [user, isOnline, removeNoteFromCache, addToSyncQueue]
   )
 
   // Save note with debouncing (used by auto-save)
@@ -501,7 +478,7 @@ export function useOfflineNotes({
         })) !== null
       )
     },
-    [updateNote],
+    [updateNote]
   )
 
   // Force sync all pending changes

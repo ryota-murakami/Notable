@@ -1,10 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { ChevronRight } from 'lucide-react'
 
-import { PlateElement, type PlateElementProps } from 'platejs/react'
+import { type PlateElementProps, PlateElement } from 'platejs/react'
+
 import { useToggleButton, useToggleButtonState } from '@platejs/toggle/react'
+import { ChevronRight } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 

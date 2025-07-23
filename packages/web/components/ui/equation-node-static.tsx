@@ -6,19 +6,9 @@ import {
   type SlateElementProps,
   type TEquationElement,
 } from 'platejs'
+import { getEquationHtml } from '@platejs/math'
 
 import { cn } from '@/lib/utils'
-
-// TODO: Implement proper equation HTML rendering
-function getEquationHtml({
-  element,
-  _options,
-}: {
-  element: TEquationElement
-  _options: any
-}) {
-  return element.texExpression || ''
-}
 
 export function EquationElementStatic(
   props: SlateElementProps<TEquationElement>

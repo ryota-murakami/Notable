@@ -2,6 +2,15 @@
 
 import * as React from 'react'
 
+import {
+  type CreatePlateEditorOptions,
+  Plate,
+  useEditorPlugin,
+  useEditorRef,
+  usePlateEditor,
+  usePluginOption,
+} from 'platejs/react'
+
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment'
 import { CommentPlugin, useCommentId } from '@platejs/comment/react'
 import {
@@ -19,14 +28,6 @@ import {
   XIcon,
 } from 'lucide-react'
 import { type Value, KEYS, nanoid, NodeApi } from 'platejs'
-import {
-  Plate,
-  useEditorPlugin,
-  useEditorRef,
-  usePlateEditor,
-  usePluginOption,
-  type CreatePlateEditorOptions,
-} from 'platejs/react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'

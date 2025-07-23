@@ -3,9 +3,11 @@
 import * as React from 'react'
 
 import {
-  DropdownMenuItemIndicator,
   type DropdownMenuProps,
+  DropdownMenuItemIndicator,
 } from '@radix-ui/react-dropdown-menu'
+import { type TElement, KEYS } from 'platejs'
+import { useEditorRef, useSelectionFragmentProp } from 'platejs/react'
 import {
   CheckIcon,
   ChevronRightIcon,
@@ -23,8 +25,6 @@ import {
   QuoteIcon,
   SquareIcon,
 } from 'lucide-react'
-import { KEYS, type TElement } from 'platejs'
-import { useEditorRef, useSelectionFragmentProp } from 'platejs/react'
 
 import {
   DropdownMenu,
@@ -146,7 +146,7 @@ export function TurnIntoToolbarButton(props: DropdownMenuProps) {
           tooltip='Turn into'
           isDropdown
         >
-          {selectedItem.label}
+          {selectedItem?.label}
         </ToolbarButton>
       </DropdownMenuTrigger>
 
@@ -159,7 +159,7 @@ export function TurnIntoToolbarButton(props: DropdownMenuProps) {
         align='start'
       >
         <ToolbarMenuGroup
-          value={value}
+          {...(value !== undefined && { value })}
           onValueChange={(type) => {
             setBlockType(editor, type)
           }}

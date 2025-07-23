@@ -1,27 +1,27 @@
 'use client'
 
 import * as React from 'react'
-import { ExternalLink, Link, Text, Unlink } from 'lucide-react'
 
-import { KEYS, type TLinkElement } from 'platejs'
+import { type TLinkElement, KEYS } from 'platejs'
+
+import { type UseVirtualFloatingOptions, flip, offset } from '@platejs/floating'
+import { getLinkAttributes } from '@platejs/link'
+import {
+  type LinkFloatingToolbarState,
+  FloatingLinkUrlInput,
+  useFloatingLinkEdit,
+  useFloatingLinkEditState,
+  useFloatingLinkInsert,
+  useFloatingLinkInsertState,
+} from '@platejs/link/react'
+import { cva } from 'class-variance-authority'
+import { ExternalLink, Link, Text, Unlink } from 'lucide-react'
 import {
   useEditorRef,
   useEditorSelection,
   useFormInputProps,
   usePluginOption,
 } from 'platejs/react'
-import {
-  FloatingLinkUrlInput,
-  useFloatingLinkEdit,
-  useFloatingLinkEditState,
-  useFloatingLinkInsert,
-  useFloatingLinkInsertState,
-  getLinkAttributes,
-} from '@platejs/link/react'
-import type { UseVirtualFloatingOptions } from '@platejs/floating'
-import type { LinkFloatingToolbarState } from '@platejs/link'
-import { offset, flip } from '@floating-ui/react'
-import { cva } from 'class-variance-authority'
 
 import { buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'

@@ -2,13 +2,6 @@
 
 import * as React from 'react'
 
-import { useDraggable, useDropLine } from '@platejs/dnd'
-import { setColumns } from '@platejs/layout'
-import { useDebouncePopoverOpen } from '@platejs/layout/react'
-import { ResizableProvider } from '@platejs/resizable'
-import { BlockSelectionPlugin } from '@platejs/selection/react'
-import { useComposedRef } from '@udecode/cn'
-import { GripHorizontal, Trash2Icon, type LucideProps } from 'lucide-react'
 import { PathApi, type TColumnElement } from 'platejs'
 import {
   PlateElement,
@@ -18,7 +11,20 @@ import {
   useReadOnly,
   useRemoveNodeButton,
   withHOC,
+  type PlateElementProps,
 } from 'platejs/react'
+
+import { useDraggable, useDropLine } from '@platejs/dnd'
+import { setColumns } from '@platejs/layout'
+import { useDebouncePopoverOpen } from '@platejs/layout/react'
+import { ResizableProvider } from '@platejs/resizable'
+import { BlockSelectionPlugin } from '@platejs/selection/react'
+import { useComposedRef } from '@udecode/cn'
+import {
+  GripHorizontal,
+  Trash2 as Trash2Icon,
+  type LucideProps,
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover'

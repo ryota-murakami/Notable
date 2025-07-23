@@ -2,9 +2,10 @@
 
 import * as React from 'react'
 
-import { cva } from 'class-variance-authority'
 import { PlateElement, type PlateElementProps } from 'platejs/react'
+
 import { useTocElement, useTocElementState } from '@platejs/toc/react'
+import { cva } from 'class-variance-authority'
 
 import { Button } from '@/components/ui/button'
 

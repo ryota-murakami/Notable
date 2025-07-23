@@ -3,6 +3,7 @@
 import * as React from 'react'
 
 import {
+  type TResolvedSuggestion,
   acceptSuggestion,
   getSuggestionKey,
   keyId2SuggestionId,
@@ -336,6 +337,7 @@ export const useResolveSuggestion = (
           if (ElementApi.isElement(node)) {
             return api.suggestion.nodeId(node)
           }
+          return undefined
         })
         .filter(Boolean)
     )
@@ -416,18 +418,20 @@ export const useResolveSuggestion = (
           if (lineBreakData.type === 'insert') {
             newText += lineBreakData.isLineBreak
               ? BLOCK_SUGGESTION
-              : BLOCK_SUGGESTION + TYPE_TEXT_MAP[node.type](node)
+              : BLOCK_SUGGESTION + (TYPE_TEXT_MAP[node.type]?.(node) || '')
           } else if (lineBreakData.type === 'remove') {
             text += lineBreakData.isLineBreak
               ? BLOCK_SUGGESTION
-              : BLOCK_SUGGESTION + TYPE_TEXT_MAP[node.type](node)
+              : BLOCK_SUGGESTION + (TYPE_TEXT_MAP[node.type]?.(node) || '')
           }
         }
       })
 
       if (entries.length === 0) return
 
-      const nodeData = api.suggestion.suggestionData(entries[0][0])
+      const nodeData = entries[0]
+        ? api.suggestion.suggestionData(entries[0][0])
+        : null
 
       if (!nodeData) return
 
@@ -485,6 +489,7 @@ export const useResolveSuggestion = (
           userId: nodeData.userId,
         })
       }
+      return undefined
     })
 
     return res

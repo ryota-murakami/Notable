@@ -1,13 +1,14 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import {
+  type TextStreamPart,
+  type ToolSet,
+  convertToCoreMessages,
+  streamText,
+} from 'ai'
+import { type NextRequest, NextResponse } from 'next/server'
+
 import { createOpenAI } from '@ai-sdk/openai'
 import { InvalidArgumentError } from '@ai-sdk/provider'
 import { delay as originalDelay } from '@ai-sdk/provider-utils'
-import {
-  convertToCoreMessages,
-  streamText,
-  type TextStreamPart,
-  type ToolSet,
-} from 'ai'
 
 /**
  * Detects the first chunk in a buffer.
@@ -93,6 +94,7 @@ function smoothStream<TOOLS extends ToolSet>({
     return new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
       async transform(chunk, controller) {
         if (chunk.type !== 'text-delta') {
+          // eslint-disable-next-line no-console
           console.info(buffer, 'finished')
 
           if (buffer.length > 0) {

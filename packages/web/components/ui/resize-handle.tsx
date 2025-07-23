@@ -3,12 +3,13 @@
 import * as React from 'react'
 
 import { cva, type VariantProps } from 'class-variance-authority'
+
 import {
-  ResizeHandlePrimitive,
-  ResizablePrimitive,
+  type ResizeHandle as ResizeHandlePrimitive,
+  Resizable as ResizablePrimitive,
   useResizeHandle,
   useResizeHandleState,
-} from '@platejs/media/react'
+} from '@platejs/resizable'
 
 import { cn } from '@/lib/utils'
 

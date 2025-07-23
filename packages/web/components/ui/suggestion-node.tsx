@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { CornerDownLeftIcon } from 'lucide-react'
 
 import type { TSuggestionData, TSuggestionText } from 'platejs'
 import {
@@ -11,6 +10,8 @@ import {
   type PlateLeafProps,
   type RenderNodeWrapper,
 } from 'platejs/react'
+
+import { CornerDownLeftIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import {
@@ -27,9 +28,15 @@ export function SuggestionLeaf(props: PlateLeafProps<TSuggestionText>) {
   const hoverSuggestionId = usePluginOption(suggestionPlugin, 'hoverId')
   const dataList = api.suggestion.dataList(leaf)
 
-  const hasRemove = dataList.some((data) => data.type === 'remove')
-  const hasActive = dataList.some((data) => data.id === activeSuggestionId)
-  const hasHover = dataList.some((data) => data.id === hoverSuggestionId)
+  const hasRemove = dataList.some(
+    (data: TSuggestionData) => data.type === 'remove'
+  )
+  const hasActive = dataList.some(
+    (data: TSuggestionData) => data.id === activeSuggestionId
+  )
+  const hasHover = dataList.some(
+    (data: TSuggestionData) => data.id === hoverSuggestionId
+  )
 
   const diffOperation = { type: hasRemove ? 'delete' : 'insert' } as const
 

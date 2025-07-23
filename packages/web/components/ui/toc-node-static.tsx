@@ -8,6 +8,9 @@ import {
   type TElement,
 } from 'platejs'
 
+import { type Heading, BaseTocPlugin, isHeading } from '@platejs/toc'
+import { cva } from 'class-variance-authority'
+
 import { Button } from '@/components/ui/button'
 
 const headingItemVariants = cva(
@@ -87,7 +90,7 @@ const getHeadingList = (editor?: SlateEditor) => {
     const id = node.id as string
 
     if (title) {
-      headingList.push({ id, depth, path, title, type })
+      headingList.push({ id, depth: depth || 1, path, title, type })
     }
   })
 

@@ -9,11 +9,14 @@ import {
   type TMentionElement,
 } from 'platejs'
 import {
+  type PlateElementProps,
   PlateElement,
   useFocused,
   useReadOnly,
   useSelected,
 } from 'platejs/react'
+
+import { getMentionOnSelectItem } from '@platejs/mention'
 
 import { cn } from '@/lib/utils'
 import { useMounted } from '@/hooks/use-mounted'
@@ -46,9 +49,9 @@ export function MentionElement(
         'inline-block rounded-md bg-muted px-1.5 py-0.5 align-baseline text-sm font-medium',
         !readOnly && 'cursor-pointer',
         selected && focused && 'ring-2 ring-ring',
-        element.children[0][KEYS.bold] === true && 'font-bold',
-        element.children[0][KEYS.italic] === true && 'italic',
-        element.children[0][KEYS.underline] === true && 'underline'
+        element.children[0]?.[KEYS.bold] === true && 'font-bold',
+        element.children[0]?.[KEYS.italic] === true && 'italic',
+        element.children[0]?.[KEYS.underline] === true && 'underline'
       )}
       attributes={{
         ...props.attributes,

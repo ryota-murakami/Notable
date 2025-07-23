@@ -35,11 +35,13 @@ export function useAnalytics() {
     if (user) {
       identifyUser({
         id: user.id,
-        email: user.email,
+        ...(user.email !== undefined && { email: user.email }),
         name: user.user_metadata?.name,
         properties: {
           created_at: user.created_at,
-          provider: user.app_metadata?.provider,
+          ...(user.app_metadata?.provider !== undefined && {
+            provider: user.app_metadata.provider,
+          }),
         },
       })
     }
@@ -50,7 +52,7 @@ export function useAnalytics() {
     (event: string, properties?: Record<string, any>) => {
       trackEvent(event, properties)
     },
-    [],
+    []
   )
 
   // Track errors with context
@@ -62,7 +64,7 @@ export function useAnalytics() {
         ...context,
       })
     },
-    [pathname, user],
+    [pathname, user]
   )
 
   // Track feature usage with automatic categorization
@@ -74,7 +76,7 @@ export function useAnalytics() {
         ...properties,
       })
     },
-    [pathname, user],
+    [pathname, user]
   )
 
   // Track user interactions
@@ -86,7 +88,7 @@ export function useAnalytics() {
         ...properties,
       })
     },
-    [pathname, user],
+    [pathname, user]
   )
 
   return {
@@ -101,7 +103,7 @@ export function useAnalytics() {
 // Hook for tracking component mount/unmount
 export function useComponentTracking(
   componentName: string,
-  properties?: Record<string, any>,
+  properties?: Record<string, any>
 ) {
   const { trackFeature } = useAnalytics()
 
@@ -142,7 +144,7 @@ export function usePerformanceTracking(metricName: string) {
         unit,
       })
     },
-    [metricName, track],
+    [metricName, track]
   )
 
   return trackPerformance

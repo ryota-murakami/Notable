@@ -2,6 +2,14 @@
 
 import * as React from 'react'
 
+import {
+  type PlateElementProps,
+  type RenderNodeWrapper,
+  useEditorPlugin,
+  useEditorRef,
+  usePluginOption,
+} from 'platejs/react'
+
 import { getDraftCommentKey } from '@platejs/comment'
 import { CommentPlugin } from '@platejs/comment/react'
 import { SuggestionPlugin } from '@platejs/suggestion/react'
@@ -20,13 +28,6 @@ import {
   PathApi,
   TextApi,
 } from 'platejs'
-import {
-  useEditorPlugin,
-  useEditorRef,
-  usePluginOption,
-  type PlateElementProps,
-  type RenderNodeWrapper,
-} from 'platejs/react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -300,7 +301,9 @@ function BlockComment({
             key={comment.id ?? index}
             comment={comment}
             discussionLength={discussion.comments.length}
-            documentContent={discussion?.documentContent}
+            {...(discussion?.documentContent && {
+              documentContent: discussion.documentContent,
+            })}
             editingId={editingId}
             index={index}
             setEditingId={setEditingId}

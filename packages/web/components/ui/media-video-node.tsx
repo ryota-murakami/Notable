@@ -12,6 +12,11 @@ import {
   type PlateElementProps,
 } from 'platejs/react'
 
+import { useDraggable } from '@platejs/dnd'
+import { parseTwitterUrl, parseVideoUrl } from '@platejs/media'
+import { useMediaState } from '@platejs/media/react'
+import { ResizableProvider, useResizableValue } from '@platejs/resizable'
+
 import { cn } from '@/lib/utils'
 
 import { Caption, CaptionTextarea } from './caption'
@@ -97,12 +102,13 @@ export const VideoElement = withHOC(
 
               {isUpload && isEditorMounted && (
                 <div ref={handleRef}>
-                  <ReactPlayer
-                    height='100%'
-                    url={unsafeUrl}
-                    width='100%'
-                    controls
-                  />
+                  <div style={{ width: '100%', height: '100%' }}>
+                    <ReactPlayer
+                      src={unsafeUrl}
+                      controls
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </div>
                 </div>
               )}
             </div>

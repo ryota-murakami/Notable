@@ -4,7 +4,9 @@ import * as React from 'react'
 
 import type { TAudioElement } from 'platejs'
 import { PlateElement, withHOC, type PlateElementProps } from 'platejs/react'
-import { ResizableProvider, useMediaState } from '@platejs/media/react'
+
+import { useMediaState } from '@platejs/media/react'
+import { ResizableProvider } from '@platejs/resizable'
 
 import { Caption, CaptionTextarea } from './caption'
 

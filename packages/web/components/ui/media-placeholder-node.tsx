@@ -1,21 +1,22 @@
 'use client'
 
 import * as React from 'react'
-import { AudioLines, FileUp, Film, ImageIcon, Loader2Icon } from 'lucide-react'
 
 import { KEYS, type TPlaceholderElement } from 'platejs'
-import { useFilePicker } from 'use-file-picker'
 import {
   PlateElement,
   useEditorPlugin,
   withHOC,
   type PlateElementProps,
 } from 'platejs/react'
+
 import {
   PlaceholderPlugin,
   PlaceholderProvider,
   updateUploadHistory,
 } from '@platejs/media/react'
+import { AudioLines, FileUp, Film, ImageIcon, Loader2Icon } from 'lucide-react'
+import { useFilePicker } from 'use-file-picker'
 
 import { cn } from '@/lib/utils'
 import { useUploadFile } from '@/hooks/use-upload-file'
@@ -69,7 +70,9 @@ export const PlaceholderElement = withHOC(
     const imageRef = React.useRef<HTMLImageElement>(null)
 
     const { openFilePicker } = useFilePicker({
-      accept: currentContent.accept,
+      ...(currentContent?.accept !== undefined && {
+        accept: currentContent.accept,
+      }),
       multiple: true,
       onFilesSelected: ({ plainFiles: updatedFiles }) => {
         const firstFile = updatedFiles[0]
@@ -97,22 +100,24 @@ export const PlaceholderElement = withHOC(
       const path = editor.api.findPath(element)
 
       editor.tf.withoutSaving(() => {
-        editor.tf.removeNodes({ at: path })
+        if (path) {
+          editor.tf.removeNodes({ at: path })
 
-        const node = {
-          children: [{ text: '' }],
-          initialHeight: imageRef.current?.height,
-          initialWidth: imageRef.current?.width,
-          isUpload: true,
-          name: element.mediaType === KEYS.file ? uploadedFile.name : '',
-          placeholderId: element.id as string,
-          type: element.mediaType!,
-          url: uploadedFile.url,
+          const node = {
+            children: [{ text: '' }],
+            initialHeight: imageRef.current?.height,
+            initialWidth: imageRef.current?.width,
+            isUpload: true,
+            name: element.mediaType === KEYS.file ? uploadedFile.name : '',
+            placeholderId: element.id as string,
+            type: element.mediaType!,
+            url: uploadedFile.url,
+          }
+
+          editor.tf.insertNodes(node, { at: path })
+
+          updateUploadHistory(editor, node)
         }
-
-        editor.tf.insertNodes(node, { at: path })
-
-        updateUploadHistory(editor, node)
       })
 
       api.placeholder.removeUploadingFile(element.id as string)
@@ -149,11 +154,11 @@ export const PlaceholderElement = withHOC(
             contentEditable={false}
           >
             <div className='relative mr-3 flex text-muted-foreground/80 [&_svg]:size-6'>
-              {currentContent.icon}
+              {currentContent?.icon}
             </div>
             <div className='text-sm whitespace-nowrap text-muted-foreground'>
               <div>
-                {loading ? uploadingFile?.name : currentContent.content}
+                {loading ? uploadingFile?.name : currentContent?.content}
               </div>
 
               {loading && !isImage && (

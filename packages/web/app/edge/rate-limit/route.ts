@@ -51,9 +51,11 @@ function getUserIdentifier(request: NextRequest, rule: RateLimitRule): string {
   }
 
   // Fall back to IP address
-  const ip = request.ip || 'unknown'
   const forwarded = request.headers.get('x-forwarded-for')
-  const realIp = forwarded ? forwarded.split(',')[0].trim() : ip
+  const firstForwarded = forwarded ? forwarded.split(',')[0] : null
+  const realIp = firstForwarded
+    ? firstForwarded.trim()
+    : request.headers.get('x-real-ip') || 'unknown'
 
   return `ip:${realIp}:${rule.identifier}`
 }
@@ -70,7 +72,7 @@ const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
 // Get rate limit info from storage
 async function getRateLimitInfo(
   key: string,
-  windowMs: number,
+  windowMs: number
 ): Promise<RateLimitInfo> {
   const now = Date.now()
   const stored = rateLimitStore.get(key)
@@ -92,7 +94,7 @@ async function getRateLimitInfo(
 // Increment rate limit counter
 async function incrementRateLimit(
   key: string,
-  windowMs: number,
+  windowMs: number
 ): Promise<RateLimitInfo> {
   const now = Date.now()
   const stored = rateLimitStore.get(key)
@@ -119,7 +121,7 @@ async function incrementRateLimit(
 // Check if request should be rate limited
 async function checkRateLimit(
   request: NextRequest,
-  ruleKey: string,
+  ruleKey: string
 ): Promise<{ allowed: boolean; info: RateLimitInfo; rule: RateLimitRule }> {
   const rule = RATE_LIMIT_CONFIGS[ruleKey]
   if (!rule) {
@@ -144,12 +146,12 @@ async function checkRateLimit(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { endpoint, _method = 'GET' } = body
+    const { endpoint } = body
 
     if (!endpoint) {
       return NextResponse.json(
         { error: 'Missing endpoint parameter' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -212,7 +214,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to check rate limit' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -245,7 +247,7 @@ export async function GET(request: NextRequest) {
         'X-RateLimit-Limit': rule.limit.toString(),
         'X-RateLimit-Remaining': Math.max(
           0,
-          rule.limit - info.count,
+          rule.limit - info.count
         ).toString(),
         'X-RateLimit-Reset': Math.ceil(info.resetTime / 1000).toString(),
       },
@@ -255,7 +257,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to get rate limit status' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -277,7 +279,7 @@ export async function DELETE(request: NextRequest) {
     if (!ruleKey || !RATE_LIMIT_CONFIGS[ruleKey]) {
       return NextResponse.json(
         { error: 'Invalid or missing rule key' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -291,7 +293,7 @@ export async function DELETE(request: NextRequest) {
     } else {
       return NextResponse.json(
         { error: 'Must specify either user or ip parameter' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -308,7 +310,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to reset rate limit' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -336,7 +338,7 @@ export async function PUT(_request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to cleanup rate limits' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
