@@ -2,30 +2,40 @@ import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
 import * as Sentry from '@sentry/nextjs'
 import { LogLevel, LogMetadata, formatError } from './index'
+import { Transform } from 'stream'
 
-// Custom Sentry transport
-class SentryTransport extends winston.Transport {
-  log(info: winston.LogEntry, callback: () => void) {
-    setImmediate(() => {
-      this.emit('logged', info)
-    })
+// Custom Sentry transport using winston's Transform base class
+class SentryTransport extends Transform {
+  constructor(options?: any) {
+    super(options)
+  }
 
-    const { level, message, ...metadata } = info
+  override _write(
+    chunk: any,
+    _encoding: string,
+    callback: (error?: Error | null) => void
+  ) {
+    try {
+      const info = JSON.parse(chunk.toString())
+      const { level, message, ...metadata } = info
 
-    // Only send errors and warnings to Sentry
-    if (level === 'error') {
-      if (metadata.error instanceof Error) {
-        Sentry.captureException(metadata.error, {
-          extra: metadata,
-        })
-      } else {
-        Sentry.captureMessage(message, 'error')
+      // Only send errors and warnings to Sentry
+      if (level === 'error') {
+        if (metadata.error instanceof Error) {
+          Sentry.captureException(metadata.error, {
+            extra: metadata,
+          })
+        } else {
+          Sentry.captureMessage(message, 'error')
+        }
+      } else if (level === 'warn') {
+        Sentry.captureMessage(message, 'warning')
       }
-    } else if (level === 'warn') {
-      Sentry.captureMessage(message, 'warning')
-    }
 
-    callback()
+      callback()
+    } catch (error) {
+      callback(error as Error)
+    }
   }
 }
 
@@ -44,14 +54,14 @@ export function createServerLogger() {
         msg += ` ${JSON.stringify(metadata, null, 2)}`
       }
       return msg
-    }),
+    })
   )
 
   // JSON format for production
   const jsonFormat = winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.json(),
+    winston.format.json()
   )
 
   // Create transports array
@@ -62,7 +72,7 @@ export function createServerLogger() {
     new winston.transports.Console({
       format: isDevelopment ? consoleFormat : jsonFormat,
       level: isDevelopment ? 'debug' : 'info',
-    }),
+    })
   )
 
   // File transports for production
@@ -76,7 +86,7 @@ export function createServerLogger() {
         maxSize: '20m',
         maxFiles: '14d',
         format: jsonFormat,
-      }),
+      })
     )
 
     // Combined log file
@@ -87,7 +97,7 @@ export function createServerLogger() {
         maxSize: '20m',
         maxFiles: '7d',
         format: jsonFormat,
-      }),
+      })
     )
 
     // Sentry transport
@@ -102,7 +112,7 @@ export function createServerLogger() {
       winston.format.errors({ stack: true }),
       winston.format.metadata({
         fillExcept: ['message', 'level', 'timestamp'],
-      }),
+      })
     ),
     defaultMeta: {
       service: 'notable-app',

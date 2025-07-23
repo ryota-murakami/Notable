@@ -7,12 +7,12 @@ import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
 import type { User } from '@supabase/supabase-js'
 // Define types inline instead of importing from missing module
-interface RealtimeUser {
-  id: string
-  name: string
-  avatar?: string
-  color?: string
-}
+// interface RealtimeUser {
+//   id: string
+//   name: string
+//   avatar?: string
+//   color?: string
+// }
 
 interface UseSupabaseNotesOptions {
   user?: User | null

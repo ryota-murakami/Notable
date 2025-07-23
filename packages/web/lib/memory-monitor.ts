@@ -86,9 +86,9 @@ export class MemoryMonitor extends EventEmitter {
     ) => {
       const id = originalSetTimeout.call(
         window,
-        handler,
+        handler as () => void,
         timeout,
-        ...args
+        ...(args as [])
       ) as unknown as number
       activeTimers.add(id)
       return id
@@ -101,9 +101,9 @@ export class MemoryMonitor extends EventEmitter {
     ) => {
       const id = originalSetInterval.call(
         window,
-        handler,
+        handler as () => void,
         timeout,
-        ...args
+        ...(args as [])
       ) as unknown as number
       activeTimers.add(id)
       return id
@@ -138,14 +138,14 @@ export class MemoryMonitor extends EventEmitter {
     this.snapshotInterval = setInterval(() => {
       this.takeSnapshot()
       this.analyzeMemoryTrends()
-    }, intervalMs) as number
+    }, intervalMs) as unknown as number
   }
 
   stopMonitoring() {
     this.monitoring = false
     if (this.snapshotInterval) {
       clearInterval(this.snapshotInterval)
-      delete this.snapshotInterval
+      this.snapshotInterval = undefined
     }
   }
 
