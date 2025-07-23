@@ -21,6 +21,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'github' : 'list',
+  /* Global timeout for all tests */
+  timeout: 30 * 1000,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -75,7 +77,7 @@ export default defineConfig({
   webServer: {
     command: 'PORT=3000 pnpm run dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true, // Always reuse existing server to avoid port conflicts
     timeout: 120 * 1000,
     stdout: 'pipe',
     stderr: 'pipe',
