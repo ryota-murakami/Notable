@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
-import { LogLevel, LogMetadata, formatError } from './index'
+import { LogLevel, LogMetadata, formatError } from './types'
 
 interface LogBuffer {
   entries: Array<{

@@ -1,7 +1,7 @@
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
 import * as Sentry from '@sentry/nextjs'
-import { LogLevel, LogMetadata, formatError } from './index'
+import { LogLevel, LogMetadata, formatError } from './types'
 
 // Custom Sentry transport
 class SentryTransport extends winston.Transport {
@@ -44,14 +44,14 @@ export function createServerLogger() {
         msg += ` ${JSON.stringify(metadata, null, 2)}`
       }
       return msg
-    }),
+    })
   )
 
   // JSON format for production
   const jsonFormat = winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.json(),
+    winston.format.json()
   )
 
   // Create transports array
@@ -62,7 +62,7 @@ export function createServerLogger() {
     new winston.transports.Console({
       format: isDevelopment ? consoleFormat : jsonFormat,
       level: isDevelopment ? 'debug' : 'info',
-    }),
+    })
   )
 
   // File transports for production
@@ -76,7 +76,7 @@ export function createServerLogger() {
         maxSize: '20m',
         maxFiles: '14d',
         format: jsonFormat,
-      }),
+      })
     )
 
     // Combined log file
@@ -87,7 +87,7 @@ export function createServerLogger() {
         maxSize: '20m',
         maxFiles: '7d',
         format: jsonFormat,
-      }),
+      })
     )
 
     // Sentry transport
@@ -102,7 +102,7 @@ export function createServerLogger() {
       winston.format.errors({ stack: true }),
       winston.format.metadata({
         fillExcept: ['message', 'level', 'timestamp'],
-      }),
+      })
     ),
     defaultMeta: {
       service: 'notable-app',

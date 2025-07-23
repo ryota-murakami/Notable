@@ -1,61 +1,13 @@
 import { createServerLogger } from './server'
 import { createClientLogger } from './client'
+import { LogLevel, LogMetadata, LogEntry, formatError } from './types'
+
+// Re-export types
+export { LogLevel, LogMetadata, LogEntry, formatError } from './types'
 
 // Export appropriate logger based on environment
 export const logger =
   typeof window === 'undefined' ? createServerLogger() : createClientLogger()
-
-// Log levels
-export enum LogLevel {
-  ERROR = 'error',
-  WARN = 'warn',
-  INFO = 'info',
-  DEBUG = 'debug',
-  VERBOSE = 'verbose',
-}
-
-// Log metadata interface
-export interface LogMetadata {
-  userId?: string
-  sessionId?: string
-  requestId?: string
-  action?: string
-  component?: string
-  duration?: number
-  error?: Error
-  [key: string]: any
-}
-
-// Structured log entry
-export interface LogEntry {
-  level: LogLevel
-  message: string
-  timestamp: Date
-  metadata?: LogMetadata
-}
-
-// Helper function to format errors for logging
-export function formatError(error: unknown): {
-  message: string
-  stack?: string
-  name?: string
-  code?: string
-} {
-  if (error instanceof Error) {
-    return {
-      message: error.message,
-      stack: error.stack,
-      name: error.name,
-      code: (error as any).code,
-    }
-  }
-
-  if (typeof error === 'string') {
-    return { message: error }
-  }
-
-  return { message: 'Unknown error', stack: JSON.stringify(error) }
-}
 
 // Performance logging helper
 export function logPerformance(

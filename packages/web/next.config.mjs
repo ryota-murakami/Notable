@@ -30,10 +30,21 @@ const nextConfig = {
   },
 
   // Bundle optimization - fixed for Next.js 15 SSR compatibility
-  webpack: (config, { isServer }) => {
-    // Only apply optimization to client-side bundles to avoid SSR issues
-    if (!isServer) {
-      // Client-side bundle optimization
+  webpack: (config, { isServer, dev }) => {
+    // Ensure server-side bundles don't include client-side globals
+    if (isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        self: false,
+        window: false,
+        document: false,
+        navigator: false,
+      }
+    }
+
+    // Optimize only for production builds to improve dev server performance
+    if (!isServer && !dev) {
+      // Client-side bundle optimization for production only
       config.optimization.splitChunks = {
         chunks: 'all',
         cacheGroups: {
@@ -65,22 +76,9 @@ const nextConfig = {
         },
       }
 
-      // Tree shaking for production (client-side only)
-      if (process.env.NODE_ENV === 'production') {
-        config.optimization.usedExports = true
-        config.optimization.sideEffects = false
-      }
-    }
-
-    // Ensure server-side bundles don't include client-side globals
-    if (isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        self: false,
-        window: false,
-        document: false,
-        navigator: false,
-      }
+      // Tree shaking for production only
+      config.optimization.usedExports = true
+      config.optimization.sideEffects = false
     }
 
     return config
