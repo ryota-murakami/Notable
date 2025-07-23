@@ -20,17 +20,22 @@ interface HealthCheckResponse {
   }
 }
 
-// Initialize Supabase client for health checks
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  {
+// Helper function to get Supabase client
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
-  }
-)
+  })
+}
 
 // Track application start time
 const startTime = Date.now()
@@ -42,6 +47,19 @@ async function checkDatabase(): Promise<
   const start = Date.now()
 
   try {
+    // Get Supabase client
+    let supabase
+    try {
+      supabase = getSupabaseClient()
+    } catch (error) {
+      return {
+        status: 'fail',
+        responseTime: Date.now() - start,
+        message: 'Database configuration missing',
+        details: 'Supabase environment variables not set',
+      }
+    }
+
     // Simple query to check database connection
     const { data: _data, error } = await supabase
       .from('notes')
