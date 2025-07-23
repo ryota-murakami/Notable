@@ -1,7 +1,6 @@
 'use client'
 
 import React, { Component, ReactNode } from 'react'
-import * as Sentry from '@sentry/nextjs'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 
@@ -26,24 +25,14 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error }
   }
 
-  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error to Sentry
-    Sentry.withScope((scope) => {
-      scope.setContext('errorBoundary', {
-        componentStack: errorInfo.componentStack,
-      })
-      Sentry.captureException(error)
-    })
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // Log error to console
+    console.error('Error caught by boundary:', error)
+    console.error('Error info:', errorInfo)
 
     // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
-    }
-
-    // Log to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error caught by boundary:', error)
-      console.error('Error info:', errorInfo)
     }
   }
 
@@ -108,7 +97,7 @@ export class ErrorBoundary extends Component<Props, State> {
 // Hook for using error boundary
 export function useErrorHandler() {
   return (error: Error) => {
-    Sentry.captureException(error)
+    console.error('Error handler:', error)
     throw error
   }
 }
@@ -123,7 +112,7 @@ export function ComponentErrorBoundary({
 }) {
   return (
     <ErrorBoundary
-      fallback={(_error, reset) => (
+      fallback={(error, reset) => (
         <div className='p-4 border border-destructive/20 rounded-lg bg-destructive/5'>
           <p className='text-sm text-destructive mb-2'>
             Failed to load {componentName}
@@ -134,10 +123,7 @@ export function ComponentErrorBoundary({
         </div>
       )}
       onError={(error) => {
-        Sentry.withScope((scope) => {
-          scope.setTag('component', componentName)
-          Sentry.captureException(error)
-        })
+        console.error(`Error in component ${componentName}:`, error)
       }}
     >
       {children}

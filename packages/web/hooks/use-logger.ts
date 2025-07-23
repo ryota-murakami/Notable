@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useUser } from '@/hooks/use-user'
-import logger, { LogMetadata } from '@/lib/logging'
+import { logger } from '@/lib/logging/logger.client'
+import type { LogMetadata } from '@/lib/logging'
 
 export function useLogger(componentName?: string) {
   const { user } = useUser()
@@ -73,7 +74,7 @@ export function useLogger(componentName?: string) {
   // User action logging
   const logAction = useCallback(
     (action: string, metadata?: LogMetadata) => {
-      logger.userAction(action, user?.id, {
+      logger.info(`User action: ${action}`, {
         ...baseMetadata,
         ...metadata,
       })
@@ -84,7 +85,8 @@ export function useLogger(componentName?: string) {
   // Performance logging
   const logPerformance = useCallback(
     (operation: string, duration: number, metadata?: LogMetadata) => {
-      logger.performance(operation, duration, {
+      const level = duration > 1000 ? 'warn' : 'info'
+      logger[level](`Performance: ${operation} took ${duration}ms`, {
         ...baseMetadata,
         ...metadata,
       })

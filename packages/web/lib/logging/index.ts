@@ -8,7 +8,7 @@ export interface Logger {
   info: (message: string, metadata?: LogMetadata) => void
   debug: (message: string, metadata?: LogMetadata) => void
   verbose: (message: string, metadata?: LogMetadata) => void
-  log: (level: string, message: string, metadata?: any) => void
+  log: (level: LogLevel, message: string, metadata?: LogMetadata) => void
 }
 
 // Export appropriate logger based on environment
@@ -46,6 +46,9 @@ export interface LogEntry {
   metadata?: LogMetadata
 }
 
+// Helper to detect server environment
+const isServerSide = () => typeof window === 'undefined'
+
 // Helper function to format errors for logging
 export function formatError(error: unknown): {
   message: string
@@ -78,12 +81,17 @@ export function logPerformance(
   metadata?: LogMetadata
 ) {
   const level = duration > 1000 ? LogLevel.WARN : LogLevel.INFO
-  logger.log(level, `Performance: ${operation} took ${duration}ms`, {
+  const message = `Performance: ${operation} took ${duration}ms`
+  const data = {
     ...metadata,
     operation,
     duration,
     performanceWarning: duration > 1000,
-  })
+  }
+
+  if (isServerSide()) {
+    console.log(`[${level}] ${message}`, data)
+  }
 }
 
 // API logging helper
@@ -95,13 +103,19 @@ export function logApiCall(
   metadata?: LogMetadata
 ) {
   const level = statusCode >= 400 ? LogLevel.ERROR : LogLevel.INFO
-  logger.log(level, `${method} ${path} - ${statusCode} (${duration}ms)`, {
+  const message = `${method} ${path} - ${statusCode} (${duration}ms)`
+  const data = {
     ...metadata,
     method,
     path,
     statusCode,
     duration,
-  })
+  }
+
+  if (isServerSide()) {
+    const logMethod = level === LogLevel.ERROR ? 'error' : 'log'
+    console[logMethod](`[${level}] ${message}`, data)
+  }
 }
 
 // User action logging helper
@@ -110,12 +124,17 @@ export function logUserAction(
   userId?: string,
   metadata?: LogMetadata
 ) {
-  logger.info(`User action: ${action}`, {
+  const message = `User action: ${action}`
+  const data = {
     ...metadata,
     action,
     ...(userId !== undefined && { userId }),
     timestamp: new Date().toISOString(),
-  })
+  }
+
+  if (isServerSide()) {
+    console.log(`[${LogLevel.INFO}] ${message}`, data)
+  }
 }
 
 // Security event logging helper
@@ -129,12 +148,18 @@ export function logSecurityEvent(
       ? LogLevel.ERROR
       : LogLevel.WARN
 
-  logger.log(level, `Security event: ${event}`, {
+  const message = `Security event: ${event}`
+  const data = {
     ...metadata,
     securityEvent: event,
     severity,
     timestamp: new Date().toISOString(),
-  })
+  }
+
+  if (isServerSide()) {
+    const logMethod = level === LogLevel.ERROR ? 'error' : 'warn'
+    console[logMethod](`[${level}] ${message}`, data)
+  }
 }
 
 // Export convenience methods
