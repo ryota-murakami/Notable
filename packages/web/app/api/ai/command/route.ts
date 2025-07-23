@@ -1,5 +1,9 @@
-import type { TextStreamPart, ToolSet } from 'ai'
-import { convertToCoreMessages, streamText } from 'ai'
+import {
+  type TextStreamPart,
+  type ToolSet,
+  convertToCoreMessages,
+  streamText,
+} from 'ai'
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { createOpenAI } from '@ai-sdk/openai'
