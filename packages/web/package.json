@@ -149,6 +149,7 @@
     "tailwindcss": "^4.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5",
+    "whatwg-fetch": "^3.6.20",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   }
