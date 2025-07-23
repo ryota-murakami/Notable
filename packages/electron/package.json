@@ -35,8 +35,8 @@
       "output": "dist"
     },
     "files": [
-      "build/main.js",
-      "build/preload.js",
+      "build/**/*",
+      "!build/**/*.map",
       "package.json"
     ],
     "mac": {
