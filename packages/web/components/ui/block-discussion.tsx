@@ -2,7 +2,13 @@
 
 import * as React from 'react'
 
-import type { PlateElementProps, RenderNodeWrapper } from 'platejs/react'
+import {
+  type PlateElementProps,
+  type RenderNodeWrapper,
+  useEditorPlugin,
+  useEditorRef,
+  usePluginOption,
+} from 'platejs/react'
 
 import { getDraftCommentKey } from '@platejs/comment'
 import { CommentPlugin } from '@platejs/comment/react'
@@ -22,7 +28,6 @@ import {
   PathApi,
   TextApi,
 } from 'platejs'
-import { useEditorPlugin, useEditorRef, usePluginOption } from 'platejs/react'
 
 import { Button } from '@/components/ui/button'
 import {

@@ -137,7 +137,7 @@ export function SearchDialog({
           let current: Note | undefined = note
           while (current?.parentId) {
             if (current.parentId === folderId) return true
-            current = notes.find((n) => n.id === current!.parentId)
+            current = notes.find((n) => n.id === current?.parentId)
             if (!current) break
           }
           return false

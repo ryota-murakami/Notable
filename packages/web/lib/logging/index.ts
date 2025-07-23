@@ -1,6 +1,16 @@
 import { createServerLogger } from './server'
 import { createClientLogger } from './client'
 
+// Logger interface
+export interface Logger {
+  error: (message: string, metadata?: LogMetadata) => void
+  warn: (message: string, metadata?: LogMetadata) => void
+  info: (message: string, metadata?: LogMetadata) => void
+  debug: (message: string, metadata?: LogMetadata) => void
+  verbose: (message: string, metadata?: LogMetadata) => void
+  log: (level: string, message: string, metadata?: any) => void
+}
+
 // Export appropriate logger based on environment
 export const logger =
   typeof window === 'undefined' ? createServerLogger() : createClientLogger()

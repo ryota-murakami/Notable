@@ -189,7 +189,16 @@ function getUserContext(request: NextRequest): UserContext {
 
   const config = ROUTING_CONFIGS[tier]
 
-  const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
+  const freeConfig = ROUTING_CONFIGS.free ||
+    ROUTING_CONFIGS.basic || {
+      features: {
+        collaboration: false,
+        ai: false,
+        encryption: false,
+        customDomain: false,
+      },
+      limits: { storage: 0, bandwidth: 0, requests: 0 },
+    }
   return {
     id: userId,
     tier,
@@ -252,7 +261,7 @@ function hasFeatureAccess(userContext: UserContext, feature: string): boolean {
 // Check if user is within limits
 function checkLimits(
   userContext: UserContext,
-  limitType: string,
+  limitType: keyof UserContext['limits'],
   currentUsage: number
 ): boolean {
   const limit = userContext.limits[limitType]
@@ -377,7 +386,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
+    const freeConfig = ROUTING_CONFIGS.free ||
+      ROUTING_CONFIGS.basic || {
+        features: {
+          collaboration: false,
+          ai: false,
+          encryption: false,
+          customDomain: false,
+        },
+        limits: { storage: 0, bandwidth: 0, requests: 0 },
+      }
     const response = {
       tier: userContext.tier,
       region: userContext.region,

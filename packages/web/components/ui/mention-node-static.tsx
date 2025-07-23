@@ -1,8 +1,11 @@
 import * as React from 'react'
 
-import type { SlateElementProps, TMentionElement } from 'platejs'
-
-import { KEYS, SlateElement } from 'platejs'
+import {
+  KEYS,
+  SlateElement,
+  type SlateElementProps,
+  type TMentionElement,
+} from 'platejs'
 
 import { cn } from '@/lib/utils'
 

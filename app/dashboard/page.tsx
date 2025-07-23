@@ -25,12 +25,6 @@ export default function DashboardPage() {
   const [notes, setNotes] = useState<any[]>([])
   const [isLoadingNotes, setIsLoadingNotes] = useState(true)
 
-  useEffect(() => {
-    if (user) {
-      loadNotes()
-    }
-  }, [user])
-
   const loadNotes = async () => {
     try {
       setIsLoadingNotes(true)
@@ -51,6 +45,12 @@ export default function DashboardPage() {
       setIsLoadingNotes(false)
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      loadNotes()
+    }
+  }, [user])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
