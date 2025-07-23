@@ -136,30 +136,33 @@ export function Shell() {
     })
   }
 
-  const handleCreateNote = async (parentId: string | null = null) => {
-    setIsEditorLoading(true)
-    let newNote: Note | null = null
+  const handleCreateNote = useCallback(
+    async (parentId: string | null = null) => {
+      setIsEditorLoading(true)
+      let newNote: Note | null = null
 
-    try {
-      newNote = await createNote(parentId)
-      if (newNote) {
-        setActiveNoteId(newNote.id)
+      try {
+        newNote = await createNote(parentId)
+        if (newNote) {
+          setActiveNoteId(newNote.id)
+          toast({
+            title: 'Note created',
+            description: 'Your new note has been created successfully.',
+          })
+        }
+      } catch {
         toast({
-          title: 'Note created',
-          description: 'Your new note has been created successfully.',
+          title: 'Error',
+          description: 'Failed to create note. Please try again.',
+          variant: 'destructive',
         })
+      } finally {
+        setIsEditorLoading(false)
       }
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to create note. Please try again.',
-        variant: 'destructive',
-      })
-    } finally {
-      setIsEditorLoading(false)
-    }
-    return newNote
-  }
+      return newNote
+    },
+    [createNote, setActiveNoteId, toast]
+  )
 
   const handleCreateFolder = async (parentId: string | null = null) => {
     let newFolder: Note | null = null
@@ -182,47 +185,50 @@ export function Shell() {
     return newFolder
   }
 
-  const handleDeleteNote = async (id: string) => {
-    try {
-      // Delete all children recursively
-      const idsToDelete = [id]
-      const findChildren = (parentId: string) => {
-        notes.forEach((note) => {
-          if (note.parentId === parentId) {
-            idsToDelete.push(note.id)
-            findChildren(note.id)
-          }
+  const handleDeleteNote = useCallback(
+    async (id: string) => {
+      try {
+        // Delete all children recursively
+        const idsToDelete = [id]
+        const findChildren = (parentId: string) => {
+          notes.forEach((note) => {
+            if (note.parentId === parentId) {
+              idsToDelete.push(note.id)
+              findChildren(note.id)
+            }
+          })
+        }
+
+        findChildren(id)
+
+        // Delete all notes
+        for (const noteId of idsToDelete) {
+          await deleteNote(noteId)
+        }
+
+        // Update active note if necessary
+        if (activeNoteId === id) {
+          const remainingNotes = notes.filter(
+            (note) => !idsToDelete.includes(note.id)
+          )
+          setActiveNoteId(remainingNotes[0]?.id || '')
+        }
+
+        toast({
+          title: 'Note deleted',
+          description: 'Your note has been deleted successfully.',
+          variant: 'destructive',
+        })
+      } catch {
+        toast({
+          title: 'Error',
+          description: 'Failed to delete note. Please try again.',
+          variant: 'destructive',
         })
       }
-
-      findChildren(id)
-
-      // Delete all notes
-      for (const noteId of idsToDelete) {
-        await deleteNote(noteId)
-      }
-
-      // Update active note if necessary
-      if (activeNoteId === id) {
-        const remainingNotes = notes.filter(
-          (note) => !idsToDelete.includes(note.id)
-        )
-        setActiveNoteId(remainingNotes[0]?.id || '')
-      }
-
-      toast({
-        title: 'Note deleted',
-        description: 'Your note has been deleted successfully.',
-        variant: 'destructive',
-      })
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete note. Please try again.',
-        variant: 'destructive',
-      })
-    }
-  }
+    },
+    [notes, deleteNote, activeNoteId, setActiveNoteId, toast]
+  )
 
   // Add comprehensive keyboard navigation
   useEffect(() => {
@@ -357,6 +363,8 @@ export function Shell() {
     toast,
     navigateToNote,
     isViewMode,
+    handleCreateNote,
+    handleDeleteNote,
   ])
 
   // Show loading screen while authenticating

@@ -90,7 +90,7 @@ export function logPerformance(
   }
 
   if (isServerSide()) {
-    console.log(`[${level}] ${message}`, data)
+    console.log(`[${level}] ${message}`, data) // eslint-disable-line no-console
   }
 }
 
@@ -114,7 +114,7 @@ export function logApiCall(
 
   if (isServerSide()) {
     const logMethod = level === LogLevel.ERROR ? 'error' : 'log'
-    console[logMethod](`[${level}] ${message}`, data)
+    console[logMethod](`[${level}] ${message}`, data) // eslint-disable-line no-console
   }
 }
 
@@ -133,7 +133,7 @@ export function logUserAction(
   }
 
   if (isServerSide()) {
-    console.log(`[${LogLevel.INFO}] ${message}`, data)
+    console.log(`[${LogLevel.INFO}] ${message}`, data) // eslint-disable-line no-console
   }
 }
 
@@ -158,7 +158,7 @@ export function logSecurityEvent(
 
   if (isServerSide()) {
     const logMethod = level === LogLevel.ERROR ? 'error' : 'warn'
-    console[logMethod](`[${level}] ${message}`, data)
+    console[logMethod](`[${level}] ${message}`, data) // eslint-disable-line no-console
   }
 }
 

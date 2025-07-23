@@ -267,7 +267,9 @@ export function OptimizedShell() {
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={handleToggleSidebar}
           isMobileMenuOpen={false}
-          onToggleMobileMenu={() => {}}
+          onToggleMobileMenu={() => {
+            // TODO: Implement mobile menu toggle functionality
+          }}
           isLoading={isLoading}
         />
 
