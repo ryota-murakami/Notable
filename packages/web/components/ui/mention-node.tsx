@@ -3,7 +3,6 @@
 import * as React from 'react'
 
 import type { TComboboxInputElement, TMentionElement } from 'platejs'
-import type { PlateElementProps } from 'platejs/react'
 
 import { getMentionOnSelectItem } from '@platejs/mention'
 import { IS_APPLE, KEYS } from 'platejs'
@@ -12,6 +11,7 @@ import {
   useFocused,
   useReadOnly,
   useSelected,
+  type PlateElementProps,
 } from 'platejs/react'
 
 import { cn } from '@/lib/utils'
@@ -29,7 +29,7 @@ import {
 export function MentionElement(
   props: PlateElementProps<TMentionElement> & {
     prefix?: string
-  },
+  }
 ) {
   const element = props.element
 
@@ -47,7 +47,7 @@ export function MentionElement(
         selected && focused && 'ring-2 ring-ring',
         element.children[0][KEYS.bold] === true && 'font-bold',
         element.children[0][KEYS.italic] === true && 'italic',
-        element.children[0][KEYS.underline] === true && 'underline',
+        element.children[0][KEYS.underline] === true && 'underline'
       )}
       attributes={{
         ...props.attributes,
@@ -78,25 +78,25 @@ export function MentionElement(
 const onSelectItem = getMentionOnSelectItem()
 
 export function MentionInputElement(
-  props: PlateElementProps<TComboboxInputElement>,
+  props: PlateElementProps<TComboboxInputElement>
 ) {
   const { editor, element } = props
   const [search, setSearch] = React.useState('')
 
   return (
-    <PlateElement {...props} as="span">
+    <PlateElement {...props} as='span'>
       <InlineCombobox
         value={search}
         element={element}
         setValue={setSearch}
         showTrigger={false}
-        trigger="@"
+        trigger='@'
       >
-        <span className="inline-block rounded-md bg-muted px-1.5 py-0.5 align-baseline text-sm ring-ring focus-within:ring-2">
+        <span className='inline-block rounded-md bg-muted px-1.5 py-0.5 align-baseline text-sm ring-ring focus-within:ring-2'>
           <InlineComboboxInput />
         </span>
 
-        <InlineComboboxContent className="my-1.5">
+        <InlineComboboxContent className='my-1.5'>
           <InlineComboboxEmpty>No results</InlineComboboxEmpty>
 
           <InlineComboboxGroup>
