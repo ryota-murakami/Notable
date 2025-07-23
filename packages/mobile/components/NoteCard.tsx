@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, StyleSheet, Alert } from 'react-native'
 import { Card, Text, IconButton, Chip } from 'react-native-paper'
 import { Note } from '../types'

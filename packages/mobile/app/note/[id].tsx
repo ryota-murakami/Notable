@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   View,
   ScrollView,
@@ -14,6 +14,8 @@ import {
   ActivityIndicator,
   Menu,
   Divider,
+  Portal,
+  Modal,
 } from 'react-native-paper'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSupabase } from '@/components/SupabaseProvider'
@@ -34,11 +36,15 @@ export default function NoteScreen() {
     typingUsers,
     startTyping,
     stopTyping,
-  } = useOfflineNotes({ user_id: user?.id, activeNoteId: id as string })
+  } = useOfflineNotes({
+    ...(user?.id && { user_id: user.id }),
+    activeNoteId: id as string,
+  })
 
   const [note, setNote] = useState<Note | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [menuVisible, setMenuVisible] = useState(false)
+  const [exportModalVisible, setExportModalVisible] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -71,7 +77,7 @@ export default function NoteScreen() {
   if (isLoading || !note) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator animating={true} size="large" />
+        <ActivityIndicator animating={true} size='large' />
       </View>
     )
   }
@@ -88,23 +94,29 @@ export default function NoteScreen() {
           subtitle={isSaving ? 'Saving...' : 'Saved'}
         />
         {isEditing ? (
-          <Appbar.Action icon="check" onPress={handleSave} />
+          <Appbar.Action icon='check' onPress={handleSave} />
         ) : (
-          <Appbar.Action icon="pencil" onPress={() => setIsEditing(true)} />
+          <Appbar.Action icon='pencil' onPress={() => setIsEditing(true)} />
         )}
         <Menu
           visible={menuVisible}
           onDismiss={() => setMenuVisible(false)}
           anchor={
             <Appbar.Action
-              icon="dots-vertical"
+              icon='dots-vertical'
               onPress={() => setMenuVisible(true)}
             />
           }
         >
-          <Menu.Item onPress={handleShare} title="Share" />
+          <Menu.Item onPress={handleShare} title='Share' />
+          <Menu.Item
+            onPress={() => {
+              setMenuVisible(false)
+              setExportModalVisible(true)
+            }}
+            title='Export'
+          />
           <Divider />
-          <NoteExporter note={note} />
         </Menu>
       </Appbar.Header>
 
@@ -114,8 +126,8 @@ export default function NoteScreen() {
             value={note.title}
             onChangeText={(text) => setNote({ ...note, title: text })}
             style={styles.titleInput}
-            mode="outlined"
-            label="Title"
+            mode='outlined'
+            label='Title'
             onFocus={startTyping}
             onBlur={stopTyping}
           />
@@ -129,8 +141,8 @@ export default function NoteScreen() {
             onChangeText={(text) => setNote({ ...note, content: text })}
             style={styles.contentInput}
             multiline
-            mode="outlined"
-            label="Content"
+            mode='outlined'
+            label='Content'
             onFocus={startTyping}
             onBlur={stopTyping}
           />
@@ -149,6 +161,19 @@ export default function NoteScreen() {
           {onlineUsers.length} user(s) online
         </Text>
       </View>
+
+      <Portal>
+        <Modal
+          visible={exportModalVisible}
+          onDismiss={() => setExportModalVisible(false)}
+          contentContainerStyle={styles.modalContent}
+        >
+          <NoteExporter
+            note={note}
+            onClose={() => setExportModalVisible(false)}
+          />
+        </Modal>
+      </Portal>
     </KeyboardAvoidingView>
   )
 }
@@ -189,5 +214,11 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 12,
     color: '#888',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 20,
+    borderRadius: 8,
   },
 })
