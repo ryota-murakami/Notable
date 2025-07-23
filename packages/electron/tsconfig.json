@@ -6,6 +6,15 @@
     "outDir": "./build",
     "noEmit": false
   },
-  "include": ["*.ts", "*.tsx", "../../types/**/*"],
-  "exclude": ["build", "dist", "node_modules"]
+  "include": ["**/*.ts", "**/*.tsx", "../../types/**/*"],
+  "exclude": [
+    "build",
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "__tests__"
+  ]
 }
