@@ -1,7 +1,6 @@
 import type { TextStreamPart, ToolSet } from 'ai'
 import { convertToCoreMessages, streamText } from 'ai'
-import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { createOpenAI } from '@ai-sdk/openai'
 import { InvalidArgumentError } from '@ai-sdk/provider'
