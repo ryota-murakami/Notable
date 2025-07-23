@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Note } from '@/types'
 import { useSupabase } from '@/components/SupabaseProvider'
 import { supabase } from '@/lib/supabase'
@@ -9,11 +9,7 @@ export function useNotes() {
   const [folders, setFolders] = useState<Note[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    loadNotes()
-  }, [user?.id])
-
-  const loadNotes = async () => {
+  const loadNotes = useCallback(async () => {
     if (!user?.id) return
 
     try {
@@ -37,7 +33,11 @@ export function useNotes() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user?.id])
+
+  useEffect(() => {
+    loadNotes()
+  }, [loadNotes])
 
   return {
     notes,
