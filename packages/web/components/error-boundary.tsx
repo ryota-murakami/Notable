@@ -55,7 +55,10 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       // Use custom fallback if provided
       if (this.props.fallback) {
-        return this.props.fallback(this.state.error!, this.reset)
+        return this.props.fallback(
+          this.state.error || new Error('Unknown error'),
+          this.reset
+        )
       }
 
       // Default fallback UI

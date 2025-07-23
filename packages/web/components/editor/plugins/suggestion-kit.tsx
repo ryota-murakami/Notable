@@ -68,7 +68,7 @@ export const suggestionPlugin = toTPlatePlugin<SuggestionConfig>(
             break
           }
 
-          const id = api.suggestion!.nodeId(suggestionEntry[0])
+          const id = api.suggestion?.nodeId(suggestionEntry[0])
 
           setOption('activeId', id ?? null)
           isSet = true
@@ -83,10 +83,10 @@ export const suggestionPlugin = toTPlatePlugin<SuggestionConfig>(
     },
   },
   render: {
-    belowNodes: SuggestionLineBreak as any,
+    belowNodes: SuggestionLineBreak as React.ComponentType,
     node: SuggestionLeaf,
     belowRootNodes: ({ api, element }) => {
-      if (!api.suggestion!.isBlockSuggestion(element)) {
+      if (!api.suggestion?.isBlockSuggestion(element)) {
         return null
       }
 
