@@ -1,10 +1,16 @@
 'use client'
 
 import * as React from 'react'
+import dynamic from 'next/dynamic'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
-import ReactPlayer from 'react-player'
 
 import type { TResizableProps, TVideoElement } from 'platejs'
+
+// Dynamically import ReactPlayer to avoid SSR issues
+const ReactPlayer = dynamic(() => import('react-player'), {
+  ssr: false,
+  loading: () => <div className='aspect-video bg-muted rounded-sm' />,
+})
 import {
   PlateElement,
   useEditorMounted,

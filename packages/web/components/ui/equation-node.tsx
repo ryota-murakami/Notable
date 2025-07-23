@@ -36,7 +36,7 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
 
   useEquationElement({
     element: props.element,
-    katexRef: katexRef,
+    katexRef,
     options: {
       displayMode: true,
       errorColor: '#cc0000',
@@ -109,7 +109,7 @@ export function InlineEquationElement(
 
   useEquationElement({
     element,
-    katexRef: katexRef,
+    katexRef,
     options: {
       displayMode: true,
       errorColor: '#cc0000',

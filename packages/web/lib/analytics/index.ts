@@ -1,5 +1,5 @@
 // Analytics integration layer
-import { AnalyticsProvider } from './provider'
+import type { AnalyticsProvider } from './provider'
 import { vercelAnalytics } from './vercel'
 import { posthogAnalytics } from './posthog'
 import { customAnalytics } from './custom'
@@ -94,6 +94,11 @@ class Analytics {
 
   // Track page view
   page(data?: PageViewEvent): void {
+    // Skip if running on server
+    if (typeof window === 'undefined') {
+      return
+    }
+
     const pageData: PageViewEvent = data || {
       url: window.location.href,
       referrer: document.referrer,

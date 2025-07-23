@@ -42,36 +42,47 @@ const nextConfig = {
         'winston-daily-rotate-file': false,
       }
     }
-    // Optimize bundle size
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        commons: {
-          name: 'commons',
-          chunks: 'all',
-          minChunks: 2,
+
+    // Fix for "self is not defined" error during SSR
+    if (isServer) {
+      config.output.globalObject = 'this'
+    }
+    // Optimize bundle size - only for client bundles
+    if (!isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          commons: {
+            name: 'commons',
+            chunks: 'all',
+            minChunks: 3, // Increased from 2 to be more conservative
+            enforce: true,
+          },
+          react: {
+            name: 'react',
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            chunks: 'all',
+            priority: 20,
+            enforce: true,
+          },
+          supabase: {
+            name: 'supabase',
+            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+            chunks: 'all',
+            priority: 15,
+            enforce: true,
+          },
+          editor: {
+            name: 'editor',
+            test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui|platejs)[\\/]/,
+            chunks: 'all',
+            priority: 10,
+            enforce: true,
+          },
         },
-        react: {
-          name: 'react',
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          chunks: 'all',
-          priority: 20,
-        },
-        supabase: {
-          name: 'supabase',
-          test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-          chunks: 'all',
-          priority: 15,
-        },
-        editor: {
-          name: 'editor',
-          test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
-          chunks: 'all',
-          priority: 10,
-        },
-      },
+      }
     }
 
     // Tree shaking for production

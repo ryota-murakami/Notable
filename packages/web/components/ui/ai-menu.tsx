@@ -494,7 +494,7 @@ export const AIMenuItems = ({
               onSelect={() => {
                 menuItem.onSelect?.({
                   aiEditor,
-                  editor: editor,
+                  editor,
                 })
               }}
             >

@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
       maxTokens: 2048,
       messages: convertToCoreMessages(messages),
       model: openai('gpt-4o'),
-      system: system,
+      system,
     })
 
     return result.toDataStreamResponse()

@@ -5,8 +5,8 @@ import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+// import { Analytics } from '@vercel/analytics/next'
+// import { SpeedInsights } from '@vercel/speed-insights/next'
 import { AnalyticsProvider } from '@/components/analytics-provider'
 import { ErrorBoundary } from '@/components/error-boundary'
 
@@ -24,13 +24,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
         <ErrorBoundary>
           <SupabaseProvider>
             <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
+              attribute='class'
+              defaultTheme='system'
               enableSystem
               disableTransitionOnChange
             >
@@ -41,8 +41,8 @@ export default function RootLayout({
             </ThemeProvider>
           </SupabaseProvider>
         </ErrorBoundary>
-        <Analytics />
-        <SpeedInsights />
+        {/* <Analytics /> */}
+        {/* <SpeedInsights /> */}
       </body>
     </html>
   )
