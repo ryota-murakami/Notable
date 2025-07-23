@@ -1,26 +1,14 @@
-const baseConfig = require('./index.js')
-
 /** @type {import('jest').Config} */
 module.exports = {
-  ...baseConfig,
-  testEnvironment: 'node',
   preset: 'jest-expo',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testMatch: [
+    '**/__tests__/**/*.(ts|tsx|js|jsx)',
+    '**/?(*.)+(spec|test).(ts|tsx|js|jsx)',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': [
-      'babel-jest',
-      {
-        presets: [
-          ['@babel/preset-env', { targets: { node: 'current' } }],
-          '@babel/preset-react',
-          '@babel/preset-typescript',
-        ],
-      },
-    ],
-  },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@expo|expo-.*|@expo/.*)/)',
+    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-native-paper|react-native-vector-icons|react-native-markdown-display|@supabase|fuse.js|@testing-library)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
