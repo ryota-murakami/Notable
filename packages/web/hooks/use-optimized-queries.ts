@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import { useSupabase } from '@/components/supabase-provider'
 import { Note } from '@/types/note'
-import { usePerformanceMonitor } from './use-performance-monitor'
 
 interface QueryCache {
   data: any
@@ -25,12 +23,9 @@ const DEFAULT_BATCH_SIZE = 50
 const QUERY_CACHE = new Map<string, QueryCache>()
 
 // Batch query queue
-const BATCH_QUEUE = new Map<string, Set<string>>()
-const BATCH_TIMERS = new Map<string, NodeJS.Timeout>()
 
 export function useOptimizedQueries() {
   const { supabase } = useSupabase()
-  const performanceMonitor = usePerformanceMonitor()
   const abortControllerRef = useRef<AbortController | null>(null)
 
   // Clean up stale cache entries
@@ -71,7 +66,7 @@ export function useOptimizedQueries() {
 
       return cached.data
     },
-    [],
+    []
   )
 
   // Set cache with expiration
@@ -88,7 +83,7 @@ export function useOptimizedQueries() {
   const fetchNotesPaginated = useCallback(
     async (
       page: number = 1,
-      options: QueryOptions = {},
+      options: QueryOptions = {}
     ): Promise<{ notes: Note[]; hasMore: boolean; total: number }> => {
       const {
         cacheTime = DEFAULT_CACHE_TIME,
@@ -103,82 +98,84 @@ export function useOptimizedQueries() {
         return cached
       }
 
-      return performanceMonitor.measureAsync(
-        `fetchNotesPaginated:${page}`,
-        async () => {
-          abortControllerRef.current = new AbortController()
+      const startTime = performance.now()
+      try {
+        abortControllerRef.current = new AbortController()
 
-          const from = (page - 1) * batchSize
-          const to = from + batchSize - 1
+        const from = (page - 1) * batchSize
+        const to = from + batchSize - 1
 
-          const { data, error, count } = await supabase
-            .from('notes')
-            .select('*', { count: 'exact' })
-            .is('deleted_at', null)
-            .order('updated_at', { ascending: false })
-            .range(from, to)
-            .abortSignal(abortControllerRef.current.signal)
+        const { data, error, count } = await supabase
+          .from('notes')
+          .select('*', { count: 'exact' })
+          .is('deleted_at', null)
+          .order('updated_at', { ascending: false })
+          .range(from, to)
+          .abortSignal(abortControllerRef.current.signal)
 
-          if (error) throw error
+        if (error) throw error
 
-          const result = {
-            notes: data || [],
-            hasMore: (count || 0) > to + 1,
-            total: count || 0,
-          }
+        const result = {
+          notes: data || [],
+          hasMore: (count || 0) > to + 1,
+          total: count || 0,
+        }
 
-          setCache(cacheKey, result, cacheTime)
-          return result
-        },
-      )
+        setCache(cacheKey, result, cacheTime)
+        return result
+      } finally {
+        const duration = performance.now() - startTime
+        console.log(`fetchNotesPaginated:${page} took ${duration}ms`)
+      }
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache]
   )
 
   // Batch note fetching for multiple IDs
   const fetchNotesBatch = useCallback(
     async (noteIds: string[]): Promise<Map<string, Note>> => {
-      return performanceMonitor.measureAsync(
-        `fetchNotesBatch:${noteIds.length}`,
-        async () => {
-          const results = new Map<string, Note>()
-          const uncachedIds: string[] = []
+      const startTime = performance.now()
+      try {
+        const results = new Map<string, Note>()
+        const uncachedIds: string[] = []
 
-          // Check cache first
-          for (const id of noteIds) {
-            const cached = getFromCache(`note:${id}`, DEFAULT_STALE_TIME)
-            if (cached) {
-              results.set(id, cached)
-            } else {
-              uncachedIds.push(id)
+        // Check cache first
+        for (const id of noteIds) {
+          const cached = getFromCache(`note:${id}`, DEFAULT_STALE_TIME)
+          if (cached) {
+            results.set(id, cached)
+          } else {
+            uncachedIds.push(id)
+          }
+        }
+
+        // Fetch uncached notes in batches
+        if (uncachedIds.length > 0) {
+          const batchSize = 50
+          for (let i = 0; i < uncachedIds.length; i += batchSize) {
+            const batch = uncachedIds.slice(i, i + batchSize)
+
+            const { data, error } = await supabase
+              .from('notes')
+              .select('*')
+              .in('id', batch)
+
+            if (error) throw error
+
+            for (const note of data || []) {
+              results.set(note.id, note)
+              setCache(`note:${note.id}`, note, DEFAULT_CACHE_TIME)
             }
           }
+        }
 
-          // Fetch uncached notes in batches
-          if (uncachedIds.length > 0) {
-            const batchSize = 50
-            for (let i = 0; i < uncachedIds.length; i += batchSize) {
-              const batch = uncachedIds.slice(i, i + batchSize)
-
-              const { data, error } = await supabase
-                .from('notes')
-                .select('*')
-                .in('id', batch)
-
-              if (error) throw error
-
-              for (const note of data || []) {
-                results.set(note.id, note)
-                setCache(`note:${note.id}`, note, DEFAULT_CACHE_TIME)
-              }
-            }
-          }
-
-          return results
-        },
-      )
+        return results
+      } finally {
+        const duration = performance.now() - startTime
+        console.log(`fetchNotesBatch:${noteIds.length} took ${duration}ms`)
+      }
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache]
   )
 
   // Optimized search with debounced queries
@@ -189,30 +186,31 @@ export function useOptimizedQueries() {
       const cacheKey = `search:${query}`
       const cached = getFromCache(
         cacheKey,
-        options.staleTime || DEFAULT_STALE_TIME,
+        options.staleTime || DEFAULT_STALE_TIME
       )
 
       if (cached) {
         return cached
       }
 
-      return performanceMonitor.measureAsync(
-        `searchNotes:${query}`,
-        async () => {
-          const { data, error } = await supabase.rpc('search_notes', {
-            search_query: query,
-            user_uuid: (await supabase.auth.getUser()).data.user?.id,
-          })
+      const startTime = performance.now()
+      try {
+        const { data, error } = await supabase.rpc('search_notes', {
+          search_query: query,
+          user_uuid: (await supabase.auth.getUser()).data.user?.id,
+        })
 
-          if (error) throw error
+        if (error) throw error
 
-          const results = data || []
-          setCache(cacheKey, results, options.cacheTime || DEFAULT_CACHE_TIME)
-          return results
-        },
-      )
+        const results = data || []
+        setCache(cacheKey, results, options.cacheTime || DEFAULT_CACHE_TIME)
+        return results
+      } finally {
+        const duration = performance.now() - startTime
+        console.log(`searchNotes:${query} took ${duration}ms`)
+      }
     },
-    [supabase, getFromCache, setCache, performanceMonitor],
+    [supabase, getFromCache, setCache]
   )
 
   // Prefetch next page of data
@@ -224,14 +222,14 @@ export function useOptimizedQueries() {
       // Only prefetch if not already cached
       const cached = getFromCache(
         cacheKey,
-        options.staleTime || DEFAULT_STALE_TIME,
+        options.staleTime || DEFAULT_STALE_TIME
       )
       if (!cached) {
         // Prefetch in background without waiting
         fetchNotesPaginated(nextPage, options).catch(console.error)
       }
     },
-    [fetchNotesPaginated, getFromCache],
+    [fetchNotesPaginated, getFromCache]
   )
 
   // Invalidate cache for specific queries
@@ -251,48 +249,49 @@ export function useOptimizedQueries() {
   // Optimized bulk operations
   const bulkUpdateNotes = useCallback(
     async (updates: Array<{ id: string; changes: Partial<Note> }>) => {
-      return performanceMonitor.measureAsync(
-        `bulkUpdateNotes:${updates.length}`,
-        async () => {
-          // Group updates by common changes for efficiency
-          const groupedUpdates = new Map<string, Array<string>>()
+      const startTime = performance.now()
+      try {
+        // Group updates by common changes for efficiency
+        const groupedUpdates = new Map<string, Array<string>>()
 
-          for (const update of updates) {
-            const key = JSON.stringify(update.changes)
-            if (!groupedUpdates.has(key)) {
-              groupedUpdates.set(key, [])
-            }
-            groupedUpdates.get(key)!.push(update.id)
+        for (const update of updates) {
+          const key = JSON.stringify(update.changes)
+          if (!groupedUpdates.has(key)) {
+            groupedUpdates.set(key, [])
           }
+          groupedUpdates.get(key)!.push(update.id)
+        }
 
-          // Execute grouped updates
-          const results = []
-          for (const [changesKey, ids] of groupedUpdates) {
-            const changes = JSON.parse(changesKey)
+        // Execute grouped updates
+        const results = []
+        for (const [changesKey, ids] of groupedUpdates) {
+          const changes = JSON.parse(changesKey)
 
-            const { data, error } = await supabase
-              .from('notes')
-              .update(changes)
-              .in('id', ids)
-              .select()
+          const { data, error } = await supabase
+            .from('notes')
+            .update(changes)
+            .in('id', ids)
+            .select()
 
-            if (error) throw error
-            results.push(...(data || []))
+          if (error) throw error
+          results.push(...(data || []))
 
-            // Invalidate cache for updated notes
-            for (const id of ids) {
-              QUERY_CACHE.delete(`note:${id}`)
-            }
+          // Invalidate cache for updated notes
+          for (const id of ids) {
+            QUERY_CACHE.delete(`note:${id}`)
           }
+        }
 
-          // Invalidate list caches
-          invalidateCache('notes:page:')
+        // Invalidate list caches
+        invalidateCache('notes:page:')
 
-          return results
-        },
-      )
+        return results
+      } finally {
+        const duration = performance.now() - startTime
+        console.log(`bulkUpdateNotes:${updates.length} took ${duration}ms`)
+      }
     },
-    [supabase, performanceMonitor, invalidateCache],
+    [supabase, invalidateCache]
   )
 
   // Connection pooling for real-time subscriptions
@@ -307,7 +306,7 @@ export function useOptimizedQueries() {
             schema: 'public',
             table: 'notes',
           },
-          (payload) => {
+          (payload: any) => {
             // Update cache
             if (payload.eventType === 'DELETE') {
               QUERY_CACHE.delete(`note:${payload.old.id}`)
@@ -319,7 +318,7 @@ export function useOptimizedQueries() {
 
             // Invalidate list caches
             invalidateCache('notes:page:')
-          },
+          }
         )
         .subscribe()
 
@@ -327,7 +326,7 @@ export function useOptimizedQueries() {
         supabase.removeChannel(channel)
       }
     },
-    [supabase, setCache, invalidateCache],
+    [supabase, setCache, invalidateCache]
   )
 
   return {

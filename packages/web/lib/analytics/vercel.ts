@@ -52,6 +52,6 @@ export const vercelAnalytics = new VercelAnalyticsProvider()
 // Extend window type for Vercel Analytics
 declare global {
   interface Window {
-    va?: (command: string, ...args: any[]) => void
+    va?: (command: string, ...args: unknown[]) => void
   }
 }

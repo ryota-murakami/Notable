@@ -1,8 +1,10 @@
 // Service Worker Registration with Performance Monitoring
 
-export async function registerServiceWorker() {
+export async function registerServiceWorker(): Promise<
+  ServiceWorkerRegistration | undefined
+> {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
-    return
+    return undefined
   }
 
   try {
@@ -11,6 +13,7 @@ export async function registerServiceWorker() {
       scope: '/',
     })
 
+    // eslint-disable-next-line no-console
     console.log('Service Worker registered successfully:', registration.scope)
 
     // Handle service worker updates
@@ -24,6 +27,7 @@ export async function registerServiceWorker() {
           navigator.serviceWorker.controller
         ) {
           // New content is available
+          // eslint-disable-next-line no-console
           console.log('New content available - refresh to update')
 
           // Show update notification to user
@@ -43,9 +47,15 @@ export async function registerServiceWorker() {
     // Enable background sync if available
     if ('sync' in registration) {
       try {
-        await registration.sync.register('sync-notes')
+        await (
+          registration as ServiceWorkerRegistration & {
+            sync: { register: (tag: string) => Promise<void> }
+          }
+        ).sync.register('sync-notes')
+        // eslint-disable-next-line no-console
         console.log('Background sync registered')
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log('Background sync registration failed:', err)
       }
     }
@@ -55,14 +65,16 @@ export async function registerServiceWorker() {
       if (event.data && event.data.type === 'SYNC_NOTES') {
         // Trigger note sync in the app
         window.dispatchEvent(
-          new CustomEvent('sw-sync-notes', { detail: event.data }),
+          new CustomEvent('sw-sync-notes', { detail: event.data })
         )
       }
     })
 
     return registration
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Service Worker registration failed:', error)
+    return undefined
   }
 }
 

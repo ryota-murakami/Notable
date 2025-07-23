@@ -18,7 +18,7 @@ const headingItemVariants = cva(
         3: 'pl-[50px]',
       },
     },
-  },
+  }
 )
 
 export function TocElementStatic(props: SlateElementProps) {
@@ -26,13 +26,13 @@ export function TocElementStatic(props: SlateElementProps) {
   const headingList = getHeadingList(editor)
 
   return (
-    <SlateElement {...props} className="mb-1 p-0">
+    <SlateElement {...props} className='mb-1 p-0'>
       <div>
         {headingList.length > 0 ? (
           headingList.map((item) => (
             <Button
               key={item.title}
-              variant="ghost"
+              variant='ghost'
               className={headingItemVariants({
                 depth: item.depth as 1 | 2 | 3,
               })}
@@ -41,7 +41,7 @@ export function TocElementStatic(props: SlateElementProps) {
             </Button>
           ))
         ) : (
-          <div className="text-sm text-gray-500">
+          <div className='text-sm text-gray-500'>
             Create a heading to display the table of contents.
           </div>
         )}
@@ -85,7 +85,7 @@ const getHeadingList = (editor?: SlateEditor) => {
     const id = node.id as string
 
     if (title) {
-      headingList.push({ id, depth, path, title, type })
+      headingList.push({ id, depth: depth || 1, path, title, type })
     }
   })
 

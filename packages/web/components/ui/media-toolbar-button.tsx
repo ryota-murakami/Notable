@@ -53,25 +53,25 @@ const MEDIA_CONFIG: Record<
 > = {
   [KEYS.audio]: {
     accept: ['audio/*'],
-    icon: <AudioLinesIcon className="size-4" />,
+    icon: <AudioLinesIcon className='size-4' />,
     title: 'Insert Audio',
     tooltip: 'Audio',
   },
   [KEYS.file]: {
     accept: ['*'],
-    icon: <FileUpIcon className="size-4" />,
+    icon: <FileUpIcon className='size-4' />,
     title: 'Insert File',
     tooltip: 'File',
   },
   [KEYS.img]: {
     accept: ['image/*'],
-    icon: <ImageIcon className="size-4" />,
+    icon: <ImageIcon className='size-4' />,
     title: 'Insert Image',
     tooltip: 'Image',
   },
   [KEYS.video]: {
     accept: ['video/*'],
-    icon: <FilmIcon className="size-4" />,
+    icon: <FilmIcon className='size-4' />,
     title: 'Insert Video',
     tooltip: 'Video',
   },
@@ -88,7 +88,7 @@ export function MediaToolbarButton({
   const [dialogOpen, setDialogOpen] = React.useState(false)
 
   const { openFilePicker } = useFilePicker({
-    accept: currentConfig.accept,
+    accept: currentConfig?.accept || [],
     multiple: true,
     onFilesSelected: ({ plainFiles: updatedFiles }) => {
       editor.getTransforms(PlaceholderPlugin).insert.media(updatedFiles)
@@ -110,7 +110,7 @@ export function MediaToolbarButton({
         pressed={open}
       >
         <ToolbarSplitButtonPrimary>
-          {currentConfig.icon}
+          {currentConfig?.icon}
         </ToolbarSplitButtonPrimary>
 
         <DropdownMenu
@@ -125,12 +125,12 @@ export function MediaToolbarButton({
 
           <DropdownMenuContent
             onClick={(e) => e.stopPropagation()}
-            align="start"
+            align='start'
             alignOffset={-32}
           >
             <DropdownMenuGroup>
               <DropdownMenuItem onSelect={() => openFilePicker()}>
-                {currentConfig.icon}
+                {currentConfig?.icon}
                 Upload from computer
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDialogOpen(true)}>
@@ -148,9 +148,9 @@ export function MediaToolbarButton({
           setDialogOpen(value)
         }}
       >
-        <AlertDialogContent className="gap-6">
+        <AlertDialogContent className='gap-6'>
           <MediaUrlDialogContent
-            currentConfig={currentConfig}
+            currentConfig={currentConfig!}
             nodeType={nodeType}
             setOpen={setDialogOpen}
           />
@@ -173,7 +173,10 @@ function MediaUrlDialogContent({
   const [url, setUrl] = React.useState('')
 
   const embedMedia = React.useCallback(() => {
-    if (!isUrl(url)) return toast.error('Invalid URL')
+    if (!isUrl(url)) {
+      toast.error('Invalid URL')
+      return
+    }
 
     setOpen(false)
     editor.tf.insertNodes({
@@ -190,23 +193,23 @@ function MediaUrlDialogContent({
         <AlertDialogTitle>{currentConfig.title}</AlertDialogTitle>
       </AlertDialogHeader>
 
-      <AlertDialogDescription className="group relative w-full">
+      <AlertDialogDescription className='group relative w-full'>
         <label
-          className="absolute top-1/2 block -translate-y-1/2 cursor-text px-1 text-sm text-muted-foreground/70 transition-all group-focus-within:pointer-events-none group-focus-within:top-0 group-focus-within:cursor-default group-focus-within:text-xs group-focus-within:font-medium group-focus-within:text-foreground has-[+input:not(:placeholder-shown)]:pointer-events-none has-[+input:not(:placeholder-shown)]:top-0 has-[+input:not(:placeholder-shown)]:cursor-default has-[+input:not(:placeholder-shown)]:text-xs has-[+input:not(:placeholder-shown)]:font-medium has-[+input:not(:placeholder-shown)]:text-foreground"
-          htmlFor="url"
+          className='absolute top-1/2 block -translate-y-1/2 cursor-text px-1 text-sm text-muted-foreground/70 transition-all group-focus-within:pointer-events-none group-focus-within:top-0 group-focus-within:cursor-default group-focus-within:text-xs group-focus-within:font-medium group-focus-within:text-foreground has-[+input:not(:placeholder-shown)]:pointer-events-none has-[+input:not(:placeholder-shown)]:top-0 has-[+input:not(:placeholder-shown)]:cursor-default has-[+input:not(:placeholder-shown)]:text-xs has-[+input:not(:placeholder-shown)]:font-medium has-[+input:not(:placeholder-shown)]:text-foreground'
+          htmlFor='url'
         >
-          <span className="inline-flex bg-background px-2">URL</span>
+          <span className='inline-flex bg-background px-2'>URL</span>
         </label>
         <Input
-          id="url"
-          className="w-full"
+          id='url'
+          className='w-full'
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') embedMedia()
           }}
-          placeholder=""
-          type="url"
+          placeholder=''
+          type='url'
           autoFocus
         />
       </AlertDialogDescription>

@@ -57,7 +57,7 @@ export function AIMenu() {
 
   const { input, messages, setInput, status } = chat
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
-    null,
+    null
   )
 
   const content = useLastAssistantMessage()?.content
@@ -131,7 +131,7 @@ export function AIMenu() {
       <PopoverAnchor virtualRef={{ current: anchorElement! }} />
 
       <PopoverContent
-        className="border-none bg-transparent p-0 shadow-none"
+        className='border-none bg-transparent p-0 shadow-none'
         style={{
           width: anchorElement?.offsetWidth,
         }}
@@ -140,11 +140,11 @@ export function AIMenu() {
 
           api.aiChat.hide()
         }}
-        align="center"
-        side="bottom"
+        align='center'
+        side='bottom'
       >
         <Command
-          className="w-full rounded-lg border shadow-md"
+          className='w-full rounded-lg border shadow-md'
           value={value}
           onValueChange={setValue}
         >
@@ -153,8 +153,8 @@ export function AIMenu() {
           )}
 
           {isLoading ? (
-            <div className="flex grow items-center gap-2 p-2 text-sm text-muted-foreground select-none">
-              <Loader2Icon className="size-4 animate-spin" />
+            <div className='flex grow items-center gap-2 p-2 text-sm text-muted-foreground select-none'>
+              <Loader2Icon className='size-4 animate-spin' />
               {messages.length > 1 ? 'Editing...' : 'Thinking...'}
             </div>
           ) : (
@@ -162,7 +162,7 @@ export function AIMenu() {
               className={cn(
                 'flex h-9 w-full min-w-0 border-input bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none placeholder:text-muted-foreground md:text-sm dark:bg-input/30',
                 'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-                'border-b focus-visible:ring-transparent',
+                'border-b focus-visible:ring-transparent'
               )}
               value={input}
               onKeyDown={(e) => {
@@ -176,7 +176,7 @@ export function AIMenu() {
                 }
               }}
               onValueChange={setInput}
-              placeholder="Ask AI anything..."
+              placeholder='Ask AI anything...'
               data-plate-focus
               autoFocus
             />
@@ -237,8 +237,10 @@ Start writing a new paragraph AFTER <Document> ONLY ONE SENTENCE`
     shortcut: 'Escape',
     value: 'discard',
     onSelect: ({ editor }) => {
-      editor.getTransforms(AIPlugin).ai.undo()
-      editor.getApi(AIChatPlugin).aiChat.hide()
+      const aiTransforms = editor.getTransforms(AIPlugin)
+      const aiChatApi = editor.getApi(AIChatPlugin)
+      aiTransforms?.ai?.undo()
+      aiChatApi?.aiChat?.hide()
     },
   },
   emojify: {
@@ -464,8 +466,14 @@ export const AIMenuItems = ({
   }, [menuState])
 
   React.useEffect(() => {
-    if (menuGroups.length > 0 && menuGroups[0].items.length > 0) {
-      setValue(menuGroups[0].items[0].value)
+    if (menuGroups.length > 0) {
+      const firstGroup = menuGroups[0]
+      if (firstGroup?.items?.length && firstGroup.items.length > 0) {
+        const firstItem = firstGroup.items[0]
+        if (firstItem?.value) {
+          setValue(firstItem.value)
+        }
+      }
     }
   }, [menuGroups, setValue])
 
@@ -476,7 +484,7 @@ export const AIMenuItems = ({
           {group.items.map((menuItem) => (
             <CommandItem
               key={menuItem.value}
-              className="[&_svg]:text-muted-foreground"
+              className='[&_svg]:text-muted-foreground'
               value={menuItem.value}
               onSelect={() => {
                 menuItem.onSelect?.({
@@ -512,20 +520,20 @@ export function AILoadingBar() {
   return (
     <div
       className={cn(
-        'absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-md border border-border bg-muted px-3 py-1.5 text-sm text-muted-foreground shadow-md transition-all duration-300',
+        'absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-md border border-border bg-muted px-3 py-1.5 text-sm text-muted-foreground shadow-md transition-all duration-300'
       )}
     >
-      <span className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+      <span className='h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent' />
       <span>{status === 'submitted' ? 'Thinking...' : 'Writing...'}</span>
       <Button
-        size="sm"
-        variant="ghost"
-        className="flex items-center gap-1 text-xs"
+        size='sm'
+        variant='ghost'
+        className='flex items-center gap-1 text-xs'
         onClick={() => api.aiChat.stop()}
       >
-        <PauseIcon className="h-4 w-4" />
+        <PauseIcon className='h-4 w-4' />
         Stop
-        <kbd className="ml-1 rounded bg-border px-1 font-mono text-[10px] text-muted-foreground shadow-sm">
+        <kbd className='ml-1 rounded bg-border px-1 font-mono text-[10px] text-muted-foreground shadow-sm'>
           Esc
         </kbd>
       </Button>
