@@ -116,7 +116,7 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
             {formatDate(note.updatedAt)}
           </Chip>
 
-          {note.parentId && (
+          {note.folder_id && (
             <Chip
               mode='outlined'
               compact

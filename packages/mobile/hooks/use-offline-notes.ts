@@ -267,7 +267,7 @@ export function useOfflineNotes({
           updatedAt: new Date().toISOString(),
           deleted_at: null,
           // Add missing required properties
-          parentId: null,
+          parentId: null, // Keep for compatibility but use folder_id for actual logic
           tags: [],
           isFolder: noteData?.is_folder || false,
           // Properties from base Note type
