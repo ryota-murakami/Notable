@@ -25,7 +25,7 @@ export interface LogMetadata {
   error?:
     | Error
     | { message: string; stack?: string; name?: string; code?: string }
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // Structured log entry
@@ -48,7 +48,9 @@ export function formatError(error: unknown): {
       message: error.message,
       ...(error.stack !== undefined && { stack: error.stack }),
       ...(error.name !== undefined && { name: error.name }),
-      ...((error as any).code !== undefined && { code: (error as any).code }),
+      ...((error as Error & { code?: string }).code !== undefined && {
+        code: (error as Error & { code?: string }).code,
+      }),
     }
   }
 
@@ -126,7 +128,7 @@ export function logSecurityEvent(
 }
 
 // Export convenience methods
-export default {
+const LoggingModule = {
   error: (message: string, metadata?: LogMetadata) =>
     logger.error(message, metadata),
   warn: (message: string, metadata?: LogMetadata) =>
@@ -144,3 +146,5 @@ export default {
   userAction: logUserAction,
   security: logSecurityEvent,
 }
+
+export default LoggingModule

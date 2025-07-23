@@ -6,7 +6,7 @@ import type { Note } from '@/types/note'
 interface ViewModeProps {
   note: Note
   onToggleViewMode: () => void
-  onExport: (format: any) => Promise<void>
+  onExport: (format: string) => Promise<void>
 }
 
 export function ViewMode({ note, onToggleViewMode, onExport }: ViewModeProps) {

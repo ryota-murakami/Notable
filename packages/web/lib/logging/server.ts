@@ -6,12 +6,12 @@ import { Transform } from 'stream'
 
 // Custom Sentry transport using winston's Transform base class
 class SentryTransport extends Transform {
-  constructor(options?: any) {
+  constructor(options?: Record<string, unknown>) {
     super(options)
   }
 
   override _write(
-    chunk: any,
+    chunk: Buffer | string,
     _encoding: string,
     callback: (error?: Error | null) => void
   ) {

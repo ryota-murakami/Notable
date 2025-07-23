@@ -71,15 +71,31 @@ const NoteItem = React.memo<{
   )
 
   // Get preview text from content
-  const getPreviewText = (content: any): string => {
+  const getPreviewText = (content: unknown): string => {
     if (typeof content === 'string') {
       return content.slice(0, 150)
     }
     if (Array.isArray(content) && content.length > 0) {
       const textNodes = content
-        .flatMap((node) => node.children || [])
-        .filter((child) => child.text)
-        .map((child) => child.text)
+        .flatMap((node: unknown) => {
+          if (
+            node &&
+            typeof node === 'object' &&
+            'children' in node &&
+            Array.isArray(node.children)
+          ) {
+            return node.children
+          }
+          return []
+        })
+        .filter(
+          (child: unknown) =>
+            child &&
+            typeof child === 'object' &&
+            'text' in child &&
+            typeof child.text === 'string'
+        )
+        .map((child: unknown) => (child as { text: string }).text)
       return textNodes.join(' ').slice(0, 150)
     }
     return ''
