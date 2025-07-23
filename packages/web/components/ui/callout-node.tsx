@@ -56,7 +56,13 @@ export function CalloutElement({
             </Button>
           }
         >
-          <EmojiPicker {...emojiPickerState} {...calloutProps} />
+          <EmojiPicker
+            {...emojiPickerState}
+            {...calloutProps}
+            {...(calloutProps.emoji !== undefined && {
+              emoji: calloutProps.emoji,
+            })}
+          />
         </EmojiPopover>
         <div className='w-full'>{children}</div>
       </div>

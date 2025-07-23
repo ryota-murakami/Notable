@@ -239,8 +239,8 @@ Start writing a new paragraph AFTER <Document> ONLY ONE SENTENCE`
     onSelect: ({ editor }) => {
       const aiTransforms = editor.getTransforms(AIPlugin)
       const aiChatApi = editor.getApi(AIChatPlugin)
-      aiTransforms?.ai.undo()
-      aiChatApi?.aiChat.hide()
+      aiTransforms?.ai?.undo()
+      aiChatApi?.aiChat?.hide()
     },
   },
   emojify: {
@@ -466,8 +466,8 @@ export const AIMenuItems = ({
   }, [menuState])
 
   React.useEffect(() => {
-    if (menuGroups.length > 0 && menuGroups[0]?.items.length > 0) {
-      const firstItem = menuGroups[0].items[0]
+    if (menuGroups.length > 0 && menuGroups[0]?.items?.length > 0) {
+      const firstItem = menuGroups[0]?.items?.[0]
       if (firstItem?.value) {
         setValue(firstItem.value)
       }
