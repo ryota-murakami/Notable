@@ -156,7 +156,7 @@ function PureColorPicker({
       </ToolbarMenuGroup>
       <ToolbarMenuGroup label='Default Colors'>
         <ColorDropdownMenuItems
-          color={color}
+          {...(color !== undefined && { color })}
           className='px-2'
           colors={colors}
           updateColor={updateColor}
@@ -236,7 +236,7 @@ function ColorCustom({
   return (
     <div className={cn('relative flex flex-col gap-4', className)} {...props}>
       <ColorDropdownMenuItems
-        color={color}
+        {...(color !== undefined && { color })}
         colors={computedColors}
         updateColor={updateColor}
       >

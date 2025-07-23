@@ -57,11 +57,27 @@ export function CalloutElement({
           }
         >
           <EmojiPicker
-            {...emojiPickerState}
-            {...calloutProps}
-            {...(calloutProps.emoji !== undefined && {
-              emoji: calloutProps.emoji,
+            clearSearch={emojiPickerState.clearSearch}
+            emojiLibrary={emojiPickerState.emojiLibrary}
+            hasFound={emojiPickerState.hasFound}
+            i18n={emojiPickerState.i18n}
+            isSearching={emojiPickerState.isSearching}
+            refs={emojiPickerState.refs}
+            searchResult={emojiPickerState.searchResult}
+            searchValue={emojiPickerState.searchValue}
+            setSearch={emojiPickerState.setSearch}
+            visibleCategories={emojiPickerState.visibleCategories}
+            handleCategoryClick={emojiPickerState.handleCategoryClick}
+            onMouseOver={emojiPickerState.onMouseOver}
+            onSelectEmoji={calloutProps.onSelectEmoji}
+            {...(emojiPickerState.emoji !== undefined && {
+              emoji: emojiPickerState.emoji,
             })}
+            {...(emojiPickerState.focusedCategory !== undefined && {
+              focusedCategory: emojiPickerState.focusedCategory,
+            })}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
           />
         </EmojiPopover>
         <div className='w-full'>{children}</div>

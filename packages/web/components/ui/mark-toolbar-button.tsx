@@ -14,7 +14,10 @@ export function MarkToolbarButton({
   nodeType: string
   clear?: string[] | string
 }) {
-  const state = useMarkToolbarButtonState({ clear, nodeType })
+  const state = useMarkToolbarButtonState({
+    nodeType,
+    ...(clear !== undefined && { clear }),
+  })
   const { props: buttonProps } = useMarkToolbarButton(state)
 
   return <ToolbarButton {...props} {...buttonProps} />

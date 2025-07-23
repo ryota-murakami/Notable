@@ -60,13 +60,28 @@ export function EmojiToolbarButton({
       setIsOpen={setIsOpen}
     >
       <EmojiPicker
-        {...emojiPickerState}
+        clearSearch={emojiPickerState.clearSearch}
+        emojiLibrary={emojiPickerState.emojiLibrary}
+        hasFound={emojiPickerState.hasFound}
+        i18n={emojiPickerState.i18n}
+        isSearching={emojiPickerState.isSearching}
+        refs={emojiPickerState.refs}
+        searchResult={emojiPickerState.searchResult}
+        searchValue={emojiPickerState.searchValue}
+        setSearch={emojiPickerState.setSearch}
+        visibleCategories={emojiPickerState.visibleCategories}
+        handleCategoryClick={emojiPickerState.handleCategoryClick}
+        onMouseOver={emojiPickerState.onMouseOver}
+        onSelectEmoji={emojiPickerState.onSelectEmoji}
         {...(emojiPickerState.emoji !== undefined && {
           emoji: emojiPickerState.emoji,
         })}
+        {...(emojiPickerState.focusedCategory !== undefined && {
+          focusedCategory: emojiPickerState.focusedCategory,
+        })}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        settings={options?.settings}
+        {...(options?.settings !== undefined && { settings: options.settings })}
       />
     </EmojiPopover>
   )
