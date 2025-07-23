@@ -1,9 +1,11 @@
 import { createServerLogger } from './server'
 import { createClientLogger } from './client'
-import { LogLevel, LogMetadata, LogEntry, formatError } from './types'
+import { LogLevel } from './types'
+import type { LogEntry, LogMetadata } from './types'
 
 // Re-export types
-export { LogLevel, LogMetadata, LogEntry, formatError } from './types'
+export { LogLevel } from './types'
+export type { LogEntry, LogMetadata } from './types'
 
 // Export appropriate logger based on environment
 export const logger =
