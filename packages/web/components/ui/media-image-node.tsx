@@ -3,7 +3,7 @@
 import * as React from 'react'
 
 import type { TImageElement } from 'platejs'
-import { PlateElement, withHOC, type PlateElementProps } from 'platejs/react'
+import { PlateElement, type PlateElementProps, withHOC } from 'platejs/react'
 
 import { useDraggable } from '@platejs/dnd'
 import { Image, ImagePlugin, useMediaState } from '@platejs/media/react'

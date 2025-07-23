@@ -1,6 +1,6 @@
 import {
-  createServerClient as createSupabaseServerClient,
   type CookieOptions,
+  createServerClient as createSupabaseServerClient,
 } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/database'

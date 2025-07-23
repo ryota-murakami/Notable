@@ -1,6 +1,6 @@
-import { View, StyleSheet, Alert } from 'react-native'
-import { Card, Text, IconButton, Chip } from 'react-native-paper'
-import { Note } from '../types'
+import { Alert, StyleSheet, View } from 'react-native'
+import { Card, Chip, IconButton, Text } from 'react-native-paper'
+import { type Note } from '../types'
 
 interface NoteCardProps {
   note: Note

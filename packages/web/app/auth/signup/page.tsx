@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSupabase } from '@/components/supabase-provider'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,20 +41,7 @@ type SignUpFormData = z.infer<typeof signUpSchema>
 
 export default function SignUpPage() {
   const router = useRouter()
-
-  // Lazily create the Supabase client only on the client side
-  const supabase = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return null
-    }
-
-    try {
-      return createClientComponentClient()
-    } catch (error) {
-      console.warn('Failed to create Supabase client:', error)
-      return null
-    }
-  }, [])
+  const { supabase } = useSupabase()
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

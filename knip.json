@@ -1,0 +1,28 @@
+{
+  "workspaces": {
+    ".": {
+      "ignoreBinaries": [],
+      "ignoreDependencies": []
+    },
+    "packages/web": {
+      "entry": ["app/**", "components/**", "lib/**", "hooks/**"],
+      "project": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+    },
+    "packages/mobile": {
+      "entry": ["app/**", "components/**", "hooks/**"],
+      "project": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+    },
+    "packages/electron": {
+      "entry": ["main.ts", "preload.ts"],
+      "project": ["**/*.ts", "**/*.tsx"]
+    }
+  },
+  "ignore": [
+    "packages/configs/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.next/**",
+    "**/.expo/**",
+    "**/coverage/**"
+  ]
+}

@@ -3,8 +3,8 @@
 import * as React from 'react'
 
 import {
-  PlateElement,
   type PlateEditor,
+  PlateElement,
   type PlateElementProps,
 } from 'platejs/react'
 
@@ -28,7 +28,7 @@ import {
   Table,
   TableOfContentsIcon,
 } from 'lucide-react'
-import { type TComboboxInputElement, KEYS } from 'platejs'
+import { KEYS, type TComboboxInputElement } from 'platejs'
 
 import {
   insertBlock,

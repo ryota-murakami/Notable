@@ -1,9 +1,10 @@
 'use client'
 
 import { useSupabase } from '@/components/supabase-provider'
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import type { Note } from '@/types/note'
+import { mapDatabaseNotesToNotes } from '@/lib/mappers/note-mapper'
 import {
   Card,
   CardContent,
@@ -12,13 +13,13 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
-  Loader2,
-  Plus,
-  Search,
   FileText,
   FolderOpen,
-  Settings,
+  Loader2,
   LogOut,
+  Plus,
+  Search,
+  Settings,
 } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -27,6 +28,8 @@ export default function DashboardPage() {
   const [isLoadingNotes, setIsLoadingNotes] = useState(true)
 
   const loadNotes = useCallback(async () => {
+    if (!supabase) return
+
     try {
       setIsLoadingNotes(true)
       const { data, error } = await supabase
@@ -38,7 +41,7 @@ export default function DashboardPage() {
       if (error) {
         console.error('Error loading notes:', error)
       } else {
-        setNotes(data || [])
+        setNotes(mapDatabaseNotesToNotes(data || []))
       }
     } catch (error) {
       console.error('Error loading notes:', error)
@@ -54,6 +57,7 @@ export default function DashboardPage() {
   }, [user, loadNotes])
 
   const handleSignOut = async () => {
+    if (!supabase) return
     await supabase.auth.signOut()
   }
 
@@ -88,9 +92,14 @@ export default function DashboardPage() {
           <div className='flex items-center justify-between'>
             <div className='flex items-center space-x-4'>
               <h1 className='text-2xl font-bold'>Notable</h1>
-              <p className='text-muted-foreground'>
-                Welcome back, {user.user_metadata?.name || user.email}
-              </p>
+              {user && (
+                <p className='text-muted-foreground'>
+                  Welcome back,{' '}
+                  {(user.user_metadata?.name as string) ||
+                    (user.email as string) ||
+                    'User'}
+                </p>
+              )}
             </div>
             <div className='flex items-center space-x-4'>
               <Button variant='outline' size='sm'>

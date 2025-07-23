@@ -4,7 +4,17 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**",
+        "build/**",
+        ".expo/**",
+        "*.apk",
+        "*.aab",
+        "*.ipa",
+        "*.tar.gz"
+      ]
     },
     "test": {
       "dependsOn": ["^build"],

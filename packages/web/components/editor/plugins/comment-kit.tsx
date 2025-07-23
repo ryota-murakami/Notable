@@ -1,6 +1,6 @@
 'use client'
 
-import { type ExtendConfig, type Path, isSlateString } from 'platejs'
+import { type ExtendConfig, isSlateString, type Path } from 'platejs'
 import { toTPlatePlugin } from 'platejs/react'
 
 import {

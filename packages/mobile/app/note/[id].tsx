@@ -1,28 +1,28 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
-  View,
-  ScrollView,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   Share,
+  StyleSheet,
+  View,
 } from 'react-native'
 import {
-  Appbar,
-  TextInput,
-  Text,
   ActivityIndicator,
-  Menu,
+  Appbar,
   Divider,
-  Portal,
+  Menu,
   Modal,
+  Portal,
+  Text,
+  TextInput,
 } from 'react-native-paper'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSupabase } from '@/components/SupabaseProvider'
 import { useOfflineNotes } from '@/hooks/use-offline-notes'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { NoteExporter } from '@/components/NoteExporter'
-import { Note } from '@/types'
+import { type Note } from '@/types'
 
 export default function NoteScreen() {
   const { id } = useLocalSearchParams()

@@ -83,6 +83,7 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@sentry/nextjs": "^8.47.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.48.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "latest",
@@ -125,6 +126,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@mswjs/interceptors": "^0.39.3",
     "@playwright/test": "^1.50.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

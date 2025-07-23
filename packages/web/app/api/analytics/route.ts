@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import type { AnalyticsBuffer } from '@/lib/analytics/custom'
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     let supabase
     try {
       supabase = getSupabaseClient()
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: 'Analytics service unavailable' },
         { status: 503 }
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
     let supabase
     try {
       supabase = getSupabaseClient()
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: 'Analytics service unavailable' },
         { status: 503 }

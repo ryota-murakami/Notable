@@ -4,8 +4,8 @@ import type { UseChatOptions } from 'ai/react'
 
 import { streamInsertChunk, withAIBatch } from '@platejs/ai'
 import {
-  type AIChatPluginConfig,
   AIChatPlugin,
+  type AIChatPluginConfig,
   AIPlugin,
   useChatChunk,
 } from '@platejs/ai/react'

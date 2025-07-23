@@ -9,8 +9,8 @@ import {
   type TMentionElement,
 } from 'platejs'
 import {
-  type PlateElementProps,
   PlateElement,
+  type PlateElementProps,
   useFocused,
   useReadOnly,
   useSelected,

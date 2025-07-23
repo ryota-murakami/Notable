@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import {
+  NodeApi,
+  SlateElement,
   type SlateElementProps,
   type TCaptionElement,
   type TResizableProps,
   type TVideoElement,
-  NodeApi,
-  SlateElement,
 } from 'platejs'
 
 export function VideoElementStatic(

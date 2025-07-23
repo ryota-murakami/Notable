@@ -3,10 +3,10 @@
 import * as React from 'react'
 
 import {
-  type DropdownMenuProps,
   DropdownMenuItemIndicator,
+  type DropdownMenuProps,
 } from '@radix-ui/react-dropdown-menu'
-import { type TElement, KEYS } from 'platejs'
+import { KEYS, type TElement } from 'platejs'
 import { useEditorRef, useSelectionFragmentProp } from 'platejs/react'
 import {
   CheckIcon,

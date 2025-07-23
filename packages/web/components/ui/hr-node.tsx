@@ -3,8 +3,8 @@
 import * as React from 'react'
 
 import {
-  type PlateElementProps,
   PlateElement,
+  type PlateElementProps,
   useFocused,
   useReadOnly,
   useSelected,

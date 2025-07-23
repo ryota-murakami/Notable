@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'edge'
 
@@ -72,7 +72,7 @@ const CACHE_PATTERNS = {
 
 // Check if key matches pattern
 function matchesPattern(key: string, pattern: string): boolean {
-  const regex = new RegExp('^' + pattern.replace(/\{[^}]+\}/g, '[^:]+') + '$')
+  const regex = new RegExp(`^${pattern.replace(/\{[^}]+\}/g, '[^:]+')}$`)
   return regex.test(key)
 }
 

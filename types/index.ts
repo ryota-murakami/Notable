@@ -5,6 +5,7 @@ export interface User {
   name?: string | null
   image?: string | null
   emailVerified?: Date | null
+  subscription?: UserSubscription | null
   createdAt: Date
   updatedAt: Date
 }
@@ -60,6 +61,72 @@ export interface NotePermission {
   permission: 'read' | 'write' | 'admin'
   createdAt: Date
   updatedAt: Date
+}
+
+// Subscription and billing types
+export interface UserSubscription {
+  id: string
+  userId: string
+  stripeCustomerId: string
+  stripeSubscriptionId?: string | null
+  stripePriceId?: string | null
+  plan: SubscriptionPlan
+  status: SubscriptionStatus
+  currentPeriodStart?: Date | null
+  currentPeriodEnd?: Date | null
+  cancelAtPeriodEnd: boolean
+  canceledAt?: Date | null
+  trialStart?: Date | null
+  trialEnd?: Date | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type SubscriptionPlan = 'free' | 'premium'
+
+export type SubscriptionStatus =
+  | 'active'
+  | 'trialing'
+  | 'past_due'
+  | 'canceled'
+  | 'unpaid'
+  | 'incomplete'
+
+export interface SubscriptionUsage {
+  id: string
+  userId: string
+  storageUsed: number // bytes
+  deviceCount: number
+  noteCount: number
+  exportCount: number
+  lastUpdated: Date
+}
+
+export interface BillingInvoice {
+  id: string
+  userId: string
+  stripeInvoiceId: string
+  amount: number
+  currency: string
+  status: 'draft' | 'open' | 'paid' | 'uncollectible' | 'void'
+  hostedInvoiceUrl?: string | null
+  invoicePdf?: string | null
+  periodStart: Date
+  periodEnd: Date
+  createdAt: Date
+}
+
+export interface PaymentMethod {
+  id: string
+  userId: string
+  stripePaymentMethodId: string
+  type: 'card' | 'bank_account' | 'sepa_debit'
+  last4?: string | null
+  brand?: string | null
+  expiryMonth?: number | null
+  expiryYear?: number | null
+  isDefault: boolean
+  createdAt: Date
 }
 
 // API Response types
@@ -177,4 +244,45 @@ export interface UserSettings {
   showWordCount: boolean
   showOutline: boolean
   keyboardShortcuts: Record<string, string>
+}
+
+// Subscription form types
+export interface CreatePaymentMethodForm {
+  paymentMethodId: string
+  setAsDefault?: boolean
+}
+
+export interface UpdateSubscriptionForm {
+  priceId: string
+}
+
+// Feature restriction constants
+export interface PlanLimits {
+  storageLimit: number // bytes
+  deviceLimit: number
+  exportFormats: ExportFormat[]
+  collaborationEnabled: boolean
+  prioritySupport: boolean
+  customThemes: boolean
+}
+
+export type ExportFormat = 'markdown' | 'pdf' | 'html' | 'react'
+
+export const PLAN_LIMITS: Record<SubscriptionPlan, PlanLimits> = {
+  free: {
+    storageLimit: 500 * 1024 * 1024, // 500MB
+    deviceLimit: 2,
+    exportFormats: ['markdown', 'html'],
+    collaborationEnabled: false,
+    prioritySupport: false,
+    customThemes: false,
+  },
+  premium: {
+    storageLimit: -1, // unlimited
+    deviceLimit: -1, // unlimited
+    exportFormats: ['markdown', 'pdf', 'html', 'react'],
+    collaborationEnabled: true,
+    prioritySupport: true,
+    customThemes: true,
+  },
 }

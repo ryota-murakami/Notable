@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { logger } from '@/lib/logging/logger.server'
 

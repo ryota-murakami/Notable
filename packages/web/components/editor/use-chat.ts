@@ -91,17 +91,17 @@ const fakeStreamText = ({
     return [
       Array.from({ length: chunkCount }, () => ({
         delay: faker.number.int({ max: 100, min: 30 }),
-        texts: faker.lorem.words({ max: 3, min: 1 }) + ' ',
+        texts: `${faker.lorem.words({ max: 3, min: 1 })} `,
       })),
 
       Array.from({ length: chunkCount + 2 }, () => ({
         delay: faker.number.int({ max: 100, min: 30 }),
-        texts: faker.lorem.words({ max: 3, min: 1 }) + ' ',
+        texts: `${faker.lorem.words({ max: 3, min: 1 })} `,
       })),
 
       Array.from({ length: chunkCount + 4 }, () => ({
         delay: faker.number.int({ max: 100, min: 30 }),
-        texts: faker.lorem.words({ max: 3, min: 1 }) + ' ',
+        texts: `${faker.lorem.words({ max: 3, min: 1 })} `,
       })),
     ]
   })()

@@ -13,9 +13,9 @@ const ReactPlayer = dynamic(() => import('react-player'), {
 })
 import {
   PlateElement,
+  type PlateElementProps,
   useEditorMounted,
   withHOC,
-  type PlateElementProps,
 } from 'platejs/react'
 
 import { useDraggable } from '@platejs/dnd'

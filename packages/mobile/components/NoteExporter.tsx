@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { View, StyleSheet, Alert } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import {
   Button,
-  Text,
   Card,
-  useTheme,
-  ProgressBar,
   Chip,
+  ProgressBar,
+  Text,
+  useTheme,
 } from 'react-native-paper'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
-import { Note } from '../types'
+import { type Note } from '../types'
 
 export interface NoteExporterProps {
   note: Note

@@ -5,8 +5,8 @@ import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import {
-  type ResizeHandle as ResizeHandlePrimitive,
   Resizable as ResizablePrimitive,
+  type ResizeHandle as ResizeHandlePrimitive,
   useResizeHandle,
   useResizeHandleState,
 } from '@platejs/resizable'

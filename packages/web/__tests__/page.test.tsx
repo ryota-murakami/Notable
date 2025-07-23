@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // Mock Next.js modules
@@ -27,7 +27,7 @@ jest.mock('../components/shell', () => ({
 describe('Page', () => {
   it('renders without crashing', () => {
     const Page = () => <div>Page Component</div>
-    render(<Page />)
-    expect(screen.getByText('Page Component')).toBeInTheDocument()
+    const { getByText } = render(<Page />)
+    expect(getByText('Page Component')).toBeInTheDocument()
   })
 })

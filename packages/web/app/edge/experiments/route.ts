@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'edge'
 
@@ -148,7 +148,7 @@ function matchesTargeting(
   // Check percentage targeting
   if (rules.percentage) {
     const identifier = getUserIdentifier(request)
-    const hash = hashString(identifier + 'targeting')
+    const hash = hashString(`${identifier}targeting`)
     const percentage = (hash % 100) + 1
     if (percentage > rules.percentage) {
       return false

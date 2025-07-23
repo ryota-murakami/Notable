@@ -1,5 +1,12 @@
-import { NextResponse, type NextRequest } from 'next/server'
-// import { createServerClient } from '@/lib/supabase/server'
+import { type NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+// Initialize Supabase client with service role
+const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
 interface MetricSnapshot {
   metric_name: string
@@ -57,11 +64,60 @@ const METRIC_DEFINITIONS: Record<string, MetricDefinition> = {
   },
 }
 
-export async function GET(_request: NextRequest) {
-  // TODO: Implement real metrics retrieval once monitoring_metrics table is added
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const metricName = searchParams.get('metric')
+    const limit = parseInt(searchParams.get('limit') || '100')
+    const hours = parseInt(searchParams.get('hours') || '24')
+
+    // Calculate time range
+    const startTime = new Date(
+      Date.now() - hours * 60 * 60 * 1000
+    ).toISOString()
+
+    // Build query
+    let query = supabase
+      .from('metrics_snapshots')
+      .select('*')
+      .gte('timestamp', startTime)
+      .order('timestamp', { ascending: false })
+      .limit(limit)
+
+    // Filter by metric name if specified
+    if (metricName) {
+      query = query.eq('metric_name', metricName)
+    }
+
+    const { data: metrics, error } = await query
+
+    if (error) {
+      console.error('Failed to retrieve metrics:', error)
+      return NextResponse.json(
+        { error: 'Failed to retrieve metrics' },
+        { status: 500 }
+      )
+    }
+
+    // Group metrics by name for easier consumption
+    const groupedMetrics: Record<string, any[]> = {}
+    if (metrics) {
+      metrics.forEach((metric) => {
+        if (!groupedMetrics[metric.metric_name]) {
+          groupedMetrics[metric.metric_name] = []
+        }
+        groupedMetrics[metric.metric_name]!.push({
+          value: metric.metric_value,
+          labels: metric.labels,
+          timestamp: metric.timestamp,
+        })
+      })
+    }
+
     return NextResponse.json({
-      metrics: [],
+      metrics: metricName ? metrics : groupedMetrics,
+      count: metrics?.length || 0,
+      timeRange: { hours, startTime },
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
@@ -111,7 +167,26 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // TODO: Store metrics once monitoring_metrics table is added
+    // Store metrics in the database
+    const metricsToInsert = validatedMetrics.map((metric) => ({
+      metric_name: metric.metric_name,
+      metric_value: metric.metric_value,
+      labels: metric.labels,
+      timestamp: metric.timestamp,
+    }))
+
+    const { error: insertError } = await supabase
+      .from('metrics_snapshots')
+      .insert(metricsToInsert)
+
+    if (insertError) {
+      console.error('Failed to store metrics:', insertError)
+      return NextResponse.json(
+        { error: 'Failed to store metrics' },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json({
       message: 'Metrics recorded successfully',
       count: validatedMetrics.length,

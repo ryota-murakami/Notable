@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import {
+  NodeApi,
+  SlateElement,
   type SlateElementProps,
   type TCaptionProps,
   type TImageElement,
   type TResizableProps,
-  NodeApi,
-  SlateElement,
 } from 'platejs'
 
 import { cn } from '@/lib/utils'

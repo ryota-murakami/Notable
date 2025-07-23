@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import type { Note } from '@/types/note'
+import { useSupabase } from '@/components/supabase-provider'
 
 // Define realtime types here
 interface TypingUser {
@@ -77,6 +77,7 @@ const throttle = (func: Function, delay: number) => {
 
 export function useRealtimeSync(options: RealtimeSyncOptions) {
   const { noteId, onNoteUpdate } = options
+  const { supabase } = useSupabase()
 
   const [isConnected, setIsConnected] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState<UserPresence[]>([])
@@ -84,28 +85,23 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
   const [connectionError, setConnectionError] = useState<string | null>(null)
 
   const channelRef = useRef<RealtimeChannel | null>(null)
-  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Initialize Supabase client
+  // Check if Supabase client is available
   useEffect(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseKey) {
-      setConnectionError('Supabase configuration missing')
+    if (!supabase) {
+      setConnectionError('Supabase client not available')
       return
     }
-
-    supabaseRef.current = createClient(supabaseUrl, supabaseKey)
-  }, [])
+    setConnectionError(null)
+  }, [supabase])
 
   // Setup real-time channel
   useEffect(() => {
-    if (!supabaseRef.current || !noteId) return
+    if (!supabase || !noteId) return
 
     const channelName = `note-${noteId}`
-    const channel = supabaseRef.current.channel(channelName)
+    const channel = supabase.channel(channelName)
 
     // Setup Postgres changes listener for note updates
     if (onNoteUpdate) {

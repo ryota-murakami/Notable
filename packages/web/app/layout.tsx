@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 // import { Analytics } from '@vercel/analytics/next'
 // import { SpeedInsights } from '@vercel/speed-insights/next'
-import { AnalyticsProvider } from '@/components/analytics-provider'
+// import { AnalyticsProvider } from '@/components/analytics-provider'
 import { ErrorBoundary } from '@/components/error-boundary'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -34,10 +34,10 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <AnalyticsProvider>
-                {children}
-                <Toaster />
-              </AnalyticsProvider>
+              {/* <AnalyticsProvider> */}
+              {children}
+              <Toaster />
+              {/* </AnalyticsProvider> */}
             </ThemeProvider>
           </SupabaseProvider>
         </ErrorBoundary>

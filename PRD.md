@@ -18,9 +18,8 @@ To create the world's most elegant and performant note-taking application that c
 
 1. **Superior Writing Experience**: Leverage Plate.js to provide a best-in-class rich text editing experience
 2. **Universal Access**: Enable users to access their notes seamlessly across all platforms
-3. **Real-time Collaboration**: Support real-time synchronization across all devices
-4. **Data Portability**: Ensure users can export their content in multiple formats
-5. **Performance Excellence**: Deliver instant responsiveness and fast load times
+3. **Data Portability**: Ensure users can export their content in multiple formats
+4. **Performance Excellence**: Deliver instant responsiveness and fast load times
 
 ## Target Audience
 
@@ -29,14 +28,12 @@ To create the world's most elegant and performant note-taking application that c
 - Knowledge workers and professionals
 - Students and researchers
 - Writers and content creators
-- Teams requiring collaborative documentation
 
 ### User Personas
 
 1. **Professional Writer**: Needs distraction-free writing with powerful formatting
 2. **Student**: Requires organization, search, and mobile access
-3. **Team Lead**: Needs real-time collaboration and sharing capabilities
-4. **Power User**: Demands keyboard shortcuts, export options, and performance
+3. **Power User**: Demands keyboard shortcuts, export options, and performance
 
 ## Core Features
 
@@ -145,6 +142,13 @@ To create the world's most elegant and performant note-taking application that c
   - Exportable as React components
   - Preserves interactivity
   - Embeddable in other applications
+
+### 8. Hidden Note Features
+
+- **Hidden Notes**
+  - Create notes that are not indexed or searchable
+  - Use for personal reminders or sensitive information
+  - Access via direct link or toggle [show hidden] option
 
 ## Technical Architecture
 

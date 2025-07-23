@@ -1,13 +1,13 @@
 'use client'
 
 import {
-  type AutoformatRule,
   autoformatArrow,
   autoformatLegal,
   autoformatLegalHtml,
   autoformatMath,
   AutoformatPlugin,
   autoformatPunctuation,
+  type AutoformatRule,
   autoformatSmartQuotes,
 } from '@platejs/autoformat'
 import { insertEmptyCodeBlock } from '@platejs/code-block'

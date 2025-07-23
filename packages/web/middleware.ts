@@ -49,14 +49,14 @@ export async function middleware(req: NextRequest) {
       )
     }
 
-    // If user is not signed in and accessing a protected route, redirect to login
-    if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
+    // If user is not signed in and accessing the root route, redirect to login
+    if (!session && req.nextUrl.pathname === '/') {
       return NextResponse.redirect(new URL('/auth/signin', req.url))
     }
 
-    // If user is signed in and accessing auth pages, redirect to dashboard
+    // If user is signed in and accessing auth pages, redirect to home
     if (session && req.nextUrl.pathname.startsWith('/auth')) {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
+      return NextResponse.redirect(new URL('/', req.url))
     }
 
     return res
@@ -77,7 +77,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
+    '/',
     '/auth/:path*',
     '/((?!api|_next/static|_next/image|favicon.ico|edge).*)',
   ],

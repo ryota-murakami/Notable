@@ -5,11 +5,11 @@ import * as React from 'react'
 import type { Point, TElement } from 'platejs'
 
 import {
-  type ComboboxItemProps,
   Combobox,
   ComboboxGroup,
   ComboboxGroupLabel,
   ComboboxItem,
+  type ComboboxItemProps,
   ComboboxPopover,
   ComboboxProvider,
   ComboboxRow,
@@ -19,8 +19,8 @@ import {
 } from '@ariakit/react'
 import { filterWords } from '@platejs/combobox'
 import {
-  type UseComboboxInputResult,
   useComboboxInput,
+  type UseComboboxInputResult,
   useHTMLInputCursorState,
 } from '@platejs/combobox/react'
 import { cva } from 'class-variance-authority'
