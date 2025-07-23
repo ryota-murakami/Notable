@@ -53,7 +53,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
 
     useChatChunk({
       onChunk: ({ chunk, isFirst, nodes }) => {
-        if (isFirst && mode == 'insert') {
+        if (isFirst && mode === 'insert') {
           editor.tf.withoutSaving(() => {
             editor.tf.insertNodes(
               {

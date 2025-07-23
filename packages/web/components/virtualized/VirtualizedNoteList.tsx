@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useEffect } from 'react'
 import { VariableSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { Note } from '@/types/note'
+import type { Note } from '@/types/note'
 import { debounceWithMetrics as debounce } from '@/lib/performance'
 import { cn } from '@/lib/utils'
 import {

@@ -1,5 +1,5 @@
-import { AnalyticsProvider } from './provider'
-import { AnalyticsEvent, AnalyticsUser, PageViewEvent } from './index'
+import type { AnalyticsProvider } from './provider'
+import type { AnalyticsEvent, AnalyticsUser, PageViewEvent } from './index'
 import posthog from 'posthog-js'
 
 class PostHogAnalyticsProvider implements AnalyticsProvider {

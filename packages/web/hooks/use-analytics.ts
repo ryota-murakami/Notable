@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
   analytics,
   trackEvent,
@@ -13,22 +13,28 @@ import { useUser } from '@/hooks/use-user'
 
 export function useAnalytics() {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
+  // Note: We're removing useSearchParams to avoid SSG issues
+  // Search params will not be tracked in analytics
   const { user } = useUser()
 
   // Track page views
   useEffect(() => {
-    const url = pathname + (searchParams ? `?${searchParams}` : '')
+    // Skip if running on server
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const url = pathname + window.location.search
     trackPage({
       url,
       title: document.title,
       referrer: document.referrer,
       properties: {
         pathname,
-        search: searchParams?.toString(),
+        search: window.location.search,
       },
     })
-  }, [pathname, searchParams])
+  }, [pathname])
 
   // Identify user when authenticated
   useEffect(() => {

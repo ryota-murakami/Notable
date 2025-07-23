@@ -1,7 +1,7 @@
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
 import * as Sentry from '@sentry/nextjs'
-import { LogLevel, LogMetadata, formatError } from './index'
+import { formatError, type LogLevel, type LogMetadata } from './index'
 import { Transform } from 'stream'
 
 // Custom Sentry transport using winston's Transform base class

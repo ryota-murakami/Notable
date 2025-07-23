@@ -1,4 +1,4 @@
-import { AnalyticsEvent, AnalyticsUser, PageViewEvent } from './index'
+import type { AnalyticsEvent, AnalyticsUser, PageViewEvent } from './index'
 
 export interface AnalyticsProvider {
   name: string

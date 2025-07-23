@@ -1,10 +1,21 @@
 'use client'
 
 import * as React from 'react'
+import dynamic from 'next/dynamic'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
-import { Tweet } from 'react-tweet'
 
 import type { TMediaEmbedElement } from 'platejs'
+
+// Dynamically import Tweet to avoid SSR issues
+const Tweet = dynamic(
+  () => import('react-tweet').then((mod) => ({ default: mod.Tweet })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className='h-[400px] w-full animate-pulse bg-muted rounded' />
+    ),
+  }
+)
 import { PlateElement, withHOC, type PlateElementProps } from 'platejs/react'
 
 import { parseTwitterUrl, parseVideoUrl } from '@platejs/media'
