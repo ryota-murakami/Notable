@@ -1,4 +1,5 @@
-import type { LogLevel, LogMetadata, Logger } from './index'
+import type { LogMetadata, Logger } from './index'
+import { LogLevel } from './index'
 
 // Simple server logger that works in edge runtime
 export function createSimpleServerLogger(): Logger {
