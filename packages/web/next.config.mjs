@@ -29,8 +29,19 @@ const nextConfig = {
         : false,
   },
 
+  // Externalize server-only packages
+  serverExternalPackages: ['winston', 'winston-daily-rotate-file'],
+
   // Bundle optimization
   webpack: (config, { isServer }) => {
+    // Prevent winston from being bundled on the client
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        winston: false,
+        'winston-daily-rotate-file': false,
+      }
+    }
     // Optimize bundle size
     config.optimization.splitChunks = {
       chunks: 'all',
@@ -116,27 +127,6 @@ const nextConfig = {
       },
     ]
   },
-}
-
-// Sentry configuration options
-const sentryWebpackPluginOptions = {
-  // For all available options, see:
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-  // Suppresses source map uploading logs during build
-  silent: true,
-
-  // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-  tunnelRoute: '/monitoring',
-
-  // Hides source maps from generated client bundles
-  hideSourceMaps: true,
-
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
-
-  // Enables automatic instrumentation of Vercel Cron Monitors.
-  automaticVercelMonitors: true,
 }
 
 // Bundle analyzer integration
