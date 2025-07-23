@@ -266,6 +266,11 @@ function checkLimits(
 ): boolean {
   const limit = userContext.limits[limitType]
 
+  // Type guard to ensure limit is a number
+  if (typeof limit !== 'number') {
+    return false // Invalid limit type, deny access
+  }
+
   if (limit === -1) {
     return true // unlimited
   }

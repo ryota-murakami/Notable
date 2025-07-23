@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error to console
     console.error('Error caught by boundary:', error)
     console.error('Error info:', errorInfo)
@@ -112,7 +112,7 @@ export function ComponentErrorBoundary({
 }) {
   return (
     <ErrorBoundary
-      fallback={(error, reset) => (
+      fallback={(_error, reset) => (
         <div className='p-4 border border-destructive/20 rounded-lg bg-destructive/5'>
           <p className='text-sm text-destructive mb-2'>
             Failed to load {componentName}
