@@ -1,28 +1,17 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
 import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
-import type { User } from '@supabase/supabase-js'
-// Define types inline instead of importing from missing module
-// interface RealtimeUser {
-//   id: string
-//   name: string
-//   avatar?: string
-//   color?: string
-// }
+import { useSupabase } from '@/components/supabase-provider'
 
 interface UseSupabaseNotesOptions {
-  user?: User | null
   activeNoteId?: string
 }
 
-export function useSupabaseNotes({
-  user,
-  activeNoteId,
-}: UseSupabaseNotesOptions) {
+export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
+  const { user, supabase } = useSupabase()
   const [notes, setNotes] = useState<Note[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -74,7 +63,7 @@ export function useSupabaseNotes({
 
   // Load notes from Supabase
   const loadNotes = useCallback(async () => {
-    if (!user) return
+    if (!user || !supabase) return
 
     setIsLoading(true)
     setError(null)
@@ -149,12 +138,12 @@ export function useSupabaseNotes({
     } finally {
       setIsLoading(false)
     }
-  }, [user, toast])
+  }, [user, supabase, toast])
 
   // Save note to Supabase
   const saveNote = useCallback(
     async (note: Note) => {
-      if (!user) return false
+      if (!user || !supabase) return false
 
       setIsSaving(true)
       setError(null)
@@ -252,20 +241,20 @@ export function useSupabaseNotes({
         setIsSaving(false)
       }
     },
-    [user, toast, broadcastNoteUpdate]
+    [user, supabase, toast, broadcastNoteUpdate]
   )
 
   // Create new note
   const createNote = useCallback(
     async (parentId: string | null = null) => {
-      if (!user) return null
+      if (!user || !supabase) return null
 
       setIsLoading(true)
       try {
         const newNote: Omit<Note, 'id' | 'createdAt' | 'updatedAt'> = {
           title: 'Untitled Note',
           content: '',
-          parentId: parentId,
+          parentId,
           isFolder: false,
           tags: [],
         }
@@ -314,14 +303,14 @@ export function useSupabaseNotes({
   // Create new folder
   const createFolder = useCallback(
     async (parentId: string | null = null) => {
-      if (!user) return null
+      if (!user || !supabase) return null
 
       setIsLoading(true)
       try {
         const newFolder: Partial<Note> = {
           title: 'New Folder',
           isFolder: true,
-          parentId: parentId,
+          parentId,
           tags: [],
         }
         const { data, error } = await supabase
@@ -361,7 +350,7 @@ export function useSupabaseNotes({
   // Delete note
   const deleteNote = useCallback(
     async (noteId: string) => {
-      if (!user) return false
+      if (!user || !supabase) return false
 
       try {
         const note = notes.find((n) => n.id === noteId)
@@ -402,7 +391,7 @@ export function useSupabaseNotes({
         return false
       }
     },
-    [user, notes, toast]
+    [user, supabase, notes, toast]
   )
 
   // Load notes when user changes

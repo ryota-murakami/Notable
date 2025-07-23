@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Sidebar } from '@/components/sidebar'
 import { PlateEditorComponent } from '@/components/plate-editor'
 import type { Note } from '@/types/note'
@@ -12,13 +12,13 @@ import { WelcomeScreen } from '@/components/welcome-screen'
 import { Breadcrumb } from '@/components/breadcrumb'
 import {
   EditorSkeleton,
-  SidebarSkeleton,
   LoadingSpinner,
+  SidebarSkeleton,
 } from '@/components/loading-states'
 import { ViewModeRenderer } from '@/components/view-mode-renderer'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Badge } from '@/components/ui/badge'
-import { Wifi, WifiOff, Users, UserCheck } from 'lucide-react'
+import { UserCheck, Users, Wifi, WifiOff } from 'lucide-react'
 
 export function Shell() {
   const [activeNoteId, setActiveNoteId] = useState<string>('')
@@ -48,7 +48,7 @@ export function Shell() {
     typingUsers,
     startTyping,
     stopTyping,
-  } = useSupabaseNotes({ user, activeNoteId })
+  } = useSupabaseNotes({ activeNoteId })
 
   const activeNote = notes.find((note) => note.id === activeNoteId) || notes[0]
 

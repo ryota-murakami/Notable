@@ -7,9 +7,9 @@ import TextareaAutosize, {
 
 import type { TEquationElement } from 'platejs'
 import {
-  type PlateElementProps,
   createPrimitiveComponent,
   PlateElement,
+  type PlateElementProps,
   useEditorRef,
   useEditorSelector,
   useElement,

@@ -4,8 +4,12 @@ const sharedConfig = require('../configs/jest-config/next')
 module.exports = {
   ...sharedConfig,
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  transformIgnorePatterns: ['/node_modules/(?!msw)'],
   moduleNameMapper: {
     ...sharedConfig.moduleNameMapper,
+    // Handle MSW module mapping
+    '^msw/node$': '<rootDir>/node_modules/msw/lib/node/index.js',
+    '^msw$': '<rootDir>/node_modules/msw/lib/core/index.js',
     // Handle module aliases specific to web package
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '^@/lib/(.*)$': '<rootDir>/lib/$1',

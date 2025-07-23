@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Note } from '@/types'
+import { useCallback, useEffect, useState } from 'react'
+import { type Note } from '@/types'
 import { useSupabase } from '@/components/SupabaseProvider'
 import { supabase } from '@/lib/supabase'
 

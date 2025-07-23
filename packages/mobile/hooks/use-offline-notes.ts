@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Note, NoteCreate, NoteUpdate } from '../types'
+import { type Note, type NoteCreate, type NoteUpdate } from '../types'
 import {
+  type RealtimeUser,
+  type TypingUser,
   useRealtimeSync,
-  RealtimeUser,
-  TypingUser,
-  UserPresence,
+  type UserPresence,
 } from './use-realtime-sync'
 import { useOfflineStorage } from './use-offline-storage'
 

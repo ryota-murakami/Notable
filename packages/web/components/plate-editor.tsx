@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Plate, usePlateEditor } from 'platejs/react'
 
 // Import the EditorKit
@@ -20,7 +20,7 @@ import { FixedToolbar } from '@/components/ui/fixed-toolbar'
 import { FixedToolbarButtons } from '@/components/ui/fixed-toolbar-buttons'
 
 // Icons
-import { Tag, Download, FileText, Globe, Code, FileImage } from 'lucide-react'
+import { Code, Download, FileImage, FileText, Globe, Tag } from 'lucide-react'
 
 import type { Note } from '@/types/note'
 import { useExport } from '@/hooks/use-export'

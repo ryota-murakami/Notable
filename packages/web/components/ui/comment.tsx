@@ -27,7 +27,7 @@ import {
   TrashIcon,
   XIcon,
 } from 'lucide-react'
-import { type Value, KEYS, nanoid, NodeApi } from 'platejs'
+import { KEYS, nanoid, NodeApi, type Value } from 'platejs'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -41,8 +41,8 @@ import {
 import { cn } from '@/lib/utils'
 import { BasicMarksKit } from '@/components/editor/plugins/basic-marks-kit'
 import {
-  type TDiscussion,
   discussionPlugin,
+  type TDiscussion,
 } from '@/components/editor/plugins/discussion-kit'
 
 import { Editor, EditorContainer } from './editor'

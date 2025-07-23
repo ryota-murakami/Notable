@@ -1,4 +1,4 @@
-import { Tabs, Redirect } from 'expo-router'
+import { Redirect, Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from 'react-native-paper'
 import { useSupabase } from '@/components/SupabaseProvider'

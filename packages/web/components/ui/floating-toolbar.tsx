@@ -3,8 +3,8 @@
 import * as React from 'react'
 
 import {
-  type FloatingToolbarState,
   flip,
+  type FloatingToolbarState,
   offset,
   useFloatingToolbar,
   useFloatingToolbarState,
@@ -77,7 +77,7 @@ export function FloatingToolbar({
         className={cn(
           'absolute z-50 scrollbar-hide overflow-x-auto rounded-md border bg-popover p-1 whitespace-nowrap opacity-100 shadow-md print:hidden',
           'max-w-[80vw]',
-          className,
+          className
         )}
       >
         {children}

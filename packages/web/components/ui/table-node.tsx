@@ -36,16 +36,16 @@ import {
   XIcon,
 } from 'lucide-react'
 import {
+  KEYS,
+  PathApi,
   type TElement,
   type TTableCellElement,
   type TTableElement,
   type TTableRowElement,
-  KEYS,
-  PathApi,
 } from 'platejs'
 import {
-  type PlateElementProps,
   PlateElement,
+  type PlateElementProps,
   useComposedRef,
   useEditorPlugin,
   useEditorRef,

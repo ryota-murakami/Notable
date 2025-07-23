@@ -2,23 +2,23 @@
 
 import { useState } from 'react'
 import {
-  Search,
-  Plus,
-  Home,
-  Inbox,
-  Settings,
-  Trash,
-  File,
-  Menu,
-  X,
-  PanelLeft,
-  PanelLeftClose,
-  User,
-  LogOut,
   Crown,
+  File,
   FolderClosed,
   FolderOpen,
   FolderPlus,
+  Home,
+  Inbox,
+  LogOut,
+  Menu,
+  PanelLeft,
+  PanelLeftClose,
+  Plus,
+  Search,
+  Settings,
+  Trash,
+  User,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'

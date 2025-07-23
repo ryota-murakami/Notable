@@ -1,10 +1,10 @@
 import * as React from 'react'
 
 import {
+  SlateElement,
   type SlateElementProps,
   type TTableCellElement,
   type TTableElement,
-  SlateElement,
 } from 'platejs'
 
 import { BaseTablePlugin } from '@platejs/table'

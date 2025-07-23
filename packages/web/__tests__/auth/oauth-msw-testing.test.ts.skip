@@ -1,0 +1,413 @@
+/**
+ * OAuth Authentication Testing with MSW
+ * 
+ * This file demonstrates how to test Google OAuth authentication using
+ * Mock Service Worker (MSW) instead of Jest mocks. MSW provides more
+ * realistic HTTP mocking by intercepting actual network requests.
+ */
+
+const { createClient } = require('@supabase/supabase-js')
+const { server, mswUtils } = require('../../__mocks__/msw/server')
+const { http, HttpResponse } = require('msw')
+
+// Mock environment variables for Supabase
+const mockSupabaseUrl = 'https://mock-project.supabase.co'
+const mockSupabaseAnonKey = 'mock-anon-key'
+
+describe('OAuth Authentication Testing with MSW', () => {
+  let supabase: ReturnType<typeof createClient>
+
+  beforeEach(() => {
+    // Reset MSW auth state before each test
+    mswUtils.resetAuthState()
+    
+    // Create Supabase client for testing
+    supabase = createClient(mockSupabaseUrl, mockSupabaseAnonKey)
+  })
+
+  describe('Google OAuth Sign-in with MSW', () => {
+    it('should successfully sign in with Google OAuth', async () => {
+      // Act
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'http://localhost:3000/auth/callback',
+        },
+      })
+
+      // Assert
+      expect(error).toBeNull()
+      expect(data.user).toBeDefined()
+      expect(data.session).toBeDefined()
+      expect(data.user?.email).toBe('test@example.com')
+      expect(data.user?.user_metadata?.provider_id).toBe('mock-google-id')
+      expect(mswUtils.getAuthState().isAuthenticated).toBe(true)
+    })
+
+    it('should handle Google OAuth with skipBrowserRedirect option', async () => {
+      // Act
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          skipBrowserRedirect: true,
+          redirectTo: 'http://localhost:3000/auth/callback',
+        },
+      })
+
+      // Assert
+      expect(error).toBeNull()
+      expect(data.url).toBeDefined()
+      expect(data.url).toContain('accounts.google.com')
+      expect(data.provider).toBe('google')
+    })
+
+    it('should handle OAuth authentication errors', async () => {
+      // Arrange - Override handler to simulate error
+      server.use(
+        http.post('*/auth/v1/oauth', () => {
+          return HttpResponse.json(
+            { error: 'oauth_error', message: 'OAuth provider error' },
+            { status: 400 }
+          )
+        })
+      )
+
+      // Act
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+      })
+
+      // Assert
+      expect(error).toBeDefined()
+      expect(error?.message).toBe('OAuth provider error')
+      expect(data.user).toBeNull()
+      expect(data.session).toBeNull()
+    })
+
+    it('should handle network errors during OAuth', async () => {
+      // Arrange - Override handler to simulate network error
+      server.use(
+        http.post('*/auth/v1/oauth', () => {
+          return HttpResponse.error()
+        })
+      )
+
+      // Act & Assert
+      await expect(
+        supabase.auth.signInWithOAuth({
+          provider: 'google',
+        })
+      ).rejects.toThrow()
+    })
+
+    it('should handle unsupported OAuth provider', async () => {
+      // Act
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github' as any, // Force unsupported provider
+      })
+
+      // Assert
+      expect(error).toBeDefined()
+      expect(error?.message).toContain('Provider not supported')
+      expect(data.user).toBeNull()
+      expect(data.session).toBeNull()
+    })
+  })
+
+  describe('OAuth Callback Handling with MSW', () => {
+    it('should exchange authorization code for session', async () => {
+      // Simulate the OAuth callback scenario
+      const mockAuthCode = 'mock-auth-code-123'
+
+      // Act - This would typically be called by the OAuth callback handler
+      const { data, error } = await supabase.auth.exchangeCodeForSession(mockAuthCode)
+
+      // Assert
+      expect(error).toBeNull()
+      expect(data.user).toBeDefined()
+      expect(data.session).toBeDefined()
+      expect(data.session?.access_token).toBe('mock-access-token')
+      expect(mswUtils.getAuthState().isAuthenticated).toBe(true)
+    })
+
+    it('should handle invalid authorization codes', async () => {
+      // Arrange - Override handler to simulate invalid code
+      server.use(
+        http.post('*/auth/v1/token', () => {
+          return HttpResponse.json(
+            { error: 'invalid_grant', message: 'Invalid authorization code' },
+            { status: 400 }
+          )
+        })
+      )
+
+      // Act
+      const { data, error } = await supabase.auth.exchangeCodeForSession('invalid-code')
+
+      // Assert
+      expect(error).toBeDefined()
+      expect(error?.message).toBe('Invalid authorization code')
+      expect(data.user).toBeNull()
+      expect(data.session).toBeNull()
+    })
+  })
+
+  describe('Authentication State Management with MSW', () => {
+    beforeEach(() => {
+      // Set up authenticated state for these tests
+      mswUtils.setAuthState({
+        isAuthenticated: true,
+        user: mswUtils.getMockUser(),
+        session: mswUtils.getMockSession(),
+        error: null,
+      })
+    })
+
+    it('should get current authenticated user', async () => {
+      // Act
+      const { data, error } = await supabase.auth.getUser()
+
+      // Assert
+      expect(error).toBeNull()
+      expect(data.user).toBeDefined()
+      expect(data.user?.email).toBe('test@example.com')
+      expect(data.user?.user_metadata?.full_name).toBe('Test User')
+    })
+
+    it('should handle unauthenticated user requests', async () => {
+      // Arrange - Reset to unauthenticated state
+      mswUtils.setAuthState({ isAuthenticated: false })
+
+      // Act
+      const { data, error } = await supabase.auth.getUser()
+
+      // Assert
+      expect(error).toBeDefined()
+      expect(error?.message).toBe('Invalid token')
+      expect(data.user).toBeNull()
+    })
+
+    it('should sign out user successfully', async () => {
+      // Act
+      const { error } = await supabase.auth.signOut()
+
+      // Assert
+      expect(error).toBeNull()
+      expect(mswUtils.getAuthState().isAuthenticated).toBe(false)
+      expect(mswUtils.getAuthState().user).toBeNull()
+      expect(mswUtils.getAuthState().session).toBeNull()
+    })
+  })
+
+  describe('Database Operations with OAuth Context', () => {
+    beforeEach(() => {
+      // Set up authenticated state
+      mswUtils.setAuthState({
+        isAuthenticated: true,
+        user: mswUtils.getMockUser(),
+        session: mswUtils.getMockSession(),
+        error: null,
+      })
+    })
+
+    it('should perform database operations with authenticated user context', async () => {
+      // Act
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', mswUtils.getMockUser().id)
+
+      // Assert
+      expect(error).toBeNull()
+      expect(data).toBeDefined()
+      expect(Array.isArray(data)).toBe(true)
+      expect(data?.[0]).toHaveProperty('profiles')
+    })
+
+    it('should insert user profile after OAuth signup', async () => {
+      // Arrange
+      const mockUser = mswUtils.getMockUser()
+      const profileData = {
+        user_id: mockUser.id,
+        email: mockUser.email,
+        full_name: mockUser.user_metadata?.full_name,
+        avatar_url: mockUser.user_metadata?.avatar_url,
+      }
+
+      // Act
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert(profileData)
+
+      // Assert
+      expect(error).toBeNull()
+      expect(data).toBeDefined()
+      expect(Array.isArray(data)).toBe(true)
+    })
+
+    it('should handle database operations without authentication', async () => {
+      // Arrange - Reset to unauthenticated state
+      mswUtils.setAuthState({ isAuthenticated: false })
+
+      // Override database handler to require authentication
+      server.use(
+        http.get('*/rest/v1/*', ({ request }) => {
+          const authHeader = request.headers.get('authorization')
+          if (!authHeader) {
+            return HttpResponse.json(
+              { error: 'unauthorized', message: 'Authentication required' },
+              { status: 401 }
+            )
+          }
+          return HttpResponse.json([])
+        })
+      )
+
+      // Act
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+
+      // Assert
+      expect(error).toBeDefined()
+      expect(error?.message).toBe('Authentication required')
+      expect(data).toBeNull()
+    })
+  })
+
+  describe('Custom MSW Scenarios', () => {
+    it('should allow custom user data for specific test cases', async () => {
+      // Arrange - Set custom auth state
+      const customUser = {
+        ...mswUtils.getMockUser(),
+        email: 'custom@example.com',
+        user_metadata: {
+          ...mswUtils.getMockUser().user_metadata,
+          full_name: 'Custom User',
+          avatar_url: 'https://custom-avatar.com/avatar.jpg',
+        },
+      }
+
+      mswUtils.setAuthState({
+        isAuthenticated: true,
+        user: customUser,
+        session: mswUtils.getMockSession(),
+        error: null,
+      })
+
+      // Act
+      const { data, error } = await supabase.auth.getUser()
+
+      // Assert
+      expect(error).toBeNull()
+      expect(data.user?.email).toBe('custom@example.com')
+      expect(data.user?.user_metadata?.full_name).toBe('Custom User')
+    })
+
+    it('should simulate specific OAuth error scenarios', async () => {
+      // Arrange - Simulate specific error
+      mswUtils.simulateAuthError('rate_limit_exceeded', 'Too many requests')
+
+      // Override handler to return the error
+      server.use(
+        http.post('*/auth/v1/oauth', () => {
+          const authState = mswUtils.getAuthState()
+          return HttpResponse.json(
+            authState.error,
+            { status: 429 }
+          )
+        })
+      )
+
+      // Act
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+      })
+
+      // Assert
+      expect(error).toBeDefined()
+      expect(error?.message).toBe('Too many requests')
+      expect(data.user).toBeNull()
+      expect(data.session).toBeNull()
+    })
+  })
+})
+
+/**
+ * Integration Testing Example with MSW
+ * 
+ * This demonstrates testing complete OAuth flows with realistic
+ * HTTP request/response cycles using MSW.
+ */
+describe('OAuth Integration Testing with MSW', () => {
+  let supabase: ReturnType<typeof createClient>
+
+  beforeEach(() => {
+    mswUtils.resetAuthState()
+    supabase = createClient(mockSupabaseUrl, mockSupabaseAnonKey)
+  })
+
+  it('should handle complete Google OAuth login flow with MSW', async () => {
+    // Step 1: Initiate OAuth sign-in
+    const { data: oauthData, error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/auth/callback',
+      },
+    })
+
+    expect(oauthError).toBeNull()
+    expect(oauthData.user).toBeDefined()
+    expect(mswUtils.getAuthState().isAuthenticated).toBe(true)
+
+    // Step 2: Verify session is established
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+
+    expect(userError).toBeNull()
+    expect(userData.user?.id).toBe(oauthData.user?.id)
+    expect(userData.user?.email).toBe('test@example.com')
+
+    // Step 3: Create user profile with authenticated context
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        user_id: oauthData.user?.id,
+        email: oauthData.user?.email,
+        full_name: oauthData.user?.user_metadata?.full_name,
+        avatar_url: oauthData.user?.user_metadata?.avatar_url,
+      })
+
+    expect(profileError).toBeNull()
+    expect(profileData).toBeDefined()
+
+    // Step 4: Sign out and verify cleanup
+    const { error: signOutError } = await supabase.auth.signOut()
+
+    expect(signOutError).toBeNull()
+    expect(mswUtils.getAuthState().isAuthenticated).toBe(false)
+    expect(mswUtils.getAuthState().user).toBeNull()
+    expect(mswUtils.getAuthState().session).toBeNull()
+  })
+
+  it('should handle OAuth flow with error recovery', async () => {
+    // Step 1: First attempt fails due to network error
+    server.use(
+      http.post('*/auth/v1/oauth', () => {
+        return HttpResponse.error()
+      }, { once: true })
+    )
+
+    await expect(
+      supabase.auth.signInWithOAuth({ provider: 'google' })
+    ).rejects.toThrow()
+
+    // Step 2: Retry succeeds (handler is reset after first use)
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    })
+
+    expect(error).toBeNull()
+    expect(data.user).toBeDefined()
+    expect(mswUtils.getAuthState().isAuthenticated).toBe(true)
+  })
+})

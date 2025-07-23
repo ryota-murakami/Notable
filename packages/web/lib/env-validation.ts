@@ -12,43 +12,43 @@ export interface EnvironmentConfig {
   // Supabase
   NEXT_PUBLIC_SUPABASE_URL: string
   NEXT_PUBLIC_SUPABASE_ANON_KEY: string
-  SUPABASE_SERVICE_ROLE_KEY?: string // Server-side only
-  SUPABASE_JWT_SECRET?: string
-  DATABASE_URL?: string
+  SUPABASE_SERVICE_ROLE_KEY: string | undefined // Server-side only
+  SUPABASE_JWT_SECRET: string | undefined
+  DATABASE_URL: string | undefined
 
   // Auth
-  GOOGLE_CLIENT_ID?: string
-  GOOGLE_CLIENT_SECRET?: string
-  NEXTAUTH_SECRET?: string
-  NEXTAUTH_URL?: string
+  GOOGLE_CLIENT_ID: string | undefined
+  GOOGLE_CLIENT_SECRET: string | undefined
+  NEXTAUTH_SECRET: string | undefined
+  NEXTAUTH_URL: string | undefined
 
   // Email
-  RESEND_API_KEY?: string
-  EMAIL_FROM?: string
+  RESEND_API_KEY: string | undefined
+  EMAIL_FROM: string | undefined
 
   // Storage
-  UPLOADTHING_SECRET?: string
-  UPLOADTHING_APP_ID?: string
+  UPLOADTHING_SECRET: string | undefined
+  UPLOADTHING_APP_ID: string | undefined
 
   // AI
-  OPENAI_API_KEY?: string
+  OPENAI_API_KEY: string | undefined
 
   // Security
-  JWT_SECRET?: string
+  JWT_SECRET: string | undefined
 
   // Analytics (Optional)
-  NEXT_PUBLIC_POSTHOG_KEY?: string
-  NEXT_PUBLIC_POSTHOG_HOST?: string
-  NEXT_PUBLIC_SENTRY_DSN?: string
-  SENTRY_DSN?: string
-  SENTRY_ORG?: string
-  SENTRY_PROJECT?: string
-  SENTRY_AUTH_TOKEN?: string
+  NEXT_PUBLIC_POSTHOG_KEY: string | undefined
+  NEXT_PUBLIC_POSTHOG_HOST: string | undefined
+  NEXT_PUBLIC_SENTRY_DSN: string | undefined
+  SENTRY_DSN: string | undefined
+  SENTRY_ORG: string | undefined
+  SENTRY_PROJECT: string | undefined
+  SENTRY_AUTH_TOKEN: string | undefined
 
   // Monitoring
-  REDIS_URL?: string
-  OTEL_SERVICE_NAME?: string
-  OTEL_EXPORTER_OTLP_ENDPOINT?: string
+  REDIS_URL: string | undefined
+  OTEL_SERVICE_NAME: string | undefined
+  OTEL_EXPORTER_OTLP_ENDPOINT: string | undefined
 }
 
 const requiredEnvVars = [

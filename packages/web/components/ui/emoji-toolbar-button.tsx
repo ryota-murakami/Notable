@@ -7,13 +7,13 @@ import type { Emoji } from '@emoji-mart/data'
 import {
   type EmojiCategoryList,
   type EmojiIconList,
-  type GridRow,
   EmojiSettings,
+  type GridRow,
 } from '@platejs/emoji'
 import {
   type EmojiDropdownMenuOptions,
-  type UseEmojiPickerType,
   useEmojiDropdownMenuState,
+  type UseEmojiPickerType,
 } from '@platejs/emoji/react'
 import * as Popover from '@radix-ui/react-popover'
 import {

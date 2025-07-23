@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { type SlateElementProps, SlateElement } from 'platejs'
+import { SlateElement, type SlateElementProps } from 'platejs'
 
 import { ChevronRight } from 'lucide-react'
 

@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { logger } from '@/lib/logging/logger.server'
 
@@ -51,7 +51,7 @@ async function checkDatabase(): Promise<
     let supabase
     try {
       supabase = getSupabaseClient()
-    } catch (error) {
+    } catch {
       return {
         status: 'fail',
         responseTime: Date.now() - start,

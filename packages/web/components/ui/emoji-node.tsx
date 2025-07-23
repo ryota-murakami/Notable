@@ -4,8 +4,8 @@ import * as React from 'react'
 
 import {
   PlateElement,
-  usePluginOption,
   type PlateElementProps,
+  usePluginOption,
 } from 'platejs/react'
 
 import { EmojiInlineIndexSearch, insertEmoji } from '@platejs/emoji'

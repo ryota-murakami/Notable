@@ -1,4 +1,4 @@
-import { LogLevel, type LogMetadata, type Logger } from './index'
+import { type Logger, LogLevel, type LogMetadata } from './index'
 
 // Console-based logger that works everywhere
 const createUniversalLogger = (): Logger => {

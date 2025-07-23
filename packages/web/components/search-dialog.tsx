@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -383,7 +383,7 @@ export function SearchDialog({
                       {result.note.content && (
                         <p className='text-sm text-muted-foreground line-clamp-2 mb-2'>
                           {highlightMatches(
-                            result.note.content.slice(0, 150) + '...',
+                            `${result.note.content.slice(0, 150)}...`,
                             result.matches.filter((m) => m.key === 'content')
                           )}
                         </p>

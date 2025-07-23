@@ -1,7 +1,7 @@
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Note } from '../types'
+import { type Note } from '../types'
 
 export interface TypingUser {
   id: string

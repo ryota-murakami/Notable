@@ -5,9 +5,9 @@ import * as React from 'react'
 import type { TFileElement } from 'platejs'
 import {
   PlateElement,
+  type PlateElementProps,
   useReadOnly,
   withHOC,
-  type PlateElementProps,
 } from 'platejs/react'
 
 import { useMediaState } from '@platejs/media/react'

@@ -18,11 +18,11 @@ import { SuggestionPlugin } from '@platejs/suggestion/react'
 import { TablePlugin } from '@platejs/table/react'
 import { insertToc } from '@platejs/toc'
 import {
+  KEYS,
   type NodeEntry,
   type Path,
-  type TElement,
-  KEYS,
   PathApi,
+  type TElement,
 } from 'platejs'
 
 const ACTION_THREE_COLUMNS = 'action_three_columns'

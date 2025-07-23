@@ -5,12 +5,12 @@ import * as React from 'react'
 import { DndPlugin, useDraggable, useDropLine } from '@platejs/dnd'
 import { BlockSelectionPlugin } from '@platejs/selection/react'
 import { GripVertical } from 'lucide-react'
-import { type TElement, getPluginByType, isType, KEYS } from 'platejs'
+import { getPluginByType, isType, KEYS, type TElement } from 'platejs'
 import {
+  MemoizedChildren,
   type PlateEditor,
   type PlateElementProps,
   type RenderNodeWrapper,
-  MemoizedChildren,
   useEditorRef,
   useElement,
   usePluginOption,

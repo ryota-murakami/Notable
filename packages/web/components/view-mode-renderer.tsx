@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { Note } from '@/types/note'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Tag, Clock } from 'lucide-react'
+import { Calendar, Clock, Tag } from 'lucide-react'
 
 interface ViewModeRendererProps {
   note: Note

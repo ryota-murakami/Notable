@@ -5,9 +5,9 @@ import * as React from 'react'
 import type { TCommentText } from 'platejs'
 import {
   PlateLeaf,
+  type PlateLeafProps,
   useEditorPlugin,
   usePluginOption,
-  type PlateLeafProps,
 } from 'platejs/react'
 import { getCommentCount } from '@platejs/comment'
 

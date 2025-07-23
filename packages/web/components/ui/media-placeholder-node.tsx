@@ -5,9 +5,9 @@ import * as React from 'react'
 import { KEYS, type TPlaceholderElement } from 'platejs'
 import {
   PlateElement,
+  type PlateElementProps,
   useEditorPlugin,
   withHOC,
-  type PlateElementProps,
 } from 'platejs/react'
 
 import {

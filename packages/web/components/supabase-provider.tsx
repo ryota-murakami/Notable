@@ -1,26 +1,36 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useMemo } from 'react'
-import {
-  createClientComponentClient,
-  type Session,
-  type User,
-  type SupabaseClient,
-} from '@supabase/auth-helpers-nextjs'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { type SupabaseClient } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+import type { Database } from '@/types/database'
+import { createSupabaseClientInstance } from '@/lib/supabase'
+
+// Simple session type
+type SimpleSession = {
+  user: SimpleUser | null
+  access_token?: string | undefined
+}
+
+// Simple user type
+export type SimpleUser = {
+  id: string
+  email?: string
+  user_metadata?: Record<string, unknown>
+}
 
 type SupabaseContext = {
-  supabase: SupabaseClient | null
-  user: User | null
-  session: Session | null
+  supabase: SupabaseClient<Database> | null
+  user: SimpleUser | null
+  session: SimpleSession | null
   loading: boolean
 }
 
 const Context = createContext<SupabaseContext | undefined>(undefined)
 
 export function SupabaseProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
+  const [user, setUser] = useState<SimpleUser | null>(null)
+  const [session, setSession] = useState<SimpleSession | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -31,7 +41,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      return createClientComponentClient()
+      return createSupabaseClientInstance()
     } catch (error) {
       console.warn('Failed to create Supabase client:', error)
       return null
@@ -45,24 +55,56 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     }
 
     const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
 
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
+        const simpleSession: SimpleSession = {
+          user: session?.user
+            ? ({
+                id: session.user.id,
+                email: session.user.email || undefined,
+                user_metadata: session.user.user_metadata,
+              } as SimpleUser)
+            : null,
+          access_token: session?.access_token,
+        }
+
+        setSession(simpleSession)
+        setUser(simpleSession.user)
+        setLoading(false)
+      } catch (error) {
+        console.warn('Error getting session:', error)
+        setLoading(false)
+      }
     }
 
     getSession()
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-      router.refresh()
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      try {
+        const simpleSession: SimpleSession = {
+          user: session?.user
+            ? ({
+                id: session.user.id,
+                email: session.user.email || undefined,
+                user_metadata: session.user.user_metadata,
+              } as SimpleUser)
+            : null,
+          access_token: session?.access_token,
+        }
+
+        setSession(simpleSession)
+        setUser(simpleSession.user)
+        setLoading(false)
+        router.refresh()
+      } catch (error) {
+        console.warn('Error in auth state change:', error)
+        setLoading(false)
+      }
     })
 
     return () => {

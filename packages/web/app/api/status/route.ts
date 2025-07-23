@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { logger } from '@/lib/logging/logger.server'
 
@@ -98,7 +98,7 @@ async function getActiveIncidents(): Promise<unknown[]> {
     let supabase
     try {
       supabase = getSupabaseClient()
-    } catch (error) {
+    } catch {
       return []
     }
 
@@ -145,7 +145,7 @@ export async function GET(_request: NextRequest) {
           let supabase
           try {
             supabase = getSupabaseClient()
-          } catch (error) {
+          } catch {
             return {
               status: 'outage' as const,
               responseTime: Date.now() - start,
@@ -167,7 +167,7 @@ export async function GET(_request: NextRequest) {
           let supabase
           try {
             supabase = getSupabaseClient()
-          } catch (error) {
+          } catch {
             return {
               status: 'outage' as const,
               responseTime: Date.now() - start,

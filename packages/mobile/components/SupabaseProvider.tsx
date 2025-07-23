@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { SupabaseClient, User, Session } from '@supabase/supabase-js'
+import {
+  type Session,
+  type SupabaseClient,
+  type User,
+} from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 
 interface SupabaseContextType {

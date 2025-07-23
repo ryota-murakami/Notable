@@ -5,10 +5,10 @@ import * as React from 'react'
 import type { TSuggestionData, TSuggestionText } from 'platejs'
 import {
   PlateLeaf,
-  useEditorPlugin,
-  usePluginOption,
   type PlateLeafProps,
   type RenderNodeWrapper,
+  useEditorPlugin,
+  usePluginOption,
 } from 'platejs/react'
 
 import { CornerDownLeftIcon } from 'lucide-react'

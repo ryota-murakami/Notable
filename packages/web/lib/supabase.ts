@@ -2,8 +2,6 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
 // Lazy initialization to avoid errors during build time
-let supabaseInstance: SupabaseClient<Database> | null = null
-let supabaseAdminInstance: SupabaseClient<Database> | null = null
 
 function getSupabaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -32,56 +30,46 @@ function getSupabaseServiceKey(): string {
   return key
 }
 
-// Public client for browser-side operations
-export const supabase: SupabaseClient<Database> = new Proxy(
-  {} as SupabaseClient<Database>,
-  {
-    get(target, prop, receiver) {
-      if (!supabaseInstance) {
-        const url = getSupabaseUrl()
-        const key = getSupabaseAnonKey()
-        const isPlaceholder =
-          url.includes('placeholder') || key.includes('placeholder')
+// Simple function to create supabase client
+function createSupabaseClient(): SupabaseClient<Database> {
+  const url = getSupabaseUrl()
+  const key = getSupabaseAnonKey()
+  const isPlaceholder =
+    url.includes('placeholder') || key.includes('placeholder')
 
-        if (isPlaceholder && typeof window !== 'undefined') {
-          console.warn(
-            'Using placeholder Supabase configuration for development/testing'
-          )
-        }
-
-        supabaseInstance = createClient<Database>(url, key, {
-          auth: {
-            autoRefreshToken: !isPlaceholder,
-            persistSession: !isPlaceholder,
-            detectSessionInUrl: !isPlaceholder,
-          },
-          db: {
-            schema: 'public',
-          },
-        })
-      }
-      return Reflect.get(supabaseInstance, prop, receiver)
-    },
+  if (isPlaceholder && typeof window !== 'undefined') {
+    console.warn(
+      'Using placeholder Supabase configuration for development/testing'
+    )
   }
-)
+
+  return createClient<Database>(url, key, {
+    auth: {
+      autoRefreshToken: !isPlaceholder,
+      persistSession: !isPlaceholder,
+      detectSessionInUrl: !isPlaceholder,
+    },
+    db: {
+      schema: 'public',
+    },
+  })
+}
+
+// Export the client creation function instead of a global instance
+export const createSupabaseClientInstance = createSupabaseClient
 
 // Admin client for server-side operations
-export const supabaseAdmin: SupabaseClient<Database> = new Proxy(
-  {} as SupabaseClient<Database>,
-  {
-    get(target, prop, receiver) {
-      if (!supabaseAdminInstance) {
-        const url = getSupabaseUrl()
-        const key = getSupabaseServiceKey()
+function createSupabaseAdminClient(): SupabaseClient<Database> {
+  const url = getSupabaseUrl()
+  const key = getSupabaseServiceKey()
 
-        supabaseAdminInstance = createClient<Database>(url, key, {
-          auth: {
-            autoRefreshToken: false,
-            persistSession: false,
-          },
-        })
-      }
-      return Reflect.get(supabaseAdminInstance, prop, receiver)
+  return createClient<Database>(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
     },
-  }
-)
+  })
+}
+
+// Export the admin client creation function instead of a global instance
+export const createSupabaseAdminClientInstance = createSupabaseAdminClient

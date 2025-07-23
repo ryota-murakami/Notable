@@ -3,8 +3,8 @@
 import type { TDateElement } from 'platejs'
 import {
   PlateElement,
-  useReadOnly,
   type PlateElementProps,
+  useReadOnly,
 } from 'platejs/react'
 
 import { Calendar } from '@/components/ui/calendar'

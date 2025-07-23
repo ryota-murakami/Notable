@@ -16,7 +16,7 @@ const Tweet = dynamic(
     ),
   }
 )
-import { PlateElement, withHOC, type PlateElementProps } from 'platejs/react'
+import { PlateElement, type PlateElementProps, withHOC } from 'platejs/react'
 
 import { parseTwitterUrl, parseVideoUrl } from '@platejs/media'
 import { MediaEmbedPlugin, useMediaState } from '@platejs/media/react'

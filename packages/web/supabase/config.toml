@@ -76,7 +76,7 @@ additional_redirect_urls = ["https://127.0.0.1:3000"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604800 (1 week).
 jwt_expiry = 3600
 # If disabled, the refresh token will never expire.
-refresh_token_rotation_enabled = true
+# refresh_token_rotation_enabled = true
 # Allows refresh tokens to be reused after expiry, up to the specified interval in seconds.
 # Requires refresh_token_rotation_enabled to be false.
 # refresh_token_reuse_interval = 10
@@ -301,8 +301,6 @@ backend = "postgres"
 
 [functions]
 # A mapping of function names to their corresponding Docker image.
-[functions._cmd]
-import_map = "deno.json"
 
 [functions.hello-world]
 verify_jwt = false

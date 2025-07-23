@@ -5,13 +5,13 @@ import * as React from 'react'
 import { PathApi, type TColumnElement } from 'platejs'
 import {
   PlateElement,
+  type PlateElementProps,
   useEditorRef,
   useElement,
   usePluginOption,
   useReadOnly,
   useRemoveNodeButton,
   withHOC,
-  type PlateElementProps,
 } from 'platejs/react'
 
 import { useDraggable, useDropLine } from '@platejs/dnd'
@@ -22,8 +22,8 @@ import { BlockSelectionPlugin } from '@platejs/selection/react'
 import { useComposedRef } from '@udecode/cn'
 import {
   GripHorizontal,
-  Trash2 as Trash2Icon,
   type LucideProps,
+  Trash2 as Trash2Icon,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'

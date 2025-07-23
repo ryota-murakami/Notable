@@ -2,13 +2,13 @@ import * as React from 'react'
 
 import {
   NodeApi,
-  SlateElement,
   type SlateEditor,
+  SlateElement,
   type SlateElementProps,
   type TElement,
 } from 'platejs'
 
-import { type Heading, BaseTocPlugin, isHeading } from '@platejs/toc'
+import { BaseTocPlugin, type Heading, isHeading } from '@platejs/toc'
 import { cva } from 'class-variance-authority'
 
 import { Button } from '@/components/ui/button'

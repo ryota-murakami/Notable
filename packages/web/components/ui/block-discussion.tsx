@@ -22,11 +22,11 @@ import {
   type AnyPluginConfig,
   type NodeEntry,
   type Path,
+  PathApi,
   type TCommentText,
   type TElement,
-  type TSuggestionText,
-  PathApi,
   TextApi,
+  type TSuggestionText,
 } from 'platejs'
 
 import { Button } from '@/components/ui/button'
@@ -38,8 +38,8 @@ import {
 } from '@/components/ui/popover'
 import { commentPlugin } from '@/components/editor/plugins/comment-kit'
 import {
-  type TDiscussion,
   discussionPlugin,
+  type TDiscussion,
 } from '@/components/editor/plugins/discussion-kit'
 import { suggestionPlugin } from '@/components/editor/plugins/suggestion-kit'
 

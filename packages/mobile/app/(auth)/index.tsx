@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { View, StyleSheet, Alert, Text } from 'react-native'
+import { Alert, StyleSheet, Text, View } from 'react-native'
 import {
-  TextInput,
   Button,
   Card,
-  Title,
-  Paragraph,
   Divider,
+  Paragraph,
+  TextInput,
+  Title,
   useTheme,
 } from 'react-native-paper'
 import { Link } from 'expo-router'

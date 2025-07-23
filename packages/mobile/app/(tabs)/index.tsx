@@ -1,12 +1,12 @@
-import { useState, useMemo } from 'react'
-import { View, FlatList, StyleSheet } from 'react-native'
-import { FAB, Text, ActivityIndicator } from 'react-native-paper'
+import { useMemo, useState } from 'react'
+import { FlatList, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, FAB, Text } from 'react-native-paper'
 import { useRouter } from 'expo-router'
 import { useSupabase } from '@/components/SupabaseProvider'
 import { useOfflineNotes } from '@/hooks/use-offline-notes'
 import { NoteCard } from '@/components/NoteCard'
 import { EmptyState } from '@/components/EmptyState'
-import { Note } from '@/types'
+import { type Note } from '@/types'
 
 export default function NotesScreen() {
   const { user } = useSupabase()

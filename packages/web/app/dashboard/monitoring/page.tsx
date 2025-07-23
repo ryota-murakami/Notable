@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Card,
   CardContent,
@@ -19,12 +19,12 @@ import {
   Clock,
   Database,
   Globe,
+  RefreshCw,
   Server,
+  TrendingDown,
+  TrendingUp,
   Users,
   Zap,
-  TrendingUp,
-  TrendingDown,
-  RefreshCw,
 } from 'lucide-react'
 
 interface ServiceStatus {

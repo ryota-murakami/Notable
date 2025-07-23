@@ -3,8 +3,8 @@
 import * as React from 'react'
 
 import {
-  type DropdownMenuProps,
   DropdownMenuItemIndicator,
+  type DropdownMenuProps,
 } from '@radix-ui/react-dropdown-menu'
 
 import { LineHeightPlugin } from '@platejs/basic-styles/react'

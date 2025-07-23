@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 
-import { type TLinkElement, KEYS } from 'platejs'
+import { KEYS, type TLinkElement } from 'platejs'
 
-import { type UseVirtualFloatingOptions, flip, offset } from '@platejs/floating'
+import { flip, offset, type UseVirtualFloatingOptions } from '@platejs/floating'
 import { getLinkAttributes } from '@platejs/link'
 import {
-  type LinkFloatingToolbarState,
   FloatingLinkUrlInput,
+  type LinkFloatingToolbarState,
   useFloatingLinkEdit,
   useFloatingLinkEditState,
   useFloatingLinkInsert,
