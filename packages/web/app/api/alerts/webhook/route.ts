@@ -75,8 +75,7 @@ async function sendSlackNotification(
     })
   } catch (error) {
     logger.error('Failed to send Slack notification', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error instanceof Error ? error : new Error(String(error)),
       alertStatus: payload.status,
       alertCount: payload.alerts.length,
       hasWebhookUrl: !!process.env.SLACK_WEBHOOK_URL,
@@ -153,8 +152,7 @@ async function sendEmailNotification(
     })
   } catch (error) {
     logger.error('Failed to send email notification', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error instanceof Error ? error : new Error(String(error)),
       alertStatus: payload.status,
       alertCount: payload.alerts.length,
       hasResendKey: !!process.env.RESEND_API_KEY,
@@ -199,8 +197,7 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
     }
   } catch (error) {
     logger.error('Failed to store alerts in database', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error instanceof Error ? error : new Error(String(error)),
       alertCount: payload.alerts.length,
       hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
       hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -242,8 +239,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     logger.error('Alert webhook processing failed', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error instanceof Error ? error : new Error(String(error)),
       headers: Object.fromEntries(await headers()),
       timestamp: new Date().toISOString(),
     })

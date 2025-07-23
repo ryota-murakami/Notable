@@ -101,8 +101,7 @@ export async function POST(request: NextRequest) {
     // Use proper logging instead of console.error
     const logger = (await import('@/lib/logging/logger.server')).logger
     logger.error('Analytics processing failed', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error instanceof Error ? error : new Error(String(error)),
       timestamp: new Date().toISOString(),
     })
     return NextResponse.json(
