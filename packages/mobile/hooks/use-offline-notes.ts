@@ -183,34 +183,34 @@ export function useOfflineNotes({
     }
   }, [user, isOnline, getCachedNotes, setCachedNotes, processSyncQueue])
 
-  const mergeNotesWithConflictResolution = (
-    cachedNotes: Note[],
-    serverNotes: Note[]
-  ): Note[] => {
-    const merged = new Map<string, Note>()
+  const mergeNotesWithConflictResolution = useCallback(
+    (cachedNotes: Note[], serverNotes: Note[]): Note[] => {
+      const merged = new Map<string, Note>()
 
-    // Add all server notes first
-    serverNotes.forEach((note) => {
-      merged.set(note.id, note)
-    })
+      // Add all server notes first
+      serverNotes.forEach((note) => {
+        merged.set(note.id, note)
+      })
 
-    // Merge cached notes, resolving conflicts
-    cachedNotes.forEach((cachedNote) => {
-      const serverNote = merged.get(cachedNote.id)
-      if (serverNote) {
-        const resolved = resolveConflict(cachedNote, serverNote)
-        merged.set(cachedNote.id, resolved)
-      } else {
-        // Note exists only in cache (likely pending sync)
-        merged.set(cachedNote.id, cachedNote)
-      }
-    })
+      // Merge cached notes, resolving conflicts
+      cachedNotes.forEach((cachedNote) => {
+        const serverNote = merged.get(cachedNote.id)
+        if (serverNote) {
+          const resolved = resolveConflict(cachedNote, serverNote)
+          merged.set(cachedNote.id, resolved)
+        } else {
+          // Note exists only in cache (likely pending sync)
+          merged.set(cachedNote.id, cachedNote)
+        }
+      })
 
-    return Array.from(merged.values()).sort(
-      (a, b) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    )
-  }
+      return Array.from(merged.values()).sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+    },
+    [resolveConflict]
+  )
 
   // Create a new note
   const createNote = useCallback(

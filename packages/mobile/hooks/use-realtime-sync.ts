@@ -59,11 +59,14 @@ const generateUserColor = (userId: string): string => {
 }
 
 // Throttle function for performance
-const throttle = (func: (...args: any[]) => void, delay: number) => {
+const throttle = <T extends unknown[]>(
+  func: (...args: T) => void,
+  delay: number
+) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 
-  return function (this: any, ...args: any[]) {
+  return function (this: any, ...args: T) {
     const currentTime = Date.now()
 
     if (currentTime - lastExecTime > delay) {

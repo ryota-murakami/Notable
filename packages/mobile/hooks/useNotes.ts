@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Note } from '@/types'
 import { useSupabase } from '@/components/SupabaseProvider'
+import { supabase } from '@/lib/supabase'
 
 export function useNotes() {
   const { user } = useSupabase()
@@ -13,12 +14,24 @@ export function useNotes() {
   }, [user?.id])
 
   const loadNotes = async () => {
+    if (!user?.id) return
+
     try {
       setIsLoading(true)
-      // In a real implementation, this would fetch from Supabase or local storage
-      // For now, return empty arrays
-      setNotes([])
-      setFolders([])
+      const { data: notesData } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('isFolder', false)
+
+      const { data: foldersData } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('isFolder', true)
+
+      setNotes(notesData || [])
+      setFolders(foldersData || [])
     } catch (error) {
       console.error('Error loading notes:', error)
     } finally {

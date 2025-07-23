@@ -37,7 +37,7 @@ export const useSupabaseNotes = ({ user_id }: UseSupabaseNotesOptions) => {
 
     const channel = supabase
       .channel(`notes:${user_id}`)
-      .on<Note>(
+      .on(
         'postgres_changes',
         {
           event: '*',
@@ -45,7 +45,7 @@ export const useSupabaseNotes = ({ user_id }: UseSupabaseNotesOptions) => {
           table: 'notes',
           filter: `user_id=eq.${user_id}`,
         },
-        (payload: { eventType: string; new?: Note; old?: Note }) => {
+        (payload: any) => {
           if (payload.eventType === 'INSERT' && payload.new) {
             setNotes((prev) => [...prev, payload.new])
           }
