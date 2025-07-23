@@ -1,7 +1,7 @@
 'use client'
 
 import { useSupabase } from '@/components/supabase-provider'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import type { Note } from '@/types/note'
 import {
@@ -30,9 +30,9 @@ export default function DashboardPage() {
     if (user) {
       loadNotes()
     }
-  }, [user])
+  }, [user, loadNotes])
 
-  const loadNotes = async () => {
+  const loadNotes = useCallback(async () => {
     try {
       setIsLoadingNotes(true)
       const { data, error } = await supabase
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoadingNotes(false)
     }
-  }
+  }, [supabase, user?.id])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()

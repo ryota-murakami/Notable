@@ -14,7 +14,7 @@ interface ServiceStatus {
 interface StatusPageResponse {
   status: 'operational' | 'degraded' | 'outage'
   services: ServiceStatus[]
-  incidents: any[]
+  incidents: unknown[]
   lastUpdated: string
   uptime: {
     last24Hours: number
@@ -25,8 +25,8 @@ interface StatusPageResponse {
 
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   {
     auth: {
       persistSession: false,
@@ -87,7 +87,7 @@ async function getUptimeStats(): Promise<StatusPageResponse['uptime']> {
 }
 
 // Get active incidents
-async function getActiveIncidents(): Promise<any[]> {
+async function getActiveIncidents(): Promise<unknown[]> {
   try {
     // In production, query your incident management system
     // For now, check for recent errors in logs

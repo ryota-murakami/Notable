@@ -4,7 +4,7 @@ export const runtime = 'edge'
 
 interface CacheEntry {
   key: string
-  value: any
+  value: unknown
   ttl: number
   createdAt: number
   tags: string[]
@@ -131,7 +131,7 @@ function getCacheEntry(key: string): CacheEntry | null {
 // Set cache entry
 function setCacheEntry(
   key: string,
-  value: any,
+  value: unknown,
   ttl: number = CACHE_CONFIG.defaultTTL,
   tags: string[] = [],
   region?: string

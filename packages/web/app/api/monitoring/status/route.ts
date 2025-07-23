@@ -11,7 +11,7 @@ interface ServiceCheck {
 interface StatusPageData {
   overallStatus: 'operational' | 'degraded' | 'outage'
   services: ServiceCheck[]
-  incidents: any[]
+  incidents: unknown[]
   uptime: {
     last24h: number
     last7d: number

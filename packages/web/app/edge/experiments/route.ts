@@ -9,7 +9,7 @@ interface Experiment {
     id: string
     name: string
     weight: number
-    config: Record<string, any>
+    config: Record<string, unknown>
   }[]
   enabled: boolean
   targetingRules?: {
@@ -179,7 +179,7 @@ function assignVariant(experiment: Experiment, userIdentifier: string) {
 export async function GET(request: NextRequest) {
   try {
     const userIdentifier = getUserIdentifier(request)
-    const experiments: Record<string, any> = {}
+    const experiments: Record<string, unknown> = {}
 
     // Process A/B tests
     for (const experiment of EXPERIMENTS) {
@@ -247,6 +247,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log for debugging (in production, send to analytics)
+    // eslint-disable-next-line no-console
     console.log('Experiment event:', eventData)
 
     return NextResponse.json({ success: true })

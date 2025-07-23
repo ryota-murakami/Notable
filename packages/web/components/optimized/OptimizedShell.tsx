@@ -101,17 +101,22 @@ export function OptimizedShell() {
 
     // Monitor web vitals
     const unsubscribe = observeWebVitals((metric) => {
+      // eslint-disable-next-line no-console
       console.log(`${metric.name}: ${metric.value} (${metric.rating})`)
 
       // Send to analytics if needed
-      if ((window as any).gtag) {
-        ;(window as any).gtag('event', metric.name, {
-          value: Math.round(
-            metric.name === 'CLS' ? metric.value * 1000 : metric.value
-          ),
-          metric_rating: metric.rating,
-          non_interaction: true,
-        })
+      if ((window as Window & { gtag?: (...args: unknown[]) => void }).gtag) {
+        ;(window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.(
+          'event',
+          metric.name,
+          {
+            value: Math.round(
+              metric.name === 'CLS' ? metric.value * 1000 : metric.value
+            ),
+            metric_rating: metric.rating,
+            non_interaction: true,
+          }
+        )
       }
     })
 

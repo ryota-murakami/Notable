@@ -13,15 +13,15 @@ interface HealthCheckResponse {
       status: 'pass' | 'fail' | 'warn'
       message?: string
       responseTime?: number
-      details?: any
+      details?: unknown
     }
   }
 }
 
 // Initialize Supabase client for health checks
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   {
     auth: {
       persistSession: false,
