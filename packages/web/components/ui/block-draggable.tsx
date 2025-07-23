@@ -14,8 +14,8 @@ import {
   useEditorRef,
   useElement,
   usePluginOption,
+  useSelected,
 } from 'platejs/react'
-import { useSelected } from 'platejs/react'
 
 import { Button } from '@/components/ui/button'
 import {
