@@ -107,9 +107,9 @@ export async function POST(request: NextRequest) {
 }
 
 // Get analytics summary
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(_request.url)
+    const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || '7d'
 
     // Calculate date range

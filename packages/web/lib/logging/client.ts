@@ -1,5 +1,4 @@
-import type { LogMetadata } from './index'
-import { LogLevel } from './index'
+import { LogLevel, type LogMetadata } from './index'
 
 interface LogBuffer {
   entries: Array<{
