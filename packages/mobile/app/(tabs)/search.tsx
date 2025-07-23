@@ -82,7 +82,13 @@ export default function SearchScreen() {
 
   const renderItem = ({ item }: { item: SearchResultItem }) => {
     return (
-      <NoteCard note={item.item} onPress={() => handleNotePress(item.item)} />
+      <NoteCard
+        note={item.item}
+        onPress={() => handleNotePress(item.item)}
+        onDelete={() => {
+          // TODO: Implement delete functionality for search results
+        }}
+      />
     )
   }
 
