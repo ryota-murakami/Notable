@@ -30,48 +30,10 @@ const nextConfig = {
         : false,
   },
 
-  // Bundle optimization
-  webpack: (config, { isServer }) => {
-    // Optimize bundle size
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        commons: {
-          name: 'commons',
-          chunks: 'all',
-          minChunks: 2,
-        },
-        react: {
-          name: 'react',
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          chunks: 'all',
-          priority: 20,
-        },
-        supabase: {
-          name: 'supabase',
-          test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-          chunks: 'all',
-          priority: 15,
-        },
-        editor: {
-          name: 'editor',
-          test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
-          chunks: 'all',
-          priority: 10,
-        },
-      },
-    }
-
-    // Tree shaking for production
-    if (!isServer && process.env.NODE_ENV === 'production') {
-      config.optimization.usedExports = true
-      config.optimization.sideEffects = false
-    }
-
-    return config
-  },
+  // Bundle optimization - commented out to fix self is not defined issue
+  // webpack: (config, { isServer }) => {
+  //   return config
+  // },
 
   // Headers for caching and security
   async headers() {
