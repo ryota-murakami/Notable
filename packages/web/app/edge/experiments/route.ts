@@ -124,7 +124,7 @@ function getUserIdentifier(request: NextRequest): string {
 // Check if user meets targeting rules
 function matchesTargeting(
   request: NextRequest,
-  rules?: Experiment['targetingRules'],
+  rules?: Experiment['targetingRules']
 ): boolean {
   if (!rules) return true
 
@@ -140,7 +140,7 @@ function matchesTargeting(
   if (rules.userAgent) {
     const userAgent = request.headers.get('user-agent') || ''
     const matches = rules.userAgent.some((pattern) =>
-      userAgent.toLowerCase().includes(pattern.toLowerCase()),
+      userAgent.toLowerCase().includes(pattern.toLowerCase())
     )
     if (!matches) return false
   }
@@ -190,9 +190,11 @@ export async function GET(request: NextRequest) {
       }
 
       const variant = assignVariant(experiment, userIdentifier)
-      experiments[experiment.id] = {
-        variant: variant.id,
-        config: variant.config,
+      if (variant) {
+        experiments[experiment.id] = {
+          variant: variant.id,
+          config: variant.config,
+        }
       }
     }
 
@@ -212,7 +214,7 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to get experiments' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -226,7 +228,7 @@ export async function POST(request: NextRequest) {
     if (!event || !experimentId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -251,7 +253,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to track event' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

@@ -1,8 +1,10 @@
 // Service Worker Registration with Performance Monitoring
 
-export async function registerServiceWorker() {
+export async function registerServiceWorker(): Promise<
+  ServiceWorkerRegistration | undefined
+> {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
-    return
+    return undefined
   }
 
   try {
@@ -43,7 +45,7 @@ export async function registerServiceWorker() {
     // Enable background sync if available
     if ('sync' in registration) {
       try {
-        await registration.sync.register('sync-notes')
+        await (registration as any).sync.register('sync-notes')
         console.log('Background sync registered')
       } catch (err) {
         console.log('Background sync registration failed:', err)
@@ -55,7 +57,7 @@ export async function registerServiceWorker() {
       if (event.data && event.data.type === 'SYNC_NOTES') {
         // Trigger note sync in the app
         window.dispatchEvent(
-          new CustomEvent('sw-sync-notes', { detail: event.data }),
+          new CustomEvent('sw-sync-notes', { detail: event.data })
         )
       }
     })
@@ -63,6 +65,7 @@ export async function registerServiceWorker() {
     return registration
   } catch (error) {
     console.error('Service Worker registration failed:', error)
+    return undefined
   }
 }
 

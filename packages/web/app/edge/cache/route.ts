@@ -58,16 +58,17 @@ const CACHE_PATTERNS = {
 }
 
 // Generate cache key with pattern
-function _generateCacheKey(
-  pattern: string,
-  params: Record<string, string>,
-): string {
-  let key = pattern
-  for (const [param, value] of Object.entries(params)) {
-    key = key.replace(`{${param}}`, value)
-  }
-  return key
-}
+// Uncomment when needed
+// function generateCacheKey(
+//   pattern: string,
+//   params: Record<string, string>,
+// ): string {
+//   let key = pattern
+//   for (const [param, value] of Object.entries(params)) {
+//     key = key.replace(`{${param}}`, value)
+//   }
+//   return key
+// }
 
 // Check if key matches pattern
 function matchesPattern(key: string, pattern: string): boolean {
@@ -133,7 +134,7 @@ function setCacheEntry(
   value: any,
   ttl: number = CACHE_CONFIG.defaultTTL,
   tags: string[] = [],
-  region?: string,
+  region?: string
 ): boolean {
   if (!isValidCacheKey(key)) {
     return false
@@ -149,7 +150,9 @@ function setCacheEntry(
     // Remove oldest entry
     const entries = Array.from(edgeCache.entries())
     entries.sort((a, b) => a[1].createdAt - b[1].createdAt)
-    edgeCache.delete(entries[0][0])
+    if (entries.length > 0 && entries[0]) {
+      edgeCache.delete(entries[0][0])
+    }
   }
 
   const entry: CacheEntry = {
@@ -158,7 +161,7 @@ function setCacheEntry(
     ttl,
     createdAt: Date.now(),
     tags,
-    region,
+    ...(region && { region }),
   }
 
   edgeCache.set(key, entry)
@@ -254,7 +257,7 @@ export async function GET(request: NextRequest) {
       if (!entry) {
         return NextResponse.json(
           { error: 'Cache entry not found' },
-          { status: 404 },
+          { status: 404 }
         )
       }
 
@@ -272,7 +275,7 @@ export async function GET(request: NextRequest) {
             'X-Cache-Hit': 'true',
             'X-Cache-TTL': entry.ttl.toString(),
           },
-        },
+        }
       )
     }
 
@@ -310,7 +313,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to get cache entry' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -324,14 +327,14 @@ export async function POST(request: NextRequest) {
     if (!key) {
       return NextResponse.json(
         { error: 'Missing key parameter' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (value === undefined) {
       return NextResponse.json(
         { error: 'Missing value parameter' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -340,13 +343,13 @@ export async function POST(request: NextRequest) {
       value,
       ttl || CACHE_CONFIG.defaultTTL,
       tags,
-      region,
+      region
     )
 
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to set cache entry' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -361,7 +364,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to set cache entry' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -418,7 +421,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to purge cache' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -464,7 +467,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to perform bulk operation' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

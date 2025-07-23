@@ -82,7 +82,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       {
         rootMargin: '50px',
         threshold: 0.01,
-      },
+      }
     )
 
     observerRef.current.observe(imageRef.current)
@@ -122,11 +122,11 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       <div
         className={cn(
           'flex items-center justify-center bg-muted text-muted-foreground',
-          className,
+          className
         )}
         style={{ width: dimensions.width, height: dimensions.height }}
       >
-        <span className="text-sm">Failed to load image</span>
+        <span className='text-sm'>Failed to load image</span>
       </div>
     )
   }
@@ -139,15 +139,15 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     >
       {isLoading && (
         <Skeleton
-          data-testid="skeleton"
-          className="absolute inset-0"
+          data-testid='skeleton'
+          className='absolute inset-0'
           style={{ width: dimensions.width, height: dimensions.height }}
         />
       )}
 
       {isInView && dimensions.width > 0 && dimensions.height > 0 && (
         <Image
-          data-testid="next-image"
+          data-testid='next-image'
           src={src}
           alt={alt}
           width={dimensions.width}
@@ -161,7 +161,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           className={cn(
             'transition-opacity duration-300',
             isLoading ? 'opacity-0' : 'opacity-100',
-            className,
+            className
           )}
           sizes={`(max-width: 640px) 100vw, (max-width: 1024px) 50vw, ${dimensions.width}px`}
         />
@@ -222,19 +222,19 @@ export const OptimizedImageGallery: React.FC<OptimizedImageGalleryProps> = ({
       }}
     >
       {images.map((image, index) => (
-        <div key={index} className="relative">
+        <div key={index} className='relative'>
           {loadedImages.has(index) ? (
             <OptimizedImage
               src={image.src}
               alt={image.alt}
-              width={image.width}
-              height={image.height}
-              className="w-full h-auto"
+              {...(image.width !== undefined && { width: image.width })}
+              {...(image.height !== undefined && { height: image.height })}
+              className='w-full h-auto'
             />
           ) : (
             <Skeleton
-              data-testid="skeleton"
-              className="w-full"
+              data-testid='skeleton'
+              className='w-full'
               style={{
                 aspectRatio:
                   image.width && image.height

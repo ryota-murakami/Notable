@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "types": ["jest", "node"],
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./*"],
       "@/components/*": ["./components/*"],

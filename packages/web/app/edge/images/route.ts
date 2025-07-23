@@ -42,7 +42,7 @@ function generateCacheKey(params: ImageTransformParams): string {
 function getOptimizedDimensions(
   request: NextRequest,
   width?: number,
-  height?: number,
+  height?: number
 ): { width?: number; height?: number } {
   const userAgent = request.headers.get('user-agent') || ''
   const isMobile = /mobile|android|iphone/i.test(userAgent)
@@ -59,13 +59,16 @@ function getOptimizedDimensions(
     }
   }
 
-  return { width, height }
+  return {
+    ...(width !== undefined && { width }),
+    ...(height !== undefined && { height }),
+  }
 }
 
 // Check if browser supports modern image formats
 function getSupportedFormat(
   request: NextRequest,
-  preferredFormat?: string,
+  preferredFormat?: string
 ): string {
   const accept = request.headers.get('accept') || ''
 
@@ -94,8 +97,8 @@ async function transformImage(params: ImageTransformParams): Promise<Response> {
     width,
     height,
     quality = 80,
-    _format = 'webp',
-    _fit = 'cover',
+    // format = 'webp',
+    // fit = 'cover',
   } = params
 
   // Build transformation URL (using Vercel's built-in image optimization)
@@ -132,7 +135,10 @@ export async function GET(request: NextRequest) {
     const quality = searchParams.get('q')
       ? parseInt(searchParams.get('q')!)
       : 80
-    const format = searchParams.get('f') as ImageTransformParams['format']
+    const formatParam = searchParams.get('f')
+    const format = formatParam
+      ? (formatParam as ImageTransformParams['format'])
+      : undefined
     const fit =
       (searchParams.get('fit') as ImageTransformParams['fit']) || 'cover'
     const gravity =
@@ -141,14 +147,14 @@ export async function GET(request: NextRequest) {
     if (!url) {
       return NextResponse.json(
         { error: 'Missing url parameter' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (!isValidImageUrl(url)) {
       return NextResponse.json(
         { error: 'Invalid or unauthorized image URL' },
-        { status: 403 },
+        { status: 403 }
       )
     }
 
@@ -156,14 +162,14 @@ export async function GET(request: NextRequest) {
     if (width && (width < 1 || width > 3840)) {
       return NextResponse.json(
         { error: 'Width must be between 1 and 3840 pixels' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (height && (height < 1 || height > 2160)) {
       return NextResponse.json(
         { error: 'Height must be between 1 and 2160 pixels' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -174,10 +180,19 @@ export async function GET(request: NextRequest) {
     const transformParams: ImageTransformParams = {
       url,
       ...optimizedDimensions,
-      quality: Math.min(Math.max(quality, 1), 100),
-      format: supportedFormat as ImageTransformParams['format'],
-      fit,
-      gravity,
+      ...(quality !== undefined && {
+        quality: Math.min(Math.max(quality, 1), 100),
+      }),
+      ...(fit && { fit }),
+      ...(gravity && { gravity }),
+    }
+
+    // Add format only if it exists and is valid
+    if (
+      supportedFormat &&
+      ['webp', 'jpeg', 'png', 'avif'].includes(supportedFormat)
+    ) {
+      transformParams.format = supportedFormat as ImageTransformParams['format']
     }
 
     // Generate cache key
@@ -187,12 +202,7 @@ export async function GET(request: NextRequest) {
     const cacheUrl = `https://edge-cache.vercel.app/${cacheKey}`
 
     try {
-      const cachedResponse = await fetch(cacheUrl, {
-        cf: {
-          cacheTtl: 86400, // Cache for 24 hours
-          cacheEverything: true,
-        },
-      })
+      const cachedResponse = await fetch(cacheUrl)
 
       if (cachedResponse.ok) {
         return new Response(cachedResponse.body, {
@@ -226,7 +236,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to process image' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -244,7 +254,7 @@ export async function POST(request: NextRequest) {
     if (urls.length > 10) {
       return NextResponse.json(
         { error: 'Maximum 10 URLs per request' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -297,7 +307,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to prefetch images' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

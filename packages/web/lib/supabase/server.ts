@@ -1,18 +1,9 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import {
+  createServerClient as createSupabaseServerClient,
+  type CookieOptions,
+} from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { Database } from '@/types/database'
-
-interface CookieOptions {
-  name?: string
-  value?: string
-  maxAge?: number
-  expires?: Date
-  path?: string
-  domain?: string
-  secure?: boolean
-  httpOnly?: boolean
-  sameSite?: boolean | 'lax' | 'strict' | 'none'
-}
+import type { Database } from '@/types/database'
 
 function getRequiredEnvVar(name: string): string {
   const value = process.env[name]
@@ -25,7 +16,7 @@ function getRequiredEnvVar(name: string): string {
 export async function createServerClient() {
   const cookieStore = await cookies()
 
-  return createSupabaseClient<Database>(
+  return createSupabaseServerClient<Database>(
     getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_URL'),
     getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
     {
@@ -34,24 +25,19 @@ export async function createServerClient() {
           return cookieStore.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options })
+          try {
+            cookieStore.set({ name, value, ...options })
+          } catch {
+            // Server Component cookie handling
+          }
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options })
+          try {
+            cookieStore.set({ name, value: '', ...options })
+          } catch {
+            // Server Component cookie handling
+          }
         },
-      },
-    }
-  )
-}
-
-export async function createServiceRoleClient() {
-  return createSupabaseClient<Database>(
-    getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_URL'),
-    getRequiredEnvVar('SUPABASE_SERVICE_ROLE_KEY'),
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
       },
     }
   )
