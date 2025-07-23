@@ -11,7 +11,7 @@ export const useSupabaseNotes = ({ user_id }: UseSupabaseNotesOptions) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Realtime sync is handled separately in useRealtimeSync hook
+  // Real-time sync is handled directly in this hook
 
   const fetchNotes = useCallback(async () => {
     if (!user_id) return
@@ -45,17 +45,17 @@ export const useSupabaseNotes = ({ user_id }: UseSupabaseNotesOptions) => {
           table: 'notes',
           filter: `user_id=eq.${user_id}`,
         },
-        (payload: any) => {
-          if (payload.eventType === 'INSERT') {
+        (payload: { eventType: string; new?: Note; old?: Note }) => {
+          if (payload.eventType === 'INSERT' && payload.new) {
             setNotes((prev) => [...prev, payload.new])
           }
-          if (payload.eventType === 'UPDATE') {
+          if (payload.eventType === 'UPDATE' && payload.new) {
             setNotes((prev) =>
-              prev.map((n) => (n.id === payload.new.id ? payload.new : n))
+              prev.map((n) => (n.id === payload.new?.id ? payload.new : n))
             )
           }
-          if (payload.eventType === 'DELETE') {
-            setNotes((prev) => prev.filter((n) => n.id !== payload.old.id))
+          if (payload.eventType === 'DELETE' && payload.old) {
+            setNotes((prev) => prev.filter((n) => n.id !== payload.old?.id))
           }
         }
       )

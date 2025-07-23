@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { supabase } from '@/lib/supabase'
 import { Note, NoteCreate, NoteUpdate } from '../types'
 import {
   useRealtimeSync,
@@ -62,40 +61,7 @@ export function useOfflineNotes({
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  // Initialize Supabase client
-  useEffect(() => {
-    const initializeSupabase = async () => {
-      try {
-        const supabaseUrl =
-          process.env.EXPO_PUBLIC_SUPABASE_URL ||
-          'https://your-project.supabase.co'
-        const supabaseKey =
-          process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
-
-        if (!supabaseUrl || !supabaseKey) {
-          setError('Supabase configuration missing')
-          return
-        }
-
-        supabaseRef.current = createClient(supabaseUrl, supabaseKey, {
-          auth: {
-            storage: AsyncStorage,
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: false,
-          },
-        })
-      } catch (err) {
-        console.error('Failed to initialize Supabase:', err)
-        setError('Failed to initialize Supabase client')
-      }
-    }
-
-    initializeSupabase()
-  }, [])
 
   // Offline storage integration
   const {
@@ -177,8 +143,8 @@ export function useOfflineNotes({
       }
 
       // If online, fetch latest from server
-      if (isOnline && supabaseRef.current) {
-        const { data, error: fetchError } = await supabaseRef.current
+      if (isOnline && supabase) {
+        const { data, error: fetchError } = await supabase
           .from('notes')
           .select('*')
           .eq('user_id', user.id)
@@ -282,10 +248,10 @@ export function useOfflineNotes({
         await addNoteToCache(newNote)
         setNotes((prev) => [newNote, ...prev])
 
-        if (isOnline && supabaseRef.current) {
+        if (isOnline && supabase) {
           // Try to create on server immediately
           try {
-            const { data, error: createError } = await supabaseRef.current
+            const { data, error: createError } = await supabase
               .from('notes')
               .insert([
                 {
@@ -378,10 +344,10 @@ export function useOfflineNotes({
           prev.map((note) => (note.id === id ? updatedNote : note))
         )
 
-        if (isOnline && supabaseRef.current) {
+        if (isOnline && supabase) {
           // Try to update on server immediately
           try {
-            const { data, error: updateError } = await supabaseRef.current
+            const { data, error: updateError } = await supabase
               .from('notes')
               .update({
                 ...updates,
@@ -456,10 +422,10 @@ export function useOfflineNotes({
         await removeNoteFromCache(id)
         setNotes((prev) => prev.filter((note) => note.id !== id))
 
-        if (isOnline && supabaseRef.current) {
+        if (isOnline && supabase) {
           // Try to delete on server immediately
           try {
-            const { error: deleteError } = await supabaseRef.current
+            const { error: deleteError } = await supabase
               .from('notes')
               .update({
                 deleted_at: new Date().toISOString(),

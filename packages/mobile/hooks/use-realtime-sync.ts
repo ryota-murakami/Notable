@@ -99,14 +99,11 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
     const initializeSupabase = async () => {
       try {
         // In React Native, we might store credentials in AsyncStorage or environment
-        const supabaseUrl =
-          process.env.EXPO_PUBLIC_SUPABASE_URL ||
-          'https://your-project.supabase.co'
-        const supabaseKey =
-          process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
+        const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
+        const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
 
         if (!supabaseUrl || !supabaseKey) {
-          setConnectionError('Supabase configuration missing')
+          setConnectionError('Missing required Supabase environment variables')
           return
         }
 

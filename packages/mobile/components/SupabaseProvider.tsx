@@ -48,11 +48,14 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
   useEffect(() => {
     const initializeSupabase = async () => {
       try {
-        const supabaseUrl =
-          process.env.EXPO_PUBLIC_SUPABASE_URL ||
-          'https://your-project.supabase.co'
-        const supabaseKey =
-          process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
+        const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
+        const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+
+        if (!supabaseUrl || !supabaseKey) {
+          console.error('Missing required Supabase environment variables')
+          setLoading(false)
+          return
+        }
 
         const client = createClient(supabaseUrl, supabaseKey, {
           auth: {

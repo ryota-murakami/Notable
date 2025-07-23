@@ -10,7 +10,7 @@ export function useNotes() {
 
   useEffect(() => {
     loadNotes()
-  }, [user])
+  }, [user?.id])
 
   const loadNotes = async () => {
     try {
