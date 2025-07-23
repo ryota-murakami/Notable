@@ -2,7 +2,8 @@ import type { LogLevel, LogMetadata, Logger } from './index'
 
 // Console-based logger that works everywhere
 const createUniversalLogger = (): Logger => {
-  const isDevelopment = process.env.NODE_ENV === 'development'
+  const isDevelopment =
+    typeof process !== 'undefined' && process.env?.NODE_ENV === 'development'
 
   const log = (level: LogLevel, message: string, metadata?: LogMetadata) => {
     const timestamp = new Date().toISOString()
@@ -16,10 +17,14 @@ const createUniversalLogger = (): Logger => {
     if (isDevelopment || level === 'error' || level === 'warn') {
       const logMethod =
         level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log'
-      console[logMethod](
-        `[${timestamp}] [${level.toUpperCase()}] ${message}`,
-        metadata || ''
-      )
+      if (metadata) {
+        console[logMethod](
+          `[${timestamp}] [${level.toUpperCase()}] ${message}`,
+          metadata
+        )
+      } else {
+        console[logMethod](`[${timestamp}] [${level.toUpperCase()}] ${message}`)
+      }
     }
   }
 

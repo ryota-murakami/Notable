@@ -122,20 +122,20 @@ export function createClientLogger() {
 
   return {
     error: (message: string, metadata?: LogMetadata) => {
-      if (metadata?.error) {
-        metadata = {
-          ...metadata,
-          error:
-            metadata.error instanceof Error
-              ? {
-                  message: metadata.error.message,
-                  stack: metadata.error.stack,
-                  name: metadata.error.name,
-                }
-              : metadata.error,
-        }
-      }
-      log(LogLevel.ERROR, message, metadata)
+      const processedMetadata = metadata?.error
+        ? {
+            ...metadata,
+            error:
+              metadata.error instanceof Error
+                ? {
+                    message: metadata.error.message,
+                    stack: metadata.error.stack,
+                    name: metadata.error.name,
+                  }
+                : metadata.error,
+          }
+        : metadata
+      log(LogLevel.ERROR, message, processedMetadata)
     },
     warn: (message: string, metadata?: LogMetadata) =>
       log(LogLevel.WARN, message, metadata),

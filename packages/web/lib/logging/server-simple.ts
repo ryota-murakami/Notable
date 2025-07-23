@@ -35,20 +35,20 @@ export function createSimpleServerLogger(): Logger {
 
   return {
     error: (message: string, metadata?: LogMetadata) => {
-      if (metadata?.error) {
-        metadata = {
-          ...metadata,
-          error:
-            metadata.error instanceof Error
-              ? {
-                  message: metadata.error.message,
-                  stack: metadata.error.stack,
-                  name: metadata.error.name,
-                }
-              : metadata.error,
-        }
-      }
-      log('error', message, metadata)
+      const processedMetadata = metadata?.error
+        ? {
+            ...metadata,
+            error:
+              metadata.error instanceof Error
+                ? {
+                    message: metadata.error.message,
+                    stack: metadata.error.stack,
+                    name: metadata.error.name,
+                  }
+                : metadata.error,
+          }
+        : metadata
+      log('error', message, processedMetadata)
     },
     warn: (message: string, metadata?: LogMetadata) =>
       log('warn', message, metadata),

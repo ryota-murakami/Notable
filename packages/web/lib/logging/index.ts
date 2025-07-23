@@ -37,6 +37,9 @@ export interface LogEntry {
   metadata?: LogMetadata
 }
 
+// Helper to detect server environment
+const isServerSide = () => typeof window === 'undefined'
+
 // Helper function to format errors for logging
 export function formatError(error: unknown): {
   message: string
@@ -75,7 +78,7 @@ export function logPerformance(
     performanceWarning: duration > 1000,
   }
 
-  if (typeof window === 'undefined') {
+  if (isServerSide()) {
     console.log(`[${level}] ${message}`, data)
   }
 }
@@ -98,8 +101,8 @@ export function logApiCall(
     duration,
   }
 
-  if (typeof window === 'undefined') {
-    const logMethod = statusCode >= 400 ? 'error' : 'log'
+  if (isServerSide()) {
+    const logMethod = level === LogLevel.ERROR ? 'error' : 'log'
     console[logMethod](`[${level}] ${message}`, data)
   }
 }
@@ -118,7 +121,7 @@ export function logUserAction(
     timestamp: new Date().toISOString(),
   }
 
-  if (typeof window === 'undefined') {
+  if (isServerSide()) {
     console.log(`[${LogLevel.INFO}] ${message}`, data)
   }
 }
@@ -142,7 +145,7 @@ export function logSecurityEvent(
     timestamp: new Date().toISOString(),
   }
 
-  if (typeof window === 'undefined') {
+  if (isServerSide()) {
     const logMethod = level === LogLevel.ERROR ? 'error' : 'warn'
     console[logMethod](`[${level}] ${message}`, data)
   }
