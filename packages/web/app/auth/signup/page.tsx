@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -41,7 +41,21 @@ type SignUpFormData = z.infer<typeof signUpSchema>
 
 export default function SignUpPage() {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+
+  // Lazily create the Supabase client only on the client side
+  const supabase = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return null
+    }
+
+    try {
+      return createClientComponentClient()
+    } catch (error) {
+      console.warn('Failed to create Supabase client:', error)
+      return null
+    }
+  }, [])
+
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -54,6 +68,11 @@ export default function SignUpPage() {
   })
 
   const onSubmit = async (data: SignUpFormData) => {
+    if (!supabase) {
+      setError('Authentication service is not available')
+      return
+    }
+
     try {
       setIsLoading(true)
       setError(null)
@@ -84,6 +103,11 @@ export default function SignUpPage() {
   }
 
   const handleGoogleSignUp = async () => {
+    if (!supabase) {
+      setError('Authentication service is not available')
+      return
+    }
+
     try {
       setIsLoading(true)
       const { error } = await supabase.auth.signInWithOAuth({
