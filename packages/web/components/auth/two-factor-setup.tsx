@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, Copy, Check } from 'lucide-react'
+import { Check, Copy, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface TwoFactorSetupProps {

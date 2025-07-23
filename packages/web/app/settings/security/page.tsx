@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useUser } from '@/hooks/use-user'
 import { useSupabase } from '@/components/supabase-provider'
 import { TwoFactorSetup } from '@/components/auth/two-factor-setup'
@@ -25,7 +25,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Shield, Smartphone, Key, Loader2 } from 'lucide-react'
+import { Key, Loader2, Shield, Smartphone } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function SecuritySettingsPage() {

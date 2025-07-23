@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import speakeasy from 'speakeasy'
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const verified = speakeasy.totp.verify({
       secret: totpSecret.secret,
       encoding: 'base32',
-      token: token,
+      token,
       window: 2,
     })
 
