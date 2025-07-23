@@ -123,7 +123,7 @@
     "tailwind-merge": "^2.5.5",
     "uploadthing": "7.7.2",
     "use-file-picker": "2.1.2",
-    "zod": "^3.24.1"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@mswjs/interceptors": "^0.39.3",

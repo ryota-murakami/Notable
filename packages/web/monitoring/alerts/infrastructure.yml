@@ -1,0 +1,116 @@
+groups:
+  - name: notable_infrastructure
+    interval: 30s
+    rules:
+      # CPU usage alert
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{name="notable_app_1"}[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: notable
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% (threshold: 80%)"
+
+      # Disk space alert
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          service: notable
+        annotations:
+          summary: "Low disk space"
+          description: "Only {{ $value }}% disk space remaining"
+
+      # Redis memory usage
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: notable
+          component: redis
+        annotations:
+          summary: "Redis high memory usage"
+          description: "Redis memory usage is {{ $value }}% (threshold: 90%)"
+
+      # Redis connection issues
+      - alert: RedisConnectionError
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: notable
+          component: redis
+        annotations:
+          summary: "Redis connection error"
+          description: "Cannot connect to Redis server"
+
+      # Database connection pool exhaustion
+      - alert: DatabaseConnectionPoolExhausted
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service: notable
+          component: database
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "{{ $value }}% of max connections used (threshold: 80%)"
+
+      # Container restart alert
+      - alert: ContainerRestarting
+        expr: rate(container_restart_count[5m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+          service: notable
+        annotations:
+          summary: "Container restarting"
+          description: "Container {{ $labels.name }} has restarted {{ $value }} times"
+
+      # SSL certificate expiry
+      - alert: SSLCertificateExpiringSoon
+        expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 30
+        for: 1h
+        labels:
+          severity: warning
+          service: notable
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration }}"
+
+      # Network latency alert
+      - alert: HighNetworkLatency
+        expr: probe_duration_seconds{job="blackbox"} > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: notable
+        annotations:
+          summary: "High network latency detected"
+          description: "Network latency to {{ $labels.instance }} is {{ $value }}s (threshold: 1s)"
+
+      # Load balancer health
+      - alert: LoadBalancerUnhealthy
+        expr: up{job="notable-app"} < 0.5
+        for: 2m
+        labels:
+          severity: critical
+          service: notable
+        annotations:
+          summary: "Load balancer unhealthy"
+          description: "Less than 50% of application instances are healthy"
+
+      # Backup failure alert
+      - alert: BackupFailed
+        expr: time() - notable_last_successful_backup_timestamp > 86400
+        for: 1h
+        labels:
+          severity: critical
+          service: notable
+        annotations:
+          summary: "Backup has not run successfully"
+          description: "Last successful backup was {{ $value | humanizeDuration }} ago"

@@ -1,10 +1,6 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
-// Import MSW server for API mocking
-// TODO: Fix MSW dependency issue
-// const { server } = require('./__mocks__/msw/server')
-
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -53,20 +49,3 @@ beforeAll(() => {
 afterAll(() => {
   console.error = originalError
 })
-
-// MSW Server Setup
-// TODO: Fix MSW dependency issue
-// beforeAll(() => {
-//   // Start the interception on the entire process level
-//   server.listen()
-// })
-
-// afterEach(() => {
-//   // Reset any runtime request handlers we may add during the tests
-//   server.resetHandlers()
-// })
-
-// afterAll(() => {
-//   // Clean up and close the server
-//   server.close()
-// })

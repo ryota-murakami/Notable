@@ -17,6 +17,7 @@ const nextConfig = {
 
   // Performance optimizations
   reactStrictMode: true,
+  swcMinify: true,
   compress: true,
 
   // Production optimizations
@@ -29,60 +30,38 @@ const nextConfig = {
         : false,
   },
 
-  // Externalize server-only packages
-  serverExternalPackages: ['winston', 'winston-daily-rotate-file'],
-
   // Bundle optimization
   webpack: (config, { isServer }) => {
-    // Prevent winston from being bundled on the client
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        winston: false,
-        'winston-daily-rotate-file': false,
-      }
-    }
-
-    // Fix for "self is not defined" error during SSR
-    if (isServer) {
-      config.output.globalObject = 'this'
-    }
-    // Optimize bundle size - only for client bundles
-    if (!isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          commons: {
-            name: 'commons',
-            chunks: 'all',
-            minChunks: 3, // Increased from 2 to be more conservative
-            enforce: true,
-          },
-          react: {
-            name: 'react',
-            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-            chunks: 'all',
-            priority: 20,
-            enforce: true,
-          },
-          supabase: {
-            name: 'supabase',
-            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-            chunks: 'all',
-            priority: 15,
-            enforce: true,
-          },
-          editor: {
-            name: 'editor',
-            test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui|platejs)[\\/]/,
-            chunks: 'all',
-            priority: 10,
-            enforce: true,
-          },
+    // Optimize bundle size
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      cacheGroups: {
+        default: false,
+        vendors: false,
+        commons: {
+          name: 'commons',
+          chunks: 'all',
+          minChunks: 2,
         },
-      }
+        react: {
+          name: 'react',
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          chunks: 'all',
+          priority: 20,
+        },
+        supabase: {
+          name: 'supabase',
+          test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+          chunks: 'all',
+          priority: 15,
+        },
+        editor: {
+          name: 'editor',
+          test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
+          chunks: 'all',
+          priority: 10,
+        },
+      },
     }
 
     // Tree shaking for production
@@ -138,6 +117,27 @@ const nextConfig = {
       },
     ]
   },
+}
+
+// Sentry configuration options
+const sentryWebpackPluginOptions = {
+  // For all available options, see:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+  // Suppresses source map uploading logs during build
+  silent: true,
+
+  // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+  tunnelRoute: '/monitoring',
+
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
+
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  disableLogger: true,
+
+  // Enables automatic instrumentation of Vercel Cron Monitors.
+  automaticVercelMonitors: true,
 }
 
 // Bundle analyzer integration
