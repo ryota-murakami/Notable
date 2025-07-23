@@ -1,2 +1,8 @@
-// Re-export note types from root
-export * from '../../../types/note'
+export interface Note {
+  id: string
+  title: string
+  content: string
+  userId: string
+  createdAt: string
+  updatedAt: string
+}

@@ -13,7 +13,7 @@ function getRequiredEnvVar(name: string): string {
   return value
 }
 
-export async function createServerClient() {
+export async function createClient() {
   const cookieStore = await cookies()
 
   return createSupabaseServerClient<Database>(
