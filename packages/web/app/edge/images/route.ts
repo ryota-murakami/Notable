@@ -127,13 +127,13 @@ export async function GET(request: NextRequest) {
 
     const url = searchParams.get('url')
     const width = searchParams.get('w')
-      ? parseInt(searchParams.get('w')!)
+      ? parseInt(searchParams.get('w') || '0')
       : undefined
     const height = searchParams.get('h')
-      ? parseInt(searchParams.get('h')!)
+      ? parseInt(searchParams.get('h') || '0')
       : undefined
     const quality = searchParams.get('q')
-      ? parseInt(searchParams.get('q')!)
+      ? parseInt(searchParams.get('q') || '80')
       : 80
     const formatParam = searchParams.get('f')
     const format = formatParam

@@ -26,7 +26,7 @@ export function Breadcrumb({
     while (current) {
       trail.unshift(current)
       if (current.parentId) {
-        current = notes.find((n) => n.id === current!.parentId)
+        current = notes.find((n) => n.id === current?.parentId)
       } else {
         current = undefined
       }

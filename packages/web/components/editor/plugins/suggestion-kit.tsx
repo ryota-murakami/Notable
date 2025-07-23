@@ -39,7 +39,7 @@ export const suggestionPlugin = toTPlatePlugin<SuggestionConfig>(
       hoverId: null,
       uniquePathMap: new Map(),
     },
-  }),
+  })
 ).configure({
   handlers: {
     // unset active suggestion when clicking outside of suggestion
@@ -60,7 +60,7 @@ export const suggestionPlugin = toTPlatePlugin<SuggestionConfig>(
         !isSlateEditor(leaf.parentElement)
       ) {
         if (leaf.classList.contains(`slate-${type}`)) {
-          const suggestionEntry = api.suggestion!.node({ isText: true })
+          const suggestionEntry = api.suggestion?.node({ isText: true })
 
           if (!suggestionEntry) {
             unsetActiveSuggestion()

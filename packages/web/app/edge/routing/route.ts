@@ -25,7 +25,7 @@ interface UserContext {
   tier: 'free' | 'pro' | 'business' | 'enterprise'
   region: string
   features: string[]
-  limits: Record<string, any>
+  limits: Record<string, unknown>
 }
 
 // Routing configurations by user tier
@@ -189,7 +189,7 @@ function getUserContext(request: NextRequest): UserContext {
 
   const config = ROUTING_CONFIGS[tier]
 
-  const freeConfig = ROUTING_CONFIGS.free!
+  const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
   return {
     id: userId,
     tier,
@@ -377,7 +377,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const freeConfig = ROUTING_CONFIGS.free!
+    const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
     const response = {
       tier: userContext.tier,
       region: userContext.region,
