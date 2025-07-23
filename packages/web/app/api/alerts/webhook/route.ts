@@ -73,8 +73,14 @@ async function sendSlackNotification(
       status: payload.status,
       alertCount: payload.alerts.length,
     })
-  } catch {
-    logger.error('Failed to send Slack notification')
+  } catch (error) {
+    logger.error('Failed to send Slack notification', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      alertStatus: payload.status,
+      alertCount: payload.alerts.length,
+      hasWebhookUrl: !!process.env.SLACK_WEBHOOK_URL,
+    })
   }
 }
 
@@ -145,8 +151,16 @@ async function sendEmailNotification(
       status: payload.status,
       alertCount: payload.alerts.length,
     })
-  } catch {
-    logger.error('Failed to send email notification')
+  } catch (error) {
+    logger.error('Failed to send email notification', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      alertStatus: payload.status,
+      alertCount: payload.alerts.length,
+      hasResendKey: !!process.env.RESEND_API_KEY,
+      hasEmailFrom: !!process.env.EMAIL_FROM,
+      hasAlertEmail: !!(process.env.ALERT_EMAIL || process.env.EMAIL_FROM),
+    })
   }
 }
 
@@ -183,8 +197,14 @@ async function storeAlert(payload: AlertWebhookPayload): Promise<void> {
         logger.error('Failed to store alert in database', { error, alert })
       }
     }
-  } catch {
-    logger.error('Failed to store alerts')
+  } catch (error) {
+    logger.error('Failed to store alerts in database', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      alertCount: payload.alerts.length,
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    })
   }
 }
 
@@ -220,8 +240,13 @@ export async function POST(request: NextRequest) {
       success: true,
       processed: payload.alerts.length,
     })
-  } catch {
-    logger.error('Alert webhook error')
+  } catch (error) {
+    logger.error('Alert webhook processing failed', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      headers: Object.fromEntries(await headers()),
+      timestamp: new Date().toISOString(),
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
