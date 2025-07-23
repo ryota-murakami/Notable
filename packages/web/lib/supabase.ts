@@ -1,40 +1,87 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// Lazy initialization to avoid errors during build time
+let supabaseInstance: SupabaseClient<Database> | null = null
+let supabaseAdminInstance: SupabaseClient<Database> | null = null
 
-// For development/testing with placeholder values, use fallback configuration
-const isPlaceholder =
-  supabaseUrl?.includes('placeholder') || !supabaseUrl || !supabaseAnonKey
-
-if (isPlaceholder) {
-  console.warn(
-    'Using placeholder Supabase configuration for development/testing'
-  )
+function getSupabaseUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!url || url === '') {
+    // Return a valid placeholder URL during build time
+    return 'https://placeholder.supabase.co'
+  }
+  return url
 }
 
-const finalUrl = supabaseUrl || 'https://placeholder.supabase.co'
-const finalAnonKey = supabaseAnonKey || 'placeholder-key'
+function getSupabaseAnonKey(): string {
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!key || key === '') {
+    // Return a valid placeholder key during build time
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDYyMzkwMjIsImV4cCI6MTk2MTgxNTAyMn0.placeholder'
+  }
+  return key
+}
 
-export const supabase = createClient<Database>(finalUrl, finalAnonKey, {
-  auth: {
-    autoRefreshToken: !isPlaceholder,
-    persistSession: !isPlaceholder,
-    detectSessionInUrl: !isPlaceholder,
-  },
-  db: {
-    schema: 'public',
-  },
-})
+function getSupabaseServiceKey(): string {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!key || key === '') {
+    // Return a valid placeholder key during build time
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY0NjIzOTAyMiwiZXhwIjoxOTYxODE1MDIyfQ.placeholder'
+  }
+  return key
+}
 
-// For server-side operations
-const serviceRoleKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key'
+// Public client for browser-side operations
+export const supabase: SupabaseClient<Database> = new Proxy(
+  {} as SupabaseClient<Database>,
+  {
+    get(target, prop, receiver) {
+      if (!supabaseInstance) {
+        const url = getSupabaseUrl()
+        const key = getSupabaseAnonKey()
+        const isPlaceholder =
+          url.includes('placeholder') || key.includes('placeholder')
 
-export const supabaseAdmin = createClient<Database>(finalUrl, serviceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-})
+        if (isPlaceholder && typeof window !== 'undefined') {
+          console.warn(
+            'Using placeholder Supabase configuration for development/testing'
+          )
+        }
+
+        supabaseInstance = createClient<Database>(url, key, {
+          auth: {
+            autoRefreshToken: !isPlaceholder,
+            persistSession: !isPlaceholder,
+            detectSessionInUrl: !isPlaceholder,
+          },
+          db: {
+            schema: 'public',
+          },
+        })
+      }
+      return Reflect.get(supabaseInstance, prop, receiver)
+    },
+  }
+)
+
+// Admin client for server-side operations
+export const supabaseAdmin: SupabaseClient<Database> = new Proxy(
+  {} as SupabaseClient<Database>,
+  {
+    get(target, prop, receiver) {
+      if (!supabaseAdminInstance) {
+        const url = getSupabaseUrl()
+        const key = getSupabaseServiceKey()
+
+        supabaseAdminInstance = createClient<Database>(url, key, {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+          },
+        })
+      }
+      return Reflect.get(supabaseAdminInstance, prop, receiver)
+    },
+  }
+)
