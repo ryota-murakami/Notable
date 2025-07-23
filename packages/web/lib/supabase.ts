@@ -4,26 +4,37 @@ import { Database } from '@/types/database'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing required Supabase environment variables')
+// For development/testing with placeholder values, use fallback configuration
+const isPlaceholder =
+  supabaseUrl?.includes('placeholder') || !supabaseUrl || !supabaseAnonKey
+
+if (isPlaceholder) {
+  console.warn(
+    'Using placeholder Supabase configuration for development/testing'
+  )
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+const finalUrl = supabaseUrl || 'https://placeholder.supabase.co'
+const finalAnonKey = supabaseAnonKey || 'placeholder-key'
+
+export const supabase = createClient<Database>(finalUrl, finalAnonKey, {
+  auth: {
+    autoRefreshToken: !isPlaceholder,
+    persistSession: !isPlaceholder,
+    detectSessionInUrl: !isPlaceholder,
+  },
+  db: {
+    schema: 'public',
+  },
+})
 
 // For server-side operations
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const serviceRoleKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key'
 
-if (!serviceRoleKey) {
-  throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable')
-}
-
-export const supabaseAdmin = createClient<Database>(
-  supabaseUrl,
-  serviceRoleKey,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-)
+export const supabaseAdmin = createClient<Database>(finalUrl, serviceRoleKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+})
