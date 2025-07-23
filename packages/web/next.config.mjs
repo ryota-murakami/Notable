@@ -29,44 +29,58 @@ const nextConfig = {
         : false,
   },
 
-  // Bundle optimization
+  // Bundle optimization - fixed for Next.js 15 SSR compatibility
   webpack: (config, { isServer }) => {
-    // Optimize bundle size
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        commons: {
-          name: 'commons',
-          chunks: 'all',
-          minChunks: 2,
+    // Only apply optimization to client-side bundles to avoid SSR issues
+    if (!isServer) {
+      // Client-side bundle optimization
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          commons: {
+            name: 'commons',
+            chunks: 'all',
+            minChunks: 2,
+          },
+          react: {
+            name: 'react',
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            chunks: 'all',
+            priority: 20,
+          },
+          supabase: {
+            name: 'supabase',
+            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+            chunks: 'all',
+            priority: 15,
+          },
+          editor: {
+            name: 'editor',
+            test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
+            chunks: 'all',
+            priority: 10,
+          },
         },
-        react: {
-          name: 'react',
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          chunks: 'all',
-          priority: 20,
-        },
-        supabase: {
-          name: 'supabase',
-          test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-          chunks: 'all',
-          priority: 15,
-        },
-        editor: {
-          name: 'editor',
-          test: /[\\/]node_modules[\\/](@udecode|slate|@radix-ui)[\\/]/,
-          chunks: 'all',
-          priority: 10,
-        },
-      },
+      }
+
+      // Tree shaking for production (client-side only)
+      if (process.env.NODE_ENV === 'production') {
+        config.optimization.usedExports = true
+        config.optimization.sideEffects = false
+      }
     }
 
-    // Tree shaking for production
-    if (!isServer && process.env.NODE_ENV === 'production') {
-      config.optimization.usedExports = true
-      config.optimization.sideEffects = false
+    // Ensure server-side bundles don't include client-side globals
+    if (isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        self: false,
+        window: false,
+        document: false,
+        navigator: false,
+      }
     }
 
     return config
