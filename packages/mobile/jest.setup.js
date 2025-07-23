@@ -1,3 +1,4 @@
+/* eslint-env jest */
 // Jest setup for React Native
 // Skip @testing-library/jest-native as it may not be installed
 
