@@ -204,10 +204,11 @@ export function observeWebVitals(
         renderTime?: number
         loadTime?: number
       }
+      const value = lastEntry.renderTime || lastEntry.loadTime || 0
       callback({
         name: 'LCP',
-        value: lastEntry.renderTime || lastEntry.loadTime,
-        rating: getLCPRating(lastEntry.renderTime || lastEntry.loadTime),
+        value,
+        rating: getLCPRating(value),
       })
     })
     lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] })
@@ -220,20 +221,20 @@ export function observeWebVitals(
   try {
     const fidObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
-      entries.forEach(
-        (
-          entry: PerformanceEntry & {
-            processingStart: number
-            startTime: number
-          }
-        ) => {
+      entries.forEach((entry) => {
+        const fidEntry = entry as PerformanceEntry & {
+          processingStart?: number
+          startTime: number
+        }
+        if (fidEntry.processingStart) {
+          const value = fidEntry.processingStart - fidEntry.startTime
           callback({
             name: 'FID',
-            value: entry.processingStart - entry.startTime,
-            rating: getFIDRating(entry.processingStart - entry.startTime),
+            value,
+            rating: getFIDRating(value),
           })
         }
-      )
+      })
     })
     fidObserver.observe({ entryTypes: ['first-input'] })
     observers.push(fidObserver)
@@ -246,18 +247,15 @@ export function observeWebVitals(
     let clsValue = 0
     const clsObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
-      entries.forEach(
-        (
-          entry: PerformanceEntry & {
-            hadRecentInput: boolean
-            value: number
-          }
-        ) => {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value
-          }
+      entries.forEach((entry) => {
+        const clsEntry = entry as PerformanceEntry & {
+          hadRecentInput?: boolean
+          value?: number
         }
-      )
+        if (clsEntry.value && !clsEntry.hadRecentInput) {
+          clsValue += clsEntry.value
+        }
+      })
       callback({
         name: 'CLS',
         value: clsValue,

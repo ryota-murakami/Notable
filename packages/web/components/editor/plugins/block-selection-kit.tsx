@@ -18,11 +18,11 @@ export const BlockSelectionKit = [
       },
     },
     render: {
-      belowRootNodes: (props) => {
+      belowRootNodes: (props: any) => {
         if (!props.attributes.className?.includes('slate-selectable'))
           return null
 
-        return <BlockSelection {...(props as Record<string, unknown>)} />
+        return <BlockSelection {...(props as any)} />
       },
     },
   })),

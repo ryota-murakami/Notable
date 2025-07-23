@@ -8,7 +8,6 @@ import {
   getSuggestionKey,
   keyId2SuggestionId,
   rejectSuggestion,
-  type TResolvedSuggestion,
 } from '@platejs/suggestion'
 import { SuggestionPlugin } from '@platejs/suggestion/react'
 import { CheckIcon, XIcon } from 'lucide-react'

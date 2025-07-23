@@ -43,7 +43,7 @@ const createSimpleServerLogger = (): Logger => {
             metadata.error instanceof Error
               ? {
                   message: metadata.error.message,
-                  stack: metadata.error.stack,
+                  ...(metadata.error.stack && { stack: metadata.error.stack }),
                   name: metadata.error.name,
                 }
               : metadata.error,
