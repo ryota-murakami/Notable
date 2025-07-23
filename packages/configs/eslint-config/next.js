@@ -1,6 +1,6 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
-  extends: ['./index.js', 'next/core-web-vitals', 'eslint-config-next'],
+  extends: ['./index.js', 'eslint-config-next/core-web-vitals'],
   plugins: ['react', 'react-hooks'],
   rules: {
     // React specific rules
