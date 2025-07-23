@@ -2,8 +2,10 @@
 
 import { runAllBenchmarks as runNoteBenchmarks } from '../tests/performance/note-operations.benchmark'
 import { runComponentBenchmarks } from '../tests/performance/component-render.benchmark'
-import { PerformanceMonitor } from '../lib/performance'
+import { performanceMonitor } from '../lib/performance'
 import { memoryMonitor } from '../lib/memory-monitor'
+import { dbOptimizer } from '../lib/db-optimization'
+import { cdnManager } from '../lib/cdn-config'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
@@ -23,6 +25,9 @@ interface PerformanceReport {
     componentRendering?: any
     webVitals?: any
     memoryProfile?: any
+    databaseAnalytics?: any
+    performanceMetrics?: any
+    cdnPerformance?: any
   }
   recommendations: string[]
 }
@@ -74,7 +79,31 @@ async function generatePerformanceReport(): Promise<PerformanceReport> {
     const memoryReport = memoryMonitor.getMemoryReport()
     report.benchmarks.memoryProfile = memoryReport
 
-    // 4. Generate recommendations based on results
+    // 4. Collect database analytics
+    console.log('🗄️  Analyzing database performance...\n')
+    report.benchmarks.databaseAnalytics = dbOptimizer.getQueryAnalytics()
+
+    // 5. Collect performance monitor metrics
+    console.log('📈 Collecting performance metrics...\n')
+    report.benchmarks.performanceMetrics = performanceMonitor.generateReport()
+
+    // 6. Test CDN performance (if configured)
+    if (process.env.NEXT_PUBLIC_CDN_ENDPOINT) {
+      console.log('🌐 Testing CDN performance...\n')
+      try {
+        const cdnTest =
+          await cdnManager.measureCDNPerformance('/test-asset.png')
+        report.benchmarks.cdnPerformance = {
+          ...cdnTest,
+          cacheStats: cdnManager.getCacheStats(),
+          config: cdnManager.getConfig(),
+        }
+      } catch (error) {
+        console.log('⚠️  CDN performance test failed:', error.message)
+      }
+    }
+
+    // 7. Generate recommendations based on results
     report.recommendations = generateRecommendations(report)
   } catch (error) {
     console.error('❌ Error during benchmarking:', error)
@@ -163,6 +192,67 @@ function generateRecommendations(report: PerformanceReport): string[] {
     if (leakDetection.leakRate && leakDetection.leakRate > 1) {
       recommendations.push(
         `High memory growth rate detected: ${leakDetection.leakRate.toFixed(2)} MB/min`
+      )
+    }
+  }
+
+  // Analyze database performance
+  if (report.benchmarks.databaseAnalytics) {
+    const dbAnalytics = report.benchmarks.databaseAnalytics
+
+    if (dbAnalytics.avgDuration > 100) {
+      recommendations.push(
+        `Average database query time is high (${dbAnalytics.avgDuration.toFixed(2)}ms). Consider query optimization.`
+      )
+    }
+
+    if (dbAnalytics.slowQueries > dbAnalytics.totalQueries * 0.1) {
+      recommendations.push(
+        `${dbAnalytics.slowQueries} slow queries detected. Review query complexity and add indexes.`
+      )
+    }
+
+    // Add specific query recommendations
+    const optimizationSuggestions = dbOptimizer.getOptimizationSuggestions()
+    recommendations.push(...optimizationSuggestions)
+  }
+
+  // Analyze performance monitor metrics
+  if (report.benchmarks.performanceMetrics) {
+    const perfMetrics = report.benchmarks.performanceMetrics
+
+    if (perfMetrics.summary.avgResponseTime > 200) {
+      recommendations.push(
+        `High average response time (${perfMetrics.summary.avgResponseTime.toFixed(2)}ms). Optimize critical paths.`
+      )
+    }
+
+    if (perfMetrics.summary.errorRate > 2) {
+      recommendations.push(
+        `Error rate is elevated (${perfMetrics.summary.errorRate.toFixed(2)}%). Investigate error sources.`
+      )
+    }
+
+    if (perfMetrics.summary.cacheHitRate < 70) {
+      recommendations.push(
+        `Cache hit rate is low (${perfMetrics.summary.cacheHitRate.toFixed(1)}%). Review caching strategy.`
+      )
+    }
+  }
+
+  // Analyze CDN performance
+  if (report.benchmarks.cdnPerformance) {
+    const cdnPerf = report.benchmarks.cdnPerformance
+
+    if (cdnPerf.loadTime > 500) {
+      recommendations.push(
+        `CDN asset load time is slow (${cdnPerf.loadTime.toFixed(2)}ms). Check CDN configuration.`
+      )
+    }
+
+    if (!cdnPerf.cached) {
+      recommendations.push(
+        'CDN cache miss detected. Verify cache headers and TTL settings.'
       )
     }
   }

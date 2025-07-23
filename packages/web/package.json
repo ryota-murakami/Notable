@@ -116,6 +116,8 @@
     "react-player": "^3.3.1",
     "react-textarea-autosize": "^8.5.9",
     "react-tweet": "^3.2.2",
+    "react-virtualized-auto-sizer": "^1.0.26",
+    "react-window": "^1.8.11",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "sonner": "^1.7.1",
@@ -123,6 +125,7 @@
     "tailwind-merge": "^2.5.5",
     "uploadthing": "7.7.2",
     "use-file-picker": "2.1.2",
+    "web-vitals": "^5.0.3",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -138,6 +141,7 @@
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-window": "^1.8.8",
     "@types/speakeasy": "^2.0.10",
     "eslint-config-next": "^15.4.3",
     "jest": "^29.7.0",
