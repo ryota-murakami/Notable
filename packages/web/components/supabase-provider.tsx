@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import {
   createClientComponentClient,
   type Session,
@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/navigation'
 
 type SupabaseContext = {
-  supabase: SupabaseClient
+  supabase: SupabaseClient | null
   user: User | null
   session: Session | null
   loading: boolean
@@ -24,9 +24,26 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  const supabase = createClientComponentClient()
+  // Lazily create the Supabase client only on the client side
+  const supabase = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return null
+    }
+
+    try {
+      return createClientComponentClient()
+    } catch (error) {
+      console.warn('Failed to create Supabase client:', error)
+      return null
+    }
+  }, [])
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     const getSession = async () => {
       const {
         data: { session },
@@ -51,7 +68,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [supabase.auth, router])
+  }, [supabase, router])
 
   const value: SupabaseContext = {
     supabase,
