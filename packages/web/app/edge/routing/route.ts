@@ -191,13 +191,13 @@ function getUserContext(request: NextRequest): UserContext {
 
   const freeConfig = ROUTING_CONFIGS.free ||
     ROUTING_CONFIGS.basic || {
-      features: {
-        collaboration: false,
-        ai: false,
-        encryption: false,
-        customDomain: false,
+      features: ['basic-editor', 'local-storage'],
+      limits: {
+        storage: 100,
+        apiCalls: 1000,
+        collaborators: 0,
+        exportFormats: ['markdown', 'txt'],
       },
-      limits: { storage: 0, bandwidth: 0, requests: 0 },
     }
   return {
     id: userId,
@@ -388,13 +388,13 @@ export async function GET(request: NextRequest) {
 
     const freeConfig = ROUTING_CONFIGS.free ||
       ROUTING_CONFIGS.basic || {
-        features: {
-          collaboration: false,
-          ai: false,
-          encryption: false,
-          customDomain: false,
+        features: ['basic-editor', 'local-storage'],
+        limits: {
+          storage: 100,
+          apiCalls: 1000,
+          collaborators: 0,
+          exportFormats: ['markdown', 'txt'],
         },
-        limits: { storage: 0, bandwidth: 0, requests: 0 },
       }
     const response = {
       tier: userContext.tier,
