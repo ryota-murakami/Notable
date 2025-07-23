@@ -2,19 +2,32 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import type {
-  RealtimeChannel,
-  RealtimePresenceState,
-} from '@supabase/supabase-js'
+import type { RealtimeChannel } from '@supabase/supabase-js'
 import type { Note } from '@/types/note'
-import type {
-  TypingUser,
-  UserPresence,
-  RealtimeSyncOptions,
-  RealtimeSyncState,
-  BroadcastPayload,
-  NoteUpdatePayload,
-} from '@/types/realtime'
+
+// Define realtime types here
+interface TypingUser {
+  userId: string
+  userName: string
+  timestamp: number
+}
+
+interface UserPresence {
+  userId: string
+  userName: string
+  color: string
+  lastSeen: number
+}
+
+interface RealtimeSyncOptions {
+  noteId: string
+  onNoteUpdate?: (note: Note) => void
+  onUserJoin?: (user: UserPresence) => void
+  onUserLeave?: (userId: string) => void
+  onTypingStart?: (user: TypingUser) => void
+  onTypingStop?: (userId: string) => void
+  debounceMs?: number
+}
 
 // Utility to generate user colors
 const generateUserColor = (userId: string): string => {
@@ -35,7 +48,7 @@ const generateUserColor = (userId: string): string => {
     return char.charCodeAt(0) + ((acc << 5) - acc)
   }, 0)
 
-  return colors[Math.abs(hash) % colors.length]
+  return colors[Math.abs(hash) % colors.length] ?? '#FF6B6B'
 }
 
 // Throttle function for performance
@@ -43,7 +56,7 @@ const throttle = (func: Function, delay: number) => {
   let timeoutId: NodeJS.Timeout
   let lastExecTime = 0
 
-  return function (...args: any[]) {
+  return function (this: any, ...args: any[]) {
     const currentTime = Date.now()
 
     if (currentTime - lastExecTime > delay) {
@@ -56,14 +69,14 @@ const throttle = (func: Function, delay: number) => {
           func.apply(this, args)
           lastExecTime = Date.now()
         },
-        delay - (currentTime - lastExecTime),
+        delay - (currentTime - lastExecTime)
       )
     }
   }
 }
 
-export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
-  const { noteId, onNoteUpdate, onUserTyping, onPresenceChange, user } = options
+export function useRealtimeSync(options: RealtimeSyncOptions) {
+  const { noteId, onNoteUpdate } = options
 
   const [isConnected, setIsConnected] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState<UserPresence[]>([])
@@ -108,12 +121,12 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
           if (payload.new) {
             onNoteUpdate(payload.new as Note)
           }
-        },
+        }
       )
     }
 
     // Setup broadcast listener for typing indicators
-    if (onUserTyping) {
+    if (options.onTypingStart || options.onTypingStop) {
       channel.on('broadcast', { event: 'typing' }, ({ payload }) => {
         const { userId, isTyping, userName, userColor } = payload
 
@@ -203,7 +216,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
   useEffect(() => {
     const interval = setInterval(() => {
       setTypingUsers(
-        (prev) => prev.filter((user) => Date.now() - user.lastTyped < 3000), // 3 seconds
+        (prev) => prev.filter((user) => Date.now() - user.lastTyped < 3000) // 3 seconds
       )
     }, 1000)
 
@@ -244,7 +257,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         },
       })
     }, 300), // 300ms throttle
-    [user],
+    [user]
   )
 
   // Method to broadcast note updates
@@ -262,7 +275,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions = {}) {
         },
       })
     },
-    [user],
+    [user]
   )
 
   // Method to start typing
