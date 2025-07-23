@@ -175,7 +175,7 @@ export default function MonitoringDashboard() {
     } as const
 
     return (
-      <Badge variant={variants[status as keyof typeof variants] || 'secondary'}>
+      <Badge variant={variants[status as keyof typeof variants] || 'default'}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     )

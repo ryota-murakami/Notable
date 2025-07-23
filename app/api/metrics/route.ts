@@ -21,13 +21,15 @@ let metrics = {
 // Export function to update metrics from other parts of the app
 export function updateMetric(metric: keyof typeof metrics, value: number = 1) {
   if (Array.isArray(metrics[metric])) {
-    ;(metrics[metric] as number[]).push(value)
+    const metricArray = metrics[metric] as number[]
+    metricArray.push(value)
     // Keep only last 1000 entries to prevent memory issues
-    if ((metrics[metric] as number[]).length > 1000) {
-      ;(metrics[metric] as number[]).shift()
+    if (metricArray.length > 1000) {
+      metricArray.shift()
     }
   } else {
-    ;(metrics[metric] as number) += value
+    const metricValue = metrics[metric] as number
+    ;(metrics as any)[metric] = metricValue + value
   }
 }
 

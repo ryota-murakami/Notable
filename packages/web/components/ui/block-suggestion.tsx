@@ -2,9 +2,8 @@
 
 import * as React from 'react'
 
-import type { TResolvedSuggestion } from '@platejs/suggestion'
-
 import {
+  type TResolvedSuggestion,
   acceptSuggestion,
   getSuggestionKey,
   keyId2SuggestionId,

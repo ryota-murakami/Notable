@@ -189,7 +189,16 @@ function getUserContext(request: NextRequest): UserContext {
 
   const config = ROUTING_CONFIGS[tier]
 
-  const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
+  const freeConfig = ROUTING_CONFIGS.free ||
+    ROUTING_CONFIGS.basic || {
+      features: ['basic-editor', 'local-storage'],
+      limits: {
+        storage: 100,
+        apiCalls: 1000,
+        collaborators: 0,
+        exportFormats: ['markdown', 'txt'],
+      },
+    }
   return {
     id: userId,
     tier,
@@ -252,7 +261,7 @@ function hasFeatureAccess(userContext: UserContext, feature: string): boolean {
 // Check if user is within limits
 function checkLimits(
   userContext: UserContext,
-  limitType: string,
+  limitType: keyof UserContext['limits'],
   currentUsage: number
 ): boolean {
   const limit = userContext.limits[limitType]
@@ -377,7 +386,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const freeConfig = ROUTING_CONFIGS.free || ROUTING_CONFIGS.basic
+    const freeConfig = ROUTING_CONFIGS.free ||
+      ROUTING_CONFIGS.basic || {
+        features: ['basic-editor', 'local-storage'],
+        limits: {
+          storage: 100,
+          apiCalls: 1000,
+          collaborators: 0,
+          exportFormats: ['markdown', 'txt'],
+        },
+      }
     const response = {
       tier: userContext.tier,
       region: userContext.region,

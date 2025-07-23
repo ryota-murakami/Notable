@@ -2,7 +2,11 @@
 
 import * as React from 'react'
 
-import type { PlateEditor, PlateElementProps } from 'platejs/react'
+import {
+  PlateElement,
+  type PlateEditor,
+  type PlateElementProps,
+} from 'platejs/react'
 
 import { AIChatPlugin } from '@platejs/ai/react'
 import {
@@ -25,7 +29,6 @@ import {
   TableOfContentsIcon,
 } from 'lucide-react'
 import { type TComboboxInputElement, KEYS } from 'platejs'
-import { PlateElement } from 'platejs/react'
 
 import {
   insertBlock,
