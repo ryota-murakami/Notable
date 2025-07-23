@@ -3,6 +3,7 @@
  * Optimizes asset delivery and caching for better performance
  */
 
+import React from 'react'
 import { performanceMonitor } from './performance'
 
 interface CDNConfig {

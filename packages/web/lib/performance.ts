@@ -3,7 +3,7 @@
  * Tracks application performance metrics and provides optimization insights
  */
 
-import { Analytics } from './analytics'
+// import { Analytics } from './analytics' // TODO: Create analytics module
 
 export interface PerformanceMetric {
   name: string
@@ -29,10 +29,10 @@ export interface PerformanceReport {
 class PerformanceMonitor {
   private metrics: PerformanceMetric[] = []
   private startTime: number = Date.now()
-  private analytics?: Analytics
+  private analytics?: any // TODO: Define Analytics interface
   private observers: Map<string, PerformanceObserver> = new Map()
 
-  constructor(analytics?: Analytics) {
+  constructor(analytics?: any) {
     this.analytics = analytics
     this.initializeWebVitals()
     this.initializeResourceTiming()
@@ -45,16 +45,14 @@ class PerformanceMonitor {
     if (typeof window === 'undefined') return
 
     // Lazy load web-vitals to avoid SSR issues
-    import('web-vitals').then(
-      ({ onCLS, onFID, onFCP, onLCP, onTTFB, onINP }) => {
-        onCLS((metric) => this.trackWebVital('CLS', metric.value, 'score'))
-        onFID((metric) => this.trackWebVital('FID', metric.value, 'ms'))
-        onFCP((metric) => this.trackWebVital('FCP', metric.value, 'ms'))
-        onLCP((metric) => this.trackWebVital('LCP', metric.value, 'ms'))
-        onTTFB((metric) => this.trackWebVital('TTFB', metric.value, 'ms'))
-        onINP((metric) => this.trackWebVital('INP', metric.value, 'ms'))
-      }
-    )
+    import('web-vitals').then(({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
+      onCLS((metric) => this.trackWebVital('CLS', metric.value, 'score'))
+      // onFID is deprecated in web-vitals v3, use onINP instead
+      onFCP((metric) => this.trackWebVital('FCP', metric.value, 'ms'))
+      onLCP((metric) => this.trackWebVital('LCP', metric.value, 'ms'))
+      onTTFB((metric) => this.trackWebVital('TTFB', metric.value, 'ms'))
+      onINP((metric) => this.trackWebVital('INP', metric.value, 'ms'))
+    })
   }
 
   /**
