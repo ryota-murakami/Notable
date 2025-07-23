@@ -1,8 +1,6 @@
 import * as React from 'react'
 
-import type { SlateElementProps } from 'platejs'
-
-import { SlateElement } from 'platejs'
+import { SlateElement, type SlateElementProps } from 'platejs'
 
 import { cn } from '@/lib/utils'
 
@@ -19,9 +17,9 @@ export function CalloutElementStatic({
       }}
       {...props}
     >
-      <div className="flex w-full gap-2 rounded-md">
+      <div className='flex w-full gap-2 rounded-md'>
         <div
-          className="size-6 text-[18px] select-none"
+          className='size-6 text-[18px] select-none'
           style={{
             fontFamily:
               '"Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols',
@@ -31,7 +29,7 @@ export function CalloutElementStatic({
             {(props.element.icon as any) || '💡'}
           </span>
         </div>
-        <div className="w-full">{children}</div>
+        <div className='w-full'>{children}</div>
       </div>
     </SlateElement>
   )

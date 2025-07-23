@@ -1,9 +1,13 @@
 'use client'
 
-import type { AIChatPluginConfig, UseChatOptions } from '@platejs/ai/react'
-
 import { streamInsertChunk, withAIBatch } from '@platejs/ai'
-import { AIChatPlugin, AIPlugin, useChatChunk } from '@platejs/ai/react'
+import {
+  AIChatPlugin,
+  AIPlugin,
+  useChatChunk,
+  type AIChatPluginConfig,
+  type UseChatOptions,
+} from '@platejs/ai/react'
 import { KEYS, PathApi } from 'platejs'
 import { usePluginOption } from 'platejs/react'
 

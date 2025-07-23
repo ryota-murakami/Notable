@@ -1,5 +1,4 @@
-import type { SlatePluginConfig } from 'platejs'
-import { KEYS } from 'platejs'
+import { KEYS, type SlatePluginConfig } from 'platejs'
 
 import {
   BaseFontBackgroundColorPlugin,

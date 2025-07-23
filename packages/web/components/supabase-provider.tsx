@@ -1,9 +1,12 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import {
+  createClientComponentClient,
+  type Session,
+  type User,
+} from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import type { Session, User } from '@supabase/auth-helpers-nextjs'
 
 type SupabaseContext = {
   supabase: ReturnType<typeof createClientComponentClient>

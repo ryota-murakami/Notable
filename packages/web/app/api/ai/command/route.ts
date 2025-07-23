@@ -1,5 +1,9 @@
-import type { TextStreamPart, ToolSet } from 'ai'
-import { convertToCoreMessages, streamText } from 'ai'
+import {
+  convertToCoreMessages,
+  streamText,
+  type TextStreamPart,
+  type ToolSet,
+} from 'ai'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { createOpenAI } from '@ai-sdk/openai'
@@ -90,6 +94,7 @@ function smoothStream<TOOLS extends ToolSet>({
     return new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
       async transform(chunk, controller) {
         if (chunk.type !== 'text-delta') {
+          // eslint-disable-next-line no-console
           console.info(buffer, 'finished')
 
           if (buffer.length > 0) {

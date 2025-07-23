@@ -1,7 +1,6 @@
 'use client'
 
-import type { ExtendConfig, Path } from 'platejs'
-import { isSlateString } from 'platejs'
+import { isSlateString, type ExtendConfig, type Path } from 'platejs'
 
 import {
   type BaseCommentConfig,
