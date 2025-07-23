@@ -115,6 +115,7 @@ export function PlateEditorComponent({
       const timeoutId = setTimeout(saveNote, 1000)
       return () => clearTimeout(timeoutId)
     }
+    return undefined
   }, [editor?.children, title, tags, note, onUpdateNote])
 
   // Save note when title changes
@@ -129,6 +130,7 @@ export function PlateEditorComponent({
       }, 500)
       return () => clearTimeout(timeoutId)
     }
+    return undefined
   }, [title, note, onUpdateNote])
 
   // Cleanup typing timeout on unmount

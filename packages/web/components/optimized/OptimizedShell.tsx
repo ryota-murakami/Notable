@@ -75,21 +75,25 @@ export function OptimizedShell() {
     deleteNote,
     saveNote,
     // Real-time sync state
-    isConnected,
+    isConnected: _isConnected,
     connectionError: _connectionError,
-    onlineUsers,
-    typingUsers,
+    onlineUsers: _onlineUsers,
+    typingUsers: _typingUsers,
     startTyping,
     stopTyping,
   } = useSupabaseNotes({ user })
 
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, _setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [viewMode, setViewMode] = useState<'edit' | 'view'>('edit')
 
-  const { exportNote, isExporting, exportProgress } = useExport()
+  const {
+    exportNote,
+    isExporting: _isExporting,
+    exportProgress: _exportProgress,
+  } = useExport()
 
   // Performance monitoring
   useEffect(() => {
@@ -148,28 +152,18 @@ export function OptimizedShell() {
   }, [])
 
   const handleCreateNote = useCallback(
-    (parentId: string | null = null): Note => {
-      // Create a note synchronously and handle async operations in the background
-      const tempNote: Note = {
-        id: `temp-${Date.now()}`,
-        title: 'Untitled',
-        content: '',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        tags: [],
-        parentId,
-        isFolder: false,
-      }
-
-      // Async creation in background
-      createNote(parentId).then((newNote) => {
+    async (parentId: string | null = null): Promise<Note | null> => {
+      try {
+        const newNote = await createNote(parentId)
         if (newNote) {
           setActiveNoteId(newNote.id)
           setViewMode('edit')
         }
-      })
-
-      return tempNote
+        return newNote
+      } catch (error) {
+        console.error('Failed to create note:', error)
+        return null
+      }
     },
     [createNote]
   )
@@ -196,7 +190,9 @@ export function OptimizedShell() {
   const handleExportNote = useCallback(
     async (note: Note, format: string) => {
       const monitor = PerformanceMonitor.getInstance()
-      await monitor.measureAsync('export-note', () => exportNote(note, format))
+      await monitor.measureAsync('export-note', () =>
+        exportNote(note, format as 'markdown' | 'html' | 'pdf' | 'react')
+      )
     },
     [exportNote]
   )
@@ -310,7 +306,7 @@ export function OptimizedShell() {
                   Select a note from the sidebar or create a new one
                 </p>
                 <button
-                  onClick={handleCreateNote}
+                  onClick={() => handleCreateNote()}
                   className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90'
                 >
                   Create New Note
@@ -327,7 +323,7 @@ export function OptimizedShell() {
               notes={notes}
               isOpen={isSearchOpen}
               onClose={() => setIsSearchOpen(false)}
-              onNoteSelect={(noteId) => {
+              onSelectNote={(noteId: string) => {
                 handleNoteSelect(noteId)
                 setIsSearchOpen(false)
               }}

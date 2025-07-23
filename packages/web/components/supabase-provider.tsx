@@ -37,7 +37,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
@@ -49,7 +49,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supabase.auth, router])
 
-  const value = {
+  const value: SupabaseContext = {
     supabase,
     user,
     session,

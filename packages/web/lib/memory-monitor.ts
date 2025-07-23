@@ -20,10 +20,10 @@ interface LeakDetectionResult {
 interface ComponentMemoryTracker {
   componentName: string
   mountTime: number
-  unmountTime: number | undefined
+  unmountTime?: number
   initialMemory: number
   peakMemory: number
-  finalMemory: number | undefined
+  finalMemory?: number
   subscriptions: Set<string>
   timers: Set<number>
   eventListeners: Array<{ target: string; event: string }>
@@ -35,7 +35,7 @@ export class MemoryMonitor extends EventEmitter {
   private globalListeners = new Map<string, number>()
   private retainedObjects = new WeakMap<object, string>()
   private monitoring = false
-  private snapshotInterval?: number
+  private snapshotInterval: number | undefined
 
   constructor() {
     super()
@@ -49,18 +49,26 @@ export class MemoryMonitor extends EventEmitter {
     const originalAddEventListener = window.addEventListener
     const originalRemoveEventListener = window.removeEventListener
 
-    window.addEventListener = (type: string, ...args: any[]) => {
+    window.addEventListener = (
+      type: string,
+      listener: EventListenerOrEventListenerObject,
+      options?: boolean | AddEventListenerOptions
+    ) => {
       const count = this.globalListeners.get(type) || 0
       this.globalListeners.set(type, count + 1)
-      return originalAddEventListener.call(window, type, ...args)
+      return originalAddEventListener.call(window, type, listener, options)
     }
 
-    window.removeEventListener = (type: string, ...args: any[]) => {
+    window.removeEventListener = (
+      type: string,
+      listener: EventListenerOrEventListenerObject,
+      options?: boolean | EventListenerOptions
+    ) => {
       const count = this.globalListeners.get(type) || 0
       if (count > 0) {
         this.globalListeners.set(type, count - 1)
       }
-      return originalRemoveEventListener.call(window, type, ...args)
+      return originalRemoveEventListener.call(window, type, listener, options)
     }
 
     // Track setTimeout/setInterval
@@ -71,31 +79,51 @@ export class MemoryMonitor extends EventEmitter {
 
     const activeTimers = new Set<number>()
 
-    window.setTimeout = (...args: any[]) => {
-      const id = originalSetTimeout.apply(window, args) as number
+    window.setTimeout = ((
+      handler: TimerHandler,
+      timeout?: number,
+      ...args: any[]
+    ) => {
+      const id = originalSetTimeout.call(
+        window,
+        handler,
+        timeout,
+        ...args
+      ) as unknown as number
       activeTimers.add(id)
       return id
-    }
+    }) as any
 
-    window.setInterval = (...args: any[]) => {
-      const id = originalSetInterval.apply(window, args) as number
+    window.setInterval = ((
+      handler: TimerHandler,
+      timeout?: number,
+      ...args: any[]
+    ) => {
+      const id = originalSetInterval.call(
+        window,
+        handler,
+        timeout,
+        ...args
+      ) as unknown as number
       activeTimers.add(id)
       return id
-    }
+    }) as any
 
-    window.clearTimeout = (id: number | undefined) => {
+    window.clearTimeout = ((id?: number | NodeJS.Timeout) => {
       if (id !== undefined) {
-        activeTimers.delete(id)
+        const numId = typeof id === 'number' ? id : Number(id)
+        activeTimers.delete(numId)
       }
       return originalClearTimeout.call(window, id)
-    }
+    }) as any
 
-    window.clearInterval = (id: number | undefined) => {
+    window.clearInterval = ((id?: number | NodeJS.Timeout) => {
       if (id !== undefined) {
-        activeTimers.delete(id)
+        const numId = typeof id === 'number' ? id : Number(id)
+        activeTimers.delete(numId)
       }
       return originalClearInterval.call(window, id)
-    }
+    }) as any
 
     // Expose timer count for debugging
     ;(window as any).__activeTimerCount = () => activeTimers.size
@@ -117,7 +145,7 @@ export class MemoryMonitor extends EventEmitter {
     this.monitoring = false
     if (this.snapshotInterval) {
       clearInterval(this.snapshotInterval)
-      this.snapshotInterval = undefined
+      delete this.snapshotInterval
     }
   }
 
@@ -190,8 +218,6 @@ export class MemoryMonitor extends EventEmitter {
       subscriptions: new Set(),
       timers: new Set(),
       eventListeners: [],
-      unmountTime: undefined,
-      finalMemory: undefined,
     }
 
     this.componentTrackers.set(trackerId, tracker)

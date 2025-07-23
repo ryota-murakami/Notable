@@ -7,7 +7,7 @@ interface ImageTransformParams {
   width?: number
   height?: number
   quality?: number
-  format?: 'webp' | 'jpeg' | 'png' | 'avif'
+  format?: 'webp' | 'jpeg' | 'png' | 'avif' | undefined
   fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside'
   gravity?: 'auto' | 'center' | 'north' | 'south' | 'east' | 'west'
 }
@@ -188,11 +188,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Add format only if it exists and is valid
-    if (
-      supportedFormat &&
-      ['webp', 'jpeg', 'png', 'avif'].includes(supportedFormat)
-    ) {
-      transformParams.format = supportedFormat as ImageTransformParams['format']
+    if (supportedFormat && supportedFormat !== undefined) {
+      const validFormats: ImageTransformParams['format'][] = [
+        'webp',
+        'jpeg',
+        'png',
+        'avif',
+      ]
+      if (
+        validFormats.includes(supportedFormat as ImageTransformParams['format'])
+      ) {
+        transformParams.format =
+          supportedFormat as ImageTransformParams['format']
+      }
     }
 
     // Generate cache key
