@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 interface EmptyStateProps {
   title: string
   description: string
-  icon: string
+  icon: keyof typeof MaterialCommunityIcons.glyphMap
   actionLabel?: string
   onAction?: () => void
 }
@@ -23,28 +23,28 @@ export function EmptyState({
   return (
     <View style={styles.container}>
       <MaterialCommunityIcons
-        name={icon as any}
+        name={icon}
         size={64}
         color={theme.colors.onSurfaceVariant}
         style={styles.icon}
       />
 
       <Text
-        variant="headlineSmall"
+        variant='headlineSmall'
         style={[styles.title, { color: theme.colors.onSurface }]}
       >
         {title}
       </Text>
 
       <Text
-        variant="bodyMedium"
+        variant='bodyMedium'
         style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
       >
         {description}
       </Text>
 
       {actionLabel && onAction && (
-        <Button mode="contained" onPress={onAction} style={styles.actionButton}>
+        <Button mode='contained' onPress={onAction} style={styles.actionButton}>
           {actionLabel}
         </Button>
       )}

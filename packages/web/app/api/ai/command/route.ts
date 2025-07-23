@@ -1,11 +1,11 @@
 import type { TextStreamPart, ToolSet } from 'ai'
+import { convertToCoreMessages, streamText } from 'ai'
 import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
 import { createOpenAI } from '@ai-sdk/openai'
 import { InvalidArgumentError } from '@ai-sdk/provider'
 import { delay as originalDelay } from '@ai-sdk/provider-utils'
-import { convertToCoreMessages, streamText } from 'ai'
-import { NextResponse } from 'next/server'
 
 /**
  * Detects the first chunk in a buffer.
@@ -57,7 +57,7 @@ function smoothStream<TOOLS extends ToolSet>({
 
       if (!buffer.startsWith(match)) {
         throw new Error(
-          `Chunking function must return a match that is a prefix of the buffer. Received: "${match}" expected to start with "${buffer}"`,
+          `Chunking function must return a match that is a prefix of the buffer. Received: "${match}" expected to start with "${buffer}"`
         )
       }
 
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
   if (!apiKey) {
     return NextResponse.json(
       { error: 'Missing OpenAI API key.' },
-      { status: 401 },
+      { status: 401 }
     )
   }
 
@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: 'Failed to process AI request' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

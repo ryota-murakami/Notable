@@ -253,7 +253,7 @@ export class MemoryMonitor extends EventEmitter {
     for (const [, tracker] of this.componentTrackers) {
       if (tracker.unmountTime && now - tracker.unmountTime > 60000) {
         suspects.push(
-          `Component ${tracker.componentName} still tracked after unmount`,
+          `Component ${tracker.componentName} still tracked after unmount`
         )
         recommendations.push(`Check cleanup in ${tracker.componentName}`)
       }
@@ -308,8 +308,8 @@ export class MemoryMonitor extends EventEmitter {
         })),
       globalListeners: Object.fromEntries(
         Array.from(this.globalListeners.entries()).filter(
-          ([_, count]) => count > 0,
-        ),
+          ([_, count]) => count > 0
+        )
       ),
       leakDetection,
     }
@@ -322,6 +322,7 @@ export class MemoryMonitor extends EventEmitter {
     // Use FinalizationRegistry to detect when object is garbage collected
     if (typeof FinalizationRegistry !== 'undefined') {
       const registry = new FinalizationRegistry((heldValue: string) => {
+        // eslint-disable-next-line no-console
         console.log(`Object garbage collected: ${heldValue}`)
       })
 
@@ -332,11 +333,13 @@ export class MemoryMonitor extends EventEmitter {
   // Force garbage collection (only works with --expose-gc flag)
   forceGC() {
     if (typeof window !== 'undefined' && (window as any).gc) {
+      // eslint-disable-next-line no-console
       console.log('Forcing garbage collection...')
       ;(window as any).gc()
     } else {
+      // eslint-disable-next-line no-console
       console.warn(
-        'Garbage collection not available. Run with --expose-gc flag.',
+        'Garbage collection not available. Run with --expose-gc flag.'
       )
     }
   }

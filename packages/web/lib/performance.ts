@@ -4,6 +4,7 @@ export class PerformanceMonitor {
   private static instance: PerformanceMonitor
   private metrics: Map<string, PerformanceMetric> = new Map()
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
   static getInstance(): PerformanceMonitor {
@@ -25,7 +26,7 @@ export class PerformanceMonitor {
   // Measure async operation time
   async measureAsync<T>(
     operationName: string,
-    operation: () => Promise<T>,
+    operation: () => Promise<T>
   ): Promise<T> {
     const startTime = performance.now()
     try {
@@ -120,7 +121,7 @@ export interface PerformanceReport {
 export function debounceWithMetrics<T extends (...args: any[]) => any>(
   func: T,
   wait: number,
-  metricName: string,
+  metricName: string
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout | null = null
   const monitor = PerformanceMonitor.getInstance()
@@ -141,7 +142,7 @@ export function debounceWithMetrics<T extends (...args: any[]) => any>(
 export function throttleWithMetrics<T extends (...args: any[]) => any>(
   func: T,
   limit: number,
-  metricName: string,
+  metricName: string
 ): (...args: Parameters<T>) => void {
   let inThrottle = false
   const monitor = PerformanceMonitor.getInstance()
@@ -161,7 +162,7 @@ export function throttleWithMetrics<T extends (...args: any[]) => any>(
 export function memoizeWithMetrics<T extends (...args: any[]) => any>(
   func: T,
   metricName: string,
-  resolver?: (...args: Parameters<T>) => string,
+  resolver?: (...args: Parameters<T>) => string
 ): T {
   const cache = new Map<string, ReturnType<T>>()
   const monitor = PerformanceMonitor.getInstance()
@@ -174,7 +175,7 @@ export function memoizeWithMetrics<T extends (...args: any[]) => any>(
     }
 
     const result = monitor.measureRender(`${metricName}-compute`, () =>
-      func(...args),
+      func(...args)
     )
     cache.set(key, result as ReturnType<T>)
 
@@ -184,9 +185,10 @@ export function memoizeWithMetrics<T extends (...args: any[]) => any>(
 
 // Performance observer for web vitals
 export function observeWebVitals(
-  callback: (metric: WebVitalMetric) => void,
+  callback: (metric: WebVitalMetric) => void
 ): () => void {
   if (typeof window === 'undefined' || !('PerformanceObserver' in window)) {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return () => {}
   }
 
