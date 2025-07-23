@@ -63,6 +63,7 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
             data-selected={selected}
             contentEditable={false}
             role='button'
+            tabIndex={0}
           >
             {props.element.texExpression.length > 0 ? (
               <span ref={katexRef} />
