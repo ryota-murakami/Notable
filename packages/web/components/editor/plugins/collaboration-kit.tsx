@@ -8,8 +8,9 @@
 import React from 'react'
 import * as Y from 'yjs'
 import { toPlatePlugin } from 'platejs/react'
-import { withYjs, YjsPlugin } from '@platejs/yjs'
-import { CursorOverlayPlugin } from '@platejs/cursor-overlay'
+import { withPlateYjs } from '@platejs/yjs'
+import { YjsPlugin } from '@platejs/yjs/react'
+// Cursor overlay functionality built-in to Plate.js selection plugin
 import { BaseCommentPlugin } from '@platejs/comment'
 import { BaseSuggestionPlugin } from '@platejs/suggestion'
 import { type Value } from 'platejs'
@@ -32,22 +33,16 @@ export const yjsPlugin = toPlatePlugin(YjsPlugin, {
 })
 
 /**
- * Enhanced cursor overlay with Y.js awareness
+ * Collaborative cursor functionality using Plate.js selection plugin
+ * Note: Modern Plate.js has built-in cursor overlay support
  */
-export const collaborativeCursorPlugin = toPlatePlugin(CursorOverlayPlugin, {
+export const collaborativeCursorPlugin = toPlatePlugin(YjsPlugin, {
   options: {
-    containerProps: {
-      className: 'pointer-events-none absolute inset-0 z-50',
-    },
-  },
-  render: {
-    aboveEditable: ({ editor, element }) => {
-      return (
-        <CollaborativeCursors
-          editorElement={element}
-          currentUser={editor.getOption('currentUser') as User}
-        />
-      )
+    cursorStateField: 'cursor',
+    selectionStateField: 'selection',
+    disableCursors: false,
+    cursorOptions: {
+      className: 'pointer-events-none absolute z-50',
     },
   },
 })

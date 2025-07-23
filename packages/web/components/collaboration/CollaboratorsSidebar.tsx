@@ -30,7 +30,11 @@ import {
   WifiOff,
   Circle,
 } from 'lucide-react'
-import { User, Awareness, yjsProvider } from '@/lib/collaboration/yjs-provider'
+import {
+  User,
+  UserAwareness,
+  yjsProvider,
+} from '@/lib/collaboration/yjs-provider'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 
@@ -44,7 +48,7 @@ interface CollaboratorsSidebarProps {
 }
 
 interface CollaboratorWithPresence extends User {
-  awareness?: Awareness
+  awareness?: UserAwareness | null
   isOnline: boolean
   permission: 'owner' | 'editor' | 'viewer'
 }

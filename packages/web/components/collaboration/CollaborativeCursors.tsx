@@ -7,7 +7,11 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { User, Awareness, yjsProvider } from '@/lib/collaboration/yjs-provider'
+import {
+  User,
+  UserAwareness,
+  yjsProvider,
+} from '@/lib/collaboration/yjs-provider'
 import { cn } from '@/lib/utils'
 
 interface CursorPosition {
@@ -20,7 +24,7 @@ interface CursorPosition {
 interface CollaborativeCursor {
   user: User
   position: CursorPosition
-  awareness: Awareness
+  awareness: UserAwareness
   isVisible: boolean
   lastUpdate: number
 }
@@ -91,8 +95,7 @@ export function CollaborativeCursors({
     const walker = document.createTreeWalker(
       element,
       NodeFilter.SHOW_TEXT,
-      null,
-      false
+      null
     )
 
     let currentOffset = 0
@@ -120,8 +123,7 @@ export function CollaborativeCursors({
     const walker = document.createTreeWalker(
       container,
       NodeFilter.SHOW_TEXT,
-      null,
-      false
+      null
     )
 
     let offset = 0
@@ -210,8 +212,7 @@ export function CollaborativeCursors({
     const walker = document.createTreeWalker(
       container,
       NodeFilter.SHOW_TEXT,
-      null,
-      false
+      null
     )
 
     let totalOffset = 0

@@ -4,9 +4,10 @@
  */
 
 import * as Y from 'yjs'
-import { SupabaseProvider } from '@y-sweet/provider'
+import { Awareness } from 'y-protocols/awareness'
+import { WebsocketProvider } from 'y-websocket'
 import { createClient } from '@supabase/supabase-js'
-import { performanceMonitor } from '@/lib/performance'
+import React from 'react'
 
 export interface User {
   id: string
@@ -21,7 +22,7 @@ export interface User {
   lastSeen: Date
 }
 
-export interface Awareness {
+export interface UserAwareness {
   user: User
   cursor?: {
     anchor: number
@@ -37,8 +38,8 @@ export interface Awareness {
 
 class YjsCollaborationProvider {
   private ydoc: Y.Doc | null = null
-  private provider: SupabaseProvider | null = null
-  private awareness: Y.Awareness | null = null
+  private provider: WebsocketProvider | null = null
+  private awareness: Awareness | null = null
   private supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -78,12 +79,11 @@ class YjsCollaborationProvider {
       this.ydoc = new Y.Doc()
       this.currentUser = currentUser
 
-      // Initialize Supabase provider for real-time sync
-      this.provider = new SupabaseProvider(this.ydoc, noteId, {
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        tableName: 'collaborative_documents',
-      })
+      // Initialize WebSocket provider for real-time sync
+      // In production, you'd use a proper Y.js WebSocket server
+      const wsUrl =
+        process.env.NEXT_PUBLIC_YJS_WEBSOCKET_URL || 'ws://localhost:1234'
+      this.provider = new WebsocketProvider(wsUrl, noteId, this.ydoc)
 
       // Set up awareness for user presence
       this.awareness = this.provider.awareness
@@ -94,17 +94,13 @@ class YjsCollaborationProvider {
 
       // Track performance
       const duration = performance.now() - startTime
-      performanceMonitor.track('yjs_document_init', duration, 'ms', {
-        noteId,
-        userId: currentUser.id,
-      })
+      console.log(
+        `Y.js document initialized in ${duration}ms for note ${noteId}`
+      )
 
       return this.ydoc
     } catch (error) {
-      performanceMonitor.track('yjs_document_init_error', 1, 'count', {
-        error: error.toString(),
-        noteId,
-      })
+      console.error('Y.js document initialization error:', error, { noteId })
       throw error
     }
   }
@@ -182,7 +178,8 @@ class YjsCollaborationProvider {
     this.awareness.setLocalStateField('cursor', { anchor, focus })
     this.awareness.setLocalStateField('lastActivity', new Date())
 
-    performanceMonitor.track('yjs_cursor_update', 1, 'count', {
+    // Track cursor updates
+    console.debug('Cursor updated:', {
       anchor,
       focus,
       userId: this.currentUser?.id,
@@ -226,7 +223,7 @@ class YjsCollaborationProvider {
   /**
    * Get awareness state for a specific user
    */
-  getUserAwareness(userId: string): Awareness | null {
+  getUserAwareness(userId: string): UserAwareness | null {
     if (!this.awareness) return null
 
     for (const [clientId, state] of this.awareness.getStates().entries()) {
@@ -270,20 +267,18 @@ class YjsCollaborationProvider {
     // Document sync events
     this.provider.on('sync', (isSynced: boolean) => {
       this.emit('sync', isSynced)
-      performanceMonitor.track('yjs_sync', 1, 'count', { isSynced })
+      console.debug('Y.js sync status:', { isSynced })
     })
 
     this.provider.on('status', (event: { status: string }) => {
       this.emit('connection-status', event.status)
-      performanceMonitor.track('yjs_connection_status', 1, 'count', {
-        status: event.status,
-      })
+      console.debug('Y.js connection status:', event.status)
     })
 
     // Document change events
     this.ydoc.on('update', (update: Uint8Array, origin: any) => {
       this.emit('document-updated', { update, origin })
-      performanceMonitor.track('yjs_document_update', 1, 'count')
+      console.debug('Y.js document updated')
     })
   }
 
@@ -349,7 +344,7 @@ class YjsCollaborationProvider {
 
     this.emit('disconnect')
 
-    performanceMonitor.track('yjs_disconnect', 1, 'count', {
+    console.log('Y.js collaboration disconnected:', {
       userId: this.currentUser?.id,
     })
   }
