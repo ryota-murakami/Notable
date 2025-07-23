@@ -169,13 +169,13 @@ export default function MonitoringDashboard() {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      operational: 'default',
-      degraded: 'secondary',
-      outage: 'destructive',
-    } as const
+      operational: 'default' as const,
+      degraded: 'secondary' as const,
+      outage: 'destructive' as const,
+    }
 
     return (
-      <Badge variant={variants[status as keyof typeof variants] || 'secondary'}>
+      <Badge variant={(variants as any)[status] || 'secondary'}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     )
@@ -194,10 +194,10 @@ export default function MonitoringDashboard() {
     }
   }
 
-  const activeAlerts = alerts.filter((alert) => alert.status === 'firing')
-  const overallStatus = services.some((s) => s.status === 'outage')
+  const activeAlerts = alerts.filter((alert: any) => alert.status === 'firing')
+  const overallStatus = services.some((s: any) => s.status === 'outage')
     ? 'outage'
-    : services.some((s) => s.status === 'degraded')
+    : services.some((s: any) => s.status === 'degraded')
       ? 'degraded'
       : 'operational'
 
@@ -249,7 +249,7 @@ export default function MonitoringDashboard() {
         <div className='mb-8'>
           <h2 className='text-xl font-semibold mb-4'>Active Alerts</h2>
           <div className='space-y-4'>
-            {activeAlerts.map((alert) => (
+            {activeAlerts.map((alert: any) => (
               <Alert
                 key={alert.id}
                 variant={
@@ -289,7 +289,7 @@ export default function MonitoringDashboard() {
         {/* Services Tab */}
         <TabsContent value='services' className='space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {services.map((service) => (
+            {services.map((service: any) => (
               <Card key={service.name}>
                 <CardHeader className='pb-3'>
                   <CardTitle className='text-lg flex items-center justify-between'>
@@ -451,7 +451,7 @@ export default function MonitoringDashboard() {
                 </CardContent>
               </Card>
             ) : (
-              alerts.map((alert) => (
+              alerts.map((alert: any) => (
                 <Card key={alert.id}>
                   <CardHeader>
                     <CardTitle className='flex items-center justify-between'>
