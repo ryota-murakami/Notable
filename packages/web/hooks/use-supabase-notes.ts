@@ -6,7 +6,13 @@ import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
 import type { User } from '@supabase/supabase-js'
-import type { RealtimeUser } from '@/types/realtime'
+// Define types inline instead of importing from missing module
+interface RealtimeUser {
+  id: string
+  name: string
+  avatar?: string
+  color?: string
+}
 
 interface UseSupabaseNotesOptions {
   user?: User | null
@@ -23,14 +29,14 @@ export function useSupabaseNotes({
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  // Real-time sync configuration
-  const realtimeUser: RealtimeUser | undefined = user
-    ? {
-        id: user.id,
-        name: user.user_metadata?.name || user.email || 'Anonymous',
-        avatar: user.user_metadata?.avatar_url,
-      }
-    : undefined
+  // Real-time sync configuration (commented out since unused)
+  // const realtimeUser: RealtimeUser | undefined = user
+  //   ? {
+  //       id: user.id,
+  //       name: user.user_metadata?.name || user.email || 'Anonymous',
+  //       avatar: user.user_metadata?.avatar_url,
+  //     }
+  //   : undefined
 
   // Setup real-time sync
   const {
@@ -42,14 +48,13 @@ export function useSupabaseNotes({
     stopTyping,
     broadcastNoteUpdate,
   } = useRealtimeSync({
-    noteId: activeNoteId,
-    user: realtimeUser,
+    noteId: activeNoteId || '',
     onNoteUpdate: handleRealtimeNoteUpdate,
-    onUserTyping: (users) => {
+    onUserJoin: (users: any) => {
       // Handle typing indicators
       console.log('Users typing:', users)
     },
-    onPresenceChange: (users) => {
+    onUserLeave: (users: any) => {
       // Handle presence changes
       console.log('Online users:', users)
     },
@@ -58,9 +63,7 @@ export function useSupabaseNotes({
   // Handle real-time note updates
   function handleRealtimeNoteUpdate(updatedNote: Note) {
     setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === updatedNote.id ? updatedNote : note,
-      ),
+      prevNotes.map((note) => (note.id === updatedNote.id ? updatedNote : note))
     )
 
     toast({
@@ -86,7 +89,7 @@ export function useSupabaseNotes({
           note_tags(
             tags(id, name, color)
           )
-        `,
+        `
         )
         .eq('user_id', user.id)
         .is('deleted_at', null)
@@ -230,8 +233,8 @@ export function useSupabaseNotes({
           prevNotes.map((n) =>
             n.id === note.id
               ? { ...note, updatedAt: new Date().toISOString() }
-              : n,
-          ),
+              : n
+          )
         )
 
         return true
@@ -249,7 +252,7 @@ export function useSupabaseNotes({
         setIsSaving(false)
       }
     },
-    [user, toast, broadcastNoteUpdate],
+    [user, toast, broadcastNoteUpdate]
   )
 
   // Create new note
@@ -275,7 +278,20 @@ export function useSupabaseNotes({
 
         if (error) throw error
 
-        const createdNote = data as Note
+        const createdNote = {
+          id: data.id,
+          title: data.title,
+          content: data.content,
+          userId: data.user_id,
+          folderId: data.folder_id,
+          isPublic: data.is_public,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+          deletedAt: data.deleted_at,
+          parentId: null,
+          tags: [],
+          isFolder: false,
+        } as Note
         setNotes((prevNotes) => [createdNote, ...prevNotes])
         return createdNote
       } catch (err) {
@@ -292,7 +308,7 @@ export function useSupabaseNotes({
         setIsLoading(false)
       }
     },
-    [user, toast],
+    [user, toast]
   )
 
   // Create new folder
@@ -311,9 +327,11 @@ export function useSupabaseNotes({
         const { data, error } = await supabase
           .from('folders')
           .insert({
-            name: newFolder.title,
+            name: newFolder.title || 'New Folder',
             user_id: user.id,
-            parent_id: newFolder.parentId,
+            ...(newFolder.parentId !== undefined && {
+              parent_id: newFolder.parentId,
+            }),
           })
           .select()
           .single()
@@ -337,7 +355,7 @@ export function useSupabaseNotes({
         setIsLoading(false)
       }
     },
-    [user, toast],
+    [user, toast]
   )
 
   // Delete note
@@ -384,7 +402,7 @@ export function useSupabaseNotes({
         return false
       }
     },
-    [user, notes, toast],
+    [user, notes, toast]
   )
 
   // Load notes when user changes

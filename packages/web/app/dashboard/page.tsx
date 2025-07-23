@@ -3,6 +3,7 @@
 import { useSupabase } from '@/components/supabase-provider'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import type { Note } from '@/types/note'
 import {
   Card,
   CardContent,
@@ -22,7 +23,7 @@ import {
 
 export default function DashboardPage() {
   const { user, supabase, loading } = useSupabase()
-  const [notes, setNotes] = useState<any[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
   const [isLoadingNotes, setIsLoadingNotes] = useState(true)
 
   useEffect(() => {
@@ -182,7 +183,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className='space-y-4'>
-                  {notes.slice(0, 5).map((note) => (
+                  {notes.slice(0, 5).map((note: Note) => (
                     <div
                       key={note.id}
                       className='flex items-center space-x-4 p-4 border rounded-lg hover:bg-muted/50 cursor-pointer'
@@ -191,7 +192,7 @@ export default function DashboardPage() {
                       <div className='flex-1'>
                         <h3 className='font-medium'>{note.title}</h3>
                         <p className='text-sm text-muted-foreground'>
-                          {new Date(note.updated_at).toLocaleDateString()}
+                          {new Date(note.updatedAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
