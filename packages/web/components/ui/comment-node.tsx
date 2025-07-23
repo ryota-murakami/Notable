@@ -9,6 +9,7 @@ import {
   usePluginOption,
   type PlateLeafProps,
 } from 'platejs/react'
+import { getCommentCount } from '@platejs/comment'
 
 import { cn } from '@/lib/utils'
 import { commentPlugin } from '@/components/editor/plugins/comment-kit'

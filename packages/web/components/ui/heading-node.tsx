@@ -3,6 +3,7 @@
 import * as React from 'react'
 
 import { PlateElement, type PlateElementProps } from 'platejs/react'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 const headingVariants = cva('relative mb-1', {
   variants: {

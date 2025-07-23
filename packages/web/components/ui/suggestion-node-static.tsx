@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import { SlateLeaf, type SlateLeafProps, type TSuggestionText } from 'platejs'
+import { BaseSuggestionPlugin } from '@platejs/suggestion'
 
 import { cn } from '@/lib/utils'
 

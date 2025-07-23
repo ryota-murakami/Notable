@@ -5,6 +5,7 @@ import {
   type SlateElementProps,
   type TLinkElement,
 } from 'platejs'
+import { getLinkAttributes } from '@platejs/link'
 
 export function LinkElementStatic(props: SlateElementProps<TLinkElement>) {
   return (

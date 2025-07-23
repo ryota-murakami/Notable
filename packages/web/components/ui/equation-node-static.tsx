@@ -12,10 +12,10 @@ import { cn } from '@/lib/utils'
 // TODO: Implement proper equation HTML rendering
 function getEquationHtml({
   element,
-  options,
+  _options,
 }: {
   element: TEquationElement
-  options: any
+  _options: any
 }) {
   return element.texExpression || ''
 }
