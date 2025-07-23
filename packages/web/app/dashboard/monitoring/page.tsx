@@ -172,12 +172,14 @@ export default function MonitoringDashboard() {
       operational: 'default' as const,
       degraded: 'secondary' as const,
       outage: 'destructive' as const,
-    }
+    } as const
+
+    type VariantKey = keyof typeof variants
+    const validStatus = status as VariantKey
+    const variant = variants[validStatus] || 'secondary'
 
     return (
-      <Badge
-        variant={(variants as Record<string, string>)[status] || 'secondary'}
-      >
+      <Badge variant={variant}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     )
