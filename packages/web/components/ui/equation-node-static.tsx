@@ -1,13 +1,12 @@
 import * as React from 'react'
+import { RadicalIcon } from 'lucide-react'
 
 import {
   SlateElement,
   type SlateElementProps,
   type TEquationElement,
 } from 'platejs'
-
 import { getEquationHtml } from '@platejs/math'
-import { RadicalIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 

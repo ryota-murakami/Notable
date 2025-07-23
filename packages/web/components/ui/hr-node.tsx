@@ -8,6 +8,7 @@ import {
   useFocused,
   useReadOnly,
   useSelected,
+  type PlateElementProps,
 } from 'platejs/react'
 
 import { cn } from '@/lib/utils'
