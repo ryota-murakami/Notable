@@ -1,4 +1,5 @@
 /* eslint-env jest, detox/detox */
+const { device, element, by, waitFor, expect } = require('detox')
 
 describe('Notes Management', () => {
   beforeAll(async () => {

@@ -1,12 +1,19 @@
 /* eslint-env jest */
 /* eslint-disable no-undef */
 
-require('detox/runners/jest/adapter')
+const adapter = require('detox/runners/jest/adapter')
 
+// Recommended by Detox docs
 beforeAll(async () => {
-  await device.launchApp()
+  await adapter.beforeAll()
+  await device.launchApp({ newInstance: true })
 })
 
 beforeEach(async () => {
+  await adapter.beforeEach()
   await device.reloadReactNative()
+})
+
+afterAll(async () => {
+  await adapter.afterAll()
 })

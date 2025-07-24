@@ -1,4 +1,5 @@
 /* eslint-env jest, detox/detox */
+const { device, element, by, waitFor, expect } = require('detox')
 
 describe('Performance Tests', () => {
   beforeAll(async () => {
@@ -40,7 +41,9 @@ describe('Performance Tests', () => {
   })
 
   it('should load large notes list efficiently', async () => {
-    // This test would require pre-populated data
+    // Verify we have sufficient test data
+    await expect(element(by.id('notes-list').atIndex(0))).toBeVisible()
+
     const startTime = Date.now()
 
     await waitFor(element(by.id('notes-list')))

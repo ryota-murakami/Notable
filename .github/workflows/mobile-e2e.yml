@@ -37,6 +37,8 @@ jobs:
 
       - name: Setup iOS Simulator
         run: |
+          # Delete existing simulator if it exists, then create new one
+          xcrun simctl delete "iPhone 15" 2>/dev/null || true
           xcrun simctl create "iPhone 15" "iPhone 15" latest
           xcrun simctl boot "iPhone 15"
 
@@ -93,6 +95,8 @@ jobs:
       - name: Create Android AVD
         run: |
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-34;google_apis;x86_64"
+          # Delete existing AVD if it exists
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name Pixel_6_API_34 || true
           echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_6_API_34 --abi google_apis/x86_64 --package "system-images;android-34;google_apis;x86_64"
 
       - name: Start Android Emulator
