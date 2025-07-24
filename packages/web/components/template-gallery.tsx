@@ -197,9 +197,37 @@ function TemplatePreview({
                     </h4>
                   </div>
                   <div className='prose prose-sm max-w-none'>
-                    {/* Simple preview rendering - in a real app, you'd use your rich text renderer */}
-                    <div className='text-sm'>
-                      {JSON.stringify(previewResult.content, null, 2)}
+                    <div className='p-4 border rounded bg-background min-h-32'>
+                      {previewResult.content.map((node: any, index: number) => (
+                        <div key={index} className='mb-2'>
+                          {node.type === 'h1' && (
+                            <h1 className='text-2xl font-bold'>
+                              {node.children?.[0]?.text || ''}
+                            </h1>
+                          )}
+                          {node.type === 'h2' && (
+                            <h2 className='text-xl font-semibold'>
+                              {node.children?.[0]?.text || ''}
+                            </h2>
+                          )}
+                          {node.type === 'p' && (
+                            <p className='text-sm'>
+                              {node.children?.[0]?.text || ''}
+                            </p>
+                          )}
+                          {node.type === 'ul' && (
+                            <ul className='list-disc pl-4'>
+                              {node.children?.map(
+                                (li: any, liIndex: number) => (
+                                  <li key={liIndex} className='text-sm'>
+                                    {li.children?.[0]?.text || ''}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
