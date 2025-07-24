@@ -1,10 +1,14 @@
 'use client'
 
-import type { AIChatPluginConfig } from '@platejs/ai/react'
+import {
+  AIChatPlugin,
+  AIPlugin,
+  useChatChunk,
+  type AIChatPluginConfig,
+} from '@platejs/ai/react'
 import type { UseChatOptions } from 'ai/react'
 
 import { streamInsertChunk, withAIBatch } from '@platejs/ai'
-import { AIChatPlugin, AIPlugin, useChatChunk } from '@platejs/ai/react'
 import { KEYS, PathApi } from 'platejs'
 import { usePluginOption } from 'platejs/react'
 
@@ -49,7 +53,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
 
     useChatChunk({
       onChunk: ({ chunk, isFirst, nodes }) => {
-        if (isFirst && mode == 'insert') {
+        if (isFirst && mode === 'insert') {
           editor.tf.withoutSaving(() => {
             editor.tf.insertNodes(
               {

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { EyeOff, Eye, Plus } from 'lucide-react'
+import { EyeOff, Plus } from 'lucide-react'
 import type { Note } from '@/types/note'
 
 // Dynamic import for PlateEditor to prevent SSR issues

@@ -31,7 +31,6 @@ interface PlateEditorProps {
 export function PlateEditor({
   value = [{ type: 'p', children: [{ text: '' }] }],
   onChange,
-  placeholder = 'Start writing...',
   className,
   showToolbar = true,
 }: PlateEditorProps) {
