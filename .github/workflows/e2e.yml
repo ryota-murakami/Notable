@@ -52,7 +52,7 @@ jobs:
           echo ""
           echo "E2E tests are functional and comprehensive when run locally:"
           echo "- Keyboard shortcuts functionality"
-          echo "- Command palette integration" 
+          echo "- Command palette integration"
           echo "- Navigation and note management"
           echo "- Authentication flow"
           echo ""
