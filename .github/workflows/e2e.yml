@@ -42,8 +42,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
+        timeout-minutes: 5
         run: |
-          cd packages/web && npx playwright install --with-deps
+          cd packages/web
+          echo "Starting Playwright browser installation..."
+          npx playwright install chromium --with-deps
+          echo "Playwright browsers installed successfully"
 
       - name: Run E2E tests
-        run: echo "E2E tests temporarily disabled due to hanging issue (see issue 107)"
+        run: |
+          cd packages/web && pnpm playwright test --reporter=list
