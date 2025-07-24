@@ -8,9 +8,17 @@ export interface Note extends BaseNote {
   folder_id?: string | null
   is_public?: boolean
   deleted_at?: string | null
+  // Override base properties to also have camelCase versions
+  createdAt: string
+  updatedAt: string
   // Add missing properties from the simple Note type
   parentId?: string | null
   isFolder?: boolean
+  isArchived?: boolean
+  isDeleted?: boolean
+  isFavorite?: boolean
+  viewCount?: number
+  wordCount?: number
   tags?: string[] | { name: string }[]
 }
 

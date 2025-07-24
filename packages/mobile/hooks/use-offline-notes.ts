@@ -222,6 +222,7 @@ export function useOfflineNotes({
         setError(null)
 
         const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const timestamp = new Date().toISOString()
         const newNote: Note = {
           id: tempId,
           title: noteData?.title || 'Untitled',
@@ -229,8 +230,10 @@ export function useOfflineNotes({
           user_id: user.id,
           folder_id: noteData?.folder_id || null,
           is_public: noteData?.is_public || false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          created_at: timestamp,
+          updated_at: timestamp,
+          createdAt: timestamp,
+          updatedAt: timestamp,
           deleted_at: null,
           // Add missing required properties
           parentId: null, // Keep for compatibility but use folder_id for actual logic
@@ -332,10 +335,12 @@ export function useOfflineNotes({
           throw new Error('Note not found')
         }
 
+        const timestamp = new Date().toISOString()
         const updatedNote: Note = {
           ...existingNote,
           ...updates,
-          updatedAt: new Date().toISOString(),
+          updatedAt: timestamp,
+          updated_at: timestamp,
         }
 
         // Update cache immediately
