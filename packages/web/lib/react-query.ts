@@ -24,15 +24,6 @@ export const queryKeys = {
     usage: () => ['user', 'usage'] as const,
   },
 
-  // Collaboration queries
-  collaboration: {
-    all: ['collaboration'] as const,
-    presence: (noteId: string) =>
-      ['collaboration', 'presence', noteId] as const,
-    comments: (noteId: string) =>
-      ['collaboration', 'comments', noteId] as const,
-  },
-
   // Performance metrics
   performance: {
     all: ['performance'] as const,
@@ -178,16 +169,6 @@ export const invalidationHelpers = {
   invalidateUserSubscription: (queryClient: QueryClient) => {
     queryClient.invalidateQueries({ queryKey: queryKeys.user.subscription() })
     queryClient.invalidateQueries({ queryKey: queryKeys.user.usage() })
-  },
-
-  // Invalidate collaboration data
-  invalidateCollaboration: (queryClient: QueryClient, noteId: string) => {
-    queryClient.invalidateQueries({
-      queryKey: queryKeys.collaboration.presence(noteId),
-    })
-    queryClient.invalidateQueries({
-      queryKey: queryKeys.collaboration.comments(noteId),
-    })
   },
 }
 

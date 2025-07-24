@@ -25,19 +25,12 @@ export const SUBSCRIPTION_PLANS = {
     description: 'Perfect for personal use',
     price: 0,
     priceId: null,
-    features: [
-      'Up to 50 notes',
-      '100MB storage',
-      '2 devices',
-      'Basic collaboration',
-      'Email support',
-    ],
+    features: ['Up to 50 notes', '100MB storage', '2 devices', 'Email support'],
     limits: {
       notes: 50,
       storage: 100 * 1024 * 1024, // 100MB in bytes
       devices: 2,
       exports: 5,
-      collaborators: 3,
       aiRequests: 10,
     },
   },
@@ -51,7 +44,6 @@ export const SUBSCRIPTION_PLANS = {
       'Unlimited notes',
       '10GB storage',
       'Unlimited devices',
-      'Advanced collaboration',
       'Priority support',
       'Advanced AI features',
       'Export to all formats',
@@ -62,7 +54,6 @@ export const SUBSCRIPTION_PLANS = {
       storage: 10 * 1024 * 1024 * 1024, // 10GB in bytes
       devices: -1,
       exports: -1,
-      collaborators: -1,
       aiRequests: -1,
     },
   },
@@ -86,7 +77,6 @@ export const SUBSCRIPTION_PLANS = {
       storage: 100 * 1024 * 1024 * 1024, // 100GB in bytes
       devices: -1,
       exports: -1,
-      collaborators: -1,
       aiRequests: -1,
       teamMembers: 25,
     },

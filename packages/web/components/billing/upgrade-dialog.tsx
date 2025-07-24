@@ -24,9 +24,12 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Crown, Check, Star, Users, Loader2, Sparkles } from 'lucide-react'
-import { SUBSCRIPTION_PLANS, formatStorageSize } from '@/lib/stripe'
-import type { SubscriptionPlan } from '@/lib/stripe'
+import { Check, Crown, Loader2, Sparkles, Star, Users } from 'lucide-react'
+import {
+  formatStorageSize,
+  SUBSCRIPTION_PLANS,
+  type SubscriptionPlan,
+} from '@/lib/stripe'
 
 interface UpgradeDialogProps {
   trigger?: React.ReactNode

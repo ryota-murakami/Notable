@@ -119,10 +119,6 @@ To create the world's most elegant and performant note-taking application that c
   - Offline-first architecture
   - Background sync
   - Sync status indicators
-- **Collaboration Features**
-  - Real-time presence indicators
-  - Cursor tracking
-  - Live updates
 
 ### 7. Export Capabilities
 
@@ -245,7 +241,6 @@ To create the world's most elegant and performant note-taking application that c
   - Unlimited device sync
   - Advanced export options
   - Priority support
-  - Collaboration features
   - Custom themes
 
 ## Success Metrics
