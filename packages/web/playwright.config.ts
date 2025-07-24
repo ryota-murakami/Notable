@@ -76,8 +76,10 @@ export default defineConfig({
     command: process.env.CI
       ? 'npm run build && npx --yes serve@latest out -p 4378 -s'
       : 'npm run dev',
-    url: process.env.CI ? 'http://localhost:4378' : 'http://localhost:4378',
+    url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
+    timeout: 180000, // 3 minutes timeout for CI
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 })
