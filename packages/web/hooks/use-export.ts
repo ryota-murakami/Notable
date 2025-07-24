@@ -77,7 +77,7 @@ export function useExport() {
             return `[${text}](${node.url})`
           case 'img':
             return `![${node.alt || ''}](${node.url})\n\n`
-          default:
+          default: {
             // Handle text formatting
             let formattedText = text
             if (node.bold) formattedText = `**${formattedText}**`
@@ -85,6 +85,7 @@ export function useExport() {
             if (node.strikethrough) formattedText = `~~${formattedText}~~`
             if (node.code) formattedText = `\`${formattedText}\``
             return formattedText
+          }
         }
       }
 
@@ -182,7 +183,7 @@ export function useExport() {
             return `<td>${sanitizeHTML(text)}</td>`
           case 'th':
             return `<th>${sanitizeHTML(text)}</th>`
-          default:
+          default: {
             // Handle text formatting
             let formattedText = sanitizeHTML(text)
             if (node.bold) formattedText = `<strong>${formattedText}</strong>`
@@ -191,6 +192,7 @@ export function useExport() {
             if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
             if (node.code) formattedText = `<code>${formattedText}</code>`
             return formattedText
+          }
         }
       }
 
@@ -333,7 +335,7 @@ export function useExport() {
           return `<td key={${key}}>${text}</td>`
         case 'th':
           return `<th key={${key}}>${text}</th>`
-        default:
+        default: {
           // Handle text formatting
           let formattedText = text
           if (node.bold) formattedText = `<strong>${formattedText}</strong>`
@@ -342,6 +344,7 @@ export function useExport() {
           if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
           if (node.code) formattedText = `<code>${formattedText}</code>`
           return formattedText
+        }
       }
     }
 
