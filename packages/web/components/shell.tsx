@@ -19,6 +19,10 @@ import { ViewModeRenderer } from '@/components/view-mode-renderer'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Badge } from '@/components/ui/badge'
 import { UserCheck, Users, Wifi, WifiOff } from 'lucide-react'
+import { BulkOperationsToolbar } from '@/components/bulk-operations-toolbar'
+import { type ExportFormat, useExport } from '@/hooks/use-export'
+import { Button } from '@/components/ui/button'
+import { CheckSquare } from 'lucide-react'
 
 export function Shell() {
   const [activeNoteId, setActiveNoteId] = useState<string>('')
@@ -27,8 +31,11 @@ export function Shell() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEditorLoading, setIsEditorLoading] = useState(false)
   const [isViewMode, setIsViewMode] = useState(false)
+  const [isMultiSelectMode, setIsMultiSelectMode] = useState(false)
+  const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(new Set())
   const { toast } = useToast()
   const { user, loading: authLoading } = useSupabase()
+  const { exportNote, isExporting } = useExport()
 
   // Use Supabase notes hook with real-time sync
   const {
@@ -51,6 +58,7 @@ export function Shell() {
   } = useSupabaseNotes({ activeNoteId })
 
   const activeNote = notes.find((note) => note.id === activeNoteId) || notes[0]
+  const folders = notes.filter((note) => note.isFolder)
 
   // Set initial active note when notes load
   useEffect(() => {
@@ -230,6 +238,170 @@ export function Shell() {
     [notes, deleteNote, activeNoteId, setActiveNoteId, toast]
   )
 
+  // Multi-select handlers
+  const toggleNoteSelection = useCallback((noteId: string) => {
+    setSelectedNoteIds((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(noteId)) {
+        newSet.delete(noteId)
+      } else {
+        newSet.add(noteId)
+      }
+      return newSet
+    })
+  }, [])
+
+  const selectAllNotes = useCallback(() => {
+    const allNoteIds = notes
+      .filter((note) => !note.isFolder)
+      .map((note) => note.id)
+    setSelectedNoteIds(new Set(allNoteIds))
+  }, [notes])
+
+  const clearSelection = useCallback(() => {
+    setSelectedNoteIds(new Set())
+  }, [])
+
+  // Bulk operation handlers
+  const handleBulkDelete = useCallback(async () => {
+    try {
+      const selectedIds = Array.from(selectedNoteIds)
+
+      // Delete all selected notes
+      for (const noteId of selectedIds) {
+        await deleteNote(noteId)
+      }
+
+      // Clear selection
+      clearSelection()
+      setIsMultiSelectMode(false)
+
+      toast({
+        title: 'Notes deleted',
+        description: `${selectedIds.length} notes have been deleted successfully.`,
+        variant: 'destructive',
+      })
+
+      // Update active note if necessary
+      if (selectedIds.includes(activeNoteId)) {
+        const remainingNotes = notes.filter(
+          (note) => !selectedIds.includes(note.id)
+        )
+        setActiveNoteId(remainingNotes[0]?.id || '')
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete notes. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }, [selectedNoteIds, deleteNote, clearSelection, toast, activeNoteId, notes])
+
+  const handleBulkExport = useCallback(
+    async (format: ExportFormat) => {
+      try {
+        const selectedNotes = notes.filter((note) =>
+          selectedNoteIds.has(note.id)
+        )
+
+        for (const note of selectedNotes) {
+          await exportNote(note, format, {
+            includeTitle: true,
+            includeMetadata: true,
+            includeStyles: true,
+          })
+        }
+
+        toast({
+          title: 'Export successful',
+          description: `${selectedNotes.length} notes exported as ${format.toUpperCase()}.`,
+        })
+      } catch {
+        toast({
+          title: 'Export failed',
+          description: 'Failed to export notes. Please try again.',
+          variant: 'destructive',
+        })
+      }
+    },
+    [selectedNoteIds, notes, exportNote, toast]
+  )
+
+  const handleBulkMove = useCallback(
+    async (folderId: string) => {
+      try {
+        const selectedIds = Array.from(selectedNoteIds)
+        const parentId = folderId === 'root' ? null : folderId
+
+        for (const noteId of selectedIds) {
+          const note = notes.find((n) => n.id === noteId)
+          if (note) {
+            await saveNote({
+              ...note,
+              parentId,
+              updatedAt: new Date().toISOString(),
+            })
+          }
+        }
+
+        clearSelection()
+        setIsMultiSelectMode(false)
+
+        toast({
+          title: 'Notes moved',
+          description: `${selectedIds.length} notes have been moved successfully.`,
+        })
+      } catch {
+        toast({
+          title: 'Error',
+          description: 'Failed to move notes. Please try again.',
+          variant: 'destructive',
+        })
+      }
+    },
+    [selectedNoteIds, notes, saveNote, clearSelection, toast]
+  )
+
+  const handleBulkAddTag = useCallback(
+    async (tag: string) => {
+      try {
+        const selectedIds = Array.from(selectedNoteIds)
+
+        for (const noteId of selectedIds) {
+          const note = notes.find((n) => n.id === noteId)
+          if (note) {
+            const updatedTags = note.tags ? [...note.tags] : []
+            if (!updatedTags.includes(tag)) {
+              updatedTags.push(tag)
+            }
+
+            await saveNote({
+              ...note,
+              tags: updatedTags,
+              updatedAt: new Date().toISOString(),
+            })
+          }
+        }
+
+        clearSelection()
+        setIsMultiSelectMode(false)
+
+        toast({
+          title: 'Tag added',
+          description: `Tag "${tag}" added to ${selectedIds.length} notes.`,
+        })
+      } catch {
+        toast({
+          title: 'Error',
+          description: 'Failed to add tag. Please try again.',
+          variant: 'destructive',
+        })
+      }
+    },
+    [selectedNoteIds, notes, saveNote, clearSelection, toast]
+  )
+
   // Add comprehensive keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -299,6 +471,26 @@ export function Shell() {
             // Toggle sidebar collapse
             setIsSidebarCollapsed(!isSidebarCollapsed)
             break
+          case 'm':
+            e.preventDefault()
+            // Toggle multi-select mode
+            setIsMultiSelectMode(!isMultiSelectMode)
+            if (isMultiSelectMode) {
+              clearSelection()
+            }
+            toast({
+              title: isMultiSelectMode ? 'Normal Mode' : 'Multi-Select Mode',
+              description: isMultiSelectMode
+                ? 'Switched to normal mode'
+                : 'Click notes to select multiple items',
+            })
+            break
+          case 'a':
+            if (isMultiSelectMode) {
+              e.preventDefault()
+              selectAllNotes()
+            }
+            break
           case 'e':
             e.preventDefault()
             // Toggle view mode
@@ -365,6 +557,9 @@ export function Shell() {
     isViewMode,
     handleCreateNote,
     handleDeleteNote,
+    isMultiSelectMode,
+    clearSelection,
+    selectAllNotes,
   ])
 
   // Show loading screen while authenticating
@@ -419,6 +614,9 @@ export function Shell() {
           isMobileMenuOpen={isMobileMenuOpen}
           onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           isLoading={isLoading}
+          selectedNoteIds={selectedNoteIds}
+          onToggleNoteSelection={toggleNoteSelection}
+          isMultiSelectMode={isMultiSelectMode}
         />
       )}
       <div
@@ -475,6 +673,20 @@ export function Shell() {
                     )}
                   </div>
 
+                  <Button
+                    variant={isMultiSelectMode ? 'default' : 'outline'}
+                    size='sm'
+                    onClick={() => {
+                      setIsMultiSelectMode(!isMultiSelectMode)
+                      if (isMultiSelectMode) {
+                        clearSelection()
+                      }
+                    }}
+                  >
+                    <CheckSquare className='h-4 w-4 mr-1' />
+                    Multi-Select
+                  </Button>
+
                   <ModeToggle
                     isViewMode={isViewMode}
                     onToggle={() => setIsViewMode(!isViewMode)}
@@ -515,6 +727,20 @@ export function Shell() {
         notes={notes}
         onSelectNote={setActiveNoteId}
         onCreateNote={() => handleCreateNote(null)}
+      />
+
+      {/* Bulk Operations Toolbar */}
+      <BulkOperationsToolbar
+        selectedNoteIds={selectedNoteIds}
+        totalNotes={notes.filter((n) => !n.isFolder).length}
+        onSelectAll={selectAllNotes}
+        onClearSelection={clearSelection}
+        onBulkDelete={handleBulkDelete}
+        onBulkExport={handleBulkExport}
+        onBulkMove={handleBulkMove}
+        onBulkAddTag={handleBulkAddTag}
+        folders={folders}
+        isExporting={isExporting}
       />
     </div>
   )
