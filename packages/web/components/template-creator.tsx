@@ -27,11 +27,7 @@ import { LoadingSpinner } from '@/components/loading-states'
 import { useToast } from '@/hooks/use-toast'
 import { TemplateEngine } from '@/utils/template-engine'
 import { createClient } from '@/utils/supabase/client'
-import type {
-  TemplateCreateRequest,
-  TemplateCategory,
-  TemplateVariable,
-} from '@/types/template'
+import type { TemplateCreateRequest, TemplateCategory } from '@/types/template'
 import {
   TEMPLATE_CATEGORIES,
   DEFAULT_TEMPLATE_VARIABLES,

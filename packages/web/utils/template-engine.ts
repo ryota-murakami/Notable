@@ -9,6 +9,7 @@ import type {
   PopularTemplate,
   TemplateUsage,
   TemplateUsageType,
+  TemplateCategory,
 } from '@/types/template'
 import { toast } from '@/hooks/use-toast'
 
@@ -67,8 +68,8 @@ export class TemplateEngine {
         data?.map((template: TemplateRpcResponse) => ({
           id: template.id,
           name: template.name,
-          description: template.description,
-          category: template.category,
+          description: template.description || undefined,
+          category: template.category as TemplateCategory,
           tags: template.tags || [],
           titleTemplate: template.title_template,
           contentTemplate: template.content_template,
@@ -76,8 +77,8 @@ export class TemplateEngine {
           isBuiltIn: template.is_built_in,
           isPublic: template.is_public || false,
           usageCount: template.usage_count || 0,
-          createdBy: template.created_by,
-          organizationId: template.organization_id,
+          createdBy: template.created_by || undefined,
+          organizationId: template.organization_id || undefined,
           createdAt: template.created_at,
           updatedAt: template.updated_at || template.created_at,
         })) || []
@@ -114,8 +115,8 @@ export class TemplateEngine {
         data?.map((template: TemplateRpcResponse) => ({
           id: template.id,
           name: template.name,
-          description: template.description,
-          category: template.category,
+          description: template.description || undefined,
+          category: template.category as TemplateCategory,
           tags: template.tags || [],
           titleTemplate: template.title_template,
           contentTemplate: template.content_template,
@@ -123,8 +124,8 @@ export class TemplateEngine {
           isBuiltIn: template.is_built_in,
           isPublic: template.is_public || false,
           usageCount: template.usage_count || 0,
-          createdBy: template.created_by,
-          organizationId: template.organization_id,
+          createdBy: template.created_by || undefined,
+          organizationId: template.organization_id || undefined,
           createdAt: template.created_at,
           updatedAt: template.updated_at || template.created_at,
           searchRank: template.search_rank,
@@ -157,8 +158,8 @@ export class TemplateEngine {
       return {
         id: data.id,
         name: data.name,
-        description: data.description,
-        category: data.category,
+        description: data.description || undefined,
+        category: data.category as TemplateCategory,
         tags: data.tags || [],
         titleTemplate: data.title_template,
         contentTemplate: data.content_template,
@@ -193,8 +194,8 @@ export class TemplateEngine {
         .from('note_templates')
         .insert({
           name: template.name,
-          description: template.description,
-          category: template.category,
+          description: template.description || undefined,
+          category: template.category as TemplateCategory,
           tags: template.tags || [],
           title_template: template.titleTemplate,
           content_template: template.contentTemplate,
@@ -223,8 +224,8 @@ export class TemplateEngine {
       return {
         id: data.id,
         name: data.name,
-        description: data.description,
-        category: data.category,
+        description: data.description || undefined,
+        category: data.category as TemplateCategory,
         tags: data.tags || [],
         titleTemplate: data.title_template,
         contentTemplate: data.content_template,
@@ -575,8 +576,8 @@ export class TemplateEngine {
         data?.map((template: TemplateRpcResponse) => ({
           id: template.id,
           name: template.name,
-          description: template.description,
-          category: template.category,
+          description: template.description || undefined,
+          category: template.category as TemplateCategory,
           tags: template.tags || [],
           titleTemplate: template.title_template,
           contentTemplate: template.content_template,
@@ -584,8 +585,8 @@ export class TemplateEngine {
           isBuiltIn: template.is_built_in,
           isPublic: template.is_public || false,
           usageCount: template.usage_count || 0,
-          createdBy: template.created_by,
-          organizationId: template.organization_id,
+          createdBy: template.created_by || undefined,
+          organizationId: template.organization_id || undefined,
           createdAt: template.created_at,
           updatedAt: template.updated_at || template.created_at,
         })) || []
