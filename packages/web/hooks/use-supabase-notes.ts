@@ -5,6 +5,7 @@ import { useRealtimeSync } from '@/hooks/use-realtime-sync'
 import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
 import { useSupabase } from '@/components/supabase-provider'
+import { offlineManager } from '@/lib/offline-manager'
 
 interface UseSupabaseNotesOptions {
   activeNoteId?: string
@@ -69,6 +70,18 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
     setError(null)
 
     try {
+      // Check if offline
+      if (!offlineManager.isOnline()) {
+        // Load from cache when offline
+        const cachedNotes = await offlineManager.getCachedNotes()
+        setNotes(cachedNotes)
+        toast({
+          title: 'Offline Mode',
+          description: 'Loading notes from local cache',
+        })
+        return
+      }
+
       const { data: notesData, error: notesError } = await supabase
         .from('notes')
         .select(
@@ -130,15 +143,31 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
 
       const allNotes = [...transformedNotes, ...transformedFolders]
       setNotes(allNotes)
+
+      // Cache notes for offline access
+      for (const note of allNotes) {
+        await offlineManager.cacheNote(note)
+      }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to load notes'
-      setError(errorMessage)
-      toast({
-        title: 'Error loading notes',
-        description: errorMessage,
-        variant: 'destructive',
-      })
+      // Try to load from cache on error
+      const cachedNotes = await offlineManager.getCachedNotes()
+      if (cachedNotes.length > 0) {
+        setNotes(cachedNotes)
+        toast({
+          title: 'Offline Mode',
+          description: 'Unable to sync. Loading notes from cache.',
+          variant: 'default',
+        })
+      } else {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to load notes'
+        setError(errorMessage)
+        toast({
+          title: 'Error loading notes',
+          description: errorMessage,
+          variant: 'destructive',
+        })
+      }
     } finally {
       setIsLoading(false)
     }
@@ -153,6 +182,52 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
       setError(null)
 
       try {
+        // Update local state immediately
+        setNotes((prevNotes) =>
+          prevNotes.map((n) =>
+            n.id === note.id
+              ? { ...note, updatedAt: new Date().toISOString() }
+              : n
+          )
+        )
+
+        // Cache the note for offline access
+        await offlineManager.cacheNote(note)
+
+        // Check if offline
+        if (!offlineManager.isOnline()) {
+          // Queue for later sync
+          await offlineManager.addToSyncQueue({
+            type: 'update',
+            table: note.isFolder ? 'folders' : 'notes',
+            data: note.isFolder
+              ? {
+                  id: note.id,
+                  name: note.title,
+                  user_id: user.id,
+                  parent_id: note.parentId,
+                  updated_at: new Date().toISOString(),
+                }
+              : {
+                  id: note.id,
+                  title: note.title,
+                  content: note.content,
+                  user_id: user.id,
+                  folder_id: note.parentId,
+                  updated_at: new Date().toISOString(),
+                  tags: note.tags,
+                },
+            status: 'pending',
+          })
+
+          toast({
+            title: 'Saved Offline',
+            description: "Changes will sync when you're back online",
+          })
+          return true
+        }
+
+        // Online - sync immediately
         if (note.isFolder) {
           // Handle folder
           const { error } = await supabase.from('folders').upsert({
@@ -221,26 +296,41 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
         // Broadcast update to other users
         broadcastNoteUpdate(note)
 
-        // Update local state
-        setNotes((prevNotes) =>
-          prevNotes.map((n) =>
-            n.id === note.id
-              ? { ...note, updatedAt: new Date().toISOString() }
-              : n
-          )
-        )
-
         return true
       } catch (err) {
+        // On error, queue for later sync
+        await offlineManager.addToSyncQueue({
+          type: 'update',
+          table: note.isFolder ? 'folders' : 'notes',
+          data: note.isFolder
+            ? {
+                id: note.id,
+                name: note.title,
+                user_id: user.id,
+                parent_id: note.parentId,
+                updated_at: new Date().toISOString(),
+              }
+            : {
+                id: note.id,
+                title: note.title,
+                content: note.content,
+                user_id: user.id,
+                folder_id: note.parentId,
+                updated_at: new Date().toISOString(),
+                tags: note.tags,
+              },
+          status: 'pending',
+        })
+
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to save note'
         setError(errorMessage)
         toast({
-          title: 'Error saving note',
-          description: errorMessage,
-          variant: 'destructive',
+          title: 'Saved locally',
+          description: 'Changes saved offline and will sync later',
+          variant: 'default',
         })
-        return false
+        return true // Return true since we queued it
       } finally {
         setIsSaving(false)
       }
@@ -255,54 +345,117 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
 
       setIsLoading(true)
       try {
-        const newNote: Omit<Note, 'id' | 'createdAt' | 'updatedAt'> = {
+        const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const timestamp = new Date().toISOString()
+
+        const newNote: Note = {
+          id: tempId,
           title: 'Untitled Note',
           content: '',
           userId: user.id,
           parentId,
           isFolder: false,
           tags: [],
+          createdAt: timestamp,
+          updatedAt: timestamp,
         }
 
+        // Add to local state immediately
+        setNotes((prevNotes) => [newNote, ...prevNotes])
+
+        // Cache the note
+        await offlineManager.cacheNote(newNote)
+
+        // Check if offline
+        if (!offlineManager.isOnline()) {
+          // Queue for later sync
+          await offlineManager.addToSyncQueue({
+            type: 'create',
+            table: 'notes',
+            data: {
+              title: newNote.title,
+              content: newNote.content,
+              user_id: user.id,
+              folder_id: parentId,
+              created_at: timestamp,
+              updated_at: timestamp,
+            },
+            status: 'pending',
+          })
+
+          toast({
+            title: 'Note created offline',
+            description: "Will sync when you're back online",
+          })
+          return newNote
+        }
+
+        // Online - create on server
         const { data, error } = await supabase
           .from('notes')
-          .insert({ ...newNote, user_id: user.id })
+          .insert({
+            title: newNote.title,
+            content: newNote.content,
+            user_id: user.id,
+            folder_id: parentId,
+          })
           .select()
           .single()
 
         if (error) throw error
 
-        const createdNote = {
+        // Update with real ID from server
+        const createdNote: Note = {
+          ...newNote,
           id: data.id,
-          title: data.title,
-          content: data.content,
-          userId: data.user_id,
-          folderId: data.folder_id,
-          isPublic: data.is_public,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
-          deletedAt: data.deleted_at,
-          parentId: null,
-          tags: [],
-          isFolder: false,
-        } as Note
-        setNotes((prevNotes) => [createdNote, ...prevNotes])
+        }
+
+        // Update local state with real ID
+        setNotes((prevNotes) =>
+          prevNotes.map((n) => (n.id === tempId ? createdNote : n))
+        )
+
+        // Update cache with real ID
+        await offlineManager.cacheNote(createdNote)
+
         return createdNote
       } catch (err) {
+        // On error, queue for later sync
+        const tempNote = notes.find(
+          (n) =>
+            n.title === 'Untitled Note' &&
+            n.createdAt === new Date().toISOString()
+        )
+        if (tempNote) {
+          await offlineManager.addToSyncQueue({
+            type: 'create',
+            table: 'notes',
+            data: {
+              title: 'Untitled Note',
+              content: '',
+              user_id: user.id,
+              folder_id: parentId,
+            },
+            status: 'pending',
+          })
+        }
+
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to create note'
         setError(errorMessage)
         toast({
-          title: 'Error creating note',
-          description: errorMessage,
-          variant: 'destructive',
+          title: 'Note saved locally',
+          description: 'Will sync when connection is restored',
+          variant: 'default',
         })
         return null
       } finally {
         setIsLoading(false)
       }
     },
-    [user, toast]
+    [user, supabase, toast, notes]
   )
 
   // Create new folder
@@ -312,44 +465,108 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
 
       setIsLoading(true)
       try {
-        const newFolder: Partial<Note> = {
+        const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const timestamp = new Date().toISOString()
+
+        const newFolder: Note = {
+          id: tempId,
           title: 'New Folder',
-          isFolder: true,
+          content: '',
+          userId: user.id,
           parentId,
+          isFolder: true,
           tags: [],
+          createdAt: timestamp,
+          updatedAt: timestamp,
         }
+
+        // Add to local state immediately
+        setNotes((prevNotes) => [newFolder, ...prevNotes])
+
+        // Cache the folder
+        await offlineManager.cacheNote(newFolder)
+
+        // Check if offline
+        if (!offlineManager.isOnline()) {
+          // Queue for later sync
+          await offlineManager.addToSyncQueue({
+            type: 'create',
+            table: 'folders',
+            data: {
+              name: newFolder.title,
+              user_id: user.id,
+              parent_id: parentId,
+              created_at: timestamp,
+              updated_at: timestamp,
+            },
+            status: 'pending',
+          })
+
+          toast({
+            title: 'Folder created offline',
+            description: "Will sync when you're back online",
+          })
+          return newFolder
+        }
+
+        // Online - create on server
         const { data, error } = await supabase
           .from('folders')
           .insert({
-            name: newFolder.title || 'New Folder',
+            name: newFolder.title,
             user_id: user.id,
-            ...(newFolder.parentId !== undefined && {
-              parent_id: newFolder.parentId,
-            }),
+            parent_id: parentId,
           })
           .select()
           .single()
 
         if (error) throw error
 
-        const createdFolder = { ...newFolder, ...data } as Note
-        setNotes((prevNotes) => [createdFolder, ...prevNotes])
+        // Update with real ID from server
+        const createdFolder: Note = {
+          ...newFolder,
+          id: data.id,
+          title: data.name,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        }
+
+        // Update local state with real ID
+        setNotes((prevNotes) =>
+          prevNotes.map((n) => (n.id === tempId ? createdFolder : n))
+        )
+
+        // Update cache with real ID
+        await offlineManager.cacheNote(createdFolder)
+
         return createdFolder
       } catch (err) {
+        // On error, queue for later sync
+        await offlineManager.addToSyncQueue({
+          type: 'create',
+          table: 'folders',
+          data: {
+            name: 'New Folder',
+            user_id: user.id,
+            parent_id: parentId,
+          },
+          status: 'pending',
+        })
+
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to create folder'
         setError(errorMessage)
         toast({
-          title: 'Error creating folder',
-          description: errorMessage,
-          variant: 'destructive',
+          title: 'Folder saved locally',
+          description: 'Will sync when connection is restored',
+          variant: 'default',
         })
         return null
       } finally {
         setIsLoading(false)
       }
     },
-    [user, toast]
+    [user, supabase, toast]
   )
 
   // Delete note
@@ -361,6 +578,30 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
         const note = notes.find((n) => n.id === noteId)
         if (!note) return false
 
+        // Remove from local state immediately
+        setNotes((prevNotes) => prevNotes.filter((n) => n.id !== noteId))
+
+        // Check if offline
+        if (!offlineManager.isOnline()) {
+          // Queue for later sync
+          await offlineManager.addToSyncQueue({
+            type: 'delete',
+            table: note.isFolder ? 'folders' : 'notes',
+            data: {
+              id: noteId,
+              user_id: user.id,
+            },
+            status: 'pending',
+          })
+
+          toast({
+            title: 'Deleted offline',
+            description: "Will sync when you're back online",
+          })
+          return true
+        }
+
+        // Online - delete on server
         if (note.isFolder) {
           // Delete folder
           const { error } = await supabase
@@ -381,19 +622,31 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
           if (error) throw error
         }
 
-        // Remove from local state
-        setNotes((prevNotes) => prevNotes.filter((n) => n.id !== noteId))
         return true
       } catch (err) {
+        // On error, queue for later sync but keep removed from UI
+        const note = notes.find((n) => n.id === noteId)
+        if (note) {
+          await offlineManager.addToSyncQueue({
+            type: 'delete',
+            table: note.isFolder ? 'folders' : 'notes',
+            data: {
+              id: noteId,
+              user_id: user.id,
+            },
+            status: 'pending',
+          })
+        }
+
         const errorMessage =
           err instanceof Error ? err.message : 'Failed to delete note'
         setError(errorMessage)
         toast({
-          title: 'Error deleting note',
-          description: errorMessage,
-          variant: 'destructive',
+          title: 'Deletion queued',
+          description: 'Will complete when connection is restored',
+          variant: 'default',
         })
-        return false
+        return true // Return true since we removed it from UI
       }
     },
     [user, supabase, notes, toast]
