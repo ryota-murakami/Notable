@@ -21,7 +21,6 @@ import {
   HardDrive,
   Smartphone,
   Download,
-  Users,
   Zap,
   AlertTriangle,
   Crown,
@@ -198,13 +197,6 @@ export function UsageMeter() {
       limit: planConfig.limits.exports,
       unit: 'this month',
       key: 'exports' as keyof typeof usage,
-    },
-    {
-      icon: <Users className='h-4 w-4 text-cyan-500' />,
-      label: 'Collaborators',
-      current: usage.collaborators,
-      limit: planConfig.limits.collaborators,
-      key: 'collaborators' as keyof typeof usage,
     },
     {
       icon: <Zap className='h-4 w-4 text-yellow-500' />,

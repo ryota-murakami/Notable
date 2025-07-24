@@ -6,8 +6,8 @@
 'use client'
 
 import {
-  usePerformanceDashboard,
   usePerformanceAlerts,
+  usePerformanceDashboard,
 } from '@/hooks/use-performance-monitoring'
 import {
   Card,
@@ -26,11 +26,11 @@ import {
   Clock,
   Database,
   HardDrive,
-  Search,
-  Zap,
-  TrendingUp,
-  TrendingDown,
+  MemoryStick,
   Minus,
+  TrendingDown,
+  TrendingUp,
+  Zap,
 } from 'lucide-react'
 
 export function PerformanceDashboard() {
@@ -339,7 +339,7 @@ function PerformanceRecommendation({
 
   if (dashboard.memoryUsage.memoryUsagePercent > 70) {
     recommendations.push({
-      icon: <Memory className='h-4 w-4 text-red-500' />,
+      icon: <MemoryStick className='h-4 w-4 text-red-500' />,
       text: 'High memory usage detected. Consider implementing virtualization for large lists',
     })
   }

@@ -5,13 +5,12 @@
 
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { performanceMonitor } from '@/lib/performance'
 import { memoryMonitor } from '@/lib/memory-monitor'
-import { usePerformance } from '@/components/performance-provider'
 import { cn } from '@/lib/utils'
 
 interface PerformanceMetrics {
@@ -45,7 +44,6 @@ export function PerformanceDashboard() {
   const [swMetrics, setSwMetrics] = useState<ServiceWorkerMetrics | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [history, setHistory] = useState<PerformanceMetrics[]>([])
-  const { performanceMonitor: pm, memoryMonitor: mm } = usePerformance()
 
   // Update metrics every 5 seconds
   useEffect(() => {

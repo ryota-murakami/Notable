@@ -3,10 +3,10 @@
  * Uses react-window for windowing to handle 100,000+ notes
  */
 
-import React, { useCallback, useMemo, useRef, useEffect } from 'react'
-import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import { FixedSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { Note } from '@/types/note'
+import type { Note } from '@/types/note'
 import { usePerformanceMonitor } from '@/hooks/use-performance-monitor'
 import { cn } from '@/lib/utils'
 

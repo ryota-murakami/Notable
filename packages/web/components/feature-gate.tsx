@@ -5,9 +5,9 @@
 
 'use client'
 
-import { ReactNode } from 'react'
-import { useSubscription } from '@/hooks/use-subscription'
-import { SubscriptionPlan } from '@/lib/stripe'
+import type { ReactNode } from 'react'
+import { useSubscription, type UsageData } from '@/hooks/use-subscription'
+import type { SubscriptionPlan } from '@/lib/stripe'
 import { UpgradeDialog } from '@/components/billing/upgrade-dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -152,7 +152,7 @@ export function FeatureGate({
  */
 interface UsageGateProps {
   /** Usage type to check (e.g., 'notes', 'storage') */
-  action: keyof import('@/hooks/use-subscription').UsageData
+  action: keyof UsageData
   /** Content to show when usage is within limits */
   children: ReactNode
   /** Alternative content when limit is exceeded */

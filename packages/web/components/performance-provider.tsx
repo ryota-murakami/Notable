@@ -5,11 +5,11 @@
 
 'use client'
 
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { performanceMonitor } from '@/lib/performance'
 import { memoryMonitor } from '@/lib/memory-monitor'
-import { useAnalytics } from '@/lib/analytics'
+// import { useAnalytics } from '@/lib/analytics'
 
 interface PerformanceContextValue {
   performanceMonitor: typeof performanceMonitor
@@ -30,13 +30,13 @@ export function PerformanceProvider({
   memoryMonitoringInterval = 10000, // 10 seconds
 }: PerformanceProviderProps) {
   const pathname = usePathname()
-  const analytics = useAnalytics()
+  // const analytics = useAnalytics()
   const pageLoadTimeRef = useRef<number>()
 
   // Initialize performance monitoring with analytics
-  useEffect(() => {
-    ;(performanceMonitor as any).analytics = analytics
-  }, [analytics])
+  // useEffect(() => {
+  //   (performanceMonitor as any).analytics = analytics
+  // }, [analytics])
 
   // Monitor memory if enabled
   useEffect(() => {
