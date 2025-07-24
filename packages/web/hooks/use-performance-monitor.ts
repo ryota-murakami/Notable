@@ -57,7 +57,7 @@ export function usePerformanceMonitor(
     slowRenders: 0,
   })
 
-  const renderStartRef = useRef<number>()
+  const renderStartRef = useRef<number>(0)
 
   // Track component mount
   useEffect(() => {
@@ -170,7 +170,7 @@ export function usePerformanceMonitor(
  * Hook for tracking specific user interactions
  */
 export function useInteractionTracking(interactionName: string) {
-  const startTimeRef = useRef<number>()
+  const startTimeRef = useRef<number | undefined>(undefined)
 
   /**
    * Start tracking an interaction

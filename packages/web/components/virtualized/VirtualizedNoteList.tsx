@@ -160,14 +160,8 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
 
   // Track scroll performance
   const handleScroll = useCallback(
-    ({
-      scrollOffset,
-      _scrollDirection,
-    }: {
-      scrollOffset: number
-      _scrollDirection: 'forward' | 'backward'
-    }) => {
-      trackMetric('scroll_offset', scrollOffset, 'count')
+    (props: any) => {
+      trackMetric('scroll_offset', props.scrollOffset, 'count')
     },
     [trackMetric]
   )

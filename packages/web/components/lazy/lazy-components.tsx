@@ -135,42 +135,42 @@ class ErrorBoundary extends React.Component<
 
 // Lazy loaded components for performance optimization
 export const LazyPerformanceDashboard = withLazyLoading(
-  () =>
-    import('@/components/performance/performance-dashboard').then((mod) => ({
-      default: mod.PerformanceDashboard as ComponentType<{}>,
-    })),
+  async () => {
+    const mod = await import('@/components/performance/performance-dashboard')
+    return { default: mod.PerformanceDashboard as ComponentType<{}> }
+  },
   <CardSkeleton />
 )
 
 export const LazyBillingDashboard = withLazyLoading(
-  () =>
-    import('@/app/dashboard/billing/page').then((mod) => ({
-      default: mod.default as ComponentType<{}>,
-    })),
+  async () => {
+    const mod = await import('@/app/dashboard/billing/page')
+    return { default: mod.default as ComponentType<{}> }
+  },
   <SpinnerLoader text='Loading billing dashboard...' />
 )
 
 export const LazyUpgradeDialog = withLazyLoading(
-  () =>
-    import('@/components/billing/upgrade-dialog').then((mod) => ({
-      default: mod.UpgradeDialog,
-    })),
+  async () => {
+    const mod = await import('@/components/billing/upgrade-dialog')
+    return { default: mod.UpgradeDialog as ComponentType<{}> }
+  },
   <SpinnerLoader text='Loading upgrade options...' />
 )
 
 export const LazyUsageMeter = withLazyLoading(
-  () =>
-    import('@/components/billing/usage-meter').then((mod) => ({
-      default: mod.UsageMeter,
-    })),
+  async () => {
+    const mod = await import('@/components/billing/usage-meter')
+    return { default: mod.UsageMeter as ComponentType<{}> }
+  },
   <CardSkeleton />
 )
 
 export const LazySubscriptionCard = withLazyLoading(
-  () =>
-    import('@/components/billing/subscription-card').then((mod) => ({
-      default: mod.SubscriptionCard,
-    })),
+  async () => {
+    const mod = await import('@/components/billing/subscription-card')
+    return { default: mod.SubscriptionCard as ComponentType<{}> }
+  },
   <CardSkeleton />
 )
 

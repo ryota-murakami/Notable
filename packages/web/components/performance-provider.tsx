@@ -38,7 +38,7 @@ export function PerformanceProvider({
 }: PerformanceProviderProps) {
   const pathname = usePathname()
   // const analytics = useAnalytics()
-  const pageLoadTimeRef = useRef<number>()
+  const pageLoadTimeRef = useRef<number>(0)
 
   // Initialize performance monitoring with analytics
   // useEffect(() => {
@@ -175,7 +175,7 @@ export function withPerformanceMonitoring<P extends object>(
   Component: React.ComponentType<P>,
   componentName: string
 ) {
-  return React.forwardRef<any, P>((props, ref) => {
+  const WrappedComponent = React.forwardRef<any, P>((props, ref) => {
     const mountTime = useRef(performance.now())
 
     useEffect(() => {
@@ -186,6 +186,9 @@ export function withPerformanceMonitoring<P extends object>(
       )
     }, [])
 
-    return <Component {...props} ref={ref} />
+    return <Component {...(props as P)} ref={ref} />
   })
+
+  WrappedComponent.displayName = `withPerformanceMonitoring(${componentName})`
+  return WrappedComponent
 }
