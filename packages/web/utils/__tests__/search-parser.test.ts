@@ -151,6 +151,49 @@ describe('SearchParser', () => {
       expect(result.tokens).toContainEqual({ type: 'OPERATOR', value: 'OR' })
       expect(result.operators.not).toEqual(['draft'])
     })
+
+    it('should handle mixed AND/OR expressions', () => {
+      const result = SearchParser.parse('A AND B OR C AND D')
+
+      expect(result.hasAdvancedOperators).toBe(true)
+      expect(result.operators.and.length).toBeGreaterThan(0)
+      expect(result.operators.or.length).toBeGreaterThan(0)
+
+      // Verify tokens are preserved in correct order
+      const operatorTokens = result.tokens
+        .filter((t) => t.type === 'OPERATOR')
+        .map((t) => t.value)
+      expect(operatorTokens).toEqual(['AND', 'OR', 'AND'])
+    })
+
+    it('should handle grouped OR within AND expressions', () => {
+      const result = SearchParser.parse(
+        'project AND (alpha OR beta) AND release'
+      )
+
+      expect(result.hasAdvancedOperators).toBe(true)
+      // Check that OR group is recognized
+      const orGroups = result.operators.or
+      expect(orGroups.length).toBeGreaterThan(0)
+    })
+
+    it('should handle leading boolean operators gracefully', () => {
+      const result = SearchParser.parse('OR meeting AND agenda')
+
+      expect(result.hasAdvancedOperators).toBe(true)
+      // Should still parse correctly despite leading OR
+      expect(result.fields.text).toContain('meeting')
+      expect(result.fields.text).toContain('agenda')
+    })
+
+    it('should handle trailing boolean operators gracefully', () => {
+      const result = SearchParser.parse('meeting agenda AND')
+
+      expect(result.hasAdvancedOperators).toBe(true)
+      // Should include the terms but ignore trailing AND
+      expect(result.fields.text).toContain('meeting')
+      expect(result.fields.text).toContain('agenda')
+    })
   })
 
   describe('stringify', () => {

@@ -1,4 +1,4 @@
-import Fuse from 'fuse.js'
+import Fuse, { type IFuseOptions, type FuseResult } from 'fuse.js'
 import type { Note } from '@/types/note'
 import { SearchParser, type ParsedSearch } from './search-parser'
 import { createClient } from '@/utils/supabase/client'
@@ -84,10 +84,32 @@ export class SearchEngine {
           const contentMatch = note.content?.match(regex)
 
           if (titleMatch || contentMatch) {
+            const matches = []
+            if (titleMatch && note.title) {
+              const index = note.title.indexOf(titleMatch[0])
+              if (index !== -1) {
+                matches.push({
+                  key: 'title',
+                  value: note.title,
+                  indices: [[index, index + titleMatch[0].length - 1]],
+                })
+              }
+            }
+            if (contentMatch && note.content) {
+              const index = note.content.indexOf(contentMatch[0])
+              if (index !== -1) {
+                matches.push({
+                  key: 'content',
+                  value: note.content,
+                  indices: [[index, index + contentMatch[0].length - 1]],
+                })
+              }
+            }
+
             results.push({
               note,
               score: 0.9, // High score for regex matches
-              matches: [],
+              matches,
               matchedFields: [
                 ...(titleMatch ? ['title'] : []),
                 ...(contentMatch ? ['content'] : []),
@@ -159,12 +181,19 @@ export class SearchEngine {
     try {
       const supabase = createClient()
 
+      // Get authenticated user
+      const { data: userData, error: authError } = await supabase.auth.getUser()
+      if (authError || !userData.user) {
+        console.error('Authentication error:', authError)
+        return this.clientSearch(parsed, options)
+      }
+
       // Convert parsed search to PostgreSQL tsquery format
       const tsQuery = this.buildTsQuery(parsed)
 
       const { data, error } = await supabase.rpc('search_notes', {
         search_query: tsQuery,
-        user_uuid: (await supabase.auth.getUser()).data.user?.id,
+        user_uuid: userData.user.id,
       })
 
       if (error) {
@@ -263,7 +292,7 @@ export class SearchEngine {
   /**
    * Map Fuse.js results to SearchResult format
    */
-  private mapFuseResults(fuseResults: Fuse.FuseResult<Note>[]): SearchResult[] {
+  private mapFuseResults(fuseResults: FuseResult<Note>[]): SearchResult[] {
     return fuseResults.map((result) => ({
       note: result.item,
       score: 1 - (result.score || 0),

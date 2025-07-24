@@ -162,6 +162,7 @@ export class SearchParser {
         const nextPart = parts[i + 1]
         if (nextPart) {
           result.tokens.push({ type: 'OPERATOR', value: 'NOT' })
+          result.tokens.push({ type: 'TEXT', value: nextPart })
           result.operators.not.push(nextPart)
           result.hasAdvancedOperators = true
           i++ // Skip next part since it was consumed
@@ -173,6 +174,7 @@ export class SearchParser {
       if (part.startsWith('-') && part.length > 1) {
         const value = part.slice(1)
         result.tokens.push({ type: 'OPERATOR', value: 'NOT' })
+        result.tokens.push({ type: 'TEXT', value })
         result.operators.not.push(value)
         result.hasAdvancedOperators = true
         i++
