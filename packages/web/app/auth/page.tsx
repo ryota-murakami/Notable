@@ -10,8 +10,16 @@ export default function AuthPage() {
     // For development/testing purposes, bypass auth
     // In production, this would be a proper auth flow
 
+    if (process.env.NODE_ENV === 'production') {
+      console.error('Auth bypass page accessed in production!')
+      router.push('/signin')
+      return
+    }
+
     // Set a mock auth cookie to bypass the auth check
-    document.cookie = 'dev-auth-bypass=true; path=/'
+    document.cookie =
+      'dev-auth-bypass=true; path=/; samesite=strict' +
+      (process.env.NODE_ENV === 'development' ? '' : '; secure')
 
     // Redirect to home
     router.push('/')

@@ -13,8 +13,12 @@ test.describe('Keyboard Shortcuts', () => {
     // Reload to apply the bypass
     await page.reload()
 
-    // Wait for the app to load
-    await page.waitForTimeout(2000)
+    // Wait for the app to load by checking for a specific element
+    await page.waitForSelector('[data-testid="app-shell"]', {
+      state: 'visible',
+    })
+    // Or wait for the network to be idle when the app is ready
+    await page.waitForLoadState('networkidle')
   })
 
   test('command palette opens with Cmd+Shift+P', async ({ page }) => {
@@ -81,24 +85,33 @@ test.describe('Keyboard Shortcuts', () => {
       localStorage.setItem('test-notes', JSON.stringify(mockNotes))
     })
 
-    // Wait for notes to load
-    await page.waitForTimeout(1000)
+    // Wait for notes to be visible in the UI
+    await expect(page.getByText('First Note')).toBeVisible()
 
     // Press down arrow
     await page.keyboard.press('ArrowDown')
-    await page.waitForTimeout(500)
+    // Assert that selection changed (add data-testid to selected items)
+    await expect(page.locator('[data-selected="true"]')).toContainText(
+      'Second Note'
+    )
 
     // Press up arrow
     await page.keyboard.press('ArrowUp')
-    await page.waitForTimeout(500)
+    await expect(page.locator('[data-selected="true"]')).toContainText(
+      'First Note'
+    )
 
     // Press j for next
     await page.keyboard.press('j')
-    await page.waitForTimeout(500)
+    await expect(page.locator('[data-selected="true"]')).toContainText(
+      'Second Note'
+    )
 
     // Press k for previous
     await page.keyboard.press('k')
-    await page.waitForTimeout(500)
+    await expect(page.locator('[data-selected="true"]')).toContainText(
+      'First Note'
+    )
   })
 
   test('note management shortcuts', async ({ page }) => {

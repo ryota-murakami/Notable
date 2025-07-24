@@ -30,13 +30,14 @@ export const defaultShortcuts: Omit<KeyboardShortcut, 'action'>[] = [
     keys: ['ArrowUp', 'k'],
     category: 'navigation',
   },
-  {
-    id: 'quick-switch',
-    name: 'Quick Switch',
-    description: 'Switch to note by number',
-    keys: ['Cmd+1...9', 'Ctrl+1...9'],
-    category: 'navigation',
-  },
+  // Quick switch shortcuts (1-9)
+  ...Array.from({ length: 9 }, (_, i) => ({
+    id: `quick-switch-${i + 1}`,
+    name: `Quick Switch ${i + 1}`,
+    description: `Switch to note ${i + 1}`,
+    keys: [`Cmd+${i + 1}`, `Ctrl+${i + 1}`],
+    category: 'navigation' as const,
+  })),
 
   // Note Management
   {

@@ -440,7 +440,6 @@ export function Shell() {
     // Quick switch shortcuts (1-9)
     ...Array.from({ length: 9 }, (_, i) => ({
       id: `quick-switch-${i + 1}`,
-      keys: [`Cmd+${i + 1}`, `Ctrl+${i + 1}`],
       action: () => {
         if (notes[i]) {
           setActiveNoteId(notes[i].id)

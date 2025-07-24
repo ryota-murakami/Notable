@@ -64,6 +64,14 @@ export function CommandPalette({
 }: CommandPaletteProps) {
   const [search, setSearch] = useState('')
 
+  // Platform-specific shortcut formatting
+  const formatShortcut = (shortcut: string) => {
+    const isMac =
+      typeof navigator !== 'undefined' &&
+      /Mac|iPhone|iPad/.test(navigator.platform)
+    return shortcut.replace(/Cmd/g, isMac ? 'Cmd' : 'Ctrl')
+  }
+
   // Define all available commands
   const commands = useMemo<CommandAction[]>(() => {
     const noteCommands: CommandAction[] = notes.map((note) => ({
@@ -89,7 +97,7 @@ export function CommandPalette({
         title: 'Create New Note',
         description: 'Create a new note in the current folder',
         icon: Plus,
-        shortcut: 'Cmd+N',
+        shortcut: formatShortcut('Cmd+N'),
         action: () => {
           onCreateNote(null)
           onClose()
@@ -101,7 +109,7 @@ export function CommandPalette({
         title: 'Search Notes',
         description: 'Search across all your notes',
         icon: Search,
-        shortcut: 'Cmd+K',
+        shortcut: formatShortcut('Cmd+K'),
         action: () => {
           onOpenSearch()
           onClose()
@@ -113,7 +121,7 @@ export function CommandPalette({
         title: isSidebarCollapsed ? 'Show Sidebar' : 'Hide Sidebar',
         description: 'Toggle the sidebar visibility',
         icon: isSidebarCollapsed ? SidebarOpen : SidebarClose,
-        shortcut: 'Cmd+,',
+        shortcut: formatShortcut('Cmd+,'),
         action: () => {
           onToggleSidebar()
           onClose()
@@ -127,7 +135,7 @@ export function CommandPalette({
           ? 'Switch to edit mode'
           : 'Switch to read-only view mode',
         icon: isViewMode ? Eye : EyeOff,
-        shortcut: 'Cmd+E',
+        shortcut: formatShortcut('Cmd+E'),
         action: () => {
           onToggleViewMode()
           onClose()
@@ -139,7 +147,7 @@ export function CommandPalette({
         title: 'Keyboard Shortcuts',
         description: 'View all keyboard shortcuts',
         icon: Keyboard,
-        shortcut: 'Cmd+/',
+        shortcut: formatShortcut('Cmd+/'),
         action: () => {
           onOpenShortcuts()
           onClose()
