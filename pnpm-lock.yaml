@@ -213,7 +213,7 @@ importers:
         version: 29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))
       jest-expo:
         specifier: ^53.0.9
-        version: 53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2)
+        version: 53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2)
       sharp:
         specifier: ^0.34.3
         version: 0.34.3
@@ -424,6 +424,9 @@ importers:
       '@udecode/plate-basic-marks':
         specifier: ^49.0.0
         version: 49.0.0(@udecode/plate@49.0.0(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.117.4(slate@0.117.2))(slate@0.117.2)(use-sync-external-store@1.5.0(react@19.1.0)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@udecode/plate-common':
+        specifier: ^42.0.0
+        version: 42.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@udecode/plate-markdown':
         specifier: ^49.0.0
         version: 49.0.0(@udecode/plate@49.0.0(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.117.4(slate@0.117.2))(slate@0.117.2)(use-sync-external-store@1.5.0(react@19.1.0)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
@@ -1604,7 +1607,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {'0': node >=0.10.0}
+    engines: {node: '>=0.10.0'}
 
   '@expo/cli@0.22.26':
     resolution: {integrity: sha512-I689wc8Fn/AX7aUGiwrh3HnssiORMJtR2fpksX+JIe8Cj/EDleblYMSwRPd0025wrwOV9UN1KM/RuEt/QjCS3Q==}
@@ -4647,6 +4650,13 @@ packages:
     deprecated: Package no longer supported, use @platejs/basic-nodes instead.
     peerDependencies:
       '@udecode/plate': '>=49.0.0'
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+
+  '@udecode/plate-common@42.0.0':
+    resolution: {integrity: sha512-Y/0Cpf/OtmyNwRx1dAfLPH23SskTbpVdaffX9rG+BTlQNJV9xZDaYt2n+dM3j4Q5Aqntf5cKO8kWGhISUQFYyw==}
+    deprecated: Package no longer supported, use @udecode/plate instead.
+    peerDependencies:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
 
@@ -16881,6 +16891,11 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
+  '@udecode/plate-common@42.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   '@udecode/plate-core@49.0.0(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.117.4(slate@0.117.2))(slate@0.117.2)(use-sync-external-store@1.5.0(react@19.1.0))':
     dependencies:
       '@udecode/react-hotkeys': 37.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -20722,7 +20737,7 @@ snapshots:
       jest-util: 30.0.5
       jest-validate: 30.0.5
 
-  jest-expo@53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2):
+  jest-expo@53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2):
     dependencies:
       '@expo/config': 11.0.13
       '@expo/json-file': 9.1.5
@@ -20734,7 +20749,7 @@ snapshots:
       jest-environment-jsdom: 29.7.0
       jest-snapshot: 29.7.0
       jest-watch-select-projects: 2.0.0
-      jest-watch-typeahead: 2.2.1(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))
+      jest-watch-typeahead: 2.2.1(jest@29.7.0(@types/node@22.16.5))
       json5: 2.2.3
       lodash: 4.17.21
       react-native: 0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)
@@ -21095,7 +21110,7 @@ snapshots:
       chalk: 3.0.0
       prompts: 2.4.2
 
-  jest-watch-typeahead@2.2.1(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))):
+  jest-watch-typeahead@2.2.1(jest@29.7.0(@types/node@22.16.5)):
     dependencies:
       ansi-escapes: 6.2.1
       chalk: 4.1.2
