@@ -1,5 +1,5 @@
-import { Shell } from '@/components/shell'
+// import { Shell } from '@/components/shell'
 
 export default function Home() {
-  return <Shell />
+  return <div>Hello Notable - Testing</div>
 }

@@ -27,23 +27,8 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
-        <ErrorBoundary>
-          <QueryProvider>
-            <SupabaseProvider>
-              <ThemeProvider
-                attribute='class'
-                defaultTheme='system'
-                enableSystem
-                disableTransitionOnChange
-              >
-                {/* <AnalyticsProvider> */}
-                {children}
-                <Toaster />
-                {/* </AnalyticsProvider> */}
-              </ThemeProvider>
-            </SupabaseProvider>
-          </QueryProvider>
-        </ErrorBoundary>
+        {/* Temporarily simplify layout for debugging */}
+        {children}
         {/* <Analytics /> */}
         {/* <SpeedInsights /> */}
       </body>
