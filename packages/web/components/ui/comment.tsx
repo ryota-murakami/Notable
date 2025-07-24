@@ -84,7 +84,7 @@ export function Comment(props: {
   const resolveDiscussion = async (id: string) => {
     const updatedDiscussions = editor
       .getOption(discussionPlugin, 'discussions')
-      .map((discussion) => {
+      .map((discussion: any) => {
         if (discussion.id === id) {
           return { ...discussion, isResolved: true }
         }
@@ -96,7 +96,7 @@ export function Comment(props: {
   const removeDiscussion = async (id: string) => {
     const updatedDiscussions = editor
       .getOption(discussionPlugin, 'discussions')
-      .filter((discussion) => discussion.id !== id)
+      .filter((discussion: any) => discussion.id !== id)
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions)
   }
 
@@ -108,9 +108,9 @@ export function Comment(props: {
   }) => {
     const updatedDiscussions = editor
       .getOption(discussionPlugin, 'discussions')
-      .map((discussion) => {
+      .map((discussion: any) => {
         if (discussion.id === input.discussionId) {
-          const updatedComments = discussion.comments.map((comment) => {
+          const updatedComments = discussion.comments.map((comment: any) => {
             if (comment.id === input.id) {
               return {
                 ...comment,
@@ -244,9 +244,9 @@ export function Comment(props: {
           <div className='absolute top-0 left-3 h-full w-0.5 shrink-0 bg-muted' />
         )}
         <Plate readOnly={!isEditing} editor={commentEditor}>
-          <EditorContainer variant='comment'>
+          <EditorContainer variant='minimal'>
             <Editor
-              variant='comment'
+              variant='minimal'
               className='w-auto grow'
               onClick={() => onEditorClick?.()}
             />
@@ -316,13 +316,13 @@ function CommentMoreDropdown(props: {
     // Find and update the discussion
     const updatedDiscussions = editor
       .getOption(discussionPlugin, 'discussions')
-      .map((discussion) => {
+      .map((discussion: any) => {
         if (discussion.id !== comment.discussionId) {
           return discussion
         }
 
         const commentIndex = discussion.comments.findIndex(
-          (c) => c.id === comment.id
+          (c: any) => c.id === comment.id
         )
         if (commentIndex === -1) {
           return discussion
@@ -446,7 +446,7 @@ export function CommentCreateForm({
 
     if (discussionId) {
       // Get existing discussion
-      const discussion = discussions.find((d) => d.id === discussionId)
+      const discussion = discussions.find((d: any) => d.id === discussionId)
       if (!discussion) {
         // Mock creating suggestion
         const newDiscussion: TDiscussion = {
@@ -463,7 +463,6 @@ export function CommentCreateForm({
           ],
           createdAt: new Date(),
           isResolved: false,
-          userId: editor.getOption(discussionPlugin, 'currentUserId'),
         }
 
         editor.setOption(discussionPlugin, 'discussions', [
@@ -491,7 +490,7 @@ export function CommentCreateForm({
 
       // Filter out old discussion and add updated one
       const updatedDiscussions = discussions
-        .filter((d) => d.id !== discussionId)
+        .filter((d: any) => d.id !== discussionId)
         .concat(updatedDiscussion)
 
       editor.setOption(discussionPlugin, 'discussions', updatedDiscussions)
@@ -526,7 +525,6 @@ export function CommentCreateForm({
       createdAt: new Date(),
       documentContent,
       isResolved: false,
-      userId: editor.getOption(discussionPlugin, 'currentUserId'),
     }
 
     editor.setOption(discussionPlugin, 'discussions', [
@@ -564,9 +562,9 @@ export function CommentCreateForm({
           }}
           editor={commentEditor}
         >
-          <EditorContainer variant='comment'>
+          <EditorContainer variant='minimal'>
             <Editor
-              variant='comment'
+              variant='minimal'
               className='min-h-[25px] grow pt-0.5 pr-8'
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -574,8 +572,6 @@ export function CommentCreateForm({
                   onAddComment()
                 }
               }}
-              placeholder='Reply...'
-              autoComplete='off'
               autoFocus={autoFocus}
             />
 
