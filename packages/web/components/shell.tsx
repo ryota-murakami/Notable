@@ -591,7 +591,7 @@ export function Shell() {
   }
 
   return (
-    <div className='flex h-screen bg-background'>
+    <div className='flex h-screen bg-background' data-testid='app-shell'>
       {isLoading ? (
         <SidebarSkeleton className='w-64 border-r' />
       ) : (
