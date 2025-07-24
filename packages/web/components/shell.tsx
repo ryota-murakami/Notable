@@ -25,7 +25,7 @@ const PlateEditorComponent = dynamic(
 )
 import { useSupabaseNotes } from '@/hooks/use-supabase-notes'
 import { useSupabase } from '@/components/supabase-provider'
-import { SearchDialog } from '@/components/search-dialog'
+import { AdvancedSearchDialog } from '@/components/advanced-search-dialog'
 import { useToast } from '@/hooks/use-toast'
 import { WelcomeScreen } from '@/components/welcome-screen'
 import { Breadcrumb } from '@/components/breadcrumb'
@@ -678,7 +678,7 @@ export function Shell() {
           </div>
         )}
       </div>
-      <SearchDialog
+      <AdvancedSearchDialog
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         notes={notes}
