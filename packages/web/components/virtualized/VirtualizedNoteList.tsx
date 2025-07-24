@@ -162,10 +162,10 @@ export const VirtualizedNoteList: React.FC<VirtualizedNoteListProps> = ({
   const handleScroll = useCallback(
     ({
       scrollOffset,
-      scrollDirection,
+      _scrollDirection,
     }: {
       scrollOffset: number
-      scrollDirection: 'forward' | 'backward'
+      _scrollDirection: 'forward' | 'backward'
     }) => {
       trackMetric('scroll_offset', scrollOffset, 'count')
     },
@@ -244,7 +244,7 @@ export function useNotePreloading(
         // Simulate preloading note content
         // In real implementation, this would fetch full note content
         await Promise.all(
-          notesToPreload.map(async (note) => {
+          notesToPreload.map(async (_note) => {
             // Preload logic here
             await new Promise((resolve) => setTimeout(resolve, 10))
           })

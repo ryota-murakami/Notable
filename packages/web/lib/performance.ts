@@ -10,7 +10,7 @@ export interface PerformanceMetric {
   value: number
   unit: 'ms' | 'bytes' | 'count' | 'percentage'
   timestamp: number
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface PerformanceReport {
@@ -29,10 +29,10 @@ export interface PerformanceReport {
 class PerformanceMonitor {
   private metrics: PerformanceMetric[] = []
   private startTime: number = Date.now()
-  private analytics?: any // TODO: Define Analytics interface
+  private analytics?: unknown // TODO: Define Analytics interface
   private observers: Map<string, PerformanceObserver> = new Map()
 
-  constructor(analytics?: any) {
+  constructor(analytics?: unknown) {
     this.analytics = analytics
     this.initializeWebVitals()
     this.initializeResourceTiming()
@@ -86,7 +86,7 @@ class PerformanceMonitor {
    * Track a Web Vital metric
    */
   private trackWebVital(name: string, value: number, unit: string) {
-    this.track(`webvital_${name}`, value, unit as any)
+    this.track(`webvital_${name}`, value, unit as PerformanceMetric['unit'])
     this.analytics?.track('Web Vital', {
       metric: name,
       value,
@@ -101,7 +101,7 @@ class PerformanceMonitor {
     name: string,
     value: number,
     unit: PerformanceMetric['unit'] = 'ms',
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ) {
     const metric: PerformanceMetric = {
       name,

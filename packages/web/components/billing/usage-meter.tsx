@@ -121,7 +121,6 @@ export function UsageMeter() {
     currentPlan,
     isLoading,
     error,
-    getUsagePercent,
     isApproachingLimit,
     canPerformAction,
   } = useSubscription()

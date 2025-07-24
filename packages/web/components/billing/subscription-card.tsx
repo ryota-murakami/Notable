@@ -28,7 +28,6 @@ import { formatStorageSize, getNextBillingDate } from '@/lib/stripe'
 export function SubscriptionCard() {
   const {
     subscription,
-    currentPlan,
     planConfig,
     isPremium,
     isActive,

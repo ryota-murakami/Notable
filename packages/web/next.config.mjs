@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', // Enable static export for Electron
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -12,39 +12,17 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
   },
-
-  // Performance optimizations
   reactStrictMode: true,
   compress: true,
-
-  // Bundle optimization - simplified
-  webpack: (config, { isServer, webpack }) => {
-    // Fix CommonJS module issues
+  webpack: (config, { isServer }) => {
+    // Disable problematic optimizations
     if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        stream: false,
-        http: false,
-        https: false,
-        zlib: false,
-        url: false,
-        buffer: 'buffer',
-        process: 'process/browser',
+      config.optimization = {
+        ...config.optimization,
+        concatenateModules: false,
+        sideEffects: false,
       }
-
-      // Add essential webpack plugins for module resolution
-      config.plugins.push(
-        new webpack.ProvidePlugin({
-          process: 'process/browser',
-          Buffer: ['buffer', 'Buffer'],
-        })
-      )
     }
-
     return config
   },
 }

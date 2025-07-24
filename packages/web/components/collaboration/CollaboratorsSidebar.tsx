@@ -30,11 +30,8 @@ import {
   WifiOff,
   Circle,
 } from 'lucide-react'
-import {
-  User,
-  UserAwareness,
-  yjsProvider,
-} from '@/lib/collaboration/yjs-provider'
+import { yjsProvider } from '@/lib/collaboration/yjs-provider'
+import type { User, UserAwareness } from '@/lib/collaboration/yjs-provider'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 
@@ -42,7 +39,7 @@ interface CollaboratorsSidebarProps {
   isOpen: boolean
   onToggle: () => void
   currentUser: User
-  noteId: string
+  _noteId: string
   noteTitle?: string
   className?: string
 }
@@ -57,7 +54,7 @@ export function CollaboratorsSidebar({
   isOpen,
   onToggle,
   currentUser,
-  noteId,
+  _noteId,
   noteTitle = 'Untitled Note',
   className,
 }: CollaboratorsSidebarProps) {
