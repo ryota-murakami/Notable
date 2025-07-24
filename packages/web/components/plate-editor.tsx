@@ -30,10 +30,20 @@ import {
 import { Badge } from '@/components/ui/badge'
 
 // Icons
-import { Code, Download, FileText, Globe, Tag, Eye, EyeOff } from 'lucide-react'
+import {
+  Code,
+  Download,
+  FileText,
+  Globe,
+  Tag,
+  Eye,
+  EyeOff,
+  Clock,
+} from 'lucide-react'
 
 import type { Note } from '@/types/note'
 import { type ExportFormat, useExport } from '@/hooks/use-export'
+import { VersionHistoryDialog } from '@/components/version-history-dialog'
 // Remove PDF export for now
 // import { PDFExportDialog } from '@/components/export/pdf-export-dialog'
 
@@ -67,6 +77,7 @@ export function PlateEditorComponent({
   const [newTag, setNewTag] = useState('')
   const [showTags, setShowTags] = useState(false)
   const [isHidden, setIsHidden] = useState(note.isHidden || false)
+  const [showVersionHistory, setShowVersionHistory] = useState(false)
   const [editorValue, setEditorValue] = useState(() => {
     if (note.content) {
       try {
@@ -252,6 +263,15 @@ export function PlateEditorComponent({
                 )}
               </Button>
 
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => setShowVersionHistory(true)}
+                title='View version history'
+              >
+                <Clock className='h-4 w-4' />
+              </Button>
+
               <Popover open={showTags} onOpenChange={setShowTags}>
                 <PopoverTrigger asChild>
                   <Button variant='ghost' size='sm'>
@@ -346,6 +366,17 @@ export function PlateEditorComponent({
           />
         </div>
       </div>
+
+      <VersionHistoryDialog
+        isOpen={showVersionHistory}
+        onClose={() => setShowVersionHistory(false)}
+        noteId={note.id}
+        currentTitle={title}
+        onRestore={() => {
+          // Refresh the editor after restoration
+          window.location.reload()
+        }}
+      />
     </div>
   )
 }
