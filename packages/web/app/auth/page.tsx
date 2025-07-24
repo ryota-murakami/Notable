@@ -16,19 +16,25 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/hooks/use-toast'
 
+// Disable static optimization for this page since it requires runtime auth
+export const dynamic = 'force-dynamic'
+
 export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const supabase = createClient()
+
+  // Create Supabase client lazily to avoid build-time errors
+  const getSupabaseClient = () => createClient()
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
+      const supabase = getSupabaseClient()
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -64,6 +70,7 @@ export default function AuthPage() {
     setLoading(true)
 
     try {
+      const supabase = getSupabaseClient()
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -99,6 +106,7 @@ export default function AuthPage() {
     setLoading(true)
 
     try {
+      const supabase = getSupabaseClient()
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {

@@ -46,4 +46,8 @@ jobs:
           cd packages/web && npx playwright install --with-deps
 
       - name: Run E2E tests
+        env:
+          # Set dummy Supabase credentials for E2E tests
+          NEXT_PUBLIC_SUPABASE_URL: 'https://dummy.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'dummy-anon-key'
         run: pnpm e2e
