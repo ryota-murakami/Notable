@@ -214,7 +214,7 @@ class CDNManager {
       const loadTime = performance.now() - startTime
       performanceMonitor.track('cdn_asset_error', loadTime, 'ms', {
         url: assetUrl,
-        error: error.toString(),
+        error: error instanceof Error ? error.toString() : String(error),
       })
       throw error
     }

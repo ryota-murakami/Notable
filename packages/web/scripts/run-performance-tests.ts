@@ -60,10 +60,7 @@ async function generatePerformanceReport(): Promise<PerformanceReport> {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     ) {
       console.log('📊 Running database operation benchmarks...\n')
-      report.benchmarks.noteOperations = await runNoteBenchmarks(
-        process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      )
+      report.benchmarks.noteOperations = await runNoteBenchmarks()
     } else {
       console.log(
         '⚠️  Skipping database benchmarks (Supabase credentials not found)\n'
@@ -99,7 +96,10 @@ async function generatePerformanceReport(): Promise<PerformanceReport> {
           config: cdnManager.getConfig(),
         }
       } catch (error) {
-        console.log('⚠️  CDN performance test failed:', error.message)
+        console.log(
+          '⚠️  CDN performance test failed:',
+          error instanceof Error ? error.message : String(error)
+        )
       }
     }
 
