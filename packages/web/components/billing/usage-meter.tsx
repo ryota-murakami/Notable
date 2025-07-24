@@ -17,14 +17,14 @@ import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
+  AlertTriangle,
+  Crown,
+  Download,
   FileText,
   HardDrive,
   Smartphone,
-  Download,
-  Zap,
-  AlertTriangle,
-  Crown,
   TrendingUp,
+  Zap,
 } from 'lucide-react'
 import { formatStorageSize } from '@/lib/stripe'
 import { UpgradeDialog } from './upgrade-dialog'
