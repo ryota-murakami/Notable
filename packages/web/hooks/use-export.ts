@@ -76,14 +76,12 @@ export function useExport() {
             return `![${node.alt || ''}](${node.url})\n\n`
           default: {
             // Handle text formatting
-            {
-              let formattedText = text
-              if (node.bold) formattedText = `**${formattedText}**`
-              if (node.italic) formattedText = `*${formattedText}*`
-              if (node.strikethrough) formattedText = `~~${formattedText}~~`
-              if (node.code) formattedText = `\`${formattedText}\``
-              return formattedText
-            }
+            let formattedText = text
+            if (node.bold) formattedText = `**${formattedText}**`
+            if (node.italic) formattedText = `*${formattedText}*`
+            if (node.strikethrough) formattedText = `~~${formattedText}~~`
+            if (node.code) formattedText = `\`${formattedText}\``
+            return formattedText
           }
         }
       }
@@ -184,15 +182,13 @@ export function useExport() {
             return `<th>${sanitizeHTML(text)}</th>`
           default: {
             // Handle text formatting
-            {
-              let formattedText = sanitizeHTML(text)
-              if (node.bold) formattedText = `<strong>${formattedText}</strong>`
-              if (node.italic) formattedText = `<em>${formattedText}</em>`
-              if (node.underline) formattedText = `<u>${formattedText}</u>`
-              if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
-              if (node.code) formattedText = `<code>${formattedText}</code>`
-              return formattedText
-            }
+            let formattedText = sanitizeHTML(text)
+            if (node.bold) formattedText = `<strong>${formattedText}</strong>`
+            if (node.italic) formattedText = `<em>${formattedText}</em>`
+            if (node.underline) formattedText = `<u>${formattedText}</u>`
+            if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
+            if (node.code) formattedText = `<code>${formattedText}</code>`
+            return formattedText
           }
         }
       }
@@ -338,15 +334,13 @@ export function useExport() {
           return `<th key={${key}}>${text}</th>`
         default: {
           // Handle text formatting
-          {
-            let formattedText = text
-            if (node.bold) formattedText = `<strong>${formattedText}</strong>`
-            if (node.italic) formattedText = `<em>${formattedText}</em>`
-            if (node.underline) formattedText = `<u>${formattedText}</u>`
-            if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
-            if (node.code) formattedText = `<code>${formattedText}</code>`
-            return formattedText
-          }
+          let formattedText = text
+          if (node.bold) formattedText = `<strong>${formattedText}</strong>`
+          if (node.italic) formattedText = `<em>${formattedText}</em>`
+          if (node.underline) formattedText = `<u>${formattedText}</u>`
+          if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
+          if (node.code) formattedText = `<code>${formattedText}</code>`
+          return formattedText
         }
       }
     }

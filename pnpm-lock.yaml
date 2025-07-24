@@ -15,10 +15,10 @@ importers:
         specifier: ^30.0.0
         version: 30.0.0
       '@types/node':
-        specifier: ^22
+        specifier: ^22.16.5
         version: 22.16.5
       eslint:
-        specifier: ^8.57.0
+        specifier: ^8.57.1
         version: 8.57.1
       husky:
         specifier: ^9.1.7
@@ -38,6 +38,8 @@ importers:
       typescript:
         specifier: ^5
         version: 5.8.3
+
+  packages/configs: {}
 
   packages/configs/eslint-config:
     dependencies:
@@ -86,7 +88,7 @@ importers:
         version: 10.1.0
     devDependencies:
       '@types/node':
-        specifier: ^22
+        specifier: ^22.16.5
         version: 22.16.5
       electron:
         specifier: ^35.2.1
@@ -95,7 +97,7 @@ importers:
         specifier: ^26.0.12
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       eslint:
-        specifier: ^8.57.0
+        specifier: ^8.57.1
         version: 8.57.1
       jest:
         specifier: ^29.7.0
@@ -183,7 +185,7 @@ importers:
         specifier: ^30.0.0
         version: 30.0.0
       '@types/node':
-        specifier: ^22
+        specifier: ^22.16.5
         version: 22.16.5
       '@types/react':
         specifier: ^19
@@ -195,7 +197,7 @@ importers:
         specifier: ^14.2.0
         version: 14.7.1(@types/node@22.16.5)(encoding@0.1.13)(typescript@5.8.3)
       eslint:
-        specifier: ^8.57.0
+        specifier: ^8.57.1
         version: 8.57.1
       eslint-plugin-react:
         specifier: ^7.37.5

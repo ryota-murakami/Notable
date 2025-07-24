@@ -50,6 +50,7 @@ export function Shell() {
   const [isViewMode, setIsViewMode] = useState(false)
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false)
   const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(new Set())
+  const [showHiddenNotes, setShowHiddenNotes] = useState(false)
   const { toast } = useToast()
   const { user, loading: authLoading } = useSupabase()
   const { exportNote, isExporting } = useExport()
@@ -73,7 +74,7 @@ export function Shell() {
     typingUsers,
     startTyping,
     stopTyping,
-  } = useSupabaseNotes({ activeNoteId })
+  } = useSupabaseNotes({ activeNoteId, includeHidden: showHiddenNotes })
 
   const activeNote = notes.find((note) => note.id === activeNoteId) || notes[0]
   const folders = notes.filter((note) => note.isFolder)
@@ -637,6 +638,8 @@ export function Shell() {
           selectedNoteIds={selectedNoteIds}
           onToggleNoteSelection={toggleNoteSelection}
           isMultiSelectMode={isMultiSelectMode}
+          showHiddenNotes={showHiddenNotes}
+          onToggleHiddenNotes={() => setShowHiddenNotes(!showHiddenNotes)}
         />
       )}
       <div

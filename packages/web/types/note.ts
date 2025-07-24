@@ -8,4 +8,5 @@ export interface Note {
   parentId?: string | null
   tags?: string[]
   isFolder?: boolean
+  isHidden?: boolean
 }

@@ -91,32 +91,5 @@
       "destination": "/auth/sign-up",
       "permanent": true
     }
-  ],
-
-  "functions": {
-    "api/notes/[id].ts": {
-      "maxDuration": 30
-    },
-    "api/export/[format].ts": {
-      "maxDuration": 60
-    },
-    "api/sync/websocket.ts": {
-      "maxDuration": 900
-    }
-  },
-
-  "crons": [
-    {
-      "path": "/api/cron/cleanup",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/backup",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/cron/analytics",
-      "schedule": "0 */6 * * *"
-    }
   ]
 }

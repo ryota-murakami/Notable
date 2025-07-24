@@ -30,7 +30,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 
 // Icons
-import { Code, Download, FileImage, FileText, Globe, Tag } from 'lucide-react'
+import { Code, Download, FileText, Globe, Tag, Eye, EyeOff } from 'lucide-react'
 
 import type { Note } from '@/types/note'
 import { type ExportFormat, useExport } from '@/hooks/use-export'
@@ -66,6 +66,7 @@ export function PlateEditorComponent({
   const [tags, setTags] = useState<string[]>(note.tags || [])
   const [newTag, setNewTag] = useState('')
   const [showTags, setShowTags] = useState(false)
+  const [isHidden, setIsHidden] = useState(note.isHidden || false)
   const [editorValue, setEditorValue] = useState(() => {
     if (note.content) {
       try {
@@ -122,6 +123,7 @@ export function PlateEditorComponent({
         title,
         content: JSON.stringify(editorValue),
         tags,
+        isHidden,
         updatedAt: new Date().toISOString(),
       })
     }
@@ -132,7 +134,7 @@ export function PlateEditorComponent({
       // Save immediately on unmount to prevent data loss
       saveNote()
     }
-  }, [editorValue, title, tags, note, onUpdateNote])
+  }, [editorValue, title, tags, isHidden, note, onUpdateNote])
 
   // Save note when title changes
   useEffect(() => {
@@ -176,6 +178,7 @@ export function PlateEditorComponent({
     }
     setTitle(note.title)
     setTags(note.tags || [])
+    setIsHidden(note.isHidden || false)
   }, [note.id]) // Only update when note ID changes
 
   const handleAddTag = () => {
@@ -234,6 +237,21 @@ export function PlateEditorComponent({
             </div>
 
             <div className='flex items-center space-x-2'>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => setIsHidden(!isHidden)}
+                title={
+                  isHidden ? 'This note is hidden' : 'This note is visible'
+                }
+              >
+                {isHidden ? (
+                  <EyeOff className='h-4 w-4' />
+                ) : (
+                  <Eye className='h-4 w-4' />
+                )}
+              </Button>
+
               <Popover open={showTags} onOpenChange={setShowTags}>
                 <PopoverTrigger asChild>
                   <Button variant='ghost' size='sm'>
