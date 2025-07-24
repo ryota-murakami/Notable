@@ -5,9 +5,9 @@ import * as React from 'react'
 import { useAIChatEditor } from '@platejs/ai/react'
 import { usePlateEditor } from 'platejs/react'
 
-import { BaseEditorKit } from '@/components/editor/editor-base-kit'
+import { BaseEditorKit } from '@/components/editor/editor-stubs'
 
-import { EditorStatic } from './editor-static'
+import { EditorStatic } from '@/components/ui/editor-static'
 
 export const AIChatEditor = React.memo(function AIChatEditor({
   content,
@@ -20,5 +20,5 @@ export const AIChatEditor = React.memo(function AIChatEditor({
 
   useAIChatEditor(aiEditor, content)
 
-  return <EditorStatic variant="aiChat" editor={aiEditor} />
+  return <EditorStatic variant='aiChat' editor={aiEditor} />
 })

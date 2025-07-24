@@ -1,54 +1,29 @@
-import * as React from 'react'
+'use client'
 
-import { cva, type VariantProps } from 'class-variance-authority'
-
-import { PlateStatic, type PlateStaticProps } from 'platejs'
-
+import React from 'react'
 import { cn } from '@/lib/utils'
 
-export const editorVariants = cva(
-  cn(
-    'group/editor',
-    'relative w-full cursor-text overflow-x-hidden break-words whitespace-pre-wrap select-text',
-    'rounded-md ring-offset-background focus-visible:outline-none',
-    'placeholder:text-muted-foreground/80 **:data-slate-placeholder:top-[auto_!important] **:data-slate-placeholder:text-muted-foreground/80 **:data-slate-placeholder:opacity-100!',
-    '[&_strong]:font-bold'
-  ),
-  {
-    defaultVariants: {
-      variant: 'none',
-    },
-    variants: {
-      disabled: {
-        true: 'cursor-not-allowed opacity-50',
-      },
-      focused: {
-        true: 'ring-2 ring-ring ring-offset-2',
-      },
-      variant: {
-        ai: 'w-full px-0 text-base md:text-sm',
-        aiChat:
-          'max-h-[min(70vh,320px)] w-full max-w-[700px] overflow-y-auto px-5 py-3 text-base md:text-sm',
-        default:
-          'size-full px-16 pt-4 pb-72 text-base sm:px-[max(64px,calc(50%-350px))]',
-        demo: 'size-full px-16 pt-4 pb-72 text-base sm:px-[max(64px,calc(50%-350px))]',
-        fullWidth: 'size-full px-16 pt-4 pb-72 text-base sm:px-24',
-        none: '',
-        select: 'px-3 py-2 text-base data-readonly:w-fit',
-      },
-    },
-  }
-)
+interface EditorStaticProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'minimal'
+  children?: React.ReactNode
+}
 
 export function EditorStatic({
+  variant = 'default',
   className,
-  variant,
+  children,
   ...props
-}: PlateStaticProps & VariantProps<typeof editorVariants>) {
+}: EditorStaticProps) {
   return (
-    <PlateStatic
-      className={cn(editorVariants({ variant }), className)}
+    <div
+      className={cn(
+        'w-full rounded-md bg-background px-3 py-2 text-sm prose prose-sm max-w-none',
+        variant === 'minimal' && 'border-0 ring-0',
+        className
+      )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 }

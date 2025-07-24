@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { Sidebar } from '@/components/sidebar'
-import { PlateEditorComponent } from '@/components/plate-editor'
+import { SimpleTestEditor as PlateEditorComponent } from '@/components/simple-test-editor'
 import type { Note } from '@/types/note'
 import { useSupabaseNotes } from '@/hooks/use-supabase-notes'
 import { useSupabase } from '@/components/supabase-provider'

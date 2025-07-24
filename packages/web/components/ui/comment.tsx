@@ -39,13 +39,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { BasicMarksKit } from '@/components/editor/plugins/basic-marks-kit'
+import { BasicMarksKit } from '@/components/editor/editor-stubs'
 import {
   discussionPlugin,
   type TDiscussion,
-} from '@/components/editor/plugins/discussion-kit'
+} from '@/components/editor/editor-stubs'
 
-import { Editor, EditorContainer } from './editor'
+import { Editor, EditorContainer } from '@/components/ui/editor'
 
 export interface TComment {
   id: string

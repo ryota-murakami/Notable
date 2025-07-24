@@ -5,7 +5,7 @@ import * as React from 'react'
 import { MessageSquareTextIcon } from 'lucide-react'
 import { useEditorRef } from 'platejs/react'
 
-import { commentPlugin } from '@/components/editor/plugins/comment-kit'
+import { commentPlugin } from '@/components/editor/editor-stubs'
 
 import { ToolbarButton } from './toolbar'
 
@@ -18,7 +18,7 @@ export function CommentToolbarButton() {
         editor.getTransforms(commentPlugin).comment.setDraft()
       }}
       data-plate-prevent-overlay
-      tooltip="Comment"
+      tooltip='Comment'
     >
       <MessageSquareTextIcon />
     </ToolbarButton>

@@ -36,12 +36,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { commentPlugin } from '@/components/editor/plugins/comment-kit'
+import { commentPlugin } from '@/components/editor/editor-stubs'
 import {
   discussionPlugin,
   type TDiscussion,
-} from '@/components/editor/plugins/discussion-kit'
-import { suggestionPlugin } from '@/components/editor/plugins/suggestion-kit'
+} from '@/components/editor/editor-stubs'
+import { suggestionPlugin } from '@/components/editor/editor-stubs'
 
 import {
   BlockSuggestionCard,

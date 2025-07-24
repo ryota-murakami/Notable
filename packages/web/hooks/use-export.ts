@@ -3,9 +3,9 @@
 import { useState, useCallback } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
-import { MarkdownPlugin } from '@platejs/markdown'
-import { createSlateEditor } from 'platejs'
-import { BaseEditorKit } from '@/components/editor/editor-base-kit'
+// import { MarkdownPlugin } from '@platejs/markdown'
+// import { createSlateEditor } from 'platejs'
+// import { BaseParagraphPlugin } from 'platejs'
 
 export type ExportFormat = 'markdown' | 'html' | 'pdf' | 'react'
 
@@ -37,16 +37,62 @@ export function useExport() {
     (content: any, title?: string, options: ExportOptions = {}): string => {
       const { includeMetadata = false } = options
 
-      // Create a temporary editor with markdown plugin to leverage GFM support
-      const editorStatic = createSlateEditor({
-        plugins: BaseEditorKit,
-        value: Array.isArray(content) ? content : [content],
-      })
+      // Simple conversion to markdown (placeholder implementation)
+      let markdownContent = ''
 
-      // Use Plate.js MarkdownPlugin to serialize with GFM support
-      const markdownContent = editorStatic
-        .getApi(MarkdownPlugin)
-        .markdown.serialize()
+      const convertNode = (node: any): string => {
+        if (typeof node === 'string') return node
+        if (!node.type) return node.text || ''
+
+        const text = node.children?.map(convertNode).join('') || ''
+
+        switch (node.type) {
+          case 'h1':
+            return `# ${text}\n\n`
+          case 'h2':
+            return `## ${text}\n\n`
+          case 'h3':
+            return `### ${text}\n\n`
+          case 'h4':
+            return `#### ${text}\n\n`
+          case 'h5':
+            return `##### ${text}\n\n`
+          case 'h6':
+            return `###### ${text}\n\n`
+          case 'p':
+            return `${text}\n\n`
+          case 'blockquote':
+            return `> ${text}\n\n`
+          case 'ul':
+            return `${text}\n`
+          case 'ol':
+            return `${text}\n`
+          case 'li':
+            return `- ${text}\n`
+          case 'code_block':
+            return `\`\`\`\n${text}\n\`\`\`\n\n`
+          case 'hr':
+            return '---\n\n'
+          case 'a':
+            return `[${text}](${node.url})`
+          case 'img':
+            return `![${node.alt || ''}](${node.url})\n\n`
+          default:
+            // Handle text formatting
+            let formattedText = text
+            if (node.bold) formattedText = `**${formattedText}**`
+            if (node.italic) formattedText = `*${formattedText}*`
+            if (node.strikethrough) formattedText = `~~${formattedText}~~`
+            if (node.code) formattedText = `\`${formattedText}\``
+            return formattedText
+        }
+      }
+
+      if (Array.isArray(content)) {
+        markdownContent = content.map(convertNode).join('')
+      } else {
+        markdownContent = convertNode(content)
+      }
 
       let markdown = ''
 

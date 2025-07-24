@@ -30,8 +30,8 @@ import { cn } from '@/lib/utils'
 import {
   discussionPlugin,
   type TDiscussion,
-} from '@/components/editor/plugins/discussion-kit'
-import { suggestionPlugin } from '@/components/editor/plugins/suggestion-kit'
+} from '@/components/editor/editor-stubs'
+import { suggestionPlugin } from '@/components/editor/editor-stubs'
 
 import {
   Comment,
