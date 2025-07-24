@@ -163,7 +163,10 @@ export function PlateToolbar() {
       <ToolbarButton
         isActive={false}
         onToggle={insertImage}
-        icon={<Image className='h-4 w-4' />}
+        icon={
+          // eslint-disable-next-line jsx-a11y/alt-text
+          <Image className='h-4 w-4' />
+        }
         tooltip='Insert Image'
       />
     </div>

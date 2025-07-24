@@ -14,8 +14,8 @@ interface SimpleTestEditorProps {
 export function SimpleTestEditor({
   note,
   onUpdateNote,
-  onDeleteNote,
-  onExportNote,
+  onDeleteNote: _onDeleteNote,
+  onExportNote: _onExportNote,
   onStartTyping,
   onStopTyping,
 }: SimpleTestEditorProps) {

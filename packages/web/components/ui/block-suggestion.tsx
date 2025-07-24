@@ -29,9 +29,9 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
   discussionPlugin,
+  suggestionPlugin,
   type TDiscussion,
 } from '@/components/editor/editor-stubs'
-import { suggestionPlugin } from '@/components/editor/editor-stubs'
 
 import {
   Comment,

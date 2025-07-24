@@ -36,12 +36,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { commentPlugin } from '@/components/editor/editor-stubs'
 import {
+  commentPlugin,
   discussionPlugin,
+  suggestionPlugin,
   type TDiscussion,
 } from '@/components/editor/editor-stubs'
-import { suggestionPlugin } from '@/components/editor/editor-stubs'
 
 import {
   BlockSuggestionCard,
@@ -75,7 +75,7 @@ export const BlockDiscussion: RenderNodeWrapper<AnyPluginConfig> = (props) => {
     return
   }
 
-  return (props) => (
+  const BlockDiscussionContent = (props: any) => (
     <BlockCommentContent
       blockPath={blockPath}
       commentNodes={commentNodes}
@@ -84,6 +84,9 @@ export const BlockDiscussion: RenderNodeWrapper<AnyPluginConfig> = (props) => {
       {...props}
     />
   )
+  BlockDiscussionContent.displayName = 'BlockDiscussionContent'
+
+  return BlockDiscussionContent
 }
 
 const BlockCommentContent = ({
