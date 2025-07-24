@@ -165,6 +165,7 @@
     "@types/react-dom": "^19",
     "@types/react-window": "^1.8.8",
     "@types/speakeasy": "^2.0.10",
+    "@types/stripe-v3": "^3.1.33",
     "@types/winston": "^2.4.4",
     "chalk": "^5.4.1",
     "dotenv": "^17.2.0",

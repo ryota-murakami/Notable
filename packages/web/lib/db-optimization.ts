@@ -46,7 +46,7 @@ class DatabaseOptimizer {
     // Check cache first
     if (options.cache && this.isCacheValid(cacheKey)) {
       performanceMonitor.track(`db_query_${queryName}_cache_hit`, 1, 'count')
-      return this.queryCache[cacheKey].result
+      return this.queryCache[cacheKey].result as T
     }
 
     const startTime = performance.now()
@@ -279,7 +279,7 @@ export function optimizeQuery(
   ) {
     const originalMethod = descriptor.value
     const queryName =
-      options.name || `${target.constructor.name}.${propertyKey}`
+      options.name || `${(target as any).constructor.name}.${propertyKey}`
 
     descriptor.value = async function (...args: unknown[]) {
       return await dbOptimizer.executeQuery(

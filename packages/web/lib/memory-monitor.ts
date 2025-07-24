@@ -246,10 +246,10 @@ class MemoryMonitor {
   }
 
   /**
-   * Get memory report (alias for getReport)
+   * Get memory report (alias for generateReport)
    */
   getMemoryReport() {
-    return this.getReport()
+    return this.generateReport()
   }
 
   /**
