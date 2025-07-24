@@ -35,7 +35,7 @@
     "pnpm": ">=9.0.0"
   },
   "volta": {
-    "node": "24.4.1"
+    "node": "22.17.1"
   },
   "lint-staged": {
     "packages/web/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
