@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { type SupabaseClient } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import type { Database } from '@/types/database'
-import { createSupabaseClientInstance } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/client'
 
 // Simple session type
 type SimpleSession = {
@@ -34,14 +34,14 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  // Lazily create the Supabase client only on the client side
+  // Create the Supabase client using the SSR-safe utility
   const supabase = useMemo(() => {
     if (typeof window === 'undefined') {
       return null
     }
 
     try {
-      return createSupabaseClientInstance()
+      return createClient()
     } catch (error) {
       console.warn('Failed to create Supabase client:', error)
       return null
