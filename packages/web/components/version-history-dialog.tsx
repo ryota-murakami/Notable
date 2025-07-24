@@ -51,11 +51,7 @@ import {
   RotateCcw,
   Star,
   StarOff,
-  FileText,
-  Eye,
   Download,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react'
 
 interface VersionHistoryDialogProps {
@@ -193,7 +189,7 @@ export function VersionHistoryDialog({
       )
       setComparison(result)
       setActiveTab('compare')
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to compare versions',
@@ -215,7 +211,7 @@ export function VersionHistoryDialog({
       a.download = `${currentTitle}-version-history-${new Date().toISOString().split('T')[0]}.json`
       a.click()
       URL.revokeObjectURL(url)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Export Failed',
         description: 'Failed to export version history',
