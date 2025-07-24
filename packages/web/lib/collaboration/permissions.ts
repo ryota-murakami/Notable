@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { User } from './yjs-provider'
+import type { User } from './yjs-provider'
 
 export type Permission = 'owner' | 'editor' | 'commenter' | 'viewer'
 

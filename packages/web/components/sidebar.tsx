@@ -148,6 +148,14 @@ export function Sidebar({
                     isFolder && 'text-blue-700 dark:text-blue-300'
                   )}
                   onClick={() => onSelectNote(note.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onSelectNote(note.id)
+                    }
+                  }}
+                  role='button'
+                  tabIndex={0}
                 >
                   {note.title || (isFolder ? 'Untitled Folder' : 'Untitled')}
                 </span>
@@ -202,6 +210,14 @@ export function Sidebar({
         <div
           className='fixed inset-0 bg-black/50 z-40 md:hidden'
           onClick={onToggleMobileMenu}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              onToggleMobileMenu()
+            }
+          }}
+          role='button'
+          tabIndex={0}
+          aria-label='Close mobile menu'
         />
       )}
 

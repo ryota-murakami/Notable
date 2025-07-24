@@ -23,18 +23,14 @@ import {
   MessageCircle,
   Send,
   Reply,
-  MoreHorizontal,
   Check,
-  X,
   Edit3,
   Trash2,
-  Flag,
   Heart,
   ThumbsUp,
   Eye,
-  Clock,
 } from 'lucide-react'
-import { User } from '@/lib/collaboration/yjs-provider'
+import type { User } from '@/lib/collaboration/yjs-provider'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 

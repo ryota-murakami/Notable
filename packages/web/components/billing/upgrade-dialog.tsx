@@ -25,11 +25,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Crown, Check, Star, Users, Loader2, Sparkles } from 'lucide-react'
-import {
-  SUBSCRIPTION_PLANS,
-  SubscriptionPlan,
-  formatStorageSize,
-} from '@/lib/stripe'
+import { SUBSCRIPTION_PLANS, formatStorageSize } from '@/lib/stripe'
+import type { SubscriptionPlan } from '@/lib/stripe'
 
 interface UpgradeDialogProps {
   trigger?: React.ReactNode
@@ -93,8 +90,8 @@ export function UpgradeDialog({
     return planIndex > currentIndex
   }
 
-  const DialogComponent = trigger ? Dialog : 'div'
-  const dialogProps = trigger ? { open, onOpenChange } : { className: 'block' }
+  const _DialogComponent = trigger ? Dialog : 'div'
+  const _dialogProps = trigger ? { open, onOpenChange } : { className: 'block' }
 
   const content = (
     <DialogContent className='max-w-4xl max-h-[90vh] overflow-y-auto'>
@@ -241,6 +238,9 @@ export function UpgradeDialog({
 }
 
 // Standalone upgrade dialog trigger
-export function UpgradeTrigger({ children, ...props }: UpgradeDialogProps) {
+export function UpgradeTrigger({
+  children,
+  ...props
+}: UpgradeDialogProps & { children: React.ReactNode }) {
   return <UpgradeDialog trigger={children} {...props} />
 }

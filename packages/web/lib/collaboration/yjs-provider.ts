@@ -4,7 +4,7 @@
  */
 
 import * as Y from 'yjs'
-import { Awareness } from 'y-protocols/awareness'
+import type { Awareness } from 'y-protocols/awareness'
 import { WebsocketProvider } from 'y-websocket'
 import { createClient } from '@supabase/supabase-js'
 import React from 'react'

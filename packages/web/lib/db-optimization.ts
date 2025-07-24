@@ -17,7 +17,7 @@ interface QueryMetrics {
 
 interface QueryCache {
   [key: string]: {
-    result: any
+    result: unknown
     timestamp: number
     ttl: number
   }
@@ -273,7 +273,7 @@ export function optimizeQuery(
   } = {}
 ) {
   return function (
-    target: any,
+    target: unknown,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
@@ -281,8 +281,8 @@ export function optimizeQuery(
     const queryName =
       options.name || `${target.constructor.name}.${propertyKey}`
 
-    descriptor.value = async function (...args: any[]) {
-      return dbOptimizer.executeQuery(
+    descriptor.value = async function (...args: unknown[]) {
+      return await dbOptimizer.executeQuery(
         queryName,
         () => originalMethod.apply(this, args),
         {

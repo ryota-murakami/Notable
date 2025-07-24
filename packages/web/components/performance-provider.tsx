@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { createContext, useContext, useEffect, useRef } from 'react'
+import React, { createContext, useContext, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { performanceMonitor } from '@/lib/performance'
 import { memoryMonitor } from '@/lib/memory-monitor'

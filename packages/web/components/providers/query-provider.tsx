@@ -5,9 +5,10 @@
 
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { useState } from 'react'
 import { getQueryClient } from '@/lib/react-query'
 
 interface QueryProviderProps {

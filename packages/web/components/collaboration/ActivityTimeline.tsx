@@ -19,17 +19,14 @@ import {
   UserPlus,
   UserMinus,
   Share,
-  Eye,
   FileText,
   Lightbulb,
-  Check,
   X,
   Filter,
-  RefreshCw,
   ChevronDown,
   ChevronRight,
 } from 'lucide-react'
-import { User } from '@/lib/collaboration/yjs-provider'
+import type { User } from '@/lib/collaboration/yjs-provider'
 import { formatDistanceToNow, format } from 'date-fns'
 import { cn } from '@/lib/utils'
 
@@ -78,7 +75,7 @@ export interface Activity {
 interface ActivityTimelineProps {
   activities: Activity[]
   currentUser: User
-  noteId: string
+  _noteId: string
   className?: string
   onActivityClick?: (activity: Activity) => void
   showFilters?: boolean
@@ -89,7 +86,7 @@ interface ActivityTimelineProps {
 export function ActivityTimeline({
   activities,
   currentUser,
-  noteId,
+  _noteId,
   className,
   onActivityClick,
   showFilters = true,
@@ -180,7 +177,7 @@ export function ActivityTimeline({
   }
 
   const getActivityDescription = (activity: Activity) => {
-    const { type, user, data } = activity
+    const { type, data } = activity
 
     switch (type) {
       case 'edit':
@@ -534,7 +531,7 @@ export function ActivityTimeline({
  */
 export function useActivityTimeline(noteId: string, currentUser: User) {
   const [activities, setActivities] = useState<Activity[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
 
   const addActivity = React.useCallback(
     (activity: Omit<Activity, 'id' | 'timestamp'>) => {

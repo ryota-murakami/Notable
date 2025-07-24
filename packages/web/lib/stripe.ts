@@ -156,7 +156,7 @@ export async function createCheckoutSession({
     }
   }
 
-  return await stripe.checkout.sessions.create(sessionParams)
+  return stripe.checkout.sessions.create(sessionParams)
 }
 
 /**
@@ -173,7 +173,7 @@ export async function createBillingPortalSession({
     throw new Error('Stripe is not configured')
   }
 
-  return await stripe.billingPortal.sessions.create({
+  return stripe.billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   })
@@ -206,7 +206,7 @@ export async function createOrRetrieveCustomer({
   }
 
   // Create new customer
-  return await stripe.customers.create({
+  return stripe.customers.create({
     email,
     name,
     metadata: {
@@ -244,7 +244,7 @@ export async function cancelSubscription(
     throw new Error('Stripe is not configured')
   }
 
-  return await stripe.subscriptions.update(subscriptionId, {
+  return stripe.subscriptions.update(subscriptionId, {
     cancel_at_period_end: cancelAtPeriodEnd,
   })
 }
@@ -267,7 +267,7 @@ export async function updateSubscription({
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
-  return await stripe.subscriptions.update(subscriptionId, {
+  return stripe.subscriptions.update(subscriptionId, {
     items: [
       {
         id: subscription.items.data[0].id,
