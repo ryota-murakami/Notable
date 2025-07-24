@@ -300,7 +300,11 @@ export function SyncQueueVisualizer() {
                     <TableCell>
                       <div className='max-w-[200px]'>
                         <p className='truncate font-medium'>
-                          {item.data.title || item.data.name || 'Untitled'}
+                          {(item.data as { title?: string; name?: string })
+                            ?.title ||
+                            (item.data as { title?: string; name?: string })
+                              ?.name ||
+                            'Untitled'}
                         </p>
                         {item.error && (
                           <p className='text-xs text-destructive truncate'>

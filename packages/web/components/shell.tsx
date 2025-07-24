@@ -18,7 +18,7 @@ import {
 import { ViewModeRenderer } from '@/components/view-mode-renderer'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Badge } from '@/components/ui/badge'
-import { UserCheck, Users, CheckSquare } from 'lucide-react'
+import { CheckSquare, UserCheck, Users } from 'lucide-react'
 import { BulkOperationsToolbar } from '@/components/bulk-operations-toolbar'
 import { type ExportFormat, useExport } from '@/hooks/use-export'
 import { Button } from '@/components/ui/button'
@@ -46,6 +46,8 @@ export function Shell() {
     error,
     createNote,
     createFolder,
+    updateFolder,
+    moveNote,
     saveNote,
     deleteNote,
     loadNotes: _loadNotes,
@@ -608,6 +610,8 @@ export function Shell() {
           onCreateNote={handleCreateNote}
           onCreateFolder={handleCreateFolder}
           onDeleteNote={handleDeleteNote}
+          onUpdateFolder={updateFolder}
+          onMoveNote={moveNote}
           onOpenSearch={() => setIsSearchOpen(true)}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}

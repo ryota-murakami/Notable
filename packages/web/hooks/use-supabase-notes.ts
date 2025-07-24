@@ -569,6 +569,209 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
     [user, supabase, toast]
   )
 
+  // Update folder
+  const updateFolder = useCallback(
+    async (folderId: string, updates: { name?: string }) => {
+      if (!user || !supabase) return false
+
+      try {
+        const folder = notes.find((n) => n.id === folderId && n.isFolder)
+        if (!folder) return false
+
+        // Update local state immediately
+        setNotes((prevNotes) =>
+          prevNotes.map((n) =>
+            n.id === folderId
+              ? {
+                  ...n,
+                  title: updates.name || n.title,
+                  updatedAt: new Date().toISOString(),
+                }
+              : n
+          )
+        )
+
+        // Check if offline
+        if (!offlineManager.isOnline()) {
+          // Queue for later sync
+          await offlineManager.addToSyncQueue({
+            type: 'update',
+            table: 'folders',
+            data: {
+              id: folderId,
+              name: updates.name || folder.title,
+              user_id: user.id,
+              updated_at: new Date().toISOString(),
+            },
+            status: 'pending',
+          })
+
+          toast({
+            title: 'Updated offline',
+            description: "Changes will sync when you're back online",
+          })
+          return true
+        }
+
+        // Online - update on server
+        const { error } = await supabase
+          .from('folders')
+          .update({
+            name: updates.name,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', folderId)
+          .eq('user_id', user.id)
+
+        if (error) throw error
+
+        return true
+      } catch (err) {
+        // On error, queue for later sync
+        const folder = notes.find((n) => n.id === folderId && n.isFolder)
+        if (folder) {
+          await offlineManager.addToSyncQueue({
+            type: 'update',
+            table: 'folders',
+            data: {
+              id: folderId,
+              name: updates.name || folder.title,
+              user_id: user.id,
+              updated_at: new Date().toISOString(),
+            },
+            status: 'pending',
+          })
+        }
+
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to update folder'
+        setError(errorMessage)
+        toast({
+          title: 'Update queued',
+          description: 'Will sync when connection is restored',
+          variant: 'default',
+        })
+        return true // Return true since we updated locally
+      }
+    },
+    [user, supabase, notes, toast]
+  )
+
+  // Move note/folder to another folder
+  const moveNote = useCallback(
+    async (noteId: string, targetFolderId: string | null) => {
+      if (!user || !supabase) return false
+
+      try {
+        const note = notes.find((n) => n.id === noteId)
+        if (!note) return false
+
+        // Update local state immediately
+        setNotes((prevNotes) =>
+          prevNotes.map((n) =>
+            n.id === noteId
+              ? {
+                  ...n,
+                  parentId: targetFolderId,
+                  updatedAt: new Date().toISOString(),
+                }
+              : n
+          )
+        )
+
+        // Check if offline
+        if (!offlineManager.isOnline()) {
+          // Queue for later sync
+          await offlineManager.addToSyncQueue({
+            type: 'update',
+            table: note.isFolder ? 'folders' : 'notes',
+            data: note.isFolder
+              ? {
+                  id: noteId,
+                  parent_id: targetFolderId,
+                  user_id: user.id,
+                  updated_at: new Date().toISOString(),
+                }
+              : {
+                  id: noteId,
+                  folder_id: targetFolderId,
+                  user_id: user.id,
+                  updated_at: new Date().toISOString(),
+                },
+            status: 'pending',
+          })
+
+          toast({
+            title: 'Moved offline',
+            description: "Changes will sync when you're back online",
+          })
+          return true
+        }
+
+        // Online - update on server
+        if (note.isFolder) {
+          const { error } = await supabase
+            .from('folders')
+            .update({
+              parent_id: targetFolderId,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', noteId)
+            .eq('user_id', user.id)
+
+          if (error) throw error
+        } else {
+          const { error } = await supabase
+            .from('notes')
+            .update({
+              folder_id: targetFolderId,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', noteId)
+            .eq('user_id', user.id)
+
+          if (error) throw error
+        }
+
+        return true
+      } catch (err) {
+        // On error, queue for later sync
+        const note = notes.find((n) => n.id === noteId)
+        if (note) {
+          await offlineManager.addToSyncQueue({
+            type: 'update',
+            table: note.isFolder ? 'folders' : 'notes',
+            data: note.isFolder
+              ? {
+                  id: noteId,
+                  parent_id: targetFolderId,
+                  user_id: user.id,
+                  updated_at: new Date().toISOString(),
+                }
+              : {
+                  id: noteId,
+                  folder_id: targetFolderId,
+                  user_id: user.id,
+                  updated_at: new Date().toISOString(),
+                },
+            status: 'pending',
+          })
+        }
+
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to move item'
+        setError(errorMessage)
+        toast({
+          title: 'Move queued',
+          description: 'Will sync when connection is restored',
+          variant: 'default',
+        })
+        return true // Return true since we updated locally
+      }
+    },
+    [user, supabase, notes, toast]
+  )
+
   // Delete note
   const deleteNote = useCallback(
     async (noteId: string) => {
@@ -664,6 +867,8 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
     error,
     createNote,
     createFolder,
+    updateFolder,
+    moveNote,
     saveNote,
     deleteNote,
     loadNotes,

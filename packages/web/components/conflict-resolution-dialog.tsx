@@ -158,7 +158,7 @@ export function ConflictResolutionDialog() {
                     <div className='flex items-center gap-2 mb-1'>
                       <FileText className='h-3 w-3' />
                       <span className='text-sm font-medium truncate'>
-                        {conflict.data.title || 'Untitled'}
+                        {(conflict.data.title as string) || 'Untitled'}
                       </span>
                     </div>
                     <div className='text-xs text-muted-foreground'>
@@ -190,20 +190,22 @@ export function ConflictResolutionDialog() {
                     </div>
                     <div className='rounded-lg border p-4 bg-muted/50'>
                       <h4 className='font-medium mb-2'>
-                        {conflictData.local.title || 'Untitled'}
+                        {(conflictData.local.title as string) || 'Untitled'}
                       </h4>
-                      {conflictData.local.content && (
+                      {Boolean(conflictData.local.content) && (
                         <p className='text-sm text-muted-foreground line-clamp-3'>
-                          {typeof conflictData.local.content === 'string'
-                            ? conflictData.local.content
-                            : 'Complex content'}
+                          {String(
+                            typeof conflictData.local.content === 'string'
+                              ? conflictData.local.content
+                              : JSON.stringify(conflictData.local.content)
+                          )}
                         </p>
                       )}
                       <div className='mt-3 flex items-center gap-4 text-xs text-muted-foreground'>
                         <div className='flex items-center gap-1'>
                           <Calendar className='h-3 w-3' />
                           {formatDistanceToNow(
-                            new Date(conflictData.local.updatedAt),
+                            new Date(conflictData.local.updatedAt as string),
                             { addSuffix: true }
                           )}
                         </div>
@@ -221,20 +223,22 @@ export function ConflictResolutionDialog() {
                     </div>
                     <div className='rounded-lg border p-4 bg-muted/50'>
                       <h4 className='font-medium mb-2'>
-                        {conflictData.remote.title || 'Untitled'}
+                        {(conflictData.remote.title as string) || 'Untitled'}
                       </h4>
-                      {conflictData.remote.content && (
+                      {Boolean(conflictData.remote.content) && (
                         <p className='text-sm text-muted-foreground line-clamp-3'>
-                          {typeof conflictData.remote.content === 'string'
-                            ? conflictData.remote.content
-                            : 'Complex content'}
+                          {String(
+                            typeof conflictData.remote.content === 'string'
+                              ? conflictData.remote.content
+                              : JSON.stringify(conflictData.remote.content)
+                          )}
                         </p>
                       )}
                       <div className='mt-3 flex items-center gap-4 text-xs text-muted-foreground'>
                         <div className='flex items-center gap-1'>
                           <Calendar className='h-3 w-3' />
                           {formatDistanceToNow(
-                            new Date(conflictData.remote.updatedAt),
+                            new Date(conflictData.remote.updatedAt as string),
                             { addSuffix: true }
                           )}
                         </div>
