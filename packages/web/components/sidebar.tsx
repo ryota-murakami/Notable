@@ -19,6 +19,7 @@ import {
   Trash,
   User,
   X,
+  EyeOff,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
@@ -70,6 +71,8 @@ interface SidebarProps {
   selectedNoteIds?: Set<string>
   onToggleNoteSelection?: (id: string) => void
   isMultiSelectMode?: boolean
+  showHiddenNotes?: boolean
+  onToggleHiddenNotes?: () => void
 }
 
 export function Sidebar({
@@ -90,6 +93,8 @@ export function Sidebar({
   selectedNoteIds = new Set(),
   onToggleNoteSelection,
   isMultiSelectMode = false,
+  showHiddenNotes = false,
+  onToggleHiddenNotes,
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedFolders, setExpandedFolders] = useState<
@@ -439,6 +444,30 @@ export function Sidebar({
                   {isCollapsed && <TooltipContent>Home</TooltipContent>}
                 </Tooltip>
               </TooltipProvider>
+              {onToggleHiddenNotes && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={showHiddenNotes ? 'secondary' : 'ghost'}
+                        className={cn(
+                          'w-full',
+                          isCollapsed ? 'justify-center px-2' : 'justify-start'
+                        )}
+                        onClick={onToggleHiddenNotes}
+                      >
+                        <EyeOff
+                          className={cn('h-4 w-4', !isCollapsed && 'mr-2')}
+                        />
+                        {!isCollapsed && 'Hidden Notes'}
+                      </Button>
+                    </TooltipTrigger>
+                    {isCollapsed && (
+                      <TooltipContent>Hidden Notes</TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>

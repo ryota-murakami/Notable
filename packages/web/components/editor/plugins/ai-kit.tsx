@@ -1,14 +1,14 @@
 'use client'
 
+import {
+  AIChatPlugin,
+  AIPlugin,
+  useChatChunk,
+  type AIChatPluginConfig,
+} from '@platejs/ai/react'
 import type { UseChatOptions } from 'ai/react'
 
 import { streamInsertChunk, withAIBatch } from '@platejs/ai'
-import {
-  AIChatPlugin,
-  type AIChatPluginConfig,
-  AIPlugin,
-  useChatChunk,
-} from '@platejs/ai/react'
 import { KEYS, PathApi } from 'platejs'
 import { usePluginOption } from 'platejs/react'
 
@@ -61,9 +61,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
                 type: KEYS.aiChat,
               },
               {
-                at: PathApi.next(
-                  editor.selection?.focus.path.slice(0, 1) || []
-                ),
+                at: PathApi.next(editor.selection!.focus.path.slice(0, 1)),
               }
             )
           })

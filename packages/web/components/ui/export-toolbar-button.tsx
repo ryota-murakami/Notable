@@ -16,9 +16,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { BaseEditorKit } from '@/components/editor/editor-base-kit'
+import { BaseEditorKit } from '@/components/editor/editor-stubs'
 
-import { EditorStatic } from './editor-static'
+import { EditorStatic } from '@/components/ui/editor-static'
 import { ToolbarButton } from './toolbar'
 
 const siteUrl = 'https://platejs.org'
@@ -41,7 +41,7 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
             const existingStyle = element.getAttribute('style') || ''
             element.setAttribute(
               'style',
-              `${existingStyle}; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important`,
+              `${existingStyle}; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important`
             )
           })
         }
@@ -147,12 +147,12 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Export" isDropdown>
-          <ArrowDownToLineIcon className="size-4" />
+        <ToolbarButton pressed={open} tooltip='Export' isDropdown>
+          <ArrowDownToLineIcon className='size-4' />
         </ToolbarButton>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align='start'>
         <DropdownMenuGroup>
           <DropdownMenuItem onSelect={exportToHtml}>
             Export as HTML

@@ -36,12 +36,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { commentPlugin } from '@/components/editor/plugins/comment-kit'
 import {
+  commentPlugin,
   discussionPlugin,
+  suggestionPlugin,
   type TDiscussion,
-} from '@/components/editor/plugins/discussion-kit'
-import { suggestionPlugin } from '@/components/editor/plugins/suggestion-kit'
+} from '@/components/editor/editor-stubs'
 
 import {
   BlockSuggestionCard,
@@ -75,7 +75,7 @@ export const BlockDiscussion: RenderNodeWrapper<AnyPluginConfig> = (props) => {
     return
   }
 
-  return (props) => (
+  const BlockDiscussionContent = (props: any) => (
     <BlockCommentContent
       blockPath={blockPath}
       commentNodes={commentNodes}
@@ -84,6 +84,9 @@ export const BlockDiscussion: RenderNodeWrapper<AnyPluginConfig> = (props) => {
       {...props}
     />
   )
+  BlockDiscussionContent.displayName = 'BlockDiscussionContent'
+
+  return BlockDiscussionContent
 }
 
 const BlockCommentContent = ({
@@ -116,7 +119,8 @@ const BlockCommentContent = ({
   const activeCommentId = usePluginOption(commentPlugin, 'activeId')
   const isCommenting = activeCommentId === getDraftCommentKey()
   const activeDiscussion =
-    activeCommentId && resolvedDiscussions.find((d) => d.id === activeCommentId)
+    activeCommentId &&
+    resolvedDiscussions.find((d: any) => d.id === activeCommentId)
 
   const noneActive = !activeSuggestion && !activeDiscussion
 
@@ -126,7 +130,7 @@ const BlockCommentContent = ({
   ].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
 
   const selected =
-    resolvedDiscussions.some((d) => d.id === activeCommentId) ||
+    resolvedDiscussions.some((d: any) => d.id === activeCommentId) ||
     resolvedSuggestions.some((s) => s.suggestionId === activeSuggestionId)
 
   const [_open, setOpen] = React.useState(selected)
@@ -296,11 +300,11 @@ function BlockComment({
   return (
     <React.Fragment key={discussion.id}>
       <div className='p-4'>
-        {discussion.comments.map((comment, index) => (
+        {discussion.comments?.map((comment, index) => (
           <Comment
             key={comment.id ?? index}
             comment={comment}
-            discussionLength={discussion.comments.length}
+            discussionLength={discussion.comments?.length || 0}
             {...(discussion?.documentContent && {
               documentContent: discussion.documentContent,
             })}

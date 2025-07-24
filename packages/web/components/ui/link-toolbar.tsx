@@ -2,8 +2,6 @@
 
 import * as React from 'react'
 
-import { KEYS, type TLinkElement } from 'platejs'
-
 import { flip, offset, type UseVirtualFloatingOptions } from '@platejs/floating'
 import { getLinkAttributes } from '@platejs/link'
 import {
@@ -16,6 +14,7 @@ import {
 } from '@platejs/link/react'
 import { cva } from 'class-variance-authority'
 import { ExternalLink, Link, Text, Unlink } from 'lucide-react'
+import { KEYS, type TLinkElement } from 'platejs'
 import {
   useEditorRef,
   useEditorSelection,

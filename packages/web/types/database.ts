@@ -8,6 +8,7 @@ export interface Database {
           content: string
           user_id: string
           folder_id: string | null
+          is_hidden: boolean
           created_at: string
           updated_at: string
         }
@@ -17,6 +18,7 @@ export interface Database {
           content: string
           user_id: string
           folder_id?: string | null
+          is_hidden?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -26,6 +28,7 @@ export interface Database {
           content?: string
           user_id?: string
           folder_id?: string | null
+          is_hidden?: boolean
           created_at?: string
           updated_at?: string
         }

@@ -32,7 +32,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { getBlockType, setBlockType } from '@/components/editor/transforms'
+import { getBlockType, setBlockType } from '@/components/editor/editor-stubs'
 
 import { ToolbarButton, ToolbarMenuGroup } from './toolbar'
 

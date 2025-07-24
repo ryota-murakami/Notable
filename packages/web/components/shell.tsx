@@ -1,9 +1,25 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Sidebar } from '@/components/sidebar'
-import { PlateEditorComponent } from '@/components/plate-editor'
 import type { Note } from '@/types/note'
+
+// Dynamic import for PlateEditorComponent to prevent SSR issues
+const PlateEditorComponent = dynamic(
+  () =>
+    import('@/components/plate-editor').then((mod) => ({
+      default: mod.PlateEditorComponent,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className='flex-1 min-h-0 p-4'>
+        <div className='animate-pulse bg-muted h-64 rounded-md' />
+      </div>
+    ),
+  }
+)
 import { useSupabaseNotes } from '@/hooks/use-supabase-notes'
 import { useSupabase } from '@/components/supabase-provider'
 import { SearchDialog } from '@/components/search-dialog'
@@ -34,6 +50,7 @@ export function Shell() {
   const [isViewMode, setIsViewMode] = useState(false)
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false)
   const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(new Set())
+  const [showHiddenNotes, setShowHiddenNotes] = useState(false)
   const { toast } = useToast()
   const { user, loading: authLoading } = useSupabase()
   const { exportNote, isExporting } = useExport()
@@ -57,7 +74,7 @@ export function Shell() {
     typingUsers,
     startTyping,
     stopTyping,
-  } = useSupabaseNotes({ activeNoteId })
+  } = useSupabaseNotes({ activeNoteId, includeHidden: showHiddenNotes })
 
   const activeNote = notes.find((note) => note.id === activeNoteId) || notes[0]
   const folders = notes.filter((note) => note.isFolder)
@@ -621,6 +638,8 @@ export function Shell() {
           selectedNoteIds={selectedNoteIds}
           onToggleNoteSelection={toggleNoteSelection}
           isMultiSelectMode={isMultiSelectMode}
+          showHiddenNotes={showHiddenNotes}
+          onToggleHiddenNotes={() => setShowHiddenNotes(!showHiddenNotes)}
         />
       )}
       <div
