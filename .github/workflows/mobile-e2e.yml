@@ -1,0 +1,165 @@
+name: Mobile E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'packages/mobile/**'
+      - '.github/workflows/mobile-e2e.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'packages/mobile/**'
+      - '.github/workflows/mobile-e2e.yml'
+
+jobs:
+  ios-e2e:
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup iOS Simulator
+        run: |
+          xcrun simctl create "iPhone 15" "iPhone 15" latest
+          xcrun simctl boot "iPhone 15"
+
+      - name: Build iOS app for testing
+        working-directory: packages/mobile
+        run: |
+          pnpm e2e:build:ios
+
+      - name: Run iOS E2E tests
+        working-directory: packages/mobile
+        run: |
+          pnpm e2e:test:ios --headless --record-logs all
+
+      - name: Upload iOS test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-e2e-artifacts
+          path: |
+            packages/mobile/artifacts/
+            packages/mobile/e2e/*.log
+
+  android-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create Android AVD
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-34;google_apis;x86_64"
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_6_API_34 --abi google_apis/x86_64 --package "system-images;android-34;google_apis;x86_64"
+
+      - name: Start Android Emulator
+        run: |
+          $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_34 -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -wipe-data &
+          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+
+      - name: Build Android app for testing
+        working-directory: packages/mobile
+        run: |
+          pnpm e2e:build:android
+
+      - name: Run Android E2E tests
+        working-directory: packages/mobile
+        run: |
+          pnpm e2e:test:android --headless --record-logs all
+
+      - name: Upload Android test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-e2e-artifacts
+          path: |
+            packages/mobile/artifacts/
+            packages/mobile/e2e/*.log
+
+  performance-test:
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup iOS Simulator
+        run: |
+          xcrun simctl create "iPhone 15" "iPhone 15" latest
+          xcrun simctl boot "iPhone 15"
+
+      - name: Build iOS app for performance testing
+        working-directory: packages/mobile
+        run: |
+          pnpm e2e:build:ios
+
+      - name: Run performance tests
+        working-directory: packages/mobile
+        run: |
+          # Run specific performance test suite
+          pnpm e2e:test:ios --testNamePattern="Performance" --headless
+
+      - name: Upload performance reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-reports
+          path: |
+            packages/mobile/performance-reports/
