@@ -66,7 +66,7 @@ export class VersionHistory {
         versionNumber: data.version_number,
         title: data.title,
         content: data.content,
-        contentDiff: data.content_diff,
+        contentDiff: undefined, // content_diff column removed
         versionName: data.version_name,
         versionMessage: data.version_message,
         createdBy: data.created_by,

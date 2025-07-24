@@ -5,7 +5,6 @@ CREATE TABLE note_versions (
     version_number INTEGER NOT NULL,
     title VARCHAR(255) NOT NULL,
     content JSONB NOT NULL DEFAULT '{}',
-    content_diff JSONB, -- Store JSON diff for efficient storage
     version_name VARCHAR(255), -- Optional name for important versions
     version_message TEXT, -- Optional message/description for the version
     created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -19,7 +18,6 @@ CREATE TABLE note_versions (
 CREATE INDEX idx_note_versions_note_id ON note_versions(note_id);
 CREATE INDEX idx_note_versions_created_at ON note_versions(created_at);
 CREATE INDEX idx_note_versions_created_by ON note_versions(created_by);
-CREATE INDEX idx_note_versions_is_milestone ON note_versions(is_milestone);
 
 -- Add version tracking fields to notes table
 ALTER TABLE notes 
@@ -59,8 +57,8 @@ BEGIN
             OLD.content,
             NEW.user_id,
             jsonb_build_object(
-                'word_count', array_length(string_to_array(OLD.content->>'text', ' '), 1),
-                'character_count', length(OLD.content->>'text'),
+                'word_count', COALESCE(array_length(string_to_array(OLD.content->>'text', ' '), 1), 0),
+                'character_count', COALESCE(length(OLD.content->>'text'), 0),
                 'previous_updated_at', OLD.updated_at
             )
         );
@@ -105,29 +103,6 @@ BEGIN
     FROM notes
     WHERE id = p_note_id;
     
-    -- Create a version entry for the current state before restoring
-    INSERT INTO note_versions (
-        note_id,
-        version_number,
-        title,
-        content,
-        created_by,
-        version_message,
-        metadata
-    )
-    SELECT 
-        id,
-        current_version,
-        title,
-        content,
-        p_user_id,
-        'Auto-saved before restore to version ' || p_version_number,
-        jsonb_build_object(
-            'restored_from_version', p_version_number,
-            'restoration_timestamp', NOW()
-        )
-    FROM notes
-    WHERE id = p_note_id;
     
     -- Update the note with the restored version
     UPDATE notes
@@ -173,8 +148,8 @@ BEGIN
         u.name,
         nv.created_at,
         nv.is_milestone,
-        (nv.metadata->>'word_count')::INTEGER,
-        (nv.metadata->>'character_count')::INTEGER
+        COALESCE((nv.metadata->>'word_count')::INTEGER, 0),
+        COALESCE((nv.metadata->>'character_count')::INTEGER, 0)
     FROM note_versions nv
     LEFT JOIN users u ON nv.created_by = u.id
     WHERE nv.note_id = p_note_id
@@ -270,3 +245,11 @@ COMMENT ON FUNCTION restore_note_version IS 'Restores a note to a specific versi
 COMMENT ON FUNCTION get_note_version_history IS 'Retrieves paginated version history for a note';
 COMMENT ON FUNCTION compare_note_versions IS 'Compares two versions of a note for diff display';
 COMMENT ON FUNCTION cleanup_old_versions IS 'Removes old non-milestone versions to save storage';
+
+-- Deny UPDATE operations on note_versions
+CREATE POLICY "No updates to note_versions" ON note_versions
+    FOR UPDATE USING (false);
+
+-- Deny DELETE operations on note_versions
+CREATE POLICY "No deletes from note_versions" ON note_versions
+    FOR DELETE USING (false);

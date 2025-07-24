@@ -1,7 +1,7 @@
 import { VersionHistory } from '../version-history'
 
-// Mock Supabase client
-const mockSupabase = {
+// Mock Supabase client factory
+const createMockSupabase = () => ({
   rpc: jest.fn(),
   from: jest.fn(() => ({
     select: jest.fn(() => ({
@@ -10,7 +10,7 @@ const mockSupabase = {
           single: jest.fn(),
         })),
         order: jest.fn(() => ({
-          then: jest.fn(),
+          // Remove the 'then' property that causes static analysis warning
         })),
       })),
       update: jest.fn(() => ({
@@ -23,7 +23,10 @@ const mockSupabase = {
   auth: {
     getUser: jest.fn(),
   },
-}
+})
+
+// Create the mock instance
+const mockSupabase = createMockSupabase()
 
 jest.mock('@/utils/supabase/client', () => ({
   createClient: () => mockSupabase,
@@ -102,19 +105,18 @@ describe('VersionHistory', () => {
         metadata: { word_count: 100 },
       }
 
-      const mockSelect = {
-        eq: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({
-              data: mockVersion,
-              error: null,
-            }),
-          })),
-        })),
-      }
+      // Setup the mock chain properly
+      const singleMock = jest.fn().mockResolvedValue({
+        data: mockVersion,
+        error: null,
+      })
+
+      const eqMock2 = jest.fn().mockReturnValue({ single: singleMock })
+      const eqMock1 = jest.fn().mockReturnValue({ eq: eqMock2 })
+      const selectMock = jest.fn().mockReturnValue({ eq: eqMock1 })
 
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn(() => mockSelect),
+        select: selectMock,
       })
 
       const result = await VersionHistory.getVersion('note-123', 2)
@@ -136,19 +138,18 @@ describe('VersionHistory', () => {
     })
 
     it('should return null for non-existent version', async () => {
-      const mockSelect = {
-        eq: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({
-              data: null,
-              error: { message: 'Not found' },
-            }),
-          })),
-        })),
-      }
+      // Setup the mock chain properly for error case
+      const singleMock = jest.fn().mockResolvedValue({
+        data: null,
+        error: { message: 'Not found' },
+      })
+
+      const eqMock2 = jest.fn().mockReturnValue({ single: singleMock })
+      const eqMock1 = jest.fn().mockReturnValue({ eq: eqMock2 })
+      const selectMock = jest.fn().mockReturnValue({ eq: eqMock1 })
 
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn(() => mockSelect),
+        select: selectMock,
       })
 
       const result = await VersionHistory.getVersion('note-123', 999)

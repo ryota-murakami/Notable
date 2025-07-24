@@ -373,8 +373,10 @@ export function PlateEditorComponent({
         noteId={note.id}
         currentTitle={title}
         onRestore={() => {
-          // Refresh the editor after restoration
-          window.location.reload()
+          // Close version history dialog
+          setShowVersionHistory(false)
+          // Note: The component will automatically refresh when the parent
+          // re-fetches the note data after the database restoration is complete
         }}
       />
     </div>

@@ -362,7 +362,9 @@ export function VersionHistoryDialog({
 
           <Tabs
             value={activeTab}
-            onValueChange={(value) => setActiveTab(value as any)}
+            onValueChange={(value) =>
+              setActiveTab(value as 'timeline' | 'milestones' | 'compare')
+            }
             className='flex-1 flex flex-col'
           >
             <TabsList className='grid w-full grid-cols-3'>

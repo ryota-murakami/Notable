@@ -1,10 +1,12 @@
+import type { TElement } from '@udecode/plate-common'
+
 export interface NoteVersion {
   id: string
   noteId: string
   versionNumber: number
   title: string
-  content: any // Plate.js content
-  contentDiff?: any
+  content: TElement[] // Plate.js content
+  contentDiff?: any // Consider defining a proper diff type later
   versionName?: string
   versionMessage?: string
   createdBy: string
@@ -38,14 +40,14 @@ export interface VersionComparisonResult {
   version1Data: {
     versionNumber: number
     title: string
-    content: any
+    content: TElement[]
     createdAt: string
     createdBy: string
   }
   version2Data: {
     versionNumber: number
     title: string
-    content: any
+    content: TElement[]
     createdAt: string
     createdBy: string
   }
@@ -54,8 +56,8 @@ export interface VersionComparisonResult {
 export interface VersionDiff {
   type: 'added' | 'removed' | 'modified'
   path: string[]
-  oldValue?: any
-  newValue?: any
+  oldValue?: TElement | TElement[] | string | number
+  newValue?: TElement | TElement[] | string | number
 }
 
 export interface VersionRestoreOptions {
