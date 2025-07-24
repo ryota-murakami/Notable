@@ -6,7 +6,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useSubscription, type UsageData } from '@/hooks/use-subscription'
+import { type UsageData, useSubscription } from '@/hooks/use-subscription'
 import type { SubscriptionPlan } from '@/lib/stripe'
 import { UpgradeDialog } from '@/components/billing/upgrade-dialog'
 import { Button } from '@/components/ui/button'

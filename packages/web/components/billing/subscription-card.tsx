@@ -16,11 +16,11 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
-  Crown,
-  CreditCard,
-  Calendar,
   AlertTriangle,
+  Calendar,
   CheckCircle,
+  CreditCard,
+  Crown,
   ExternalLink,
 } from 'lucide-react'
 import { formatStorageSize, getNextBillingDate } from '@/lib/stripe'

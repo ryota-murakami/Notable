@@ -3,6 +3,9 @@
 import { useState, useCallback } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
+import { MarkdownPlugin } from '@platejs/markdown'
+import { createSlateEditor } from 'platejs'
+import { BaseEditorKit } from '@/components/editor/editor-base-kit'
 
 export type ExportFormat = 'markdown' | 'html' | 'pdf' | 'react'
 
@@ -18,97 +21,40 @@ export function useExport() {
   const [exportProgress, setExportProgress] = useState(0)
   const { toast } = useToast()
 
-  // Convert Plate.js content to Markdown
+  // Convert Plate.js content to Markdown with GFM support
   const convertToMarkdown = useCallback(
-    (content: any, title?: string): string => {
-      const convertNode = (node: any): string => {
-        if (typeof node === 'string') return node
-        if (!node.type) return node.text || ''
+    (content: any, title?: string, options: ExportOptions = {}): string => {
+      const { includeMetadata = false } = options
 
-        const text = node.children?.map(convertNode).join('') || ''
+      // Create a temporary editor with markdown plugin to leverage GFM support
+      const editorStatic = createSlateEditor({
+        plugins: BaseEditorKit,
+        value: Array.isArray(content) ? content : [content],
+      })
 
-        switch (node.type) {
-          case 'h1':
-            return `# ${text}\n\n`
-          case 'h2':
-            return `## ${text}\n\n`
-          case 'h3':
-            return `### ${text}\n\n`
-          case 'h4':
-            return `#### ${text}\n\n`
-          case 'h5':
-            return `##### ${text}\n\n`
-          case 'h6':
-            return `###### ${text}\n\n`
-          case 'p':
-            return `${text}\n\n`
-          case 'blockquote':
-            return `> ${text}\n\n`
-          case 'ul':
-            return `${text}\n`
-          case 'ol':
-            return `${text}\n`
-          case 'li':
-            return `- ${text}\n`
-          case 'code_block':
-            return `\`\`\`${node.lang || ''}\n${text}\n\`\`\`\n\n`
-          case 'hr':
-            return `---\n\n`
-          case 'br':
-            return '\n'
-          case 'a':
-            return `[${text}](${node.url})`
-          case 'img':
-            return `![${node.alt || ''}](${node.url})`
-          case 'table':
-            return convertTableToMarkdown(node)
-          case 'tr':
-            return `${text}\n`
-          case 'td':
-          case 'th':
-            return `| ${text} `
-          default:
-            // Handle text formatting
-            if (node.bold) return `**${text}**`
-            if (node.italic) return `*${text}*`
-            if (node.underline) return `<u>${text}</u>`
-            if (node.strikethrough) return `~~${text}~~`
-            if (node.code) return `\`${text}\``
-            return text
-        }
-      }
-
-      const convertTableToMarkdown = (table: any): string => {
-        const rows = table.children || []
-        if (rows.length === 0) return ''
-
-        let markdown = ''
-        rows.forEach((row: any, index: number) => {
-          const cells = row.children || []
-          const rowText = cells
-            .map((cell: any) => convertNode(cell))
-            .join(' | ')
-          markdown += `| ${rowText} |\n`
-
-          // Add separator after header row
-          if (index === 0) {
-            const separator = cells.map(() => '---').join(' | ')
-            markdown += `| ${separator} |\n`
-          }
-        })
-        return markdown + '\n'
-      }
+      // Use Plate.js MarkdownPlugin to serialize with GFM support
+      const markdownContent = editorStatic
+        .getApi(MarkdownPlugin)
+        .markdown.serialize()
 
       let markdown = ''
-      if (title) {
+
+      // Add front matter if metadata is requested
+      if (includeMetadata) {
+        const date = new Date().toISOString()
+        markdown += '---\n'
+        markdown += `title: "${title || 'Untitled Note'}"\n`
+        markdown += `date: ${date}\n`
+        markdown += `generator: "Notable - Premium Notion Clone"\n`
+        markdown += '---\n\n'
+      }
+
+      // Add title as H1 if requested
+      if (title && !includeMetadata) {
         markdown += `# ${title}\n\n`
       }
 
-      if (Array.isArray(content)) {
-        markdown += content.map(convertNode).join('')
-      } else {
-        markdown += convertNode(content)
-      }
+      markdown += markdownContent
 
       return markdown.trim()
     },
@@ -415,7 +361,7 @@ export default ${componentName}`
 
         switch (format) {
           case 'markdown':
-            exportData = convertToMarkdown(content, title)
+            exportData = convertToMarkdown(content, title, options)
             filename = `${note.title || 'untitled'}.md`
             mimeType = 'text/markdown'
             break
