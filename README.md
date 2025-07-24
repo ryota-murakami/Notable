@@ -1,5 +1,10 @@
 # Notable - Premium Notion Clone
 
+[![Build](https://github.com/ryota-murakami/Notable/workflows/Build/badge.svg)](https://github.com/ryota-murakami/Notable/actions/workflows/build.yml)
+[![Test](https://github.com/ryota-murakami/Notable/workflows/Test/badge.svg)](https://github.com/ryota-murakami/Notable/actions/workflows/test.yml)
+[![Lint](https://github.com/ryota-murakami/Notable/workflows/Lint/badge.svg)](https://github.com/ryota-murakami/Notable/actions/workflows/lint.yml)
+[![TypeCheck](https://github.com/ryota-murakami/Notable/workflows/TypeCheck/badge.svg)](https://github.com/ryota-murakami/Notable/actions/workflows/typecheck.yml)
+
 A top-tier freemium note-taking and knowledge management application built with modern technologies, offering a superior writing experience with Plate.js, real-time synchronization, and cross-platform support.
 
 ## 🚀 Tech Stack
