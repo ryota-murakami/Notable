@@ -5,10 +5,9 @@ import * as React from 'react'
 import {
   AIChatPlugin,
   AIPlugin,
-  useEditorChat,
   useLastAssistantMessage,
 } from '@platejs/ai/react'
-import { BlockSelectionPlugin, useIsSelecting } from '@platejs/selection/react'
+import { useIsSelecting } from '@platejs/selection/react'
 import { Command as CommandPrimitive } from 'cmdk'
 import {
   Album,
@@ -27,7 +26,7 @@ import {
   Wand,
   X,
 } from 'lucide-react'
-import { isHotkey, NodeApi, type NodeEntry, type SlateEditor } from 'platejs'
+import { isHotkey, NodeApi, type SlateEditor } from 'platejs'
 import {
   type PlateEditor,
   useEditorPlugin,
@@ -86,7 +85,7 @@ export function AIMenu() {
     }
   }
 
-  const show = (anchorElement: HTMLElement) => {
+  const _show = (anchorElement: HTMLElement) => {
     setAnchorElement(anchorElement)
     setOpen(true)
   }
@@ -96,7 +95,7 @@ export function AIMenu() {
   // useEditorChat({
   //   chat,
   //   onOpenBlockSelection: (blocks: NodeEntry[]) => {
-  //     show(editor.api.toDOMNode(blocks.at(-1)![0])!)
+  //     _show(editor.api.toDOMNode(blocks.at(-1)![0])!)
   //   },
   //   onOpenChange: (open) => {
   //     if (!open) {
@@ -113,10 +112,10 @@ export function AIMenu() {
   //         .blockSelection.set(ancestor.id as string)
   //     }
 
-  //     show(editor.api.toDOMNode(ancestor)!)
+  //     _show(editor.api.toDOMNode(ancestor)!)
   //   },
   //   onOpenSelection: () => {
-  //     show(editor.api.toDOMNode(editor.api.blocks().at(-1)![0])!)
+  //     _show(editor.api.toDOMNode(editor.api.blocks().at(-1)![0])!)
   //   },
   // })
 
