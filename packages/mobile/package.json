@@ -51,9 +51,6 @@
     "react-native-web": "~0.19.13"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.26.3",
-    "@expo/cli": "^0.22.2",
-    "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22",
     "@types/react": "^19",
