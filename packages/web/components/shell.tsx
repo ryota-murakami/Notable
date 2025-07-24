@@ -568,6 +568,7 @@ export function Shell() {
   // Check for dev bypass cookie
   const hasDevBypass =
     typeof window !== 'undefined' &&
+    process.env.NODE_ENV === 'development' &&
     document.cookie.includes('dev-auth-bypass=true')
 
   // Redirect to auth if not authenticated and no dev bypass
