@@ -12,6 +12,36 @@ import type {
 } from '@/types/template'
 import { toast } from '@/hooks/use-toast'
 
+interface TemplateRpcResponse {
+  id: string
+  name: string
+  description: string | null
+  category: string
+  tags: string[] | null
+  title_template: string
+  content_template: any[]
+  variables: Record<string, any> | null
+  is_built_in: boolean
+  is_public: boolean | null
+  usage_count: number | null
+  created_by: string | null
+  organization_id: string | null
+  created_at: string
+  updated_at: string | null
+  search_rank?: number
+}
+
+interface TemplateUpdateData {
+  name?: string
+  description?: string
+  category?: string
+  tags?: string[]
+  title_template?: string
+  content_template?: any[]
+  variables?: Record<string, any>
+  is_public?: boolean
+}
+
 export class TemplateEngine {
   private static supabase = createClient()
 
@@ -34,7 +64,7 @@ export class TemplateEngine {
       }
 
       return (
-        data?.map((template: any) => ({
+        data?.map((template: TemplateRpcResponse) => ({
           id: template.id,
           name: template.name,
           description: template.description,
@@ -81,7 +111,7 @@ export class TemplateEngine {
       }
 
       return (
-        data?.map((template: any) => ({
+        data?.map((template: TemplateRpcResponse) => ({
           id: template.id,
           name: template.name,
           description: template.description,
@@ -225,7 +255,7 @@ export class TemplateEngine {
     template: TemplateUpdateRequest
   ): Promise<boolean> {
     try {
-      const updates: any = {}
+      const updates: TemplateUpdateData = {}
       if (template.name !== undefined) updates.name = template.name
       if (template.description !== undefined)
         updates.description = template.description
@@ -389,6 +419,14 @@ export class TemplateEngine {
 
       // Add built-in variables
       const now = new Date()
+
+      // Get actual user data from auth
+      const { data: userData } = await this.supabase.auth.getUser()
+      const userName =
+        userData.user?.user_metadata?.full_name ||
+        userData.user?.email?.split('@')[0] ||
+        'User'
+
       const processedVariables = {
         ...variables,
         date: now.toISOString().split('T')[0],
@@ -400,32 +438,32 @@ export class TemplateEngine {
           hour: '2-digit',
           minute: '2-digit',
         }),
-        user: 'User', // TODO: Get actual user name from auth
+        user: userName,
+      }
+
+      // Helper function to process variables efficiently
+      const processVariables = (
+        text: string,
+        variables: Record<string, string>
+      ) => {
+        return text.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+          return variables[key] || match
+        })
       }
 
       // Process title template
-      let processedTitle = template.titleTemplate
-      for (const [key, value] of Object.entries(processedVariables)) {
-        const placeholder = `{{${key}}}`
-        processedTitle = processedTitle.replace(
-          new RegExp(placeholder, 'g'),
-          value
-        )
-      }
+      const processedTitle = processVariables(
+        template.titleTemplate,
+        processedVariables
+      )
 
       // Process content template
-      let processedContent = JSON.parse(
-        JSON.stringify(template.contentTemplate)
+      const contentStr = JSON.stringify(template.contentTemplate)
+      const processedContentStr = processVariables(
+        contentStr,
+        processedVariables
       )
-      for (const [key, value] of Object.entries(processedVariables)) {
-        const placeholder = `{{${key}}}`
-        const contentStr = JSON.stringify(processedContent)
-        const replacedStr = contentStr.replace(
-          new RegExp(placeholder, 'g'),
-          value
-        )
-        processedContent = JSON.parse(replacedStr)
-      }
+      const processedContent = JSON.parse(processedContentStr)
 
       return {
         title: processedTitle,
@@ -534,7 +572,7 @@ export class TemplateEngine {
       }
 
       return (
-        data?.map((template: any) => ({
+        data?.map((template: TemplateRpcResponse) => ({
           id: template.id,
           name: template.name,
           description: template.description,
