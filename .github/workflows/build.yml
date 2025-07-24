@@ -43,7 +43,6 @@ jobs:
 
       - name: Build packages
         env:
-          # Set dummy Supabase credentials for build to prevent errors
-          NEXT_PUBLIC_SUPABASE_URL: 'https://dummy.supabase.co'
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'dummy-anon-key'
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: pnpm build
