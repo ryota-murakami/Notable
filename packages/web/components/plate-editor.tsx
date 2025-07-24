@@ -232,7 +232,7 @@ export function PlateEditorComponent({
     setShowTemplateGallery(false)
   }
 
-  const handleTemplateCreated = (templateId: string) => {
+  const handleTemplateCreated = (_templateId: string) => {
     // Template was created successfully
     setShowTemplateCreator(false)
     // Could potentially show a success message or redirect to template management

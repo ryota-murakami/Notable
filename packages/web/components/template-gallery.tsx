@@ -48,7 +48,6 @@ import {
   Filter,
   Tag,
   User,
-  Calendar,
   TrendingUp,
   Grid3X3,
   List,
