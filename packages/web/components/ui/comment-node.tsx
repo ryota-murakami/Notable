@@ -12,7 +12,7 @@ import {
 import { getCommentCount } from '@platejs/comment'
 
 import { cn } from '@/lib/utils'
-import { commentPlugin } from '@/components/editor/plugins/comment-kit'
+import { commentPlugin } from '@/components/editor/editor-stubs'
 
 export function CommentLeaf(props: PlateLeafProps<TCommentText>) {
   const { children, leaf } = props

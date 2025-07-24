@@ -14,10 +14,7 @@ import {
 import { CornerDownLeftIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import {
-  type SuggestionConfig,
-  suggestionPlugin,
-} from '@/components/editor/plugins/suggestion-kit'
+import { suggestionPlugin } from '@/components/editor/editor-stubs'
 
 export function SuggestionLeaf(props: PlateLeafProps<TSuggestionText>) {
   const { api, setOption } = useEditorPlugin(suggestionPlugin)
@@ -29,13 +26,13 @@ export function SuggestionLeaf(props: PlateLeafProps<TSuggestionText>) {
   const dataList = api.suggestion.dataList(leaf)
 
   const hasRemove = dataList.some(
-    (data) => (data as TSuggestionData).type === 'remove'
+    (data: any) => (data as TSuggestionData).type === 'remove'
   )
   const hasActive = dataList.some(
-    (data) => (data as TSuggestionData).id === activeSuggestionId
+    (data: any) => (data as TSuggestionData).id === activeSuggestionId
   )
   const hasHover = dataList.some(
-    (data) => (data as TSuggestionData).id === hoverSuggestionId
+    (data: any) => (data as TSuggestionData).id === hoverSuggestionId
   )
 
   const diffOperation = { type: hasRemove ? 'delete' : 'insert' } as const
@@ -65,13 +62,13 @@ export function SuggestionLeaf(props: PlateLeafProps<TSuggestionText>) {
   )
 }
 
-export const SuggestionLineBreak: RenderNodeWrapper<SuggestionConfig> = ({
+export const SuggestionLineBreak: RenderNodeWrapper<any> = ({
   api,
   element,
 }) => {
-  if (!api.suggestion.isBlockSuggestion(element)) return
+  if (!api.suggestion?.isBlockSuggestion?.(element)) return
 
-  const suggestionData = element.suggestion
+  const suggestionData = element.suggestion as TSuggestionData | undefined
 
   if (!suggestionData?.isLineBreak) return
 

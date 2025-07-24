@@ -33,7 +33,7 @@ import { KEYS, type TComboboxInputElement } from 'platejs'
 import {
   insertBlock,
   insertInlineElement,
-} from '@/components/editor/transforms'
+} from '@/components/editor/editor-stubs'
 
 import {
   InlineCombobox,

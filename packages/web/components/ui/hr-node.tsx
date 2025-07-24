@@ -4,10 +4,10 @@ import * as React from 'react'
 
 import {
   PlateElement,
-  type PlateElementProps,
   useFocused,
   useReadOnly,
   useSelected,
+  type PlateElementProps,
 } from 'platejs/react'
 
 import { cn } from '@/lib/utils'

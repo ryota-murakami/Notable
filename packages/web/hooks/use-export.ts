@@ -3,9 +3,6 @@
 import { useState, useCallback } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
-import { MarkdownPlugin } from '@platejs/markdown'
-import { createSlateEditor } from 'platejs'
-import { BaseEditorKit } from '@/components/editor/editor-base-kit'
 
 export type ExportFormat = 'markdown' | 'html' | 'pdf' | 'react'
 
@@ -37,16 +34,63 @@ export function useExport() {
     (content: any, title?: string, options: ExportOptions = {}): string => {
       const { includeMetadata = false } = options
 
-      // Create a temporary editor with markdown plugin to leverage GFM support
-      const editorStatic = createSlateEditor({
-        plugins: BaseEditorKit,
-        value: Array.isArray(content) ? content : [content],
-      })
+      // Custom conversion to markdown using recursive node processing
+      let markdownContent = ''
 
-      // Use Plate.js MarkdownPlugin to serialize with GFM support
-      const markdownContent = editorStatic
-        .getApi(MarkdownPlugin)
-        .markdown.serialize()
+      const convertNode = (node: any): string => {
+        if (typeof node === 'string') return node
+        if (!node.type) return node.text || ''
+
+        const text = node.children?.map(convertNode).join('') || ''
+
+        switch (node.type) {
+          case 'h1':
+            return `# ${text}\n\n`
+          case 'h2':
+            return `## ${text}\n\n`
+          case 'h3':
+            return `### ${text}\n\n`
+          case 'h4':
+            return `#### ${text}\n\n`
+          case 'h5':
+            return `##### ${text}\n\n`
+          case 'h6':
+            return `###### ${text}\n\n`
+          case 'p':
+            return `${text}\n\n`
+          case 'blockquote':
+            return `> ${text}\n\n`
+          case 'ul':
+            return `${text}\n`
+          case 'ol':
+            return `${text}\n`
+          case 'li':
+            return `- ${text}\n`
+          case 'code_block':
+            return `\`\`\`\n${text}\n\`\`\`\n\n`
+          case 'hr':
+            return '---\n\n'
+          case 'a':
+            return `[${text}](${node.url})`
+          case 'img':
+            return `![${node.alt || ''}](${node.url})\n\n`
+          default: {
+            // Handle text formatting
+            let formattedText = text
+            if (node.bold) formattedText = `**${formattedText}**`
+            if (node.italic) formattedText = `*${formattedText}*`
+            if (node.strikethrough) formattedText = `~~${formattedText}~~`
+            if (node.code) formattedText = `\`${formattedText}\``
+            return formattedText
+          }
+        }
+      }
+
+      if (Array.isArray(content)) {
+        markdownContent = content.map(convertNode).join('')
+      } else {
+        markdownContent = convertNode(content)
+      }
 
       let markdown = ''
 
@@ -77,6 +121,18 @@ export function useExport() {
     (content: any, title?: string, options: ExportOptions = {}): string => {
       const { includeStyles = true, includeMetadata = true } = options
 
+      // HTML sanitization function to prevent XSS
+      const sanitizeHTML = (html: string): string => {
+        if (typeof html !== 'string') return ''
+        return html
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#x27;')
+          .replace(/\//g, '&#x2F;')
+      }
+
       const convertNode = (node: any): string => {
         if (typeof node === 'string') return node
         if (!node.type) return node.text || ''
@@ -85,54 +141,55 @@ export function useExport() {
 
         switch (node.type) {
           case 'h1':
-            return `<h1>${text}</h1>`
+            return `<h1>${sanitizeHTML(text)}</h1>`
           case 'h2':
-            return `<h2>${text}</h2>`
+            return `<h2>${sanitizeHTML(text)}</h2>`
           case 'h3':
-            return `<h3>${text}</h3>`
+            return `<h3>${sanitizeHTML(text)}</h3>`
           case 'h4':
-            return `<h4>${text}</h4>`
+            return `<h4>${sanitizeHTML(text)}</h4>`
           case 'h5':
-            return `<h5>${text}</h5>`
+            return `<h5>${sanitizeHTML(text)}</h5>`
           case 'h6':
-            return `<h6>${text}</h6>`
+            return `<h6>${sanitizeHTML(text)}</h6>`
           case 'p':
-            return `<p>${text}</p>`
+            return `<p>${sanitizeHTML(text)}</p>`
           case 'blockquote':
-            return `<blockquote>${text}</blockquote>`
+            return `<blockquote>${sanitizeHTML(text)}</blockquote>`
           case 'ul':
             return `<ul>${text}</ul>`
           case 'ol':
             return `<ol>${text}</ol>`
           case 'li':
-            return `<li>${text}</li>`
+            return `<li>${sanitizeHTML(text)}</li>`
           case 'code_block':
-            return `<pre><code class="language-${node.lang || ''}">${text}</code></pre>`
+            return `<pre><code class="language-${sanitizeHTML(node.lang || '')}">${sanitizeHTML(text)}</code></pre>`
           case 'hr':
             return '<hr>'
           case 'br':
             return '<br>'
           case 'a':
-            return `<a href="${node.url}">${text}</a>`
+            return `<a href="${sanitizeHTML(node.url)}">${sanitizeHTML(text)}</a>`
           case 'img':
-            return `<img src="${node.url}" alt="${node.alt || ''}">`
+            return `<img src="${sanitizeHTML(node.url)}" alt="${sanitizeHTML(node.alt || '')}">`
           case 'table':
             return `<table>${text}</table>`
           case 'tr':
             return `<tr>${text}</tr>`
           case 'td':
-            return `<td>${text}</td>`
+            return `<td>${sanitizeHTML(text)}</td>`
           case 'th':
-            return `<th>${text}</th>`
-          default:
+            return `<th>${sanitizeHTML(text)}</th>`
+          default: {
             // Handle text formatting
-            let formattedText = text
+            let formattedText = sanitizeHTML(text)
             if (node.bold) formattedText = `<strong>${formattedText}</strong>`
             if (node.italic) formattedText = `<em>${formattedText}</em>`
             if (node.underline) formattedText = `<u>${formattedText}</u>`
             if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
             if (node.code) formattedText = `<code>${formattedText}</code>`
             return formattedText
+          }
         }
       }
 
@@ -211,11 +268,11 @@ export function useExport() {
 <html lang="en">
 <head>
   ${metadata}
-  <title>${title || 'Untitled Note'}</title>
+  <title>${sanitizeHTML(title || 'Untitled Note')}</title>
   ${styles}
 </head>
 <body>
-  ${title ? `<h1>${title}</h1>` : ''}
+  ${title ? `<h1>${sanitizeHTML(title)}</h1>` : ''}
   ${body}
 </body>
 </html>`
@@ -275,7 +332,7 @@ export function useExport() {
           return `<td key={${key}}>${text}</td>`
         case 'th':
           return `<th key={${key}}>${text}</th>`
-        default:
+        default: {
           // Handle text formatting
           let formattedText = text
           if (node.bold) formattedText = `<strong>${formattedText}</strong>`
@@ -284,6 +341,7 @@ export function useExport() {
           if (node.strikethrough) formattedText = `<s>${formattedText}</s>`
           if (node.code) formattedText = `<code>${formattedText}</code>`
           return formattedText
+        }
       }
     }
 
@@ -508,17 +566,24 @@ export default ${componentName}`
       // Create a new window for printing
       const printWindow = window.open('', '_blank')
       if (!printWindow) {
-        throw new Error('Could not open print window')
+        throw new Error(
+          'Could not open print window. Please allow popups and try again.'
+        )
       }
 
-      printWindow.document.write(htmlContent)
-      printWindow.document.close()
+      try {
+        printWindow.document.write(htmlContent)
+        printWindow.document.close()
 
-      // Wait for content to load
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+        // Wait for content to load
+        await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      printWindow.print()
-      printWindow.close()
+        printWindow.print()
+        printWindow.close()
+      } catch (error) {
+        printWindow.close()
+        throw new Error('Failed to generate PDF. Please try again.')
+      }
     },
     [convertToHTML, generateTableOfContents]
   )

@@ -34,7 +34,10 @@ const config: Record<
 export const BlockList: RenderNodeWrapper = (props) => {
   if (!props.element.listStyleType) return
 
-  return (props) => <List {...props} />
+  const ListWrapper = (props: any) => <List {...props} />
+  ListWrapper.displayName = 'ListWrapper'
+
+  return ListWrapper
 }
 
 function List(props: PlateElementProps) {
@@ -44,7 +47,7 @@ function List(props: PlateElementProps) {
 
   return (
     <List
-      className="relative m-0 p-0"
+      className='relative m-0 p-0'
       style={{ listStyleType }}
       start={listStart}
     >
@@ -64,7 +67,7 @@ function TodoMarker(props: PlateElementProps) {
       <Checkbox
         className={cn(
           'absolute top-1 -left-6',
-          readOnly && 'pointer-events-none',
+          readOnly && 'pointer-events-none'
         )}
         {...checkboxProps}
       />
@@ -78,7 +81,7 @@ function TodoLi(props: PlateElementProps) {
       className={cn(
         'list-none',
         (props.element.checked as boolean) &&
-          'text-muted-foreground line-through',
+          'text-muted-foreground line-through'
       )}
     >
       {props.children}

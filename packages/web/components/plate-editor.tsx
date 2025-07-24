@@ -1,10 +1,23 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import { Plate, usePlateEditor } from 'platejs/react'
+import dynamic from 'next/dynamic'
 
-// Import the EditorKit
-import { EditorKit } from '@/components/editor/editor-kit'
+// Dynamic import for EnhancedPlateEditor to prevent SSR issues
+const EnhancedPlateEditor = dynamic(
+  () =>
+    import('@/components/editor').then((mod) => ({
+      default: mod.EnhancedPlateEditor,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className='h-full flex items-center justify-center'>
+        <div className='animate-pulse bg-muted h-32 w-full rounded-md' />
+      </div>
+    ),
+  }
+)
 
 // UI Components
 import { Button } from '@/components/ui/button'
@@ -15,16 +28,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Badge } from '@/components/ui/badge'
-import { Editor, EditorContainer } from '@/components/ui/editor'
-import { FixedToolbar } from '@/components/ui/fixed-toolbar'
-import { FixedToolbarButtons } from '@/components/ui/fixed-toolbar-buttons'
 
 // Icons
-import { Code, Download, FileImage, FileText, Globe, Tag } from 'lucide-react'
+import { Code, Download, FileText, Globe, Tag, Eye, EyeOff } from 'lucide-react'
 
 import type { Note } from '@/types/note'
 import { type ExportFormat, useExport } from '@/hooks/use-export'
-import { PDFExportDialog } from '@/components/export/pdf-export-dialog'
+// Remove PDF export for now
+// import { PDFExportDialog } from '@/components/export/pdf-export-dialog'
 
 export interface PlateEditorProps {
   note: Note
@@ -55,29 +66,27 @@ export function PlateEditorComponent({
   const [tags, setTags] = useState<string[]>(note.tags || [])
   const [newTag, setNewTag] = useState('')
   const [showTags, setShowTags] = useState(false)
+  const [isHidden, setIsHidden] = useState(note.isHidden || false)
+  const [editorValue, setEditorValue] = useState(() => {
+    if (note.content) {
+      try {
+        return typeof note.content === 'string'
+          ? JSON.parse(note.content)
+          : note.content
+      } catch {
+        // If content is not valid JSON, treat it as plain text
+        return [{ type: 'p', children: [{ text: note.content }] }]
+      }
+    }
+    return initialValue
+  })
+
   const titleInputRef = useRef<HTMLInputElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isTypingRef = useRef(false)
 
   // Export functionality
   const { exportNote, isExporting, exportProgress } = useExport()
-  const [showPDFDialog, setShowPDFDialog] = useState(false)
-
-  const editor = usePlateEditor({
-    plugins: EditorKit,
-    value: note.content
-      ? typeof note.content === 'string'
-        ? (() => {
-            try {
-              return JSON.parse(note.content)
-            } catch {
-              // If content is not valid JSON, treat it as plain text
-              return [{ type: 'p', children: [{ text: note.content }] }]
-            }
-          })()
-        : note.content
-      : initialValue,
-  })
 
   // Handle typing indicators
   const handleStartTyping = () => {
@@ -100,25 +109,32 @@ export function PlateEditorComponent({
     }, 2000) // Stop typing after 2 seconds of inactivity
   }
 
+  // Handle editor content changes
+  const handleEditorChange = (value: any[]) => {
+    setEditorValue(value)
+    handleStartTyping()
+  }
+
   // Save note when content changes
   useEffect(() => {
-    if (editor) {
-      const saveNote = () => {
-        const content = editor.children
-        onUpdateNote({
-          ...note,
-          title,
-          content: JSON.stringify(content),
-          tags,
-          updatedAt: new Date().toISOString(),
-        })
-      }
-
-      const timeoutId = setTimeout(saveNote, 1000)
-      return () => clearTimeout(timeoutId)
+    const saveNote = () => {
+      onUpdateNote({
+        ...note,
+        title,
+        content: JSON.stringify(editorValue),
+        tags,
+        isHidden,
+        updatedAt: new Date().toISOString(),
+      })
     }
-    return undefined
-  }, [editor, editor?.children, title, tags, note, onUpdateNote])
+
+    const timeoutId = setTimeout(saveNote, 1000)
+    return () => {
+      clearTimeout(timeoutId)
+      // Save immediately on unmount to prevent data loss
+      saveNote()
+    }
+  }, [editorValue, title, tags, isHidden, note, onUpdateNote])
 
   // Save note when title changes
   useEffect(() => {
@@ -143,6 +159,27 @@ export function PlateEditorComponent({
       }
     }
   }, [])
+
+  // Update editor value when note changes
+  useEffect(() => {
+    if (note.content) {
+      try {
+        const newValue =
+          typeof note.content === 'string'
+            ? JSON.parse(note.content)
+            : note.content
+        setEditorValue(newValue)
+      } catch {
+        // If content is not valid JSON, treat it as plain text
+        setEditorValue([{ type: 'p', children: [{ text: note.content }] }])
+      }
+    } else {
+      setEditorValue(initialValue)
+    }
+    setTitle(note.title)
+    setTags(note.tags || [])
+    setIsHidden(note.isHidden || false)
+  }, [note.id]) // Only update when note ID changes
 
   const handleAddTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
@@ -200,6 +237,21 @@ export function PlateEditorComponent({
             </div>
 
             <div className='flex items-center space-x-2'>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => setIsHidden(!isHidden)}
+                title={
+                  isHidden ? 'This note is hidden' : 'This note is visible'
+                }
+              >
+                {isHidden ? (
+                  <EyeOff className='h-4 w-4' />
+                ) : (
+                  <Eye className='h-4 w-4' />
+                )}
+              </Button>
+
               <Popover open={showTags} onOpenChange={setShowTags}>
                 <PopoverTrigger asChild>
                   <Button variant='ghost' size='sm'>
@@ -265,15 +317,6 @@ export function PlateEditorComponent({
                       <Code className='h-4 w-4 mr-2' />
                       Export as React
                     </Button>
-                    <Button
-                      variant='ghost'
-                      className='w-full justify-start'
-                      onClick={() => setShowPDFDialog(true)}
-                      disabled={isExporting}
-                    >
-                      <FileImage className='h-4 w-4 mr-2' />
-                      Export as PDF
-                    </Button>
                   </div>
                   {isExporting && (
                     <div className='mt-3 pt-2 border-t'>
@@ -294,31 +337,15 @@ export function PlateEditorComponent({
           </div>
         </div>
 
-        <div className='flex-1 min-h-0'>
-          <Plate editor={editor}>
-            <EditorContainer variant='default'>
-              <FixedToolbar>
-                <FixedToolbarButtons />
-              </FixedToolbar>
-              <Editor
-                variant='default'
-                onKeyDown={handleStartTyping}
-                onChange={handleStartTyping}
-                onPaste={handleStartTyping}
-                onInput={handleStartTyping}
-              />
-            </EditorContainer>
-          </Plate>
+        <div className='flex-1 min-h-0 p-4'>
+          <EnhancedPlateEditor
+            value={editorValue}
+            onChange={handleEditorChange}
+            placeholder='Start writing your note...'
+            className='h-full'
+          />
         </div>
       </div>
-
-      {/* PDF Export Dialog */}
-      <PDFExportDialog
-        open={showPDFDialog}
-        onOpenChange={setShowPDFDialog}
-        onExport={handleExport}
-        isExporting={isExporting}
-      />
     </div>
   )
 }

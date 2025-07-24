@@ -1,12 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],
@@ -14,6 +8,10 @@ const nextConfig = {
   },
   reactStrictMode: true,
   compress: true,
+  typescript: {
+    // Temporarily ignore type errors during Plate.js migration
+    ignoreBuildErrors: true,
+  },
   webpack: (config, { isServer }) => {
     // Disable problematic optimizations
     if (!isServer) {
