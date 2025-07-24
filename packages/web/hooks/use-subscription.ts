@@ -35,7 +35,6 @@ export interface UsageData {
   storage: number
   devices: number
   exports: number
-  collaborators: number
   aiRequests: number
   teamMembers?: number
 }
@@ -168,7 +167,6 @@ export function useSubscription() {
           storage_used: 0,
           devices_count: 1,
           exports_count: 0,
-          collaborators_count: 0,
           ai_requests_count: 0,
         }
 
@@ -187,7 +185,6 @@ export function useSubscription() {
             storage: newUsage.storage_used,
             devices: newUsage.devices_count,
             exports: newUsage.exports_count,
-            collaborators: newUsage.collaborators_count,
             aiRequests: newUsage.ai_requests_count,
           },
         }))
@@ -201,7 +198,6 @@ export function useSubscription() {
           storage: usageData.storage_used,
           devices: usageData.devices_count,
           exports: usageData.exports_count,
-          collaborators: usageData.collaborators_count,
           aiRequests: usageData.ai_requests_count,
           teamMembers: usageData.team_members_count,
         },

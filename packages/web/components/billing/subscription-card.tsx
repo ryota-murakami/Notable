@@ -168,12 +168,6 @@ export function SubscriptionCard() {
                   ? 'Unlimited'
                   : planConfig.limits.devices}
               </div>
-              <div>
-                <span className='text-muted-foreground'>Collaborators:</span>{' '}
-                {planConfig.limits.collaborators === -1
-                  ? 'Unlimited'
-                  : planConfig.limits.collaborators}
-              </div>
             </div>
           </div>
         </div>

@@ -6,9 +6,9 @@ import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import { AnalyticsProvider } from '@/components/analytics-provider'
+// import { Analytics } from '@vercel/analytics/next'
+// import { SpeedInsights } from '@vercel/speed-insights/next'
+// import { AnalyticsProvider } from '@/components/analytics-provider'
 import { ErrorBoundary } from '@/components/error-boundary'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -36,12 +36,12 @@ export default function RootLayout({
           <SupabaseProvider>
             <QueryProvider>
               <ErrorBoundary>
-                <AnalyticsProvider>
-                  {children}
-                  <Analytics />
-                  <SpeedInsights />
-                  <Toaster />
-                </AnalyticsProvider>
+                {/* <AnalyticsProvider> */}
+                {children}
+                {/* <Analytics />
+                  <SpeedInsights /> */}
+                <Toaster />
+                {/* </AnalyticsProvider> */}
               </ErrorBoundary>
             </QueryProvider>
           </SupabaseProvider>

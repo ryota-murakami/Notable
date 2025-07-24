@@ -87,11 +87,11 @@ class PerformanceMonitor {
    */
   private trackWebVital(name: string, value: number, unit: string) {
     this.track(`webvital_${name}`, value, unit as PerformanceMetric['unit'])
-    this.analytics?.track('Web Vital', {
-      metric: name,
-      value,
-      unit,
-    })
+    // this.analytics?.track('Web Vital', {
+    //   metric: name,
+    //   value,
+    //   unit,
+    // })
   }
 
   /**
@@ -114,9 +114,9 @@ class PerformanceMonitor {
     this.metrics.push(metric)
 
     // Send to analytics if available
-    if (this.analytics) {
-      this.analytics.performance(name, value, unit, metadata)
-    }
+    // if (this.analytics) {
+    //   this.analytics.performance(name, value, unit, metadata)
+    // }
 
     // Trigger alert if threshold exceeded
     this.checkThresholds(metric)
@@ -171,12 +171,12 @@ class PerformanceMonitor {
       )
 
       // Track threshold violation
-      this.analytics?.track('Performance Threshold Exceeded', {
-        metric: metric.name,
-        value: metric.value,
-        threshold,
-        unit: metric.unit,
-      })
+      // this.analytics?.track('Performance Threshold Exceeded', {
+      //   metric: metric.name,
+      //   value: metric.value,
+      //   threshold,
+      //   unit: metric.unit,
+      // })
     }
   }
 

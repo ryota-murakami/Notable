@@ -5,8 +5,8 @@
 
 'use client'
 
+import React, { Suspense, type ComponentType, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
-import { Suspense, type ComponentType, type ReactNode } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
