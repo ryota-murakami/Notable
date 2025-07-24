@@ -39,11 +39,16 @@ import {
   Eye,
   EyeOff,
   Clock,
+  FileText as FileTemplate,
+  Plus,
 } from 'lucide-react'
 
 import type { Note } from '@/types/note'
 import { type ExportFormat, useExport } from '@/hooks/use-export'
 import { VersionHistoryDialog } from '@/components/version-history-dialog'
+import { TemplateGallery } from '@/components/template-gallery'
+import { TemplateCreator } from '@/components/template-creator'
+import type { TemplateProcessingResult } from '@/types/template'
 // Remove PDF export for now
 // import { PDFExportDialog } from '@/components/export/pdf-export-dialog'
 
@@ -78,6 +83,8 @@ export function PlateEditorComponent({
   const [showTags, setShowTags] = useState(false)
   const [isHidden, setIsHidden] = useState(note.isHidden || false)
   const [showVersionHistory, setShowVersionHistory] = useState(false)
+  const [showTemplateGallery, setShowTemplateGallery] = useState(false)
+  const [showTemplateCreator, setShowTemplateCreator] = useState(false)
   const [editorValue, setEditorValue] = useState(() => {
     if (note.content) {
       try {
@@ -218,6 +225,19 @@ export function PlateEditorComponent({
     }
   }
 
+  const handleTemplateSelection = (result: TemplateProcessingResult) => {
+    // Apply template to current note
+    setTitle(result.title)
+    setEditorValue(result.content)
+    setShowTemplateGallery(false)
+  }
+
+  const handleTemplateCreated = (templateId: string) => {
+    // Template was created successfully
+    setShowTemplateCreator(false)
+    // Could potentially show a success message or redirect to template management
+  }
+
   return (
     <div className='h-full flex flex-col'>
       <div className='flex-1 flex flex-col min-h-0'>
@@ -248,6 +268,24 @@ export function PlateEditorComponent({
             </div>
 
             <div className='flex items-center space-x-2'>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => setShowTemplateGallery(true)}
+                title='Use template'
+              >
+                <FileTemplate className='h-4 w-4' />
+              </Button>
+
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => setShowTemplateCreator(true)}
+                title='Create template from this note'
+              >
+                <Plus className='h-4 w-4' />
+              </Button>
+
               <Button
                 variant='ghost'
                 size='sm'
@@ -378,6 +416,23 @@ export function PlateEditorComponent({
           // Note: The component will automatically refresh when the parent
           // re-fetches the note data after the database restoration is complete
         }}
+      />
+
+      <TemplateGallery
+        isOpen={showTemplateGallery}
+        onClose={() => setShowTemplateGallery(false)}
+        onSelectTemplate={handleTemplateSelection}
+        onCreateCustomTemplate={() => {
+          setShowTemplateGallery(false)
+          setShowTemplateCreator(true)
+        }}
+      />
+
+      <TemplateCreator
+        isOpen={showTemplateCreator}
+        onClose={() => setShowTemplateCreator(false)}
+        noteId={note.id}
+        onTemplateCreated={handleTemplateCreated}
       />
     </div>
   )
