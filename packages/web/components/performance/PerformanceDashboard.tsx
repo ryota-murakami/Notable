@@ -53,7 +53,7 @@ export function PerformanceDashboard() {
 
       const newMetrics: PerformanceMetrics = {
         responseTime: report.summary.avgResponseTime,
-        throughput: report.summary.throughput,
+        throughput: report.metrics.length / (report.duration / 1000), // ops/sec
         errorRate: report.summary.errorRate,
         memoryUsage: memoryMetrics.heapUsed / (1024 * 1024), // MB
         cacheHitRate: report.summary.cacheHitRate,

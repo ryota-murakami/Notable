@@ -34,41 +34,36 @@ export function usePerformanceMonitoring() {
 
   useEffect(() => {
     // Import web-vitals dynamically to avoid SSR issues
-    import('web-vitals').then(
-      ({ onCLS, onFCP, onFID, onLCP, onTTFB, onINP }) => {
-        onCLS((metric) => {
-          setMetrics((prev) => ({ ...prev, CLS: metric.value }))
-          reportMetric('CLS', metric.value)
-        })
+    import('web-vitals').then(({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
+      onCLS((metric: any) => {
+        setMetrics((prev) => ({ ...prev, CLS: metric.value }))
+        reportMetric('CLS', metric.value)
+      })
 
-        onFCP((metric) => {
-          setMetrics((prev) => ({ ...prev, FCP: metric.value }))
-          reportMetric('FCP', metric.value)
-        })
+      onFCP((metric: any) => {
+        setMetrics((prev) => ({ ...prev, FCP: metric.value }))
+        reportMetric('FCP', metric.value)
+      })
 
-        onFID((metric) => {
-          setMetrics((prev) => ({ ...prev, FID: metric.value }))
-          reportMetric('FID', metric.value)
-        })
+      // FID is deprecated in favor of INP
 
-        onLCP((metric) => {
-          setMetrics((prev) => ({ ...prev, LCP: metric.value }))
-          reportMetric('LCP', metric.value)
-        })
+      onLCP((metric: any) => {
+        setMetrics((prev) => ({ ...prev, LCP: metric.value }))
+        reportMetric('LCP', metric.value)
+      })
 
-        onTTFB((metric) => {
-          setMetrics((prev) => ({ ...prev, TTFB: metric.value }))
-          reportMetric('TTFB', metric.value)
-        })
+      onTTFB((metric: any) => {
+        setMetrics((prev) => ({ ...prev, TTFB: metric.value }))
+        reportMetric('TTFB', metric.value)
+      })
 
-        onINP((metric) => {
-          setMetrics((prev) => ({ ...prev, INP: metric.value }))
-          reportMetric('INP', metric.value)
-        })
+      onINP((metric: any) => {
+        setMetrics((prev) => ({ ...prev, INP: metric.value }))
+        reportMetric('INP', metric.value)
+      })
 
-        setIsLoading(false)
-      }
-    )
+      setIsLoading(false)
+    })
   }, [])
 
   // Report metric to analytics service
