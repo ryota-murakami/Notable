@@ -1,10 +1,14 @@
 // Mock Supabase client completely
+const mockRpc = jest.fn()
+const mockFrom = jest.fn()
+const mockGetUser = jest.fn()
+
 jest.mock('@/utils/supabase/client', () => ({
   createClient: jest.fn(() => ({
-    rpc: jest.fn(),
-    from: jest.fn(),
+    rpc: mockRpc,
+    from: mockFrom,
     auth: {
-      getUser: jest.fn(),
+      getUser: mockGetUser,
     },
   })),
 }))
