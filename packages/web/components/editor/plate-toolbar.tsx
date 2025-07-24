@@ -19,6 +19,10 @@ import {
   Link,
   Image,
 } from 'lucide-react'
+import {
+  insertLink as insertLinkStub,
+  insertImage as insertImageStub,
+} from '@/components/editor/editor-stubs'
 
 interface ToolbarButtonProps {
   isActive?: boolean
@@ -62,8 +66,8 @@ export function PlateToolbar() {
   const setBlockquote = () => console.log('Set blockquote')
   const insertBulletList = () => console.log('Insert bullet list')
   const insertNumberedList = () => console.log('Insert numbered list')
-  const insertLink = () => console.log('Insert link')
-  const insertImage = () => console.log('Insert image')
+  const insertLink = insertLinkStub
+  const insertImage = insertImageStub
 
   return (
     <div className='flex flex-wrap items-center gap-1 border-b border-border p-2'>

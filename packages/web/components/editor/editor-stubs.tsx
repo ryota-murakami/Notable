@@ -42,9 +42,18 @@ export const commentPlugin = {
 export const suggestionPlugin = {
   key: 'suggestion',
   pluginKey: 'suggestion',
+  api: {
+    suggestion: {
+      activeId: () => undefined,
+      hoverId: () => undefined,
+      nodeId: () => undefined,
+      node: () => undefined,
+      dataList: () => [],
+    },
+  },
 }
 
-// Runtime helpers for suggestion API
+// Runtime helpers for suggestion API (kept for backwards compatibility)
 export const suggestionHelpers = {
   activeId: () => undefined,
   hoverId: () => undefined,

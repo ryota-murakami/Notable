@@ -3,9 +3,6 @@
 import { useState, useCallback } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
-// import { MarkdownPlugin } from '@platejs/markdown'
-// import { createSlateEditor } from 'platejs'
-// import { BaseParagraphPlugin } from 'platejs'
 
 export type ExportFormat = 'markdown' | 'html' | 'pdf' | 'react'
 
@@ -37,7 +34,7 @@ export function useExport() {
     (content: any, title?: string, options: ExportOptions = {}): string => {
       const { includeMetadata = false } = options
 
-      // Simple conversion to markdown (placeholder implementation)
+      // Custom conversion to markdown using recursive node processing
       let markdownContent = ''
 
       const convertNode = (node: any): string => {
