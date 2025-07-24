@@ -10,7 +10,7 @@
     "dev": "electron .",
     "start": "electron .",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint . --ext .ts,.tsx --fix",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "test": "jest",
     "e2e": "echo 'E2E tests for electron'",
