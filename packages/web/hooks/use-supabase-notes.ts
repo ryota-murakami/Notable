@@ -332,6 +332,7 @@ export function useSupabaseNotes({
                 content: note.content,
                 user_id: user.id,
                 folder_id: note.parentId,
+                is_hidden: note.isHidden || false,
                 updated_at: new Date().toISOString(),
                 tags: note.tags,
               },

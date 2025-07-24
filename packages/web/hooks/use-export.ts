@@ -77,7 +77,7 @@ export function useExport() {
             return `[${text}](${node.url})`
           case 'img':
             return `![${node.alt || ''}](${node.url})\n\n`
-          default:
+          default: {
             // Handle text formatting
             let formattedText = text
             if (node.bold) formattedText = `**${formattedText}**`
@@ -85,6 +85,7 @@ export function useExport() {
             if (node.strikethrough) formattedText = `~~${formattedText}~~`
             if (node.code) formattedText = `\`${formattedText}\``
             return formattedText
+          }
         }
       }
 

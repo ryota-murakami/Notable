@@ -20,8 +20,8 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^22",
-    "eslint": "^8.57.0",
+    "@types/node": "^22.16.5",
+    "eslint": "^8.57.1",
     "husky": "^9.1.7",
     "knip": "5.40.0",
     "lint-staged": "^16.1.2",
