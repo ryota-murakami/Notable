@@ -44,6 +44,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { NoteListSkeleton } from '@/components/loading-states'
 import { EmptyState } from '@/components/empty-states'
 import { Checkbox } from '@/components/ui/checkbox'
+import { FolderContextMenu } from '@/components/folder-context-menu'
 
 interface SidebarProps {
   notes: Note[]
@@ -52,6 +53,14 @@ interface SidebarProps {
   onCreateNote: (parentId: string | null) => Promise<Note | null>
   onCreateFolder: (parentId: string | null) => Promise<Note | null>
   onDeleteNote: (id: string) => void
+  onUpdateFolder?: (
+    folderId: string,
+    updates: { name?: string }
+  ) => Promise<boolean>
+  onMoveNote?: (
+    noteId: string,
+    targetFolderId: string | null
+  ) => Promise<boolean>
   onOpenSearch: () => void
   isCollapsed: boolean
   onToggleCollapse: () => void
@@ -69,7 +78,9 @@ export function Sidebar({
   onSelectNote,
   onCreateNote,
   onCreateFolder,
-  onDeleteNote: _onDeleteNote,
+  onDeleteNote,
+  onUpdateFolder,
+  onMoveNote: _onMoveNote,
   onOpenSearch,
   isCollapsed,
   onToggleCollapse,
@@ -118,90 +129,111 @@ export function Sidebar({
           const isExpanded = expandedFolders[note.id]
           const isFolder = note.isFolder || hasChildren
 
-          return (
-            <li key={note.id}>
-              <div
+          const content = (
+            <div
+              className={cn(
+                'flex items-center py-1.5 px-2 rounded-md text-sm group transition-all duration-200',
+                activeNoteId === note.id && !isMultiSelectMode
+                  ? 'bg-accent text-accent-foreground shadow-sm'
+                  : 'hover:bg-accent/50',
+                isFolder && 'font-medium'
+              )}
+            >
+              {/* Checkbox for multi-select */}
+              {isMultiSelectMode && !isFolder && (
+                <Checkbox
+                  checked={selectedNoteIds.has(note.id)}
+                  onCheckedChange={() => onToggleNoteSelection?.(note.id)}
+                  className='mr-2'
+                  onClick={(e) => e.stopPropagation()}
+                />
+              )}
+
+              {/* Folder/File Icon */}
+              <div className='flex items-center mr-2'>
+                {isFolder ? (
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='h-4 w-4 p-0 hover:bg-transparent'
+                    onClick={() => toggleFolder(note.id)}
+                  >
+                    {isExpanded ? (
+                      <FolderOpen className='h-4 w-4 text-blue-500' />
+                    ) : (
+                      <FolderClosed className='h-4 w-4 text-blue-500' />
+                    )}
+                  </Button>
+                ) : (
+                  <File className='h-4 w-4 text-gray-500' />
+                )}
+              </div>
+
+              {/* Note Title */}
+              <span
                 className={cn(
-                  'flex items-center py-1.5 px-2 rounded-md text-sm group transition-all duration-200',
-                  activeNoteId === note.id && !isMultiSelectMode
-                    ? 'bg-accent text-accent-foreground shadow-sm'
-                    : 'hover:bg-accent/50',
-                  isFolder && 'font-medium'
+                  'flex-1 truncate cursor-pointer transition-colors',
+                  isFolder && 'text-blue-700 dark:text-blue-300'
                 )}
-              >
-                {/* Checkbox for multi-select */}
-                {isMultiSelectMode && !isFolder && (
-                  <Checkbox
-                    checked={selectedNoteIds.has(note.id)}
-                    onCheckedChange={() => onToggleNoteSelection?.(note.id)}
-                    className='mr-2'
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                )}
-
-                {/* Folder/File Icon */}
-                <div className='flex items-center mr-2'>
-                  {isFolder ? (
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='h-4 w-4 p-0 hover:bg-transparent'
-                      onClick={() => toggleFolder(note.id)}
-                    >
-                      {isExpanded ? (
-                        <FolderOpen className='h-4 w-4 text-blue-500' />
-                      ) : (
-                        <FolderClosed className='h-4 w-4 text-blue-500' />
-                      )}
-                    </Button>
-                  ) : (
-                    <File className='h-4 w-4 text-gray-500' />
-                  )}
-                </div>
-
-                {/* Note Title */}
-                <span
-                  className={cn(
-                    'flex-1 truncate cursor-pointer transition-colors',
-                    isFolder && 'text-blue-700 dark:text-blue-300'
-                  )}
-                  onClick={(e) => {
+                onClick={(e) => {
+                  if (isMultiSelectMode && !isFolder) {
+                    e.preventDefault()
+                    onToggleNoteSelection?.(note.id)
+                  } else {
+                    onSelectNote(note.id)
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
                     if (isMultiSelectMode && !isFolder) {
-                      e.preventDefault()
                       onToggleNoteSelection?.(note.id)
                     } else {
                       onSelectNote(note.id)
                     }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      if (isMultiSelectMode && !isFolder) {
-                        onToggleNoteSelection?.(note.id)
-                      } else {
-                        onSelectNote(note.id)
-                      }
-                    }
-                  }}
-                  role='button'
-                  tabIndex={0}
-                >
-                  {note.title || (isFolder ? 'Untitled Folder' : 'Untitled')}
-                </span>
+                  }
+                }}
+                role='button'
+                tabIndex={0}
+              >
+                {note.title || (isFolder ? 'Untitled Folder' : 'Untitled')}
+              </span>
 
-                {/* Actions */}
-                <div className='flex opacity-0 group-hover:opacity-100 transition-opacity'>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    className='h-5 w-5 p-0 hover:bg-accent'
-                    onClick={() => onCreateNote(note.id)}
-                    title={isFolder ? 'Add note to folder' : 'Add sub-note'}
-                  >
-                    <Plus className='h-3 w-3' />
-                  </Button>
-                </div>
+              {/* Actions */}
+              <div className='flex opacity-0 group-hover:opacity-100 transition-opacity'>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='h-5 w-5 p-0 hover:bg-accent'
+                  onClick={() => onCreateNote(note.id)}
+                  title={isFolder ? 'Add note to folder' : 'Add sub-note'}
+                >
+                  <Plus className='h-3 w-3' />
+                </Button>
               </div>
+            </div>
+          )
+
+          return (
+            <li key={note.id}>
+              {isFolder && onUpdateFolder ? (
+                <FolderContextMenu
+                  folder={note}
+                  onRename={async (id, name) =>
+                    await onUpdateFolder(id, { name })
+                  }
+                  onDelete={async (id) => {
+                    await Promise.resolve(onDeleteNote(id))
+                    return true
+                  }}
+                  onCreateSubfolder={onCreateFolder}
+                  onCreateNote={onCreateNote}
+                >
+                  {content}
+                </FolderContextMenu>
+              ) : (
+                content
+              )}
 
               {/* Nested Children */}
               {(isFolder || hasChildren) && isExpanded && (
