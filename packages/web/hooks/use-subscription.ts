@@ -277,12 +277,16 @@ export function useSubscription() {
 
       const limits = planConfig.limits
       const currentUsage = state.usage[action]
-      const limit = limits[action]
+      const limit = action in limits ? (limits as any)[action] : undefined
 
       // -1 means unlimited
       if (limit === -1) return true
 
-      return typeof currentUsage === 'number' && currentUsage < limit
+      return (
+        typeof currentUsage === 'number' &&
+        typeof limit === 'number' &&
+        currentUsage < limit
+      )
     },
     [state.usage, state.subscription, planConfig]
   )
@@ -294,13 +298,15 @@ export function useSubscription() {
 
       const limits = planConfig.limits
       const currentUsage = state.usage[action]
-      const limit = limits[action]
+      const limit = action in limits ? (limits as any)[action] : undefined
 
       // -1 means unlimited
       if (limit === -1) return false
 
       return (
-        typeof currentUsage === 'number' && currentUsage / limit >= threshold
+        typeof currentUsage === 'number' &&
+        typeof limit === 'number' &&
+        currentUsage / limit >= threshold
       )
     },
     [state.usage, state.subscription, planConfig]
@@ -312,11 +318,14 @@ export function useSubscription() {
       if (!state.usage || !state.subscription) return 0
 
       const currentUsage = state.usage[action]
-      const limit = planConfig.limits[action]
+      const limit =
+        action in planConfig.limits
+          ? (planConfig.limits as any)[action]
+          : undefined
 
       return getUsagePercentage(
         typeof currentUsage === 'number' ? currentUsage : 0,
-        limit
+        typeof limit === 'number' ? limit : 0
       )
     },
     [state.usage, state.subscription, planConfig]
@@ -331,8 +340,23 @@ export function useSubscription() {
       return { isWithin: true, exceededLimits: [] }
     }
 
-    return isWithinLimits(state.usage, currentPlan)
-  }, [state.usage, state.subscription, currentPlan])
+    const limits = planConfig.limits
+    const exceededLimits: string[] = []
+
+    Object.entries(state.usage).forEach(([key, value]) => {
+      if (key in limits) {
+        const limit = (limits as any)[key]
+        if (limit !== -1 && typeof value === 'number' && value > limit) {
+          exceededLimits.push(key)
+        }
+      }
+    })
+
+    return {
+      isWithin: exceededLimits.length === 0,
+      exceededLimits,
+    }
+  }, [state.usage, state.subscription, planConfig])
 
   // Track usage
   const trackUsage = useCallback(

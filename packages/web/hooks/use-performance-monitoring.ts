@@ -140,7 +140,7 @@ export function useQueryPerformanceTracking() {
             duration:
               state.dataUpdatedAt -
                 (state.fetchFailureReason as any)?.timestamp || 0,
-            status: state.status,
+            status: state.status as 'success' | 'error' | 'loading',
             timestamp: Date.now(),
           },
         }))
