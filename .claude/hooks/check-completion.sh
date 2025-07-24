@@ -12,5 +12,5 @@ if [[ "$STOP_ACTIVE" == "true" && -f "$PENDING_FILE" ]]; then
 fi
 
 # Otherwise allow Claude to continue normally.
-echo '{"decision":"block","reason":"タスクが未完了のためストップを禁止します。You MUST remember all memories with memory mcp tool. まだ完了していないIssueがないか確認し、全てが完了するまで作業を繰り返してください。既にFixしているIssueはCloseしてください。作業してIssueをFixしたらCommit,PushしてIssueをCloseしてください。"}'
+echo '{"decision":"block","reason":"タスクが未完了のためストップを禁止します。You MUST remember all memories with read_graph tool. まだ完了していないIssueがないか確認し、全てが完了するまで作業を繰り返してください。既にFixしているIssueはCloseしてください。作業してIssueをFixしたらCommit,PushしてIssueをCloseしてください。"}'
 exit 2
