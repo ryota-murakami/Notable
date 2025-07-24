@@ -11,7 +11,7 @@
     "typecheck": "turbo typecheck",
     "e2e": "turbo e2e",
     "dev": "turbo dev",
-    "clean": "turbo clean",
+    "clean": "turbo clean && rm -rf node_modules pnpm-lock.yaml",
     "prepare": "husky",
     "prettier": "prettier --ignore-unknown --write .",
     "knip": "knip"

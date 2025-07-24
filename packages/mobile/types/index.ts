@@ -1,5 +1,5 @@
 // Re-export types from the root types directory
-import type { Note as BaseNote } from '../../../types'
+import type { Note as BaseNote } from '../../../types/note'
 
 // Extend Note type for mobile specific fields with snake_case properties for Supabase compatibility
 export interface Note
@@ -37,7 +37,7 @@ export type {
   CreateNoteForm,
   CreateFolderForm,
   UserSettings,
-} from '../../../types'
+} from '../../../types/note'
 
 // Additional types for mobile
 export interface NoteCreate {

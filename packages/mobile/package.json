@@ -21,7 +21,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "test": "jest",
     "e2e": "echo 'E2E tests for mobile'",
-    "clean": "rm -rf .expo dist",
+    "clean": "rm -rf .expo dist node_modules pnpm-lock.yaml",
     "dev": "expo start --dev-client"
   },
   "dependencies": {
