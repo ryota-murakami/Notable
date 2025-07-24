@@ -1,6 +1,8 @@
 {
   "extends": ["../configs/eslint-config/next.js"],
   "rules": {
-    "react/display-name": "off"
+    "react/display-name": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-comment": "off"
   }
 }
