@@ -12,6 +12,8 @@ if [[ "$STOP_ACTIVE" == "true" && -f "$PENDING_FILE" ]]; then
 fi
 
 # Otherwise allow Claude to continue normally.
-echo '{"decision":"block","reason":"タスクが未完了のためストップを禁止します。You MUST remember all memories with read_graph tool. CLAUDE.mdを読んで読んでください。まだ完了していないIssueがないか確認し、全てが完了するまで作業を繰り返してください。既にFixしているIssueはCloseしてください。作業してIssueをFixしたらCommit,PushしてIssueをCloseしてください。"}'
-# echo '{"decision":"block","reason":"タスクが未完了のためストップを禁止します。https://github.com/ryota-murakami/Notable/pull/100 をマージするまで一緒に最高のNotableを作りましょう。😄"}'
+read -r -d '' REASON <<'JSON'
+タスクが未完了のためストップを禁止します。You MUST remember all memories with read_graph tool. CLAUDE.mdを読んで読んでください。まだ完了していないIssueがないか確認し、全てが完了するまで作業を繰り返してください。既にFixしているIssueはCloseしてください。作業してIssueをFixしたらCommit,PushしてIssueをCloseしてください。
+JSON
+echo "{\"decision\":\"block\",\"reason\":\"$REASON\"}"
 exit 2
