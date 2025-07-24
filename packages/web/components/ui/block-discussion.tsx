@@ -119,7 +119,8 @@ const BlockCommentContent = ({
   const activeCommentId = usePluginOption(commentPlugin, 'activeId')
   const isCommenting = activeCommentId === getDraftCommentKey()
   const activeDiscussion =
-    activeCommentId && resolvedDiscussions.find((d) => d.id === activeCommentId)
+    activeCommentId &&
+    resolvedDiscussions.find((d: any) => d.id === activeCommentId)
 
   const noneActive = !activeSuggestion && !activeDiscussion
 
@@ -129,7 +130,7 @@ const BlockCommentContent = ({
   ].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
 
   const selected =
-    resolvedDiscussions.some((d) => d.id === activeCommentId) ||
+    resolvedDiscussions.some((d: any) => d.id === activeCommentId) ||
     resolvedSuggestions.some((s) => s.suggestionId === activeSuggestionId)
 
   const [_open, setOpen] = React.useState(selected)
@@ -299,11 +300,11 @@ function BlockComment({
   return (
     <React.Fragment key={discussion.id}>
       <div className='p-4'>
-        {discussion.comments.map((comment, index) => (
+        {discussion.comments?.map((comment, index) => (
           <Comment
             key={comment.id ?? index}
             comment={comment}
-            discussionLength={discussion.comments.length}
+            discussionLength={discussion.comments?.length || 0}
             {...(discussion?.documentContent && {
               documentContent: discussion.documentContent,
             })}

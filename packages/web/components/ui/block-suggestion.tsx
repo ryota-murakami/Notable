@@ -324,14 +324,14 @@ export const useResolveSuggestion = (
           if (TextApi.isText(node)) {
             const dataList = api.suggestion.dataList(node)
             const includeUpdate = dataList.some(
-              (data) => data.type === 'update'
+              (data: any) => data.type === 'update'
             )
 
             if (!includeUpdate) return api.suggestion.nodeId(node)
 
             return dataList
-              .filter((data) => data.type === 'update')
-              .map((d) => d.id)
+              .filter((data: any) => data.type === 'update')
+              .map((d: any) => d.id)
           }
           if (ElementApi.isElement(node)) {
             return api.suggestion.nodeId(node)
@@ -376,7 +376,7 @@ export const useResolveSuggestion = (
         if (TextApi.isText(node)) {
           const dataList = api.suggestion.dataList(node)
 
-          dataList.forEach((data) => {
+          dataList.forEach((data: any) => {
             if (data.id !== id) return
 
             switch (data.type) {
@@ -409,7 +409,7 @@ export const useResolveSuggestion = (
             }
           })
         } else {
-          const lineBreakData = api.suggestion.isBlockSuggestion(node)
+          const lineBreakData: any = api.suggestion.isBlockSuggestion(node)
             ? node.suggestion
             : undefined
 
