@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { Suspense, type ComponentType, type ReactNode } from 'react'
+import React, { type ComponentType, type ReactNode, Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -59,7 +59,7 @@ export const SpinnerLoader = ({ text = 'Loading...' }: { text?: string }) => (
 )
 
 // HOC to wrap components with lazy loading and error boundaries
-export function withLazyLoading<P extends object = {}>(
+export function withLazyLoading<P extends object = Record<string, unknown>>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   fallback: ReactNode = <ComponentSkeleton />,
   errorFallback?: ReactNode
@@ -137,7 +137,11 @@ class ErrorBoundary extends React.Component<
 export const LazyPerformanceDashboard = withLazyLoading(
   async () => {
     const mod = await import('@/components/performance/performance-dashboard')
-    return { default: mod.PerformanceDashboard as ComponentType<{}> }
+    return {
+      default: mod.PerformanceDashboard as ComponentType<
+        Record<string, unknown>
+      >,
+    }
   },
   <CardSkeleton />
 )
@@ -145,7 +149,7 @@ export const LazyPerformanceDashboard = withLazyLoading(
 export const LazyBillingDashboard = withLazyLoading(
   async () => {
     const mod = await import('@/app/dashboard/billing/page')
-    return { default: mod.default as ComponentType<{}> }
+    return { default: mod.default as ComponentType<Record<string, unknown>> }
   },
   <SpinnerLoader text='Loading billing dashboard...' />
 )
@@ -153,7 +157,9 @@ export const LazyBillingDashboard = withLazyLoading(
 export const LazyUpgradeDialog = withLazyLoading(
   async () => {
     const mod = await import('@/components/billing/upgrade-dialog')
-    return { default: mod.UpgradeDialog as ComponentType<{}> }
+    return {
+      default: mod.UpgradeDialog as ComponentType<Record<string, unknown>>,
+    }
   },
   <SpinnerLoader text='Loading upgrade options...' />
 )
@@ -161,7 +167,7 @@ export const LazyUpgradeDialog = withLazyLoading(
 export const LazyUsageMeter = withLazyLoading(
   async () => {
     const mod = await import('@/components/billing/usage-meter')
-    return { default: mod.UsageMeter as ComponentType<{}> }
+    return { default: mod.UsageMeter as ComponentType<Record<string, unknown>> }
   },
   <CardSkeleton />
 )
@@ -169,7 +175,9 @@ export const LazyUsageMeter = withLazyLoading(
 export const LazySubscriptionCard = withLazyLoading(
   async () => {
     const mod = await import('@/components/billing/subscription-card')
-    return { default: mod.SubscriptionCard as ComponentType<{}> }
+    return {
+      default: mod.SubscriptionCard as ComponentType<Record<string, unknown>>,
+    }
   },
   <CardSkeleton />
 )
@@ -218,19 +226,20 @@ export function useIntersectionObserver(
   const ref = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
+    const element = ref.current
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         callback()
       }
     }, options)
 
-    if (ref.current) {
-      observer.observe(ref.current)
+    if (element) {
+      observer.observe(element)
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
+      if (element) {
+        observer.unobserve(element)
       }
     }
   }, [callback, options])
