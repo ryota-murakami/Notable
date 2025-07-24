@@ -40,6 +40,9 @@
     "start": {
       "cache": false,
       "persistent": true
+    },
+    "clean": {
+      "cache": false
     }
   }
 }

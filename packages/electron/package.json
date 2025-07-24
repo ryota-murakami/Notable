@@ -14,7 +14,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "test": "jest",
     "e2e": "echo 'E2E tests for electron'",
-    "clean": "rm -rf dist build",
+    "clean": "rm -rf dist build node_modules pnpm-lock.yaml",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
