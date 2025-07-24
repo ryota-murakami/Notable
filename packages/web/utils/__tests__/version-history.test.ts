@@ -1,33 +1,14 @@
 import { VersionHistory } from '../version-history'
 
-// Mock Supabase client factory
-const createMockSupabase = () => ({
-  rpc: jest.fn(),
-  from: jest.fn(() => ({
-    select: jest.fn(() => ({
-      eq: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(),
-        })),
-        order: jest.fn(() => ({})),
-      })),
-      update: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          eq: jest.fn(),
-        })),
-      })),
-    })),
-  })),
-  auth: {
-    getUser: jest.fn(),
-  },
-})
-
-// Create the mock instance
-const mockSupabase = createMockSupabase()
-
+// Mock Supabase client
 jest.mock('@/utils/supabase/client', () => ({
-  createClient: () => mockSupabase,
+  createClient: () => ({
+    rpc: jest.fn(),
+    from: jest.fn(),
+    auth: {
+      getUser: jest.fn(),
+    },
+  }),
 }))
 
 // Mock toast
@@ -35,9 +16,30 @@ jest.mock('@/hooks/use-toast', () => ({
   toast: jest.fn(),
 }))
 
+// Get the mocked Supabase client
+import { createClient } from '@/utils/supabase/client'
+const mockSupabase = createClient() as jest.Mocked<any>
+
 describe('VersionHistory', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+
+    // Setup default mock behavior for from()
+    mockSupabase.from.mockReturnValue({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            single: jest.fn(),
+          })),
+          order: jest.fn(() => ({})),
+        })),
+      })),
+      update: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          eq: jest.fn(),
+        })),
+      })),
+    })
   })
 
   describe('getHistory', () => {
@@ -115,6 +117,11 @@ describe('VersionHistory', () => {
 
       mockSupabase.from.mockReturnValueOnce({
         select: selectMock,
+        update: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            eq: jest.fn(),
+          })),
+        })),
       })
 
       const result = await VersionHistory.getVersion('note-123', 2)
@@ -148,6 +155,11 @@ describe('VersionHistory', () => {
 
       mockSupabase.from.mockReturnValueOnce({
         select: selectMock,
+        update: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            eq: jest.fn(),
+          })),
+        })),
       })
 
       const result = await VersionHistory.getVersion('note-123', 999)
@@ -245,6 +257,14 @@ describe('VersionHistory', () => {
       }
 
       mockSupabase.from.mockReturnValueOnce({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              single: jest.fn(),
+            })),
+            order: jest.fn(() => ({})),
+          })),
+        })),
         update: jest.fn(() => mockUpdate),
       })
 

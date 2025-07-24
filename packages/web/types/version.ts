@@ -1,4 +1,6 @@
-import type { TElement } from '@udecode/plate-common'
+// TODO: Import proper TElement type when plate-common types are available
+// import type { TElement } from '@udecode/plate-common'
+type TElement = any
 
 export interface NoteVersion {
   id: string

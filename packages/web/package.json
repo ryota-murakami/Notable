@@ -95,6 +95,7 @@
     "@udecode/cn": "^49.0.15",
     "@udecode/plate-ai": "^49.0.0",
     "@udecode/plate-basic-marks": "^49.0.0",
+    "@udecode/plate-common": "^42.0.0",
     "@udecode/plate-markdown": "^49.0.0",
     "@udecode/plate-selection": "^49.0.0",
     "@uploadthing/react": "7.3.1",
