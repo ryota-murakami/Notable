@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -15,12 +15,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -30,19 +24,16 @@ import type { Note } from '@/types/note'
 import { NoSearchResultsEmptyState } from '@/components/empty-states'
 import { LoadingSpinner } from '@/components/loading-states'
 import {
+  Bookmark,
   Clock,
+  Edit2,
+  History,
+  Info,
   Search,
   Star,
-  Info,
-  ChevronDown,
   X,
-  History,
-  Bookmark,
-  Save,
-  Edit2,
 } from 'lucide-react'
 import { SearchEngine, type SearchResult } from '@/utils/search-engine'
-import { SearchParser } from '@/utils/search-parser'
 import { SearchHistory } from '@/utils/search-history'
 import { useToast } from '@/hooks/use-toast'
 
@@ -223,7 +214,9 @@ export function AdvancedSearchDialog({
             <p className='text-xs mt-1'>Search by tag</p>
           </div>
           <div>
-            <code className='bg-muted px-1 rounded'>"exact phrase"</code>
+            <code className='bg-muted px-1 rounded'>
+              &quot;exact phrase&quot;
+            </code>
             <p className='text-xs mt-1'>Exact phrase match</p>
           </div>
           <div>
@@ -349,6 +342,13 @@ export function AdvancedSearchDialog({
                 <div
                   className='flex-1'
                   onClick={() => setSearchQuery(item.query)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setSearchQuery(item.query)
+                    }
+                  }}
+                  role='button'
+                  tabIndex={0}
                 >
                   <p className='font-medium text-sm'>{item.query}</p>
                   <p className='text-xs text-muted-foreground'>
@@ -391,11 +391,20 @@ export function AdvancedSearchDialog({
               <div
                 className='flex-1'
                 onClick={() => setSearchQuery(item.query)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSearchQuery(item.query)
+                  }
+                }}
+                role='button'
+                tabIndex={0}
               >
                 {editingSavedSearch === item.id ? (
                   <div
                     className='flex items-center gap-2'
                     onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    role='none'
                   >
                     <Input
                       value={savedSearchName}
@@ -559,7 +568,9 @@ export function AdvancedSearchDialog({
           {/* Tabs for Results, History, and Saved */}
           <Tabs
             value={activeTab}
-            onValueChange={(value) => setActiveTab(value as any)}
+            onValueChange={(value) =>
+              setActiveTab(value as 'results' | 'history' | 'saved')
+            }
             className='flex-1 flex flex-col'
           >
             <TabsList className='grid w-full grid-cols-3'>

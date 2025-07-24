@@ -84,14 +84,23 @@ export class SearchEngine {
           const contentMatch = note.content?.match(regex)
 
           if (titleMatch || contentMatch) {
-            const matches = []
+            const matches: Array<{
+              key: string
+              value: string
+              indices: Array<[number, number]>
+            }> = []
             if (titleMatch && note.title) {
               const index = note.title.indexOf(titleMatch[0])
               if (index !== -1) {
                 matches.push({
                   key: 'title',
                   value: note.title,
-                  indices: [[index, index + titleMatch[0].length - 1]],
+                  indices: [
+                    [index, index + titleMatch[0].length - 1] as [
+                      number,
+                      number,
+                    ],
+                  ],
                 })
               }
             }
@@ -101,7 +110,12 @@ export class SearchEngine {
                 matches.push({
                   key: 'content',
                   value: note.content,
-                  indices: [[index, index + contentMatch[0].length - 1]],
+                  indices: [
+                    [index, index + contentMatch[0].length - 1] as [
+                      number,
+                      number,
+                    ],
+                  ],
                 })
               }
             }

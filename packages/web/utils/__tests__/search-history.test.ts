@@ -27,6 +27,13 @@ describe('SearchHistory', () => {
     localStorageMock.clear()
     // Reset any mocks
     jest.clearAllMocks()
+    jest.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    // Ensure localStorage is cleared after each test
+    localStorageMock.clear()
+    jest.restoreAllMocks()
   })
 
   describe('search history', () => {
@@ -81,11 +88,16 @@ describe('SearchHistory', () => {
     })
 
     it('should remove specific history item', () => {
+      // Clear any previous data to ensure clean state
+      localStorageMock.clear()
+
       SearchHistory.addToHistory('query 1', 3)
       SearchHistory.addToHistory('query 2', 5)
 
       const history = SearchHistory.getHistory()
-      // Most recent item is first (query 2)
+      expect(history).toHaveLength(2) // Verify we have 2 items
+
+      // Most recent item is first (query 2 at index 0, query 1 at index 1)
       const idToRemove = history[1].id // Remove query 1
 
       SearchHistory.removeFromHistory(idToRemove)
@@ -133,6 +145,8 @@ describe('SearchHistory', () => {
       const saved = SearchHistory.getSavedSearches()
       expect(saved).toHaveLength(2) // Verify we have 2 items
 
+      // Saved searches are not in reverse chronological order, they are in the order added
+      // So saved[0] is 'query 1' and saved[1] is 'query 2'
       const idToRemove = saved[0].id // Remove query 1
 
       SearchHistory.removeSavedSearch(idToRemove)
@@ -205,17 +219,17 @@ describe('SearchHistory', () => {
 
   describe('error handling', () => {
     it('should handle localStorage errors gracefully', () => {
-      // Mock localStorage to throw error
-      const originalGetItem = localStorageMock.getItem
-      localStorageMock.getItem = jest.fn(() => {
-        throw new Error('Storage error')
-      })
+      // Use jest.spyOn for better mock isolation
+      const getItemSpy = jest
+        .spyOn(localStorageMock, 'getItem')
+        .mockImplementation(() => {
+          throw new Error('Storage error')
+        })
 
       const history = SearchHistory.getHistory()
       expect(history).toEqual([])
 
-      // Restore original function
-      localStorageMock.getItem = originalGetItem
+      // Spy is automatically restored by jest.restoreAllMocks in afterEach
     })
 
     it('should handle invalid JSON in localStorage', () => {
@@ -224,8 +238,7 @@ describe('SearchHistory', () => {
       const history = SearchHistory.getHistory()
       expect(history).toEqual([])
 
-      // Clean up
-      localStorageMock.clear()
+      // localStorage is cleared in afterEach
     })
   })
 })

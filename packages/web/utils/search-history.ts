@@ -11,6 +11,7 @@ export class SearchHistory {
   private static readonly STORAGE_KEY = 'notable-search-history'
   private static readonly MAX_HISTORY_ITEMS = 50
   private static readonly SAVED_SEARCHES_KEY = 'notable-saved-searches'
+  private static idCounter = 0
 
   /**
    * Get all search history items
@@ -47,7 +48,7 @@ export class SearchHistory {
 
       // Add new item at the beginning
       const newItem: SearchHistoryItem = {
-        id: `search-${Date.now()}`,
+        id: `search-${Date.now()}-${++this.idCounter}`,
         query,
         timestamp: new Date(),
         resultCount,
@@ -125,7 +126,7 @@ export class SearchHistory {
       if (saved.some((item) => item.query === query)) return
 
       const newItem: SearchHistoryItem = {
-        id: `saved-${Date.now()}`,
+        id: `saved-${Date.now()}-${++this.idCounter}`,
         query,
         timestamp: new Date(),
         resultCount: 0,
