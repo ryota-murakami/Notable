@@ -14,6 +14,8 @@
     "clean": "turbo clean && rm -rf node_modules pnpm-lock.yaml",
     "prepare": "husky",
     "prettier": "prettier --ignore-unknown --write .",
+    "sherif": "pnpm dlx sherif -r unsync-similar-dependencies",
+    "sherif:fix": "pnpm run sherif --fix -r unsync-similar-dependencies",
     "knip": "knip"
   },
   "devDependencies": {
