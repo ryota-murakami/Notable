@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 import fs from 'fs'
 
-const __dirname = path.dirname(__filename)
+// __dirname is automatically available in CommonJS
 
 let mainWindow: BrowserWindow | null = null
 
@@ -19,7 +19,7 @@ const createWindow = () => {
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
-    `file://${path.join(__dirname, '../out/index.html')}`
+    `file://${path.join(__dirname, '../../web/out/index.html')}`
   mainWindow.loadURL(startUrl)
 
   if (process.env.NODE_ENV === 'development') {

@@ -1,12 +1,17 @@
 {
-  "extends": "../configs/tsconfig/node.json",
+  "extends": "../configs/tsconfig/base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "target": "ES2020",
+    "lib": ["ES2020"],
     "types": ["node"],
     "outDir": "./build",
     "noEmit": false,
     "module": "commonjs",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
   "include": ["**/*.ts", "**/*.tsx", "../../types/**/*"],
   "exclude": [
