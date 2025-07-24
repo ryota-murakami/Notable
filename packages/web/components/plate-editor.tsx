@@ -1,9 +1,23 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 
-// Import the new Plate editor
-import { EnhancedPlateEditor } from '@/components/editor'
+// Dynamic import for EnhancedPlateEditor to prevent SSR issues
+const EnhancedPlateEditor = dynamic(
+  () =>
+    import('@/components/editor').then((mod) => ({
+      default: mod.EnhancedPlateEditor,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className='h-full flex items-center justify-center'>
+        <div className='animate-pulse bg-muted h-32 w-full rounded-md' />
+      </div>
+    ),
+  }
+)
 
 // UI Components
 import { Button } from '@/components/ui/button'

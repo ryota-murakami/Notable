@@ -1,9 +1,25 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Sidebar } from '@/components/sidebar'
-import { SimpleTestEditor as PlateEditorComponent } from '@/components/simple-test-editor'
 import type { Note } from '@/types/note'
+
+// Dynamic import for PlateEditorComponent to prevent SSR issues
+const PlateEditorComponent = dynamic(
+  () =>
+    import('@/components/plate-editor').then((mod) => ({
+      default: mod.PlateEditorComponent,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className='flex-1 min-h-0 p-4'>
+        <div className='animate-pulse bg-muted h-64 rounded-md' />
+      </div>
+    ),
+  }
+)
 import { useSupabaseNotes } from '@/hooks/use-supabase-notes'
 import { useSupabase } from '@/components/supabase-provider'
 import { SearchDialog } from '@/components/search-dialog'
