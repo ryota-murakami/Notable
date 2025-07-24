@@ -1,4 +1,4 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import * as Sentry from '@sentry/nextjs'
@@ -19,7 +19,28 @@ export async function middleware(req: NextRequest) {
     res.headers.set('X-XSS-Protection', '1; mode=block')
     res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
 
-    const supabase = createMiddlewareClient({ req, res })
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.warn(
+        'Supabase environment variables not set, skipping auth check'
+      )
+      return res
+    }
+
+    const supabase = createServerClient(supabaseUrl, supabaseKey, {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            res.cookies.set(name, value, options)
+          })
+        },
+      },
+    })
 
     const {
       data: { session },
@@ -88,8 +109,9 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/auth/:path*',
-    '/((?!api|_next/static|_next/image|favicon.ico|edge).*)',
+    // Temporarily disable all middleware for debugging
+    // '/dashboard/:path*',
+    // '/auth/:path*',
+    // '/((?!api|_next/static|_next/image|favicon.ico|edge).*)',
   ],
 }
