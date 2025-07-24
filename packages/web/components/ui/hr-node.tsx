@@ -2,13 +2,12 @@
 
 import * as React from 'react'
 
-import type { PlateElementProps } from 'platejs/react'
-
 import {
   PlateElement,
   useFocused,
   useReadOnly,
   useSelected,
+  type PlateElementProps,
 } from 'platejs/react'
 
 import { cn } from '@/lib/utils'

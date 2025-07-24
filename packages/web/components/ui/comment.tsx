@@ -39,8 +39,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { BasicMarksKit } from '@/components/editor/editor-stubs'
 import {
+  BasicMarksKit,
   discussionPlugin,
   type TDiscussion,
 } from '@/components/editor/editor-stubs'

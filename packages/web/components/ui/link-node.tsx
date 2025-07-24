@@ -3,10 +3,8 @@
 import * as React from 'react'
 
 import type { TLinkElement } from 'platejs'
-import type { PlateElementProps } from 'platejs/react'
-
+import { PlateElement, type PlateElementProps } from 'platejs/react'
 import { getLinkAttributes } from '@platejs/link'
-import { PlateElement } from 'platejs/react'
 
 export function LinkElement(props: PlateElementProps<TLinkElement>) {
   return (
