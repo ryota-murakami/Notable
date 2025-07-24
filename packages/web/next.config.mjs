@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
+  // output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],
