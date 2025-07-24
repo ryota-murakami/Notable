@@ -43,6 +43,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { NoteListSkeleton } from '@/components/loading-states'
 import { EmptyState } from '@/components/empty-states'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface SidebarProps {
   notes: Note[]
@@ -57,6 +58,9 @@ interface SidebarProps {
   isMobileMenuOpen: boolean
   onToggleMobileMenu: () => void
   isLoading?: boolean
+  selectedNoteIds?: Set<string>
+  onToggleNoteSelection?: (id: string) => void
+  isMultiSelectMode?: boolean
 }
 
 export function Sidebar({
@@ -72,6 +76,9 @@ export function Sidebar({
   isMobileMenuOpen,
   onToggleMobileMenu,
   isLoading = false,
+  selectedNoteIds = new Set(),
+  onToggleNoteSelection,
+  isMultiSelectMode = false,
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedFolders, setExpandedFolders] = useState<
@@ -116,12 +123,22 @@ export function Sidebar({
               <div
                 className={cn(
                   'flex items-center py-1.5 px-2 rounded-md text-sm group transition-all duration-200',
-                  activeNoteId === note.id
+                  activeNoteId === note.id && !isMultiSelectMode
                     ? 'bg-accent text-accent-foreground shadow-sm'
                     : 'hover:bg-accent/50',
                   isFolder && 'font-medium'
                 )}
               >
+                {/* Checkbox for multi-select */}
+                {isMultiSelectMode && !isFolder && (
+                  <Checkbox
+                    checked={selectedNoteIds.has(note.id)}
+                    onCheckedChange={() => onToggleNoteSelection?.(note.id)}
+                    className='mr-2'
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                )}
+
                 {/* Folder/File Icon */}
                 <div className='flex items-center mr-2'>
                   {isFolder ? (
@@ -148,11 +165,22 @@ export function Sidebar({
                     'flex-1 truncate cursor-pointer transition-colors',
                     isFolder && 'text-blue-700 dark:text-blue-300'
                   )}
-                  onClick={() => onSelectNote(note.id)}
+                  onClick={(e) => {
+                    if (isMultiSelectMode && !isFolder) {
+                      e.preventDefault()
+                      onToggleNoteSelection?.(note.id)
+                    } else {
+                      onSelectNote(note.id)
+                    }
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
-                      onSelectNote(note.id)
+                      if (isMultiSelectMode && !isFolder) {
+                        onToggleNoteSelection?.(note.id)
+                      } else {
+                        onSelectNote(note.id)
+                      }
                     }
                   }}
                   role='button'
