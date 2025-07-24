@@ -314,3 +314,6 @@ function generateLargeContent(wordCount: number): string {
   }
   return content.trim()
 }
+
+// Export alias for backward compatibility
+export { runNoteOperationBenchmarks as runAllBenchmarks }
