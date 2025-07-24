@@ -143,7 +143,10 @@ export const LazyPerformanceDashboard = withLazyLoading(
 )
 
 export const LazyBillingDashboard = withLazyLoading(
-  () => import('@/app/dashboard/billing/page'),
+  () =>
+    import('@/app/dashboard/billing/page').then((mod) => ({
+      default: mod.default,
+    })),
   <SpinnerLoader text='Loading billing dashboard...' />
 )
 
