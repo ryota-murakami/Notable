@@ -6,22 +6,22 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import {
   Bold,
-  Italic,
-  Underline,
-  Strikethrough,
   Code,
   Heading1,
   Heading2,
   Heading3,
-  Quote,
+  Image,
+  Italic,
+  Link,
   List,
   ListOrdered,
-  Link,
-  Image,
+  Quote,
+  Strikethrough,
+  Underline,
 } from 'lucide-react'
 import {
-  insertLink as insertLinkStub,
   insertImage as insertImageStub,
+  insertLink as insertLinkStub,
 } from '@/components/editor/editor-stubs'
 
 interface ToolbarButtonProps {

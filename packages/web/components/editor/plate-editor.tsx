@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Plate, usePlateEditor } from 'platejs/react'
-import { PlateElement } from 'platejs/react'
 
 // Import base editor configuration
 import { BaseEditorKit } from './editor-stubs'
@@ -15,13 +14,6 @@ import { FloatingToolbarButtons } from '@/components/ui/floating-toolbar-buttons
 
 // Import proper component mappings
 import { Editor } from '@/components/ui/editor'
-import { ParagraphElement } from '@/components/ui/paragraph-node'
-import { HeadingElement } from '@/components/ui/heading-node'
-import { BlockquoteElement } from '@/components/ui/blockquote-node'
-import { CodeBlockElement } from '@/components/ui/code-block-node'
-import { HrElement } from '@/components/ui/hr-node'
-import { LinkElement } from '@/components/ui/link-node'
-import { BlockList } from '@/components/ui/block-list'
 
 // Simple className utility function
 const cn = (...classes: (string | undefined)[]): string => {

@@ -6,7 +6,6 @@ import { BasicMarksKit } from '@/components/editor/plugins/basic-marks-kit'
 import { BasicBlocksKit } from '@/components/editor/plugins/basic-blocks-kit'
 import { FixedToolbarButtons } from '@/components/ui/fixed-toolbar-buttons'
 import { FixedToolbar } from '@/components/ui/fixed-toolbar'
-import { Editor } from '@/components/ui/editor'
 
 const initialValue = [
   {
