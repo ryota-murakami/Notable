@@ -23,7 +23,8 @@ import { FixedToolbarButtons } from '@/components/ui/fixed-toolbar-buttons'
 import { Code, Download, FileImage, FileText, Globe, Tag } from 'lucide-react'
 
 import type { Note } from '@/types/note'
-import { useExport } from '@/hooks/use-export'
+import { type ExportFormat, useExport } from '@/hooks/use-export'
+import { PDFExportDialog } from '@/components/export/pdf-export-dialog'
 
 export interface PlateEditorProps {
   note: Note
@@ -60,6 +61,7 @@ export function PlateEditorComponent({
 
   // Export functionality
   const { exportNote, isExporting, exportProgress } = useExport()
+  const [showPDFDialog, setShowPDFDialog] = useState(false)
 
   const editor = usePlateEditor({
     plugins: EditorKit,
@@ -155,14 +157,13 @@ export function PlateEditorComponent({
     setTags(updatedTags)
   }
 
-  const handleExport = async (
-    format: 'markdown' | 'html' | 'pdf' | 'react'
-  ) => {
+  const handleExport = async (format: ExportFormat, options: any = {}) => {
     try {
       await exportNote(note, format, {
         includeTitle: true,
         includeMetadata: true,
         includeStyles: true,
+        ...options,
       })
     } catch (error) {
       console.error('Export failed:', error)
@@ -267,7 +268,7 @@ export function PlateEditorComponent({
                     <Button
                       variant='ghost'
                       className='w-full justify-start'
-                      onClick={() => handleExport('pdf')}
+                      onClick={() => setShowPDFDialog(true)}
                       disabled={isExporting}
                     >
                       <FileImage className='h-4 w-4 mr-2' />
@@ -310,6 +311,14 @@ export function PlateEditorComponent({
           </Plate>
         </div>
       </div>
+
+      {/* PDF Export Dialog */}
+      <PDFExportDialog
+        open={showPDFDialog}
+        onOpenChange={setShowPDFDialog}
+        onExport={handleExport}
+        isExporting={isExporting}
+      />
     </div>
   )
 }

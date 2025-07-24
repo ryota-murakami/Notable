@@ -14,6 +14,17 @@ interface ExportOptions {
   includeMetadata?: boolean
   includeStyles?: boolean
   templateName?: string
+  // PDF-specific options
+  includePageNumbers?: boolean
+  includeTableOfContents?: boolean
+  headerText?: string
+  footerText?: string
+  pageMargins?: {
+    top?: string
+    right?: string
+    bottom?: string
+    left?: string
+  }
 }
 
 export function useExport() {
@@ -307,13 +318,192 @@ export function ${componentName}({ className }: ${componentName}Props) {
 export default ${componentName}`
   }, [])
 
-  // Generate PDF using browser printing
+  // Generate table of contents from content
+  const generateTableOfContents = useCallback((content: any): string => {
+    const headings: Array<{ level: number; text: string; id: string }> = []
+    let headingCounter = 0
+
+    const extractHeadings = (node: any) => {
+      if (!node || typeof node === 'string') return
+
+      if (node.type && node.type.match(/^h[1-6]$/)) {
+        const level = parseInt(node.type.charAt(1))
+        const text =
+          node.children
+            ?.map((child: any) =>
+              typeof child === 'string' ? child : child.text || ''
+            )
+            .join('') || ''
+
+        headingCounter++
+        const id = `heading-${headingCounter}`
+        headings.push({ level, text, id })
+      }
+
+      if (node.children && Array.isArray(node.children)) {
+        node.children.forEach(extractHeadings)
+      }
+    }
+
+    if (Array.isArray(content)) {
+      content.forEach(extractHeadings)
+    } else {
+      extractHeadings(content)
+    }
+
+    // Build TOC HTML
+    let tocHTML = '<h2>Table of Contents</h2><ul>'
+    headings.forEach((heading) => {
+      const indent = (heading.level - 1) * 20
+      tocHTML += `<li style="margin-left: ${indent}px;">
+        <a href="#${heading.id}">${heading.text}</a>
+      </li>`
+    })
+    tocHTML += '</ul>'
+
+    return tocHTML
+  }, [])
+
+  // Generate PDF using browser printing with customization options
   const generatePDF = useCallback(
-    async (content: any, title?: string): Promise<void> => {
-      const htmlContent = convertToHTML(content, title, {
-        includeStyles: true,
-        includeMetadata: true,
-      })
+    async (
+      content: any,
+      title?: string,
+      options: ExportOptions = {}
+    ): Promise<void> => {
+      const {
+        includePageNumbers = false,
+        includeTableOfContents = false,
+        headerText = '',
+        footerText = '',
+        pageMargins = {
+          top: '1in',
+          right: '1in',
+          bottom: '1in',
+          left: '1in',
+        },
+      } = options
+
+      // Generate table of contents if requested
+      let tocHTML = ''
+      if (includeTableOfContents) {
+        tocHTML = generateTableOfContents(content)
+      }
+
+      // Create custom HTML with PDF-specific styling
+      const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title || 'Untitled Note'}</title>
+  <style>
+    @page {
+      margin: ${pageMargins.top || '1in'} ${pageMargins.right || '1in'} ${
+        pageMargins.bottom || '1in'
+      } ${pageMargins.left || '1in'};
+      @top-left {
+        content: "${headerText}";
+        font-size: 10pt;
+        color: #666;
+      }
+      @bottom-right {
+        content: "${footerText}";
+        font-size: 10pt;
+        color: #666;
+      }
+      ${
+        includePageNumbers
+          ? `
+      @bottom-center {
+        content: "Page " counter(page) " of " counter(pages);
+        font-size: 10pt;
+        color: #666;
+      }
+      `
+          : ''
+      }
+    }
+    
+    @media print {
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: #333;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        color: #2c3e50;
+        page-break-after: avoid;
+      }
+      h1 { font-size: 24pt; margin-top: 2rem; }
+      h2 { font-size: 20pt; margin-top: 1.5rem; }
+      h3 { font-size: 16pt; margin-top: 1.2rem; }
+      p { margin-bottom: 1rem; orphans: 3; widows: 3; }
+      blockquote {
+        border-left: 4px solid #3498db;
+        padding-left: 1rem;
+        margin-left: 0;
+        font-style: italic;
+        color: #7f8c8d;
+      }
+      pre {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        page-break-inside: avoid;
+      }
+      code {
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: Monaco, 'Courier New', monospace;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        page-break-inside: avoid;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 0.5rem;
+        text-align: left;
+      }
+      th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+      }
+      .toc {
+        page-break-after: always;
+        margin-bottom: 2rem;
+      }
+      .toc h2 {
+        margin-bottom: 1rem;
+      }
+      .toc ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .toc li {
+        margin-bottom: 0.5rem;
+      }
+      .toc a {
+        text-decoration: none;
+        color: #3498db;
+      }
+      .toc .page-num {
+        float: right;
+        color: #666;
+      }
+    }
+  </style>
+</head>
+<body>
+  ${includeTableOfContents ? `<div class="toc">${tocHTML}</div>` : ''}
+  ${convertToHTML(content, title, { includeStyles: false, includeMetadata: false })}
+</body>
+</html>`
 
       // Create a new window for printing
       const printWindow = window.open('', '_blank')
@@ -330,7 +520,7 @@ export default ${componentName}`
       printWindow.print()
       printWindow.close()
     },
-    [convertToHTML]
+    [convertToHTML, generateTableOfContents]
   )
 
   // Main export function
@@ -380,7 +570,7 @@ export default ${componentName}`
 
           case 'pdf':
             setExportProgress(50)
-            await generatePDF(content, title)
+            await generatePDF(content, title, options)
             setExportProgress(100)
             toast({
               title: 'PDF Export',
