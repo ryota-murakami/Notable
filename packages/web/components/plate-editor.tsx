@@ -86,7 +86,6 @@ export function PlateEditorComponent({
 
   // Export functionality
   const { exportNote, isExporting, exportProgress } = useExport()
-  const [showPDFDialog, setShowPDFDialog] = useState(false)
 
   // Handle typing indicators
   const handleStartTyping = () => {
@@ -128,7 +127,11 @@ export function PlateEditorComponent({
     }
 
     const timeoutId = setTimeout(saveNote, 1000)
-    return () => clearTimeout(timeoutId)
+    return () => {
+      clearTimeout(timeoutId)
+      // Save immediately on unmount to prevent data loss
+      saveNote()
+    }
   }, [editorValue, title, tags, note, onUpdateNote])
 
   // Save note when title changes

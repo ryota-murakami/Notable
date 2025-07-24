@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils'
 
 interface EditorProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'minimal'
-  children?: React.ReactNode
 }
 
 export function Editor({
@@ -30,7 +29,6 @@ export function Editor({
 
 interface EditorContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'minimal'
-  children?: React.ReactNode
 }
 
 export function EditorContainer({

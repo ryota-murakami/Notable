@@ -81,7 +81,6 @@ export function PlateEditor({
             contentEditable
             suppressContentEditableWarning
             className='outline-none'
-            placeholder={placeholder}
           />
         </div>
       </Plate>

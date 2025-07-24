@@ -13,7 +13,6 @@ interface EnhancedPlateEditorProps {
   onChange?: (value: any[]) => void
   placeholder?: string
   className?: string
-  showToolbar?: boolean
 }
 
 export function EnhancedPlateEditor({
@@ -21,7 +20,6 @@ export function EnhancedPlateEditor({
   onChange,
   placeholder = 'Start writing...',
   className,
-  showToolbar = false,
 }: EnhancedPlateEditorProps) {
   return (
     <div

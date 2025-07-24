@@ -13,6 +13,15 @@ export const commentPlugin = {
 
 export const suggestionPlugin = {
   key: 'suggestion',
+  pluginKey: 'suggestion',
+}
+
+// Runtime helpers for suggestion API
+export const suggestionHelpers = {
+  activeId: () => undefined,
+  hoverId: () => undefined,
+  nodeId: () => undefined,
+  dataList: () => [],
 }
 
 export const discussionPlugin = {
@@ -34,13 +43,13 @@ export const useChat = () => ({
   _abortFakeStream: () => {},
 })
 
-export const getBlockType = (node?: any) => 'p'
-export const setBlockType = (editor: any, type: string) => {}
+export const getBlockType = (_node?: any) => 'p'
+export const setBlockType = (_editor: any, _type: string) => {}
 export const insertNodes = () => {}
 export const insertLink = () => {}
 export const insertImage = () => {}
-export const insertBlock = (editor: any, value: string) => {}
-export const insertInlineElement = (editor: any, value: string) => {}
+export const insertBlock = (_editor: any, _value: string) => {}
+export const insertInlineElement = (_editor: any, _value: string) => {}
 
 // Placeholder types
 export type TSuggestionData = {
