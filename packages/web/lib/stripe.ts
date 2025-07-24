@@ -99,7 +99,7 @@ export const STRIPE_WEBHOOK_EVENTS = {
 /**
  * Create a Stripe checkout session for subscription
  */
-export async function createCheckoutSession({
+export function createCheckoutSession({
   customerId,
   priceId,
   successUrl,
@@ -152,7 +152,7 @@ export async function createCheckoutSession({
 /**
  * Create a billing portal session for subscription management
  */
-export async function createBillingPortalSession({
+export function createBillingPortalSession({
   customerId,
   returnUrl,
 }: {
@@ -226,7 +226,7 @@ export async function getSubscription(
 /**
  * Cancel a subscription
  */
-export async function cancelSubscription(
+export function cancelSubscription(
   subscriptionId: string,
   cancelAtPeriodEnd = true
 ): Promise<Stripe.Subscription> {

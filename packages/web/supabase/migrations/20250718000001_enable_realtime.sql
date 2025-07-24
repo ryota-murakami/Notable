@@ -111,9 +111,5 @@ LEFT JOIN tags t ON nt.tag_id = t.id
 WHERE n.deleted_at IS NULL
 GROUP BY n.id, n.title, n.content, n.user_id, n.folder_id, n.is_public, n.created_at, n.updated_at, n.deleted_at, f.name;
 
--- Enable RLS on the view
-ALTER VIEW note_updates ENABLE ROW LEVEL SECURITY;
-
--- Create RLS policy for the view
-CREATE POLICY "Users can view own note updates" ON note_updates
-    FOR SELECT USING (auth.uid() = user_id);
+-- Note: RLS cannot be enabled on views in PostgreSQL
+-- Security is handled by the underlying tables' RLS policies
