@@ -59,7 +59,7 @@ export const SpinnerLoader = ({ text = 'Loading...' }: { text?: string }) => (
 )
 
 // HOC to wrap components with lazy loading and error boundaries
-export function withLazyLoading<P extends object>(
+export function withLazyLoading<P extends object = {}>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   fallback: ReactNode = <ComponentSkeleton />,
   errorFallback?: ReactNode
@@ -137,7 +137,7 @@ class ErrorBoundary extends React.Component<
 export const LazyPerformanceDashboard = withLazyLoading(
   () =>
     import('@/components/performance/performance-dashboard').then((mod) => ({
-      default: mod.PerformanceDashboard,
+      default: mod.PerformanceDashboard as ComponentType<{}>,
     })),
   <CardSkeleton />
 )
@@ -145,7 +145,7 @@ export const LazyPerformanceDashboard = withLazyLoading(
 export const LazyBillingDashboard = withLazyLoading(
   () =>
     import('@/app/dashboard/billing/page').then((mod) => ({
-      default: mod.default,
+      default: mod.default as ComponentType<{}>,
     })),
   <SpinnerLoader text='Loading billing dashboard...' />
 )

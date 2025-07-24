@@ -553,4 +553,5 @@ if (require.main === module) {
   main()
 }
 
-export { generatePerformanceReport, PerformanceReport }
+export { generatePerformanceReport }
+export type { PerformanceReport }

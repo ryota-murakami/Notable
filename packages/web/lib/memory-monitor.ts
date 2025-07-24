@@ -246,6 +246,13 @@ class MemoryMonitor {
   }
 
   /**
+   * Get memory report (alias for getReport)
+   */
+  getMemoryReport() {
+    return this.getReport()
+  }
+
+  /**
    * Clear metrics history
    */
   clearHistory() {

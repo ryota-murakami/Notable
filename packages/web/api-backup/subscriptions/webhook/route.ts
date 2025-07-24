@@ -120,10 +120,12 @@ async function handleSubscriptionChange(
         subscription_id: subscription.id,
         plan: plan.id,
         status: subscription.status,
-        current_period_start: new Date(
-          subscription.current_period_start * 1000
-        ),
-        current_period_end: new Date(subscription.current_period_end * 1000),
+        current_period_start: subscription.current_period_start
+          ? new Date(subscription.current_period_start * 1000).toISOString()
+          : null,
+        current_period_end: subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : null,
         trial_end: subscription.trial_end
           ? new Date(subscription.trial_end * 1000)
           : null,
