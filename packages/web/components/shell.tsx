@@ -52,7 +52,7 @@ export function Shell() {
   const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(new Set())
   const [showHiddenNotes, setShowHiddenNotes] = useState(false)
   const { toast } = useToast()
-  const { user, loading: authLoading } = useSupabase()
+  const { loading: authLoading } = useSupabase()
   const { exportNote, isExporting } = useExport()
 
   // Use Supabase notes hook with real-time sync
@@ -591,25 +591,6 @@ export function Shell() {
             <LoadingSpinner className='h-8 w-8 mx-auto mb-4' />
             <p className='text-muted-foreground'>Loading...</p>
           </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Redirect to auth if not authenticated
-  if (!user) {
-    return (
-      <div className='flex h-screen bg-background items-center justify-center'>
-        <div className='text-center'>
-          <p className='text-muted-foreground mb-4'>
-            Please sign in to access your notes
-          </p>
-          <button
-            onClick={() => (window.location.href = '/auth')}
-            className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90'
-          >
-            Sign In
-          </button>
         </div>
       </div>
     )
