@@ -43,7 +43,6 @@ export function mapNoteToDatabase(
     content: note.content || '',
     user_id: userId,
     folder_id: note.parentId || null,
-    is_public: false, // Default to private
   }
 
   if (note.id) {
