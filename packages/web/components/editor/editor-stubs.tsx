@@ -1,12 +1,40 @@
 'use client'
 
-// Stub implementations for missing editor components
-export const BaseEditorKit = []
+// Import all the installed Plate kits
+import { BasicMarksKit as ImportedBasicMarksKit } from './plugins/basic-marks-kit'
+import { BasicBlocksKit } from './plugins/basic-blocks-kit'
+import { LinkKit } from './plugins/link-kit'
+import { ListKit } from './plugins/list-kit'
+import { IndentKit } from './plugins/indent-kit'
+import { AIKit } from './plugins/ai-kit'
+import { CommentKit } from './plugins/comment-kit'
+import { SuggestionKit } from './plugins/suggestion-kit'
+import { FixedToolbarKit } from './plugins/fixed-toolbar-kit'
+import { FloatingToolbarKit } from './plugins/floating-toolbar-kit'
+import { CursorOverlayKit } from './plugins/cursor-overlay-kit'
+import { MarkdownKit } from './plugins/markdown-kit'
 
-export const EditorKit = []
+// Comprehensive editor kit with all features
+export const BaseEditorKit = [
+  ...ImportedBasicMarksKit,
+  ...BasicBlocksKit,
+  ...LinkKit,
+  ...ListKit,
+  ...IndentKit,
+  ...AIKit,
+  ...CommentKit,
+  ...SuggestionKit,
+  ...FixedToolbarKit,
+  ...FloatingToolbarKit,
+  ...CursorOverlayKit,
+  ...MarkdownKit,
+]
 
-export const BasicMarksKit = []
+export const EditorKit = BaseEditorKit
 
+export const BasicMarksKit = ImportedBasicMarksKit
+
+// Re-export for backwards compatibility
 export const commentPlugin = {
   key: 'comment',
 }

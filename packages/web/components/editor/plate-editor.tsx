@@ -10,6 +10,18 @@ import { BaseEditorKit } from './editor-stubs'
 // Import toolbar components
 import { FixedToolbarButtons } from '@/components/ui/fixed-toolbar-buttons'
 import { FixedToolbar } from '@/components/ui/fixed-toolbar'
+import { FloatingToolbar } from '@/components/ui/floating-toolbar'
+import { FloatingToolbarButtons } from '@/components/ui/floating-toolbar-buttons'
+
+// Import proper component mappings
+import { Editor } from '@/components/ui/editor'
+import { ParagraphElement } from '@/components/ui/paragraph-node'
+import { HeadingElement } from '@/components/ui/heading-node'
+import { BlockquoteElement } from '@/components/ui/blockquote-node'
+import { CodeBlockElement } from '@/components/ui/code-block-node'
+import { HrElement } from '@/components/ui/hr-node'
+import { LinkElement } from '@/components/ui/link-node'
+import { BlockList } from '@/components/ui/block-list'
 
 // Simple className utility function
 const cn = (...classes: (string | undefined)[]): string => {
@@ -36,19 +48,21 @@ export function PlateEditor({
     value,
     override: {
       components: {
-        // Use generic PlateElement for all types to prevent missing component errors
-        p: PlateElement,
-        h1: PlateElement,
-        h2: PlateElement,
-        h3: PlateElement,
-        h4: PlateElement,
-        h5: PlateElement,
-        h6: PlateElement,
-        blockquote: PlateElement,
-        ul: PlateElement,
-        ol: PlateElement,
-        li: PlateElement,
-        // Add other common elements as needed
+        // Use proper Plate UI components - disable for now to avoid type issues
+        // p: ParagraphElement,
+        // h1: HeadingElement,
+        // h2: HeadingElement,
+        // h3: HeadingElement,
+        // h4: HeadingElement,
+        // h5: HeadingElement,
+        // h6: HeadingElement,
+        // blockquote: BlockquoteElement,
+        // hr: HrElement,
+        // a: LinkElement,
+        // ul: BlockList,
+        // ol: BlockList,
+        // li: PlateElement,
+        // code_block: CodeBlockElement,
       },
     },
   })
@@ -67,7 +81,7 @@ export function PlateEditor({
           </FixedToolbar>
         )}
 
-        <div
+        <Editor
           className={cn(
             'relative overflow-x-auto',
             'min-h-[400px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background',
@@ -76,13 +90,11 @@ export function PlateEditor({
             '[&_.slate-editor]:min-h-[400px] [&_.slate-editor]:outline-none',
             '[&_.slate-editor]:px-0 [&_.slate-editor]:py-2'
           )}
-        >
-          <div
-            contentEditable
-            suppressContentEditableWarning
-            className='outline-none'
-          />
-        </div>
+        />
+
+        <FloatingToolbar>
+          <FloatingToolbarButtons />
+        </FloatingToolbar>
       </Plate>
     </div>
   )
