@@ -18,11 +18,12 @@ import {
 import { ViewModeRenderer } from '@/components/view-mode-renderer'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Badge } from '@/components/ui/badge'
-import { UserCheck, Users, Wifi, WifiOff } from 'lucide-react'
+import { UserCheck, Users, CheckSquare } from 'lucide-react'
 import { BulkOperationsToolbar } from '@/components/bulk-operations-toolbar'
 import { type ExportFormat, useExport } from '@/hooks/use-export'
 import { Button } from '@/components/ui/button'
-import { CheckSquare } from 'lucide-react'
+import { OfflineStatus } from '@/components/offline-status'
+import { ConflictResolutionDialog } from '@/components/conflict-resolution-dialog'
 
 export function Shell() {
   const [activeNoteId, setActiveNoteId] = useState<string>('')
@@ -49,7 +50,6 @@ export function Shell() {
     deleteNote,
     loadNotes: _loadNotes,
     // Real-time sync state
-    isConnected,
     connectionError,
     onlineUsers,
     typingUsers,
@@ -636,26 +636,11 @@ export function Shell() {
                   onNavigateToNote={setActiveNoteId}
                 />
                 <div className='flex items-center gap-3'>
+                  {/* Offline status indicator */}
+                  <OfflineStatus />
+
                   {/* Real-time sync indicators */}
                   <div className='flex items-center gap-2'>
-                    {/* Connection status */}
-                    <Badge
-                      variant={isConnected ? 'default' : 'destructive'}
-                      className='text-xs'
-                    >
-                      {isConnected ? (
-                        <>
-                          <Wifi className='h-3 w-3 mr-1' />
-                          Connected
-                        </>
-                      ) : (
-                        <>
-                          <WifiOff className='h-3 w-3 mr-1' />
-                          Offline
-                        </>
-                      )}
-                    </Badge>
-
                     {/* Online users count */}
                     {onlineUsers.length > 0 && (
                       <Badge variant='secondary' className='text-xs'>
@@ -742,6 +727,9 @@ export function Shell() {
         folders={folders}
         isExporting={isExporting}
       />
+
+      {/* Conflict Resolution Dialog */}
+      <ConflictResolutionDialog />
     </div>
   )
 }
