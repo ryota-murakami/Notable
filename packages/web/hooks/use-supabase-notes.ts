@@ -9,9 +9,13 @@ import { offlineManager } from '@/lib/offline-manager'
 
 interface UseSupabaseNotesOptions {
   activeNoteId?: string
+  includeHidden?: boolean
 }
 
-export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
+export function useSupabaseNotes({
+  activeNoteId,
+  includeHidden = false,
+}: UseSupabaseNotesOptions) {
   const { user, supabase } = useSupabase()
   const [notes, setNotes] = useState<Note[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -82,7 +86,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
         return
       }
 
-      const { data: notesData, error: notesError } = await supabase
+      let query = supabase
         .from('notes')
         .select(
           `
@@ -95,7 +99,16 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
         )
         .eq('user_id', user.id)
         .is('deleted_at', null)
-        .order('updated_at', { ascending: false })
+
+      // Filter out hidden notes unless explicitly requested
+      if (!includeHidden) {
+        query = query.eq('is_hidden', false)
+      }
+
+      const { data: notesData, error: notesError } = await query.order(
+        'updated_at',
+        { ascending: false }
+      )
 
       if (notesError) throw notesError
 
@@ -116,6 +129,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
             note.note_tags?.map((nt: any) => nt.tags.name).filter(Boolean) ||
             [],
           isFolder: false,
+          isHidden: note.is_hidden || false,
         })) || []
 
       // Load folders separately
@@ -171,7 +185,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
     } finally {
       setIsLoading(false)
     }
-  }, [user, supabase, toast])
+  }, [user, supabase, toast, includeHidden])
 
   // Save note to Supabase
   const saveNote = useCallback(
@@ -214,6 +228,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
                   content: note.content,
                   user_id: user.id,
                   folder_id: note.parentId,
+                  is_hidden: note.isHidden || false,
                   updated_at: new Date().toISOString(),
                   tags: note.tags,
                 },
@@ -247,6 +262,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
             content: note.content,
             user_id: user.id,
             folder_id: note.parentId,
+            is_hidden: note.isHidden || false,
             updated_at: new Date().toISOString(),
           })
 
@@ -356,6 +372,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
           parentId,
           isFolder: false,
           tags: [],
+          isHidden: false,
           createdAt: timestamp,
           updatedAt: timestamp,
         }
@@ -377,6 +394,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
               content: newNote.content,
               user_id: user.id,
               folder_id: parentId,
+              is_hidden: false,
               created_at: timestamp,
               updated_at: timestamp,
             },
@@ -398,6 +416,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
             content: newNote.content,
             user_id: user.id,
             folder_id: parentId,
+            is_hidden: false,
           })
           .select()
           .single()
@@ -410,6 +429,7 @@ export function useSupabaseNotes({ activeNoteId }: UseSupabaseNotesOptions) {
           id: data.id,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
+          isHidden: data.is_hidden || false,
         }
 
         // Update local state with real ID
