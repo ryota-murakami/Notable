@@ -26,6 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LoadingSpinner } from '@/components/loading-states'
 import { useToast } from '@/hooks/use-toast'
 import { TemplateEngine } from '@/utils/template-engine'
+import { createClient } from '@/utils/supabase/client'
 import type {
   TemplateCreateRequest,
   TemplateCategory,
@@ -97,24 +98,42 @@ export function TemplateCreator({
 
     setIsLoading(true)
     try {
-      // TODO: Replace with actual note fetching logic
-      // For now, we'll simulate loading note data
-      const mockNoteData = {
-        title: 'Sample Note Title',
-        content: [
-          { type: 'h1', children: [{ text: 'Sample Note Title' }] },
-          {
-            type: 'p',
-            children: [{ text: 'This is sample content from the note.' }],
-          },
-        ],
+      const supabase = createClient()
+
+      // Fetch the note data directly from the database
+      const { data: noteData, error } = await supabase
+        .from('notes')
+        .select('title, content')
+        .eq('id', noteId)
+        .single()
+
+      if (error || !noteData) {
+        console.error('Failed to fetch note data:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to fetch note data. Please try again.',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // Parse the content if it's a JSON string
+      let parsedContent
+      try {
+        parsedContent =
+          typeof noteData.content === 'string'
+            ? JSON.parse(noteData.content)
+            : noteData.content
+      } catch {
+        // If content is not valid JSON, treat it as plain text
+        parsedContent = [{ type: 'p', children: [{ text: noteData.content }] }]
       }
 
       setTemplateData((prev) => ({
         ...prev,
-        name: `Template from "${mockNoteData.title}"`,
-        titleTemplate: mockNoteData.title,
-        contentTemplate: mockNoteData.content,
+        name: `Template from "${noteData.title}"`,
+        titleTemplate: noteData.title,
+        contentTemplate: parsedContent,
       }))
     } catch (error) {
       console.error('Failed to load note data:', error)
@@ -618,7 +637,9 @@ export function TemplateCreator({
           <>
             <Tabs
               value={step}
-              onValueChange={(value) => setStep(value as any)}
+              onValueChange={(value) =>
+                setStep(value as 'details' | 'variables' | 'preview')
+              }
               className='flex-1'
             >
               <TabsList className='grid w-full grid-cols-3'>
