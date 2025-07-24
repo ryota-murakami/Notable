@@ -38,6 +38,15 @@
     "node": "24.4.1"
   },
   "lint-staged": {
+    "packages/web/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
+      "pnpm --filter @notable/web lint:fix --no-error-on-unmatched-pattern"
+    ],
+    "packages/mobile/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
+      "pnpm --filter @notable/mobile lint:fix --no-error-on-unmatched-pattern"
+    ],
+    "packages/electron/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
+      "pnpm --filter @notable/electron lint:fix --no-error-on-unmatched-pattern"
+    ],
     "*": "prettier --ignore-unknown --write"
   },
   "pnpm": {
