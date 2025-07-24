@@ -143,6 +143,7 @@ export function Sidebar({
                   : 'hover:bg-accent/50',
                 isFolder && 'font-medium'
               )}
+              data-selected={activeNoteId === note.id ? 'true' : 'false'}
             >
               {/* Checkbox for multi-select */}
               {isMultiSelectMode && !isFolder && (
@@ -300,6 +301,7 @@ export function Sidebar({
             ? 'fixed inset-y-0 left-0 w-64 flex translate-x-0'
             : 'fixed inset-y-0 left-0 w-64 -translate-x-full'
         )}
+        data-sidebar
       >
         {/* Header */}
         <div className={cn('p-4 border-b', isCollapsed && 'p-2')}>
