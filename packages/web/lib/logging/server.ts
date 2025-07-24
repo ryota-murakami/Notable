@@ -1,6 +1,7 @@
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
 // Conditionally import Sentry to avoid build issues
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let Sentry: any = null
 if (typeof window === 'undefined' && process.env.VERCEL) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
