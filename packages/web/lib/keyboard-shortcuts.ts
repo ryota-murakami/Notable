@@ -277,10 +277,14 @@ export class KeyboardShortcutManager {
 
   private saveCustomConfig() {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(
-        'keyboard-shortcuts',
-        JSON.stringify(this.customConfig)
-      )
+      try {
+        localStorage.setItem(
+          'keyboard-shortcuts',
+          JSON.stringify(this.customConfig)
+        )
+      } catch (error) {
+        console.error('Failed to save custom keyboard shortcuts:', error)
+      }
     }
   }
 
