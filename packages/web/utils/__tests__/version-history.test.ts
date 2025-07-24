@@ -9,9 +9,7 @@ const createMockSupabase = () => ({
         eq: jest.fn(() => ({
           single: jest.fn(),
         })),
-        order: jest.fn(() => ({
-          // Remove the 'then' property that causes static analysis warning
-        })),
+        order: jest.fn(() => ({})),
       })),
       update: jest.fn(() => ({
         eq: jest.fn(() => ({
