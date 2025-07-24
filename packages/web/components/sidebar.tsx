@@ -88,11 +88,12 @@ export function Sidebar({
   const filteredNotes = searchQuery
     ? notes.filter(
         (note) =>
-          note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          note.tags.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase())
-          )
+          (note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            note.tags?.some((tag) =>
+              tag.toLowerCase().includes(searchQuery.toLowerCase())
+            )) ??
+          false
       )
     : notes
 

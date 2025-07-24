@@ -82,7 +82,7 @@ const NoteRow = React.memo<{
         {highlightedTitle}
       </h3>
       <p className='text-sm text-gray-500 dark:text-gray-400 truncate mt-1'>
-        {note.excerpt || note.content?.substring(0, 100) || 'No content'}
+        {note.content?.substring(0, 100) || 'No content'}
       </p>
       <div className='flex items-center gap-2 mt-2'>
         <span className='text-xs text-gray-400 dark:text-gray-500'>

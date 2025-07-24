@@ -95,7 +95,7 @@ export function SearchDialog({
   const allTags = useMemo(() => {
     const tagSet = new Set<string>()
     notes.forEach((note) => {
-      note.tags.forEach((tag) => tagSet.add(tag))
+      note.tags?.forEach((tag) => tagSet.add(tag))
     })
     return Array.from(tagSet).sort()
   }, [notes])
@@ -125,8 +125,8 @@ export function SearchDialog({
 
       // Filter by tags
       if (filters.tags.length > 0) {
-        const hasMatchingTag = filters.tags.some((tag) =>
-          note.tags.includes(tag)
+        const hasMatchingTag = filters.tags.some(
+          (tag) => note.tags?.includes(tag) ?? false
         )
         if (!hasMatchingTag) return false
       }
@@ -391,7 +391,7 @@ export function SearchDialog({
 
                       <div className='flex items-center justify-between'>
                         <div className='flex flex-wrap gap-1'>
-                          {result.note.tags.map((tag) => (
+                          {result.note.tags?.map((tag) => (
                             <Badge
                               key={tag}
                               variant='secondary'

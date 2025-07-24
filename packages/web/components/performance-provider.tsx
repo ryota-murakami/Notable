@@ -11,6 +11,13 @@ import { performanceMonitor } from '@/lib/performance'
 import { memoryMonitor } from '@/lib/memory-monitor'
 // import { useAnalytics } from '@/lib/analytics'
 
+// Simple analytics placeholder
+const analytics = {
+  track: (event: string, properties?: Record<string, any>) => {
+    console.log(`Analytics: ${event}`, properties)
+  },
+}
+
 interface PerformanceContextValue {
   performanceMonitor: typeof performanceMonitor
   memoryMonitor: typeof memoryMonitor
@@ -139,7 +146,7 @@ export function PerformanceProvider({
     }, 60000) // Report every minute
 
     return () => clearInterval(reportInterval)
-  }, [analytics])
+  }, [])
 
   const value: PerformanceContextValue = {
     performanceMonitor,
