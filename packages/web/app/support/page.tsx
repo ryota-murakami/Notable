@@ -63,7 +63,7 @@ export default function Support() {
                 <div>
                   <h3 className="text-lg font-medium text-white mb-1">Community Forum</h3>
                   <p className="text-gray-300 text-sm mb-2">Connect with other Notable users</p>
-                  <a href="#" className="text-blue-400 hover:text-blue-300 text-sm">Join our community</a>
+                  <span className="text-gray-500 text-sm">Coming soon</span>
                 </div>
               </div>
               
@@ -72,7 +72,7 @@ export default function Support() {
                 <div>
                   <h3 className="text-lg font-medium text-white mb-1">Documentation</h3>
                   <p className="text-gray-300 text-sm mb-2">Comprehensive guides and tutorials</p>
-                  <a href="#" className="text-blue-400 hover:text-blue-300 text-sm">View documentation</a>
+                  <span className="text-gray-500 text-sm">Coming soon</span>
                 </div>
               </div>
               
@@ -81,7 +81,7 @@ export default function Support() {
                 <div>
                   <h3 className="text-lg font-medium text-white mb-1">Bug Reports</h3>
                   <p className="text-gray-300 text-sm mb-2">Report issues and help us improve</p>
-                  <a href="#" className="text-blue-400 hover:text-blue-300 text-sm">Submit bug report</a>
+                  <span className="text-gray-500 text-sm">Coming soon</span>
                 </div>
               </div>
             </div>

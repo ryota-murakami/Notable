@@ -61,16 +61,14 @@ export class YjsDocumentPersistence {
   async saveDocument(noteId: string, doc: Doc, userId: string): Promise<void> {
     try {
       const state = encodeStateAsUpdate(doc)
-      const version = this.getDocumentVersion(doc)
 
-      this.log('Saving document', { noteId, stateSize: state.length, version })
+      this.log('Saving document', { noteId, stateSize: state.length })
 
       const { error } = await this.supabase
         .from(this.tableName)
         .upsert({
           note_id: noteId,
           state: state, // Store as binary data (BYTEA)
-          version,
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'note_id'
@@ -103,7 +101,7 @@ export class YjsDocumentPersistence {
         .limit(1)
         .single()
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      if (error && error.status !== 406) { // Not found is acceptable
         throw new Error(`Failed to load document: ${error.message}`)
       }
 
@@ -119,8 +117,7 @@ export class YjsDocumentPersistence {
 
       this.log('Document loaded successfully', { 
         noteId, 
-        stateSize: state.length,
-        version: data.version 
+        stateSize: state.length
       })
 
       return doc
@@ -131,15 +128,6 @@ export class YjsDocumentPersistence {
     }
   }
 
-  /**
-   * Get document version (based on state vector)
-   */
-  private getDocumentVersion(doc: Doc): number {
-    // Simple version based on state vector length
-    // In a real implementation, you might want a more sophisticated versioning system
-    const stateVector = doc.getStateVector()
-    return Array.from(stateVector).reduce((sum, val) => sum + val, 0)
-  }
 
   /**
    * Queue a document for auto-save

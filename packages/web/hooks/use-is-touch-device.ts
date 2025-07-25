@@ -7,10 +7,15 @@ export function useIsTouchDevice() {
 
   React.useEffect(() => {
     function onResize() {
+      // Detect touch device only in browser environment
+      if (typeof window === 'undefined') {
+        setIsTouchDevice(false)
+        return
+      }
+      
       setIsTouchDevice(
         'ontouchstart' in window ||
-          navigator.maxTouchPoints > 0 ||
-          navigator.maxTouchPoints > 0,
+          (window.navigator && window.navigator.maxTouchPoints > 0)
       )
     }
 

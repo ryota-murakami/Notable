@@ -11,7 +11,7 @@
 
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { 
   Plate, 
   PlateProvider, 
@@ -175,18 +175,37 @@ export const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
     }
   }, [doc, getText, editorValue])
 
-  // Auto-save functionality
+  // Auto-save functionality with useRef to prevent interval churn
+  const saveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const latestEditorValue = useRef(editorValue)
+  
+  // Update ref when editor value changes
+  useEffect(() => {
+    latestEditorValue.current = editorValue
+  }, [editorValue])
+
   useEffect(() => {
     if (!onSave || readOnly) return
 
-    const saveInterval = setInterval(() => {
-      if (editorValue) {
-        onSave(editorValue)
+    // Clear existing interval
+    if (saveIntervalRef.current) {
+      clearInterval(saveIntervalRef.current)
+    }
+
+    // Set up new interval
+    saveIntervalRef.current = setInterval(() => {
+      if (latestEditorValue.current) {
+        onSave(latestEditorValue.current)
       }
     }, 5000) // Auto-save every 5 seconds
 
-    return () => clearInterval(saveInterval)
-  }, [editorValue, onSave, readOnly])
+    return () => {
+      if (saveIntervalRef.current) {
+        clearInterval(saveIntervalRef.current)
+        saveIntervalRef.current = null
+      }
+    }
+  }, [onSave, readOnly])
 
   return (
     <div className={cn('flex flex-col h-full border rounded-lg overflow-hidden', className)}>
