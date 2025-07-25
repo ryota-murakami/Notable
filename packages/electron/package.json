@@ -57,7 +57,21 @@
     },
     "linux": {
       "target": "AppImage"
-    }
+    },
+    "platforms": [
+      {
+        "name": "mac",
+        "archs": ["x64", "arm64"]
+      },
+      {
+        "name": "win",
+        "archs": ["x64"]
+      },
+      {
+        "name": "linux",
+        "archs": ["x64"]
+      }
+    ]
   },
   "jest": {
     "preset": "../configs/jest-config"
