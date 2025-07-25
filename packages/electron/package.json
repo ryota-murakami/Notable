@@ -19,10 +19,14 @@
     "dist": "electron-builder"
   },
   "dependencies": {
-    "electron-store": "^10.1.0"
+    "electron-store": "^10.1.0",
+    "electron-updater": "^6.3.9",
+    "electron-localshortcut": "^3.2.1",
+    "node-notifier": "^10.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.16.5",
+    "@types/node-notifier": "^8.0.5",
     "electron": "^35.2.1",
     "electron-builder": "^26.0.12",
     "eslint": "^8.57.1",
