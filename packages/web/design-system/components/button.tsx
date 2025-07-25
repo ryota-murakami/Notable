@@ -5,7 +5,14 @@ import { cn } from '../utils/theme'
 import { motion, type MotionProps } from 'framer-motion'
 
 export interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
+  extends Omit<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      | 'onDrag'
+      | 'onDragEnd'
+      | 'onDragStart'
+      | 'onAnimationStart'
+      | 'onAnimationEnd'
+    >,
     Omit<MotionProps, 'children'> {
   variant?:
     | 'default'
