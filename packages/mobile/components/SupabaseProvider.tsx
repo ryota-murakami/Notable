@@ -7,9 +7,9 @@ interface User {
 }
 
 interface MockSupabaseAuth {
-  signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: null }>
-  signInWithOAuth: (options: { provider: string }) => Promise<{ error: null }>
-  signUp: (options: any) => Promise<{ error: null }>
+  signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
+  signInWithOAuth: (options: { provider: string }) => Promise<{ error: { message: string } | null }>
+  signUp: (options: any) => Promise<{ error: { message: string } | null }>
 }
 
 interface MockSupabase {
