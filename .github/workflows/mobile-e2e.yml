@@ -166,13 +166,18 @@ jobs:
           # Use a smaller, faster API 30 for better performance
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
           # Delete existing AVD if it exists
-          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name E2E_API_30 || true
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name E2E_API_30 --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name test_avd || true
+          # Create AVD with simpler name and verify creation
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
+          # List AVDs to verify creation
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
+          # Verify AVD files exist
+          ls -la $HOME/.android/avd/ || true
 
       - name: Start Android Emulator
         run: |
           # Start emulator with optimized settings for CI
-          $ANDROID_HOME/emulator/emulator -avd E2E_API_30 \
+          $ANDROID_HOME/emulator/emulator -avd test_avd \
             -no-audio \
             -no-window \
             -gpu swiftshader_indirect \

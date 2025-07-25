@@ -34,7 +34,7 @@ module.exports = {
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: 'E2E_API_30',
+        avdName: 'test_avd',
       },
     },
   },
