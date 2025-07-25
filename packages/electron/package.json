@@ -41,6 +41,7 @@
   "build": {
     "appId": "com.notable.electron",
     "productName": "Notable",
+    "electronVersion": "35.2.1",
     "directories": {
       "output": "dist"
     },
