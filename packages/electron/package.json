@@ -11,7 +11,7 @@
     "dev:electron-only": "ELECTRON_START_URL=http://localhost:4378 electron .",
     "start": "electron .",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
     "e2e": "playwright test",
