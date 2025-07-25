@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Notable mobile application built with React Native/Expo",
   "private": true,
-  "type": "module",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -73,8 +72,5 @@
     "react-test-renderer": "^19.1.0",
     "sharp": "^0.34.3",
     "typescript": "^5"
-  },
-  "jest": {
-    "preset": "../configs/jest-config/react-native"
   }
 }
