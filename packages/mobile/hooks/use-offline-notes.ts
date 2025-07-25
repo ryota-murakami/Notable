@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { type Note, type User } from '../types'
 
-export const useOfflineNotes = (_options = {}) => {
+export const useOfflineNotes = (_options: unknown = {}) => {
   const [notes] = useState<Note[]>([])
   const [isLoading] = useState(false)
   const [isSaving] = useState(false)
@@ -18,7 +18,10 @@ export const useOfflineNotes = (_options = {}) => {
     }
   }
 
-  const updateNote = async (_id: string, _data: Partial<Note>): Promise<void> => {
+  const updateNote = async (
+    _id: string,
+    _data: Partial<Note>
+  ): Promise<void> => {
     // Mock implementation
   }
 

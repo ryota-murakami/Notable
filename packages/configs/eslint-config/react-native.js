@@ -7,7 +7,7 @@ import baseConfig from './index.js'
 export default [
   ...baseConfig,
   {
-    files: ['**/*.{jsx,tsx}'],
+    files: ['**/*.{js,ts,jsx,tsx}'],
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
