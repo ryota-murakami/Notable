@@ -22,7 +22,7 @@ import { useSupabase } from '@/components/SupabaseProvider'
 import { useOfflineNotes } from '@/hooks/use-offline-notes'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { NoteExporter } from '@/components/NoteExporter'
-import { type Note } from '@/types'
+import { type Note } from '../../types'
 
 export default function NoteScreen() {
   const { id } = useLocalSearchParams()

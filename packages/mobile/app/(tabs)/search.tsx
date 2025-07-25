@@ -5,7 +5,7 @@ import Fuse from 'fuse.js'
 import { useNotes } from '@/hooks/useNotes'
 import { NoteCard } from '@/components/NoteCard'
 import { EmptyState } from '@/components/EmptyState'
-import { type Note } from '@/types'
+import { type Note } from '../../types'
 import { useRouter } from 'expo-router'
 
 type SearchFilter = 'all' | 'notes' | 'folders'
@@ -170,7 +170,7 @@ export default function SearchScreen() {
         <EmptyState
           title='No results found'
           description='Try a different search term'
-          icon='magnify'
+          icon='search-outline'
         />
       ) : (
         <FlatList
@@ -181,7 +181,7 @@ export default function SearchScreen() {
             <EmptyState
               title='No notes to search'
               description='Create some notes first'
-              icon='note-text-outline'
+              icon='document-text-outline'
             />
           }
         />
