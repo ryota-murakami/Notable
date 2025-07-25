@@ -272,7 +272,7 @@ test.describe('File Operations', () => {
       expect(loadedNotes[0].content).toBe(largeContent)
     })
 
-    test('should handle save errors gracefully', async ({ electronPage, _electronMain }) => {
+    test('should handle save errors gracefully', async ({ electronPage, electronMain }) => {
       // Create invalid data that would cause JSON.stringify to fail
       const circularRef: any = { id: 'circular' }
       circularRef.self = circularRef
@@ -283,14 +283,14 @@ test.describe('File Operations', () => {
       expect(typeof saveResult.error).toBe('string')
     })
 
-    test.skip('should load empty array when notes file does not exist', async ({ electronPage, _electronMain }) => {
+    test.skip('should load empty array when notes file does not exist', async ({ electronPage, electronMain }) => {
       // TODO: Fix file system access in tests
       // The loadNotes handler already returns empty array for non-existent files
       const loadedNotes = await sendIPCMessage(electronPage, 'loadNotes')
       expect(Array.isArray(loadedNotes)).toBe(true)
     })
 
-    test.skip('should verify notes file location', async ({ electronPage, _electronMain }) => {
+    test.skip('should verify notes file location', async ({ electronPage, electronMain }) => {
       // TODO: Fix file system access in tests
       const testNotes = [{ id: 'location-test', title: 'Location Test' }]
       
@@ -604,7 +604,7 @@ test.describe('File Operations', () => {
       expect(Array.isArray(finalNotes)).toBe(true)
     })
 
-    test.skip('should handle malformed notes file', async ({ electronPage, _electronMain }) => {
+    test.skip('should handle malformed notes file', async ({ electronPage, electronMain }) => {
       // TODO: Fix file system access in tests
       // The loadNotes handler should handle malformed JSON gracefully
       const loadedNotes = await sendIPCMessage(electronPage, 'loadNotes')

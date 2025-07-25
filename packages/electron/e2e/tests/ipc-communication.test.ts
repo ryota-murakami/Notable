@@ -24,7 +24,7 @@ test.describe('IPC Communication', () => {
       expect(Array.isArray(result)).toBe(true)
     })
 
-    test('should handle save-notes IPC call', async ({ electronPage, _electronMain }) => {
+    test('should handle save-notes IPC call', async ({ electronPage, electronMain }) => {
       const testNotes = [
         { id: '1', title: 'Test Note 1', content: 'Content 1' },
         { id: '2', title: 'Test Note 2', content: 'Content 2' }
