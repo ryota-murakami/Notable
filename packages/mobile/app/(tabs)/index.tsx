@@ -41,7 +41,7 @@ export default function NotesScreen() {
     <NoteCard
       note={item}
       onPress={() => router.push(`/note/${item.id}`)}
-      onDelete={() => deleteNote()}
+      onDelete={() => deleteNote(item.id)}
     />
   )
 

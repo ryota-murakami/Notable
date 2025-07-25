@@ -90,4 +90,11 @@ export default [
       'require-await': 'warn',
     },
   },
+  // Override for test files to allow require() for mocking
+  {
+    files: ['**/*.test.ts', '**/*.test.js', '**/e2e/**/*.ts', '**/e2e/**/*.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ]

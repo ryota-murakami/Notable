@@ -13,7 +13,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as localShortcut from 'electron-localshortcut'
 import { autoUpdater } from 'electron-updater'
-import notifier from 'node-notifier'
+import * as notifier from 'node-notifier'
 
 // __dirname is automatically available in CommonJS
 
@@ -902,3 +902,6 @@ function setupAutoUpdater() {
     60 * 60 * 1000
   )
 }
+
+// Export for testing
+export { createWindow }

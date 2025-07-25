@@ -18,11 +18,11 @@ export const useOfflineNotes = (_options = {}) => {
     }
   }
 
-  const updateNote = async (): Promise<void> => {
+  const updateNote = async (_id: string, _data: Partial<Note>): Promise<void> => {
     // Mock implementation
   }
 
-  const deleteNote = async (): Promise<void> => {
+  const deleteNote = async (_id: string): Promise<void> => {
     // Mock implementation
   }
 
