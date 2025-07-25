@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
+  // output: 'export', // Temporarily disabled for development - middleware is needed
+  trailingSlash: true,
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],

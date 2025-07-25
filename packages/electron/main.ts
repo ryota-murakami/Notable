@@ -13,7 +13,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as localShortcut from 'electron-localshortcut'
 import { autoUpdater } from 'electron-updater'
-import * as notifier from 'node-notifier'
+import notifier from 'node-notifier'
 
 // __dirname is automatically available in CommonJS
 
@@ -26,6 +26,9 @@ const windows: Set<BrowserWindow> = new Set()
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isMac = process.platform === 'darwin'
 const isWindows = process.platform === 'win32'
+
+// Set app name from package.json productName
+app.setName('Notable')
 
 const createWindow = () => {
   // Window state management
@@ -61,7 +64,98 @@ const createWindow = () => {
   const startUrl =
     process.env.ELECTRON_START_URL ||
     `file://${path.join(__dirname, '../../web/out/index.html')}`
-  mainWindow.loadURL(startUrl)
+  
+  console.log(`[Main] Attempting to load URL: ${startUrl}`)
+  
+  // Load URL with error handling
+  const loadUrlWithFallback = async () => {
+    try {
+      await mainWindow!.loadURL(startUrl)
+      console.log(`[Main] Successfully loaded URL: ${startUrl}`)
+    } catch (error) {
+      console.error(`[Main] Failed to load URL: ${startUrl}`, error)
+      
+      // If development URL fails, try to fall back to built files
+      if (process.env.ELECTRON_START_URL) {
+        const fallbackUrl = `file://${path.join(__dirname, '../../web/out/index.html')}`
+        console.log(`[Main] Attempting fallback to: ${fallbackUrl}`)
+        
+        try {
+          await mainWindow!.loadURL(fallbackUrl)
+          console.log(`[Main] Successfully loaded fallback URL: ${fallbackUrl}`)
+          
+          // Show a notification that we're running in offline mode
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.executeJavaScript(`
+              if (typeof window !== 'undefined' && window.electronAPI) {
+                console.log('Running in offline mode - development server not available');
+              }
+            `).catch(() => {
+              // Ignore errors if the page isn't ready yet
+            });
+          }
+        } catch (fallbackError) {
+          console.error(`[Main] Fallback URL also failed: ${fallbackUrl}`, fallbackError)
+          
+          // Create a basic error page as last resort
+          await mainWindow!.loadFile(path.join(__dirname, 'error-page.html')).catch(() => {
+            // Create inline error page if file doesn't exist
+            const errorHtml = `
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <title>Notable - Connection Error</title>
+                  <style>
+                    body { 
+                      font-family: system-ui, -apple-system, sans-serif; 
+                      display: flex; 
+                      justify-content: center; 
+                      align-items: center; 
+                      height: 100vh; 
+                      margin: 0; 
+                      background: #f5f5f5; 
+                    }
+                    .error-container { 
+                      text-align: center; 
+                      background: white; 
+                      padding: 2rem; 
+                      border-radius: 8px; 
+                      box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+                    }
+                    .error-title { color: #d32f2f; margin-bottom: 1rem; }
+                    .error-message { color: #666; margin-bottom: 2rem; line-height: 1.5; }
+                    .retry-button { 
+                      background: #1976d2; 
+                      color: white; 
+                      border: none; 
+                      padding: 12px 24px; 
+                      border-radius: 4px; 
+                      cursor: pointer; 
+                      font-size: 14px; 
+                    }
+                    .retry-button:hover { background: #1565c0; }
+                  </style>
+                </head>
+                <body>
+                  <div class="error-container">
+                    <h1 class="error-title">Connection Error</h1>
+                    <p class="error-message">
+                      Unable to connect to the development server.<br>
+                      Please ensure the Next.js development server is running on port 4378.
+                    </p>
+                    <button class="retry-button" onclick="location.reload()">Retry</button>
+                  </div>
+                </body>
+              </html>
+            `;
+            mainWindow!.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`);
+          });
+        }
+      }
+    }
+  }
+  
+  loadUrlWithFallback()
 
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
@@ -131,10 +225,13 @@ app.on('will-quit', () => {
 
 // Handle theme changes
 nativeTheme.on('updated', () => {
-  mainWindow?.webContents.send(
-    'native-theme-updated',
-    nativeTheme.shouldUseDarkColors
-  )
+  // Send theme update to all windows
+  BrowserWindow.getAllWindows().forEach(window => {
+    window.webContents.send(
+      'native-theme-updated',
+      nativeTheme.shouldUseDarkColors
+    )
+  })
 })
 
 // Data storage path
@@ -198,33 +295,33 @@ ipcMain.handle('create-window', () => {
 })
 
 ipcMain.handle('close-window', () => {
-  const focusedWindow = BrowserWindow.getFocusedWindow()
-  if (focusedWindow) {
-    focusedWindow.close()
+  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  if (window) {
+    window.close()
   }
 })
 
 ipcMain.handle('minimize-window', () => {
-  const focusedWindow = BrowserWindow.getFocusedWindow()
-  if (focusedWindow) {
-    focusedWindow.minimize()
+  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  if (window) {
+    window.minimize()
   }
 })
 
 ipcMain.handle('maximize-window', () => {
-  const focusedWindow = BrowserWindow.getFocusedWindow()
-  if (focusedWindow) {
-    if (focusedWindow.isMaximized()) {
-      focusedWindow.unmaximize()
+  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  if (window) {
+    if (window.isMaximized()) {
+      window.unmaximize()
     } else {
-      focusedWindow.maximize()
+      window.maximize()
     }
   }
 })
 
 ipcMain.handle('is-maximized', () => {
-  const focusedWindow = BrowserWindow.getFocusedWindow()
-  return focusedWindow ? focusedWindow.isMaximized() : false
+  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  return window ? window.isMaximized() : false
 })
 
 ipcMain.handle('get-theme', () => {
@@ -289,15 +386,23 @@ function createMenu() {
           label: 'New Note',
           accelerator: 'CmdOrCtrl+N',
           click: () => {
-            mainWindow?.webContents.send('menu-new-note')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            console.log('[Menu] New Note clicked, window:', window?.id, 'all windows:', BrowserWindow.getAllWindows().map(w => w.id))
+            if (window) {
+              window.webContents.send('menu-new-note')
+              console.log('[Menu] Sent menu-new-note message')
+            } else {
+              console.log('[Menu] No window available to send message')
+            }
           },
         },
         {
           label: 'Open...',
           accelerator: 'CmdOrCtrl+O',
           click: async () => {
-            if (!mainWindow) return
-            const result = await dialog.showOpenDialog(mainWindow, {
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            if (!window) return
+            const result = await dialog.showOpenDialog(window, {
               properties: ['openFile'],
               filters: [
                 { name: 'Notable files', extensions: ['notable', 'md', 'txt'] },
@@ -306,7 +411,7 @@ function createMenu() {
             })
 
             if (!result.canceled && result.filePaths.length > 0) {
-              mainWindow?.webContents.send(
+              window.webContents.send(
                 'menu-open-file',
                 result.filePaths[0]
               )
@@ -318,14 +423,16 @@ function createMenu() {
           label: 'Save',
           accelerator: 'CmdOrCtrl+S',
           click: () => {
-            mainWindow?.webContents.send('menu-save')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            window?.webContents.send('menu-save')
           },
         },
         {
           label: 'Save As...',
           accelerator: 'CmdOrCtrl+Shift+S',
           click: () => {
-            mainWindow?.webContents.send('menu-save-as')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            window?.webContents.send('menu-save-as')
           },
         },
         { type: 'separator' },
@@ -335,19 +442,22 @@ function createMenu() {
             {
               label: 'Export as PDF',
               click: () => {
-                mainWindow?.webContents.send('menu-export-pdf')
+                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                window?.webContents.send('menu-export-pdf')
               },
             },
             {
               label: 'Export as HTML',
               click: () => {
-                mainWindow?.webContents.send('menu-export-html')
+                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                window?.webContents.send('menu-export-html')
               },
             },
             {
               label: 'Export as Markdown',
               click: () => {
-                mainWindow?.webContents.send('menu-export-markdown')
+                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                window?.webContents.send('menu-export-markdown')
               },
             },
           ],
@@ -357,7 +467,8 @@ function createMenu() {
           label: 'Preferences',
           accelerator: 'CmdOrCtrl+,',
           click: () => {
-            mainWindow?.webContents.send('menu-preferences')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            window?.webContents.send('menu-preferences')
           },
         },
         { type: 'separator' },
@@ -379,14 +490,16 @@ function createMenu() {
           label: 'Find',
           accelerator: 'CmdOrCtrl+F',
           click: () => {
-            mainWindow?.webContents.send('menu-find')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            window?.webContents.send('menu-find')
           },
         },
         {
           label: 'Find and Replace',
           accelerator: 'CmdOrCtrl+H',
           click: () => {
-            mainWindow?.webContents.send('menu-find-replace')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            window?.webContents.send('menu-find-replace')
           },
         },
       ],
@@ -413,7 +526,8 @@ function createMenu() {
               checked: nativeTheme.themeSource === 'light',
               click: () => {
                 nativeTheme.themeSource = 'light'
-                mainWindow?.webContents.send('theme-changed', 'light')
+                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                window?.webContents.send('theme-changed', 'light')
               },
             },
             {
@@ -422,7 +536,8 @@ function createMenu() {
               checked: nativeTheme.themeSource === 'dark',
               click: () => {
                 nativeTheme.themeSource = 'dark'
-                mainWindow?.webContents.send('theme-changed', 'dark')
+                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                window?.webContents.send('theme-changed', 'dark')
               },
             },
             {
@@ -431,7 +546,8 @@ function createMenu() {
               checked: nativeTheme.themeSource === 'system',
               click: () => {
                 nativeTheme.themeSource = 'system'
-                mainWindow?.webContents.send('theme-changed', 'system')
+                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                window?.webContents.send('theme-changed', 'system')
               },
             },
           ],
@@ -455,7 +571,8 @@ function createMenu() {
           label: 'Focus Mode',
           accelerator: 'CmdOrCtrl+Shift+F',
           click: () => {
-            mainWindow?.webContents.send('menu-focus-mode')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            window?.webContents.send('menu-focus-mode')
           },
         },
       ],
@@ -478,7 +595,8 @@ function createMenu() {
         {
           label: 'Keyboard Shortcuts',
           click: () => {
-            mainWindow?.webContents.send('menu-shortcuts')
+            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            window?.webContents.send('menu-shortcuts')
           },
         },
         { type: 'separator' },
