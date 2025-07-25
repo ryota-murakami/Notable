@@ -120,7 +120,7 @@ jobs:
 
   android-e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -163,15 +163,38 @@ jobs:
 
       - name: Create Android AVD
         run: |
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-34;google_apis;x86_64"
+          # Use a smaller, faster API 30 for better performance
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
           # Delete existing AVD if it exists
-          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name Pixel_6_API_34 || true
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_6_API_34 --abi google_apis/x86_64 --package "system-images;android-34;google_apis;x86_64"
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name E2E_API_30 || true
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name E2E_API_30 --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
 
       - name: Start Android Emulator
         run: |
-          $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_34 -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -wipe-data &
-          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+          # Start emulator with optimized settings for CI
+          $ANDROID_HOME/emulator/emulator -avd E2E_API_30 \
+            -no-audio \
+            -no-window \
+            -gpu swiftshader_indirect \
+            -no-snapshot \
+            -camera-back none \
+            -camera-front none \
+            -memory 4096 \
+            -partition-size 4096 \
+            -cores 2 &
+
+          # Wait for device with timeout and better error handling
+          echo "Waiting for Android emulator to start..."
+          timeout 600 adb wait-for-device || { echo "Emulator failed to start within 10 minutes"; exit 1; }
+
+          # Wait for boot completion with timeout
+          echo "Waiting for Android system to boot..."
+          timeout 300 bash -c 'while [[ -z $(adb shell getprop sys.boot_completed | tr -d "\r") ]]; do sleep 2; echo "Still booting..."; done'
+
+          # Unlock screen
+          adb shell input keyevent 82
+
+          echo "Android emulator is ready!"
 
       - name: Build Android app for testing
         working-directory: packages/mobile
