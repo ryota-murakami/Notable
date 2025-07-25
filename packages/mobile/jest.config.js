@@ -1,38 +1,5 @@
-// Modules that need to be transformed by Jest (not ignored)
-const nodeModulesToTransform = [
-  'react-native',
-  'react-native-.*',
-  '@react-native',
-  '@react-native/.*',
-  '@react-native-.*',
-  '@react-native-community',
-  '@react-native-community/.*',
-  'expo',
-  'expo-.*',
-  '@expo',
-  '@expo/.*',
-  'react-navigation',
-  '@react-navigation',
-  '@react-navigation/.*',
-  '@unimodules',
-  'unimodules',
-  'react-native-paper',
-  'react-native-vector-icons',
-  'react-native-markdown-display',
-  '@supabase',
-  '@supabase/.*',
-  'fuse.js',
-  '@testing-library',
-  '@testing-library/.*',
-  'react-native-gesture-handler',
-  'react-native-reanimated',
-  'react-native-screens',
-  'react-native-safe-area-context',
-  'react-native-web',
-]
-
 module.exports = {
-  preset: 'jest-expo',
+  preset: 'react-native',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: [
     '**/__tests__/**/*.(ts|tsx|js|jsx)',
@@ -40,7 +7,7 @@ module.exports = {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   transformIgnorePatterns: [
-    `node_modules/(?!(${nodeModulesToTransform.join('|')})/?)`,
+    'node_modules/(?!(react-native|@react-native|@react-native-community|expo|@expo|@unimodules|react-native-.*|@react-native-.*|expo-.*|@expo/.*|react-navigation|@react-navigation|@react-navigation/.*|react-native-paper|react-native-vector-icons|react-native-markdown-display|@supabase|@supabase/.*|fuse\\.js|@testing-library|@testing-library/.*|react-native-gesture-handler|react-native-reanimated|react-native-screens|react-native-safe-area-context|react-native-web)/)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
