@@ -1,4 +1,13 @@
-import { createServerLogger } from './server'
+// Mock server logger since winston dependency was removed
+const createServerLogger = () => ({
+  error: (message: string, metadata?: any) => console.error(message, metadata),
+  warn: (message: string, metadata?: any) => console.warn(message, metadata),
+  info: (message: string, metadata?: any) => console.info(message, metadata),
+  debug: (message: string, metadata?: any) => console.debug(message, metadata),
+  verbose: (message: string, metadata?: any) => console.log(message, metadata),
+  log: (level: string, message: string, metadata?: any) =>
+    console.log(`[${level}]`, message, metadata),
+})
 import { createClientLogger } from './client'
 
 // Logger interface

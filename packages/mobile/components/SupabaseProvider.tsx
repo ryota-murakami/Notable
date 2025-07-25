@@ -1,29 +1,34 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import {
-  type Session,
-  type SupabaseClient,
-  type User,
-} from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
+import React, { createContext, useContext, ReactNode } from 'react'
+import { User } from '../types'
+
+interface SignUpOptions {
+  email: string
+  password: string
+  options?: {
+    data?: Record<string, unknown>
+  }
+}
+
+interface MockSupabaseAuth {
+  signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
+  signInWithOAuth: (options: { provider: string }) => Promise<{ error: { message: string } | null }>
+  signUp: (options: SignUpOptions) => Promise<{ error: { message: string } | null }>
+}
+
+interface MockSupabase {
+  auth: MockSupabaseAuth
+}
 
 interface SupabaseContextType {
-  supabase: SupabaseClient
+  supabase: MockSupabase | null
   user: User | null
-  session: Session | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any }>
-  signUp: (email: string, password: string) => Promise<{ error: any }>
-  signOut: () => Promise<void>
 }
 
 const SupabaseContext = createContext<SupabaseContextType>({
-  supabase,
+  supabase: null,
   user: null,
-  session: null,
-  loading: true,
-  signIn: async () => ({ error: null }),
-  signUp: async () => ({ error: null }),
-  signOut: async () => {},
+  loading: false,
 })
 
 export const useSupabase = () => {
@@ -35,79 +40,25 @@ export const useSupabase = () => {
 }
 
 interface SupabaseProviderProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
-export function SupabaseProvider({ children }: SupabaseProviderProps) {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        // Get initial session
-        const {
-          data: { session: initialSession },
-        } = await supabase.auth.getSession()
-        setSession(initialSession)
-        setUser(initialSession?.user ?? null)
-
-        // Listen for auth changes
-        const {
-          data: { subscription },
-        } = supabase.auth.onAuthStateChange(async (_event, session) => {
-          setSession(session)
-          setUser(session?.user ?? null)
-        })
-
-        setLoading(false)
-
-        return subscription
-      } catch (error) {
-        console.error('Failed to initialize auth:', error)
-        setLoading(false)
-        return null
-      }
-    }
-
-    const subscription = initializeAuth()
-
-    return () => {
-      subscription.then((sub) => sub?.unsubscribe())
-    }
-  }, [])
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    return { error }
-  }
-
-  const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-
-    return { error }
-  }
-
-  const signOut = async () => {
-    await supabase.auth.signOut()
+export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
+  // Mock Supabase implementation - provides no real authentication functionality.
+  // All auth methods return successful responses without performing actual operations.
+  // This is used after removing real Supabase integration from the mobile package.
+  const mockSupabase: MockSupabase = {
+    auth: {
+      signInWithPassword: async () => ({ error: null }),
+      signInWithOAuth: async () => ({ error: null }),
+      signUp: async () => ({ error: null }),
+    },
   }
 
   const value: SupabaseContextType = {
-    supabase,
-    user,
-    session,
-    loading,
-    signIn,
-    signUp,
-    signOut,
+    supabase: mockSupabase,
+    user: null,
+    loading: false,
   }
 
   return (

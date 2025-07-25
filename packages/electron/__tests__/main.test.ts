@@ -1,5 +1,9 @@
 import { app, BrowserWindow } from 'electron'
 
+// Mock jest functions
+const mockApp = app as jest.Mocked<typeof app>
+const mockBrowserWindow = BrowserWindow as jest.MockedClass<typeof BrowserWindow>
+
 describe('Electron Main Process', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -11,7 +15,7 @@ describe('Electron Main Process', () => {
   })
 
   it('should create BrowserWindow with correct options', () => {
-    const window = new BrowserWindow({
+    const window = new mockBrowserWindow({
       width: 1200,
       height: 800,
       webPreferences: {
@@ -20,7 +24,7 @@ describe('Electron Main Process', () => {
       },
     })
 
-    expect(BrowserWindow).toHaveBeenCalledWith({
+    expect(mockBrowserWindow).toHaveBeenCalledWith({
       width: 1200,
       height: 800,
       webPreferences: {
@@ -32,7 +36,7 @@ describe('Electron Main Process', () => {
   })
 
   it('should handle app quit', () => {
-    app.quit()
-    expect(app.quit).toHaveBeenCalled()
+    mockApp.quit()
+    expect(mockApp.quit).toHaveBeenCalled()
   })
 })

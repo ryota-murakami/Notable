@@ -19,10 +19,7 @@ jest.mock('next/navigation', () => ({
   },
 }))
 
-// Mock components
-jest.mock('../components/shell', () => ({
-  Shell: () => <div data-testid='shell'>Shell Component</div>,
-}))
+// Mock components removed - shell component was deleted
 
 describe('Page', () => {
   it('renders without crashing', () => {

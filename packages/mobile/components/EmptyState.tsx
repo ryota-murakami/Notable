@@ -1,52 +1,20 @@
+import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Button, Text, useTheme } from 'react-native-paper'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { Text } from 'react-native-paper'
+import { Ionicons } from '@expo/vector-icons'
 
 interface EmptyStateProps {
   title: string
   description: string
-  icon: string
-  actionLabel?: string
-  onAction?: () => void
+  icon: keyof typeof Ionicons.glyphMap
 }
 
-export function EmptyState({
-  title,
-  description,
-  icon,
-  actionLabel,
-  onAction,
-}: EmptyStateProps) {
-  const theme = useTheme()
-
+export const EmptyState: React.FC<EmptyStateProps> = ({ title, description, icon }) => {
   return (
     <View style={styles.container}>
-      <MaterialCommunityIcons
-        name={icon as any}
-        size={64}
-        color={theme.colors.onSurfaceVariant}
-        style={styles.icon}
-      />
-
-      <Text
-        variant='headlineSmall'
-        style={[styles.title, { color: theme.colors.onSurface }]}
-      >
-        {title}
-      </Text>
-
-      <Text
-        variant='bodyMedium'
-        style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
-      >
-        {description}
-      </Text>
-
-      {actionLabel && onAction && (
-        <Button mode='contained' onPress={onAction} style={styles.actionButton}>
-          {actionLabel}
-        </Button>
-      )}
+      <Ionicons name={icon} size={64} color="#ccc" />
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.description}>{description}</Text>
     </View>
   )
 }
@@ -56,24 +24,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingVertical: 48,
-  },
-  icon: {
-    marginBottom: 16,
-    opacity: 0.6,
+    padding: 32,
   },
   title: {
-    textAlign: 'center',
-    marginBottom: 8,
+    fontSize: 20,
     fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 8,
   },
   description: {
+    fontSize: 16,
     textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 20,
-  },
-  actionButton: {
-    marginTop: 8,
   },
 })

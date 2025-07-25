@@ -6,7 +6,7 @@ import { useSupabase } from '@/components/SupabaseProvider'
 import { useOfflineNotes } from '@/hooks/use-offline-notes'
 import { NoteCard } from '@/components/NoteCard'
 import { EmptyState } from '@/components/EmptyState'
-import { type Note } from '@/types'
+import { type Note } from '../../types'
 
 export default function NotesScreen() {
   const { user } = useSupabase()
@@ -60,7 +60,7 @@ export default function NotesScreen() {
         <EmptyState
           title='No notes yet'
           description='Create a new note to get started.'
-          icon='note-plus-outline'
+          icon='add-outline'
         />
       ) : (
         <FlatList
