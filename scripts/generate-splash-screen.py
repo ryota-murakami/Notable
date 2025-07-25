@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 from PIL import Image, ImageDraw
 
 # Notable brand colors
@@ -59,7 +60,7 @@ def create_splash_screen():
     )
     
     # Save the splash screen
-    output_path = "/Users/ryota.murakami/repository/Notable/packages/mobile/assets/splash.png"
+    output_path = os.path.join("packages", "mobile", "assets", "splash.png")
     img.save(output_path, 'PNG')
     print(f"Generated splash screen: {output_path}")
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from PIL import Image, ImageDraw, ImageFont
-import math
+from PIL import Image, ImageDraw
 
 # Notable brand colors
 PRIMARY_COLOR = "#3B82F6"  # Blue
@@ -106,7 +105,7 @@ def generate_favicon(sizes, output_dir):
     print(f"Generated: {output_path}")
 
 def main():
-    base_dir = "/Users/ryota.murakami/repository/Notable/assets/icons"
+    base_dir = os.path.join("assets", "icons")
     
     # Web favicons
     web_sizes = {
