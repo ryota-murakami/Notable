@@ -195,7 +195,7 @@ importers:
         version: 13.2.3(@babel/core@7.28.0)
       detox:
         specifier: ^20.40.2
-        version: 20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))
+        version: 20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5))
       eas-cli:
         specifier: ^14.2.0
         version: 14.7.1(@types/node@22.16.5)(encoding@0.1.13)(typescript@5.8.3)
@@ -216,7 +216,7 @@ importers:
         version: 29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))
       jest-expo:
         specifier: ^53.0.9
-        version: 53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2)
+        version: 53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2)
       sharp:
         specifier: ^0.34.3
         version: 0.34.3
@@ -460,6 +460,9 @@ importers:
       express:
         specifier: ^4.21.2
         version: 4.21.2
+      framer-motion:
+        specifier: ^12.23.9
+        version: 12.23.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       fuse.js:
         specifier: ^7.0.0
         version: 7.1.0
@@ -6950,6 +6953,20 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
 
+  framer-motion@12.23.9:
+    resolution: {integrity: sha512-TqEHXj8LWfQSKqfdr5Y4mYltYLw96deu6/K9kGDd+ysqRJPNwF9nb5mZcrLmybHbU7gcJ+HQar41U3UTGanbbQ==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   freeport-async@2.0.0:
     resolution: {integrity: sha512-K7od3Uw45AJg00XUmy15+Hae2hOcgKcmN3/EF6Y7i01O0gaqiRx8sUSpsb9+BRNL8RPBrhzPsVfy8q9ADlJuWQ==}
     engines: {node: '>=8'}
@@ -8945,6 +8962,12 @@ packages:
 
   moment@2.30.1:
     resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
+
+  motion-dom@12.23.9:
+    resolution: {integrity: sha512-6Sv++iWS8XMFCgU1qwKj9l4xuC47Hp4+2jvPfyTXkqDg2tTzSgX6nWKD4kNFXk0k7llO59LZTPuJigza4A2K1A==}
+
+  motion-utils@12.23.6:
+    resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -13401,7 +13424,7 @@ snapshots:
       fs-extra: 10.1.0
       http-call: 5.3.0
       semver: 7.5.4
-      tslib: 2.6.2
+      tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -14352,7 +14375,7 @@ snapshots:
       strip-ansi: 6.0.1
       supports-color: 8.1.1
       supports-hyperlinks: 2.3.0
-      tslib: 2.6.2
+      tslib: 2.8.1
       widest-line: 3.1.0
       wrap-ansi: 7.0.0
 
@@ -17400,10 +17423,10 @@ snapshots:
     optionalDependencies:
       expect: 30.0.5
 
-  '@wix-pilot/detox@1.0.13(@wix-pilot/core@3.4.1(expect@30.0.5))(detox@20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))))(expect@30.0.5)':
+  '@wix-pilot/detox@1.0.13(@wix-pilot/core@3.4.1(expect@30.0.5))(detox@20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)))(expect@30.0.5)':
     dependencies:
       '@wix-pilot/core': 3.4.1(expect@30.0.5)
-      detox: 20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))
+      detox: 20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5))
       expect: 30.0.5
 
   '@xmldom/xmldom@0.7.13': {}
@@ -18780,10 +18803,10 @@ snapshots:
   detect-node@2.1.0:
     optional: true
 
-  detox@20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))):
+  detox@20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)):
     dependencies:
       '@wix-pilot/core': 3.4.1(expect@30.0.5)
-      '@wix-pilot/detox': 1.0.13(@wix-pilot/core@3.4.1(expect@30.0.5))(detox@20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))))(expect@30.0.5)
+      '@wix-pilot/detox': 1.0.13(@wix-pilot/core@3.4.1(expect@30.0.5))(detox@20.40.2(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(expect@30.0.5)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)))(expect@30.0.5)
       ajv: 8.17.1
       bunyan: 1.8.15
       bunyan-debug-stream: 3.1.1(bunyan@1.8.15)
@@ -18795,7 +18818,7 @@ snapshots:
       funpermaproxy: 1.1.0
       glob: 8.1.0
       ini: 1.3.8
-      jest-environment-emit: 1.2.0(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))
+      jest-environment-emit: 1.2.0(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5))
       json-cycle: 1.5.0
       lodash: 4.17.21
       multi-sort-stream: 1.0.4
@@ -20026,6 +20049,15 @@ snapshots:
 
   forwarded@0.2.0: {}
 
+  framer-motion@12.23.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      motion-dom: 12.23.9
+      motion-utils: 12.23.6
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   freeport-async@2.0.0: {}
 
   fresh@0.5.2: {}
@@ -20270,7 +20302,7 @@ snapshots:
   graphql-tag@2.12.6(graphql@16.8.1):
     dependencies:
       graphql: 16.8.1
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   graphql@16.8.1: {}
 
@@ -21003,7 +21035,7 @@ snapshots:
       jest-util: 30.0.5
       pretty-format: 30.0.5
 
-  jest-environment-emit@1.2.0(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))):
+  jest-environment-emit@1.2.0(@jest/environment@30.0.5)(@jest/types@30.0.5)(@types/bunyan@1.8.11)(jest-environment-jsdom@29.7.0)(jest-environment-node@30.0.5)(jest@29.7.0(@types/node@22.16.5)):
     dependencies:
       bunyamin: 1.6.3(@types/bunyan@1.8.11)(bunyan@2.0.5)
       bunyan: 2.0.5
@@ -21056,7 +21088,7 @@ snapshots:
       jest-util: 30.0.5
       jest-validate: 30.0.5
 
-  jest-expo@53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2):
+  jest-expo@53.0.9(@babel/core@7.28.0)(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(jest@29.7.0(@types/node@22.16.5))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)(webpack@5.100.2):
     dependencies:
       '@expo/config': 11.0.13
       '@expo/json-file': 9.1.5
@@ -21068,7 +21100,7 @@ snapshots:
       jest-environment-jsdom: 29.7.0
       jest-snapshot: 29.7.0
       jest-watch-select-projects: 2.0.0
-      jest-watch-typeahead: 2.2.1(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3)))
+      jest-watch-typeahead: 2.2.1(jest@29.7.0(@types/node@22.16.5))
       json5: 2.2.3
       lodash: 4.17.21
       react-native: 0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)
@@ -21429,7 +21461,7 @@ snapshots:
       chalk: 3.0.0
       prompts: 2.4.2
 
-  jest-watch-typeahead@2.2.1(jest@29.7.0(@types/node@22.16.5)(ts-node@10.9.2(@types/node@22.16.5)(typescript@5.8.3))):
+  jest-watch-typeahead@2.2.1(jest@29.7.0(@types/node@22.16.5)):
     dependencies:
       ansi-escapes: 6.2.1
       chalk: 4.1.2
@@ -22837,6 +22869,12 @@ snapshots:
   module-details-from-path@1.0.4: {}
 
   moment@2.30.1: {}
+
+  motion-dom@12.23.9:
+    dependencies:
+      motion-utils: 12.23.6
+
+  motion-utils@12.23.6: {}
 
   ms@2.0.0: {}
 
