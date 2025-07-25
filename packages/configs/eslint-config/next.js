@@ -39,9 +39,9 @@ export default [
       'react-hooks/exhaustive-deps': 'warn',
 
       // Next.js specific rules
-      '@next/next/no-img-element': 'warn',
+      '@next/next/no-img-element': 'error',
       '@next/next/no-html-link-for-pages': 'error',
-      '@next/next/no-page-custom-font': 'warn',
+      '@next/next/no-page-custom-font': 'error',
       '@next/next/no-unwanted-polyfillio': 'error',
 
       // Enhanced accessibility rules

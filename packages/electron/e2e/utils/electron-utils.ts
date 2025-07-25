@@ -1,5 +1,7 @@
 import { _electron as electron, type ElectronApplication, type Page } from '@playwright/test'
 import * as path from 'path'
+import os from 'os'
+import fs from 'fs'
 
 export interface ElectronTestContext {
   app: ElectronApplication
@@ -281,16 +283,13 @@ export async function mockNotifications(app: ElectronApplication): Promise<void>
  * Test file operations with temporary files
  */
 export function getTempFilePath(filename: string): string {
-  const os = require('os')  
-  const pathLib = require('path')  
-  return pathLib.join(os.tmpdir(), `notable-test-${Date.now()}-${filename}`)
+  return path.join(os.tmpdir(), `notable-test-${Date.now()}-${filename}`)
 }
 
 /**
  * Clean up temp files
  */
 export function cleanupTempFiles(filePaths: string[]): void {
-  const fs = require('fs')  
   filePaths.forEach(filePath => {
     try {
       if (fs.existsSync(filePath)) { // eslint-disable-line no-sync
