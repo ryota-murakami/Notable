@@ -18,7 +18,7 @@
     "build:preview": "eas build --profile preview --platform all",
     "build:production": "eas build --profile production --platform all",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
     "e2e": "detox test",
