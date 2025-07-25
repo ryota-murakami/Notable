@@ -1,14 +1,10 @@
-import { test, expect } from '../fixtures/electron-fixtures'
+import { expect, test } from '../fixtures/electron-fixtures'
 import { 
-  sendIPCMessage, 
-  waitForIPCMessage, 
-  evaluateInMain,
-  getTempFilePath,
-  cleanupTempFiles
+  cleanupTempFiles, 
+  evaluateInMain, 
+  sendIPCMessage,
+  waitForIPCMessage
 } from '../utils/electron-utils'
-import * as fs from 'fs'
-import * as path from 'path'
-import * as os from 'os'
 
 test.describe('File Operations', () => {
   let tempFiles: string[] = []
@@ -32,7 +28,7 @@ test.describe('File Operations', () => {
       await evaluateInMain(electronMain, ({ dialog }) => {
         const originalShowOpenDialog = dialog.showOpenDialog
         dialog.showOpenDialog = async (window, options) => {
-          ;(global as any).__capturedDialogOptions = options
+          (global as any).__capturedDialogOptions = options
           return { canceled: true, filePaths: [] }
         }
         ;(global as any).__originalShowOpenDialog = originalShowOpenDialog
@@ -70,7 +66,7 @@ test.describe('File Operations', () => {
       await evaluateInMain(electronMain, ({ dialog }) => {
         const originalShowSaveDialog = dialog.showSaveDialog
         dialog.showSaveDialog = async (window, options) => {
-          ;(global as any).__capturedSaveDialogOptions = options
+          (global as any).__capturedSaveDialogOptions = options
           return { canceled: true, filePath: undefined }
         }
         ;(global as any).__originalShowSaveDialog = originalShowSaveDialog
@@ -619,7 +615,7 @@ test.describe('File Operations', () => {
       test.setTimeout(120000) // Increase timeout to 2 minutes for deep nested objects
       
       // Create deeply nested object - reduce from 100 to 50 levels to avoid timeout
-      let deepObject: any = { id: 'deep-test' }
+      const deepObject: any = { id: 'deep-test' }
       let current = deepObject
       
       // Create 50 levels of nesting (reduced from 100 to avoid timeout)

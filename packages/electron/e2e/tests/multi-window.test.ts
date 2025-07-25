@@ -1,12 +1,12 @@
-import { test, expect } from '../fixtures/electron-fixtures'
+import { expect, test } from '../fixtures/electron-fixtures'
 import { 
-  sendIPCMessage, 
-  waitForIPCMessage, 
-  evaluateInMain,
-  getAllWindows,
-  waitForNewWindow,
+  evaluateInMain, 
+  getAllWindows, 
+  getWindowState,
+  sendIPCMessage,
   setWindowState,
-  getWindowState
+  waitForIPCMessage,
+  waitForNewWindow
 } from '../utils/electron-utils'
 
 test.describe('Multi-Window Management', () => {

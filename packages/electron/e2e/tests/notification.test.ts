@@ -1,8 +1,8 @@
-import { test, expect } from '../fixtures/electron-fixtures'
+import { expect, test } from '../fixtures/electron-fixtures'
 import { 
-  sendIPCMessage, 
-  evaluateInMain,
-  mockNotifications
+  evaluateInMain, 
+  mockNotifications,
+  sendIPCMessage
 } from '../utils/electron-utils'
 
 test.describe('Notification System', () => {
@@ -22,7 +22,7 @@ test.describe('Notification System', () => {
       await evaluateInMain(electronMain, () => {
         const mockNotifier = {
           notify: (options: any) => {
-            ;(global as any).__capturedNotificationOptions = options
+            (global as any).__capturedNotificationOptions = options
             return true
           }
         }
@@ -65,7 +65,7 @@ test.describe('Notification System', () => {
       await evaluateInMain(electronMain, () => {
         const mockNotifier = {
           notify: (options: any) => {
-            ;(global as any).__capturedNotificationOptions = options
+            (global as any).__capturedNotificationOptions = options
             return true
           }
         }
@@ -108,7 +108,7 @@ test.describe('Notification System', () => {
       await evaluateInMain(electronMain, () => {
         const mockNotifier = {
           notify: (options: any) => {
-            ;(global as any).__capturedNotificationOptions = options
+            (global as any).__capturedNotificationOptions = options
             return true
           }
         }
@@ -160,7 +160,7 @@ test.describe('Notification System', () => {
           const mockNotifier = {
             notify: (options: any) => {
               if (options.title === 'Notable Update Available') {
-                ;(global as any).__updateAvailableNotification = options
+                (global as any).__updateAvailableNotification = options
               }
               return true
             }
@@ -199,7 +199,7 @@ test.describe('Notification System', () => {
           const mockNotifier = {
             notify: (options: any) => {
               if (options.title === 'Notable Update Ready') {
-                ;(global as any).__updateDownloadedNotification = options
+                (global as any).__updateDownloadedNotification = options
               }
               return true
             }
@@ -303,7 +303,7 @@ test.describe('Notification System', () => {
             if (!options || typeof options !== 'object') {
               throw new Error('Invalid notification options')
             }
-            ;(global as any).__strictNotificationOptions = options
+            (global as any).__strictNotificationOptions = options
             return true
           }
         }
@@ -343,7 +343,7 @@ test.describe('Notification System', () => {
       await evaluateInMain(electronMain, () => {
         const mockNotifier = {
           notify: (options: any) => {
-            ;(global as any).__notificationWithTimeout = options
+            (global as any).__notificationWithTimeout = options
             // Simulate timeout behavior
             setTimeout(() => {
               // Notification times out
@@ -432,10 +432,10 @@ test.describe('Notification System', () => {
       await evaluateInMain(electronMain, () => {
         const mockNotifier = {
           notify: (options: any) => {
-            ;(global as any).__notificationFlow = {
+            (global as any).__notificationFlow = {
               received: true,
               timestamp: Date.now(),
-              options: options
+              options
             }
             return true
           }
@@ -479,9 +479,9 @@ test.describe('Notification System', () => {
         const mockNotifier = {
           notify: (options: any) => {
             if (!(global as any).__rapidNotifications) {
-              ;(global as any).__rapidNotifications = []
+              (global as any).__rapidNotifications = []
             }
-            ;(global as any).__rapidNotifications.push({
+            (global as any).__rapidNotifications.push({
               title: options.title,
               message: options.message,
               timestamp: Date.now()

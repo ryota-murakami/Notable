@@ -1,12 +1,12 @@
-import { test, expect } from '../fixtures/electron-fixtures'
+import { expect, test } from '../fixtures/electron-fixtures'
 import { 
-  sendIPCMessage, 
-  waitForIPCMessage, 
-  evaluateInMain,
+  cleanupTempFiles, 
+  evaluateInMain, 
   getAllWindows,
   getTempFilePath,
-  cleanupTempFiles,
-  mockNotifications
+  mockNotifications,
+  sendIPCMessage,
+  waitForIPCMessage
 } from '../utils/electron-utils'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -271,7 +271,7 @@ test.describe('IPC Communication', () => {
         if (focusedWindow) {
           const originalOpenDevTools = focusedWindow.webContents.openDevTools
           focusedWindow.webContents.openDevTools = function() {
-            ;(global as any).__devToolsOpened = true
+            (global as any).__devToolsOpened = true
             return originalOpenDevTools.call(this)
           }
         }
@@ -301,7 +301,7 @@ test.describe('IPC Communication', () => {
         if (focusedWindow) {
           const originalReload = focusedWindow.webContents.reload
           focusedWindow.webContents.reload = function() {
-            ;(global as any).__reloadCalled = true
+            (global as any).__reloadCalled = true
             // Don't actually reload to avoid disrupting tests
             return
           }

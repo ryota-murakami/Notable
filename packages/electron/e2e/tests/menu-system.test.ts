@@ -1,10 +1,10 @@
-import { test, expect } from '../fixtures/electron-fixtures'
+import { expect, test } from '../fixtures/electron-fixtures'
 import { 
   evaluateInMain, 
-  triggerMenuItem, 
-  waitForIPCMessage, 
-  sendIPCMessage,
-  getAllWindows,
+  getAllWindows, 
+  sendIPCMessage, 
+  triggerMenuItem,
+  waitForIPCMessage,
   waitForNewWindow
 } from '../utils/electron-utils'
 

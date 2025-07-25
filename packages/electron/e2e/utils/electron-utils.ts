@@ -1,4 +1,4 @@
-import { type ElectronApplication, type Page, _electron as electron } from '@playwright/test'
+import { _electron as electron, type ElectronApplication, type Page } from '@playwright/test'
 import * as path from 'path'
 
 export interface ElectronTestContext {
@@ -103,7 +103,7 @@ export async function sendIPCMessage<T>(
   ...args: any[]
 ): Promise<T> {
   return await page.evaluate(async ({ channel, args }) => {
-    // @ts-ignore - electronAPI is exposed via preload
+    // @ts-expect-error - electronAPI is exposed via preload
     return await window.electronAPI[channel](...args)
   }, { channel, args })
 }
@@ -122,53 +122,56 @@ export async function waitForIPCMessage(
   console.log(`[Test Utils] Setting up waitForIPCMessage for channel: ${channel}`)
   
   // Create a promise that will resolve when the message is received
-  const messagePromise = new Promise<any>(async (resolve, reject) => {
+  const messagePromise = new Promise<any>((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       console.error(`[Test Utils] Timeout waiting for IPC message: ${channel}`)
       reject(new Error(`Timeout waiting for IPC message: ${channel}`))
     }, timeout)
     
-    try {
-      // Expose a function that can be called from the page
-      await page.exposeFunction(handlerName, (data: any) => {
-        console.log(`[Test Utils] Handler called for channel ${channel} with data:`, data)
-        clearTimeout(timeoutId)
-        resolve(data || true) // Resolve with data or true if no data
-      })
-      
-      // Set up the IPC listener in the page context
-      await page.evaluate(({ channel, handlerName }) => {
+    // Use async IIFE to handle async operations
+    ;(async () => {
+      try {
+        // Expose a function that can be called from the page
+        await page.exposeFunction(handlerName, (data: any) => {
+          console.log(`[Test Utils] Handler called for channel ${channel} with data:`, data)
+          clearTimeout(timeoutId)
+          resolve(data || true) // Resolve with data or true if no data
+        })
+        
+        // Set up the IPC listener in the page context
+        await page.evaluate(({ channel, handlerName }) => {
         console.log(`[Test] Setting up IPC listener for channel: ${channel}`)
-        // @ts-ignore - electronAPI is exposed via preload
+        // @ts-expect-error - electronAPI is exposed via preload
         console.log(`[Test] window.electronAPI:`, window.electronAPI)
-        // @ts-ignore - electronAPI is exposed via preload
+        // @ts-expect-error - electronAPI is exposed via preload
         console.log(`[Test] window.electronAPI.onMessage:`, window.electronAPI?.onMessage)
         
-        // @ts-ignore - electronAPI is exposed via preload
+        // @ts-expect-error - electronAPI is exposed via preload
         if (!window.electronAPI || !window.electronAPI.onMessage) {
           console.error(`[Test] Missing electronAPI.onMessage function!`)
           throw new Error('window.electronAPI.onMessage is not available')
         }
         
-        // @ts-ignore - electronAPI is exposed via preload
+        // @ts-expect-error - electronAPI is exposed via preload
         const cleanup = window.electronAPI.onMessage(channel, (data: any) => {
           console.log(`[Test] Received IPC message on channel ${channel}:`, data)
-          // @ts-ignore - exposed by Playwright
+          // @ts-expect-error - exposed by Playwright
           window[handlerName](data)
           cleanup()
         })
         
         // Store cleanup function for later
-        // @ts-ignore
+        // @ts-expect-error - Dynamically set cleanup function on window
         window[`__cleanup_${handlerName}`] = cleanup
       }, { channel, handlerName })
       
-      console.log(`[Test Utils] IPC listener setup complete for channel: ${channel}`)
-    } catch (err) {
-      clearTimeout(timeoutId)
-      console.error(`[Test Utils] Error setting up IPC listener for ${channel}:`, err)
-      reject(err)
-    }
+        console.log(`[Test Utils] IPC listener setup complete for channel: ${channel}`)
+      } catch (err) {
+        clearTimeout(timeoutId)
+        console.error(`[Test Utils] Error setting up IPC listener for ${channel}:`, err)
+        reject(err)
+      }
+    })()
   })
   
   return messagePromise
@@ -197,7 +200,7 @@ export async function waitForThemeChange(
 ): Promise<void> {
   await page.waitForFunction(
     (theme) => {
-      // @ts-ignore
+      // @ts-expect-error - electronAPI is exposed via preload
       return window.electronAPI && window.electronAPI.getTheme() === theme
     },
     expectedTheme,
@@ -278,20 +281,20 @@ export async function mockNotifications(app: ElectronApplication): Promise<void>
  * Test file operations with temporary files
  */
 export function getTempFilePath(filename: string): string {
-  const os = require('os')
-  const path = require('path')
-  return path.join(os.tmpdir(), `notable-test-${Date.now()}-${filename}`)
+  const os = require('os') // eslint-disable-line @typescript-eslint/no-require-imports
+  const pathLib = require('path') // eslint-disable-line @typescript-eslint/no-require-imports
+  return pathLib.join(os.tmpdir(), `notable-test-${Date.now()}-${filename}`)
 }
 
 /**
  * Clean up temp files
  */
 export function cleanupTempFiles(filePaths: string[]): void {
-  const fs = require('fs')
+  const fs = require('fs') // eslint-disable-line @typescript-eslint/no-require-imports
   filePaths.forEach(filePath => {
     try {
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath)
+      if (fs.existsSync(filePath)) { // eslint-disable-line no-sync
+        fs.unlinkSync(filePath) // eslint-disable-line no-sync
       }
     } catch (error) {
       console.warn(`Failed to cleanup temp file: ${filePath}`, error)

@@ -1,6 +1,5 @@
-import { test as base, type Page } from '@playwright/test'
-import type { ElectronApplication } from '@playwright/test'
-import { launchElectronApp, closeElectronApp, type ElectronTestContext } from '../utils/electron-utils'
+import { test as base, type ElectronApplication, type Page } from '@playwright/test'
+import { closeElectronApp, type ElectronTestContext, launchElectronApp } from '../utils/electron-utils'
 
 export interface ElectronFixtures {
   electronApp: ElectronTestContext
@@ -12,7 +11,7 @@ export interface ElectronFixtures {
  * Extended test with Electron fixtures
  */
 export const test = base.extend<ElectronFixtures>({
-  electronApp: async ({}, use) => {
+  electronApp: async (_fixtures, use) => {
     let context: ElectronTestContext | null = null
     
     try {

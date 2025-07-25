@@ -1,8 +1,8 @@
-import { test, expect } from '../fixtures/electron-fixtures'
+import { expect, test } from '../fixtures/electron-fixtures'
 import { 
+  evaluateInMain, 
   sendIPCMessage, 
-  waitForIPCMessage, 
-  evaluateInMain,
+  waitForIPCMessage,
   waitForThemeChange
 } from '../utils/electron-utils'
 

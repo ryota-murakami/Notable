@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test'
-import { ElectronApplication } from 'playwright'
-import { _electron as electron } from 'playwright'
+import { expect, test } from '@playwright/test'
+import { _electron as electron, type ElectronApplication } from 'playwright'
 import path from 'path'
 
 let electronApp: ElectronApplication

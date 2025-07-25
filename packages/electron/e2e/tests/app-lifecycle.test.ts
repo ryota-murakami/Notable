@@ -1,11 +1,11 @@
-import { test, expect } from '../fixtures/electron-fixtures'
+import { expect, test } from '../fixtures/electron-fixtures'
 import { 
-  waitForWindowReady, 
   evaluateInMain, 
-  getAppVersion, 
+  getAllWindows, 
   getAppName, 
+  getAppVersion, 
   isAppPackaged,
-  getAllWindows 
+  waitForWindowReady 
 } from '../utils/electron-utils'
 
 test.describe('Electron App Lifecycle', () => {
@@ -68,7 +68,7 @@ test.describe('Electron App Lifecycle', () => {
       if (windows.length > 0) {
         const window = windows[0]
         // Check if context is properly isolated by testing if Node.js APIs are not available
-        const hasNodeGlobals = window.webContents.executeJavaScript(`
+        const _hasNodeGlobals = window.webContents.executeJavaScript(`
           typeof process !== 'undefined' && typeof require !== 'undefined'
         `).catch(() => false)
         
@@ -117,7 +117,7 @@ test.describe('Electron App Lifecycle', () => {
 
   test('should handle app quit properly', async ({ electronMain }) => {
     // Register quit event listener
-    let quitFired = false
+    const _quitFired = false
     await evaluateInMain(electronMain, ({ app }) => {
       app.once('before-quit', () => {
         // This would fire when app.quit() is called
@@ -129,7 +129,7 @@ test.describe('Electron App Lifecycle', () => {
     expect(true).toBe(true) // Test passes if no errors in setup
   })
 
-  test('should handle window close behavior correctly on macOS', async ({ electronMain, electronPage }) => {
+  test('should handle window close behavior correctly on macOS', async ({ electronMain, electronPage: _electronPage }) => {
     const platform = await evaluateInMain(electronMain, () => process.platform)
     
     if (platform === 'darwin') {
