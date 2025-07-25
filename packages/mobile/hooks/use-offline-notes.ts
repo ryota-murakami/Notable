@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Note, User } from '@/types'
+import { Note, User } from '../types'
 
 export const useOfflineNotes = (_options: unknown = {}) => {
   const [notes] = useState<Note[]>([])

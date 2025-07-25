@@ -1,10 +1,18 @@
 import React, { createContext, useContext, ReactNode } from 'react'
-import { User } from '@/types'
+import { User } from '../types'
+
+interface SignUpOptions {
+  email: string
+  password: string
+  options?: {
+    data?: Record<string, any>
+  }
+}
 
 interface MockSupabaseAuth {
   signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
   signInWithOAuth: (options: { provider: string }) => Promise<{ error: { message: string } | null }>
-  signUp: (options: any) => Promise<{ error: { message: string } | null }>
+  signUp: (options: SignUpOptions) => Promise<{ error: { message: string } | null }>
 }
 
 interface MockSupabase {

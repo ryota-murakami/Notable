@@ -6,7 +6,7 @@ import { useSupabase } from '@/components/SupabaseProvider'
 import { useOfflineNotes } from '@/hooks/use-offline-notes'
 import { NoteCard } from '@/components/NoteCard'
 import { EmptyState } from '@/components/EmptyState'
-import { type Note } from '@/types'
+import { type Note } from '../../types'
 
 export default function NotesScreen() {
   const { user } = useSupabase()

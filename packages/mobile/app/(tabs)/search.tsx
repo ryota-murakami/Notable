@@ -5,7 +5,7 @@ import Fuse from 'fuse.js'
 import { useNotes } from '@/hooks/useNotes'
 import { NoteCard } from '@/components/NoteCard'
 import { EmptyState } from '@/components/EmptyState'
-import { type Note } from '@/types'
+import { type Note } from '../../types'
 import { useRouter } from 'expo-router'
 
 type SearchFilter = 'all' | 'notes' | 'folders'
