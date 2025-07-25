@@ -267,7 +267,7 @@ export function Shell({ initialNoteId }: ShellProps = {}) {
   }
 
   const handleDeleteNote = useCallback(
-    async (id: string) => {
+    async (id: string): Promise<boolean> => {
       try {
         // Delete all children recursively
         const idsToDelete = [id]
@@ -300,12 +300,14 @@ export function Shell({ initialNoteId }: ShellProps = {}) {
           description: 'Your note has been deleted successfully.',
           variant: 'destructive',
         })
+        return true
       } catch {
         toast({
           title: 'Error',
           description: 'Failed to delete note. Please try again.',
           variant: 'destructive',
         })
+        return false
       }
     },
     [notes, deleteNote, activeNoteId, navigateToNote, toast]
@@ -733,6 +735,7 @@ export function Shell({ initialNoteId }: ShellProps = {}) {
         notes={notes}
         onSelectNote={navigateToNote}
         onCreateNote={() => handleCreateNote(null)}
+        onDeleteNote={handleDeleteNote}
       />
 
       {/* Command Palette */}

@@ -65,7 +65,57 @@ export const createQueryClient = () => {
         // Global error handling for mutations
         onError: (error) => {
           console.error('Mutation error:', error)
-          // TODO: Show toast notification
+
+          // Import toast dynamically to avoid circular dependencies
+          import('@/hooks/use-toast')
+            .then(({ toast }) => {
+              // Extract meaningful error message
+              let errorMessage = 'An unexpected error occurred'
+
+              if (error && typeof error === 'object') {
+                // Handle different error types
+                if ('message' in error && typeof error.message === 'string') {
+                  errorMessage = error.message
+                } else if ('status' in error) {
+                  switch (error.status) {
+                    case 401:
+                      errorMessage =
+                        'Authentication required. Please sign in again.'
+                      break
+                    case 403:
+                      errorMessage =
+                        'You do not have permission to perform this action.'
+                      break
+                    case 404:
+                      errorMessage = 'The requested resource was not found.'
+                      break
+                    case 429:
+                      errorMessage =
+                        'Too many requests. Please try again later.'
+                      break
+                    case 500:
+                      errorMessage = 'Server error. Please try again later.'
+                      break
+                    case 503:
+                      errorMessage =
+                        'Service temporarily unavailable. Please try again later.'
+                      break
+                    default:
+                      errorMessage = `Request failed with status ${error.status}`
+                  }
+                }
+              }
+
+              // Show error toast notification
+              toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: errorMessage,
+              })
+            })
+            .catch((error) => {
+              console.error('Failed to show error toast:', error)
+            })
         },
       },
     },
@@ -187,11 +237,34 @@ export const performanceIntegration = {
       `query-end-${JSON.stringify(queryKey)}`
     )
 
-    // Report slow queries
-    if (duration > 1000) {
-      console.warn(
-        `Slow query detected: ${JSON.stringify(queryKey)} took ${duration}ms`
+    // Track query performance in analytics
+    import('./analytics').then(({ analytics }) => {
+      analytics.performance(
+        `query_${queryKey[0] || 'unknown'}`,
+        duration,
+        'ms',
+        {
+          queryKey: JSON.stringify(queryKey),
+          category: 'react-query',
+        }
       )
-    }
+
+      // Report slow queries
+      if (duration > 1000) {
+        console.warn(
+          `Slow query detected: ${JSON.stringify(queryKey)} took ${duration}ms`
+        )
+
+        // Track slow queries as potential performance issues
+        analytics.track({
+          name: 'slow_query_detected',
+          properties: {
+            queryKey: JSON.stringify(queryKey),
+            duration,
+            threshold: 1000,
+          },
+        })
+      }
+    })
   },
 }

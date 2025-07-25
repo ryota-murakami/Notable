@@ -31,6 +31,8 @@ export function MediaPreviewDialog() {
   const isOpen = useImagePreviewValue('isOpen', editor.id)
   const scale = useImagePreviewValue('scale')
   const isEditingScale = useImagePreviewValue('isEditingScale')
+  const currentPreview = useImagePreviewValue('currentPreview')
+  const previewList = useImagePreviewValue('previewList')
   const {
     closeProps,
     currentUrlIndex,
@@ -45,6 +47,73 @@ export function MediaPreviewDialog() {
     zoomInProps,
     zoomOutDisabled,
   } = useImagePreview({ scrollSpeed: SCROLL_SPEED })
+
+  const handleDownload = async () => {
+    if (!currentPreview?.url) return
+
+    try {
+      const currentUrl = currentPreview.url
+
+      // Generate filename from URL or use default
+      const generateFilename = (url: string) => {
+        try {
+          const urlObj = new URL(url)
+          const pathname = urlObj.pathname
+          const filename = pathname.split('/').pop()
+
+          if (filename && filename.includes('.')) {
+            return filename
+          }
+
+          // If no filename found, use timestamp
+          return `image-${Date.now()}.jpg`
+        } catch {
+          return `image-${Date.now()}.jpg`
+        }
+      }
+
+      const filename = generateFilename(currentUrl)
+
+      // Handle different URL types
+      if (currentUrl.startsWith('data:')) {
+        // Handle base64 data URLs
+        const link = document.createElement('a')
+        link.href = currentUrl
+        link.download = filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } else if (currentUrl.startsWith('blob:')) {
+        // Handle blob URLs
+        const link = document.createElement('a')
+        link.href = currentUrl
+        link.download = filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } else {
+        // Handle remote URLs - need to fetch and create blob
+        const response = await fetch(currentUrl)
+        if (!response.ok) throw new Error('Failed to fetch image')
+
+        const blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+
+        const link = document.createElement('a')
+        link.href = url
+        link.download = filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        // Clean up object URL
+        URL.revokeObjectURL(url)
+      }
+    } catch (error) {
+      console.error('Failed to download image:', error)
+      // Could add toast notification here
+    }
+  }
 
   return (
     <div
@@ -127,8 +196,17 @@ export function MediaPreviewDialog() {
                 <Plus className='size-4' />
               </button>
             </div>
-            {/* TODO: downLoad the image */}
-            <button className={cn(buttonVariants())} type='button'>
+            <button
+              className={cn(
+                buttonVariants({
+                  variant: !currentPreview?.url ? 'disabled' : 'default',
+                })
+              )}
+              type='button'
+              onClick={handleDownload}
+              disabled={!currentPreview?.url}
+              title='Download image'
+            >
               <Download className='size-4' />
             </button>
             <button
