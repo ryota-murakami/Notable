@@ -33,6 +33,49 @@ export interface Database {
           updated_at?: string
         }
       }
+      tags: {
+        Row: {
+          id: string
+          name: string
+          color: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          color?: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          color?: string
+          user_id?: string
+          created_at?: string
+        }
+      }
+      note_tags: {
+        Row: {
+          id: string
+          note_id: string
+          tag_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          note_id: string
+          tag_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          note_id?: string
+          tag_id?: string
+          created_at?: string
+        }
+      }
       user_subscriptions: {
         Row: {
           id: string

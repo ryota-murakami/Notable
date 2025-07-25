@@ -19,7 +19,7 @@ export function mapDatabaseNoteToNote(dbNote: DatabaseNote): Note {
     createdAt: dbNote.created_at,
     updatedAt: dbNote.updated_at,
     parentId: dbNote.folder_id,
-    tags: [], // TODO: Implement tags system
+    tags: [], // Tags are fetched separately via joins in useSupabaseNotes hook
     isFolder: false, // Notes are not folders
   }
 }
@@ -29,6 +29,32 @@ export function mapDatabaseNoteToNote(dbNote: DatabaseNote): Note {
  */
 export function mapDatabaseNotesToNotes(dbNotes: DatabaseNote[]): Note[] {
   return dbNotes.map(mapDatabaseNoteToNote)
+}
+
+/**
+ * Maps a database note row with joined tags to the Note interface
+ * This handles the data structure returned from Supabase joins
+ */
+export function mapDatabaseNoteWithTagsToNote(
+  dbNote: DatabaseNote & {
+    note_tags?: Array<{ tags: { id: string; name: string; color: string } }>
+  }
+): Note {
+  return {
+    id: dbNote.id,
+    title: dbNote.title,
+    content:
+      typeof dbNote.content === 'string'
+        ? dbNote.content
+        : JSON.stringify(dbNote.content),
+    userId: dbNote.user_id,
+    createdAt: dbNote.created_at,
+    updatedAt: dbNote.updated_at,
+    parentId: dbNote.folder_id,
+    tags: dbNote.note_tags?.map((nt) => nt.tags.name).filter(Boolean) || [],
+    isFolder: false, // Notes are not folders
+    isHidden: dbNote.is_hidden || false,
+  }
 }
 
 /**
