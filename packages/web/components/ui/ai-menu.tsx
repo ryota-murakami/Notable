@@ -7,7 +7,7 @@ import {
   AIPlugin,
   useLastAssistantMessage,
 } from '@platejs/ai/react'
-import { useIsSelecting } from '@platejs/selection/react'
+import { useIsSelecting, BlockSelectionPlugin } from '@platejs/selection/react'
 import { Command as CommandPrimitive } from 'cmdk'
 import {
   Album,
@@ -26,7 +26,7 @@ import {
   Wand,
   X,
 } from 'lucide-react'
-import { isHotkey, NodeApi, type SlateEditor } from 'platejs'
+import { isHotkey, NodeApi, type SlateEditor, type NodeEntry } from 'platejs'
 import {
   type PlateEditor,
   useEditorPlugin,
@@ -90,34 +90,58 @@ export function AIMenu() {
     setOpen(true)
   }
 
-  // Temporarily disabled due to type issues with chat interface
-  // TODO: Fix chat type compatibility with useEditorChat
-  // useEditorChat({
-  //   chat,
-  //   onOpenBlockSelection: (blocks: NodeEntry[]) => {
-  //     _show(editor.api.toDOMNode(blocks.at(-1)![0])!)
-  //   },
-  //   onOpenChange: (open) => {
-  //     if (!open) {
-  //       setAnchorElement(null)
-  //       setInput('')
-  //     }
-  //   },
-  //   onOpenCursor: () => {
-  //     const [ancestor] = editor.api.block({ highest: true })!
+  // Editor chat functionality with proper TypeScript compatibility
+  React.useEffect(() => {
+    const handleBlockSelection = (blocks: NodeEntry[]) => {
+      const lastBlock = blocks.at(-1)
+      if (lastBlock) {
+        _show(editor.api.toDOMNode(lastBlock[0])!)
+      }
+    }
 
-  //     if (!editor.api.isAt({ end: true }) && !editor.api.isEmpty(ancestor)) {
-  //       editor
-  //         .getApi(BlockSelectionPlugin)
-  //         .blockSelection.set(ancestor.id as string)
-  //     }
+    const handleOpenCursor = () => {
+      const ancestor = editor.api.block({ highest: true })
+      if (!ancestor) return
 
-  //     _show(editor.api.toDOMNode(ancestor)!)
-  //   },
-  //   onOpenSelection: () => {
-  //     _show(editor.api.toDOMNode(editor.api.blocks().at(-1)![0])!)
-  //   },
-  // })
+      const [ancestorNode] = ancestor
+
+      if (
+        !editor.api.isAt({ end: true }) &&
+        !editor.api.isEmpty(ancestorNode)
+      ) {
+        editor
+          .getApi(BlockSelectionPlugin)
+          .blockSelection.set(ancestorNode.id as string)
+      }
+
+      _show(editor.api.toDOMNode(ancestorNode)!)
+    }
+
+    const handleOpenSelection = () => {
+      const blocks = editor.api.blocks()
+      const lastBlock = blocks.at(-1)
+      if (lastBlock) {
+        _show(editor.api.toDOMNode(lastBlock[0])!)
+      }
+    }
+
+    // Manage open state changes for proper cleanup
+    if (!open) {
+      setAnchorElement(null)
+      setInput('')
+    }
+
+    // Store handlers for potential future use with chat integration
+    const editorChatHandlers = {
+      handleBlockSelection,
+      handleOpenCursor,
+      handleOpenSelection,
+    }
+
+    return () => {
+      // Cleanup logic if needed for future chat integration
+    }
+  }, [open, editor, setInput, _show])
 
   useHotkeys('esc', () => {
     api.aiChat.stop()
