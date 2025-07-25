@@ -1,19 +1,18 @@
 // CRDT (Conflict-free Replicated Data Type) operations for Notable sync
 
 import { v4 as uuidv4 } from 'uuid'
-import type { 
-  VectorClock, 
-  Note, 
-  ChangeSet, 
-  CRDTOperations, 
-  ConflictResult
+import type {
+  ChangeSet,
+  ConflictResult,
+  CRDTOperations,
+  Note,
+  VectorClock,
 } from './types'
 
 /**
  * Implementation of CRDT operations for Notable sync system
  */
 export class CRDTOperationsImpl implements CRDTOperations {
-  
   /**
    * Increment the logical clock for a device in the vector clock
    */
@@ -27,26 +26,29 @@ export class CRDTOperationsImpl implements CRDTOperations {
    * Compare two vector clocks to determine their relationship
    * Returns:
    * - 'before': clock1 happened before clock2
-   * - 'after': clock1 happened after clock2  
+   * - 'after': clock1 happened after clock2
    * - 'concurrent': clocks are concurrent (conflict)
    */
-  compareClock(clock1: VectorClock, clock2: VectorClock): 'before' | 'after' | 'concurrent' {
+  compareClock(
+    clock1: VectorClock,
+    clock2: VectorClock,
+  ): 'before' | 'after' | 'concurrent' {
     const allDevices = new Set([...Object.keys(clock1), ...Object.keys(clock2)])
-    
+
     let clock1Greater = false
     let clock2Greater = false
-    
+
     for (const deviceId of allDevices) {
       const val1 = clock1[deviceId] || 0
       const val2 = clock2[deviceId] || 0
-      
+
       if (val1 > val2) {
         clock1Greater = true
       } else if (val2 > val1) {
         clock2Greater = true
       }
     }
-    
+
     if (clock1Greater && clock2Greater) {
       return 'concurrent'
     } else if (clock1Greater) {
@@ -64,11 +66,11 @@ export class CRDTOperationsImpl implements CRDTOperations {
   mergeClock(clock1: VectorClock, clock2: VectorClock): VectorClock {
     const allDevices = new Set([...Object.keys(clock1), ...Object.keys(clock2)])
     const merged: VectorClock = {}
-    
+
     for (const deviceId of allDevices) {
       merged[deviceId] = Math.max(clock1[deviceId] || 0, clock2[deviceId] || 0)
     }
-    
+
     return merged
   }
 
@@ -76,15 +78,18 @@ export class CRDTOperationsImpl implements CRDTOperations {
    * Resolve conflicts between two note versions using CRDT principles
    */
   resolveConflict(local: Note, remote: Note): ConflictResult {
-    const clockComparison = this.compareClock(local.vector_clock, remote.vector_clock)
-    
+    const clockComparison = this.compareClock(
+      local.vector_clock,
+      remote.vector_clock,
+    )
+
     // If not concurrent, use the later version
     if (clockComparison !== 'concurrent') {
       const winner = clockComparison === 'after' ? local : remote
       return {
         resolved: winner,
         strategy: 'last-write-wins',
-        conflicts: []
+        conflicts: [],
       }
     }
 
@@ -94,17 +99,18 @@ export class CRDTOperationsImpl implements CRDTOperations {
       ...local,
       vector_clock: this.mergeClock(local.vector_clock, remote.vector_clock),
       last_modified: new Date().toISOString(),
-      local_changes: true
+      local_changes: true,
     }
 
     // Title conflict resolution: use the longer title (more information preserved)
     if (local.title !== remote.title) {
-      const resolvedTitle = local.title.length >= remote.title.length ? local.title : remote.title
+      const resolvedTitle =
+        local.title.length >= remote.title.length ? local.title : remote.title
       conflicts.push({
         field: 'title',
         local_value: local.title,
         remote_value: remote.title,
-        resolved_value: resolvedTitle
+        resolved_value: resolvedTitle,
       })
       resolved.title = resolvedTitle
     }
@@ -112,23 +118,24 @@ export class CRDTOperationsImpl implements CRDTOperations {
     // Content conflict resolution: merge if both have changes, otherwise use non-empty
     if (local.content !== remote.content) {
       let resolvedContent: string
-      
+
       if (!local.content && remote.content) {
         resolvedContent = remote.content
       } else if (local.content && !remote.content) {
         resolvedContent = local.content
       } else {
         // Both have content - use simple last-write-wins based on timestamp
-        resolvedContent = new Date(local.last_modified) > new Date(remote.last_modified) 
-          ? local.content 
-          : remote.content
+        resolvedContent =
+          new Date(local.last_modified) > new Date(remote.last_modified)
+            ? local.content
+            : remote.content
       }
-      
+
       conflicts.push({
         field: 'content',
         local_value: local.content,
         remote_value: remote.content,
-        resolved_value: resolvedContent
+        resolved_value: resolvedContent,
       })
       resolved.content = resolvedContent
     }
@@ -140,7 +147,7 @@ export class CRDTOperationsImpl implements CRDTOperations {
         field: 'is_folder',
         local_value: local.is_folder,
         remote_value: remote.is_folder,
-        resolved_value: resolvedIsFolder
+        resolved_value: resolvedIsFolder,
       })
       resolved.is_folder = resolvedIsFolder
     }
@@ -148,13 +155,17 @@ export class CRDTOperationsImpl implements CRDTOperations {
     // Parent ID: use the one that exists, or prefer local if both exist
     if (local.parent_id !== remote.parent_id) {
       const resolvedParentId = local.parent_id || remote.parent_id
-      if (local.parent_id && remote.parent_id && local.parent_id !== remote.parent_id) {
+      if (
+        local.parent_id &&
+        remote.parent_id &&
+        local.parent_id !== remote.parent_id
+      ) {
         // Both have different parents - keep local preference
         conflicts.push({
           field: 'parent_id',
           local_value: local.parent_id,
           remote_value: remote.parent_id,
-          resolved_value: local.parent_id
+          resolved_value: local.parent_id,
         })
         resolved.parent_id = local.parent_id
       } else {
@@ -172,31 +183,37 @@ export class CRDTOperationsImpl implements CRDTOperations {
     return {
       resolved,
       strategy: conflicts.length > 0 ? 'merge' : 'last-write-wins',
-      conflicts
+      conflicts,
     }
   }
 
   /**
    * Merge two sets of changes, resolving conflicts using CRDT principles
    */
-  mergeChanges(localChanges: ChangeSet[], remoteChanges: ChangeSet[]): ChangeSet[] {
+  mergeChanges(
+    localChanges: ChangeSet[],
+    remoteChanges: ChangeSet[],
+  ): ChangeSet[] {
     const allChanges = [...localChanges, ...remoteChanges]
     const changesByNote = new Map<string, ChangeSet[]>()
-    
+
     // Group changes by note ID
     for (const change of allChanges) {
       const existing = changesByNote.get(change.note_id) || []
       existing.push(change)
       changesByNote.set(change.note_id, existing)
     }
-    
+
     const mergedChanges: ChangeSet[] = []
-    
+
     // Process each note's changes
     for (const [, changes] of changesByNote) {
       // Sort changes by timestamp
-      changes.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-      
+      changes.sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      )
+
       // If there's only one change or no conflicts, just use all changes
       if (changes.length === 1) {
         const firstChange = changes[0]
@@ -205,32 +222,34 @@ export class CRDTOperationsImpl implements CRDTOperations {
         }
         continue
       }
-      
+
       // Find concurrent changes that need merging
       const processedChanges: ChangeSet[] = []
-      
+
       for (let i = 0; i < changes.length; i++) {
         const current = changes[i]!
-        const conflicts = changes.filter(c => 
-          c !== current && 
-          this.compareClock(c.vector_clock, current.vector_clock) === 'concurrent'
+        const conflicts = changes.filter(
+          (c) =>
+            c !== current &&
+            this.compareClock(c.vector_clock, current.vector_clock) ===
+              'concurrent',
         )
-        
+
         if (conflicts.length === 0) {
           // No conflicts, add as-is
           processedChanges.push(current)
         } else {
           // Merge concurrent changes
           const merged = this.mergeChangeConflicts([current, ...conflicts])
-          if (!processedChanges.find(c => c.id === merged.id)) {
+          if (!processedChanges.find((c) => c.id === merged.id)) {
             processedChanges.push(merged)
           }
         }
       }
-      
+
       mergedChanges.push(...processedChanges)
     }
-    
+
     return mergedChanges
   }
 
@@ -245,7 +264,7 @@ export class CRDTOperationsImpl implements CRDTOperations {
       last_modified: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       local_changes: false, // Applied changes are now synced
-      version: note.version + 1
+      version: note.version + 1,
     }
 
     // Handle deletion
@@ -268,7 +287,7 @@ export class CRDTOperationsImpl implements CRDTOperations {
       last_modified: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       local_changes: true,
-      version: note.version + 1
+      version: note.version + 1,
     }
   }
 
@@ -280,7 +299,7 @@ export class CRDTOperationsImpl implements CRDTOperations {
     operation: 'create' | 'update' | 'delete',
     data: Partial<Note>,
     deviceId: string,
-    vectorClock: VectorClock
+    vectorClock: VectorClock,
   ): ChangeSet {
     return {
       id: uuidv4(),
@@ -290,7 +309,7 @@ export class CRDTOperationsImpl implements CRDTOperations {
       timestamp: new Date().toISOString(),
       device_id: deviceId,
       vector_clock: this.incrementClock(vectorClock, deviceId),
-      applied: false
+      applied: false,
     }
   }
 
@@ -314,22 +333,26 @@ export class CRDTOperationsImpl implements CRDTOperations {
     }
 
     // Sort by timestamp to establish order
-    const sorted = [...changes].sort((a, b) => 
-      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    const sorted = [...changes].sort(
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     )
 
     const latest = sorted[sorted.length - 1]
     if (!latest) {
       throw new Error('No changes to merge')
     }
-    
+
     const mergedData: Partial<Note> = {}
     const mergedVectorClock: VectorClock = {}
 
     // Merge all data changes
     for (const change of sorted) {
       Object.assign(mergedData, change.data)
-      Object.assign(mergedVectorClock, this.mergeClock(mergedVectorClock, change.vector_clock))
+      Object.assign(
+        mergedVectorClock,
+        this.mergeClock(mergedVectorClock, change.vector_clock),
+      )
     }
 
     return {
@@ -340,7 +363,7 @@ export class CRDTOperationsImpl implements CRDTOperations {
       device_id: latest.device_id,
       vector_clock: mergedVectorClock,
       timestamp: new Date().toISOString(),
-      applied: false
+      applied: false,
     }
   }
 }

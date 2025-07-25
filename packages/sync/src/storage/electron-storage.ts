@@ -1,6 +1,6 @@
 // SQLite storage adapter for Electron platform
 
-import type { StorageAdapter, Note, ChangeSet } from '../types'
+import type { ChangeSet, Note, StorageAdapter } from '../types'
 
 // Mock SQLite interface - actual implementation would use electron-sqlite or similar
 interface SqliteDatabase {
@@ -49,7 +49,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   private async openDatabase(path: string): Promise<SqliteDatabase> {
     // In real implementation: const Database = require('better-sqlite3')
     // return new Database(path)
-    
+
     // Mock implementation for typing
     console.log(`Opening SQLite database at: ${path}`)
     return {
@@ -117,12 +117,24 @@ export class ElectronStorageAdapter implements StorageAdapter {
     `)
 
     // Create indexes for better performance
-    this.db.exec('CREATE INDEX IF NOT EXISTS idx_notes_parent_id ON notes (parent_id)')
-    this.db.exec('CREATE INDEX IF NOT EXISTS idx_notes_deleted ON notes (deleted)')
-    this.db.exec('CREATE INDEX IF NOT EXISTS idx_notes_last_modified ON notes (last_modified)')
-    this.db.exec('CREATE INDEX IF NOT EXISTS idx_changes_note_id ON changes (note_id)')
-    this.db.exec('CREATE INDEX IF NOT EXISTS idx_changes_applied ON changes (applied)')
-    this.db.exec('CREATE INDEX IF NOT EXISTS idx_changes_timestamp ON changes (timestamp)')
+    this.db.exec(
+      'CREATE INDEX IF NOT EXISTS idx_notes_parent_id ON notes (parent_id)',
+    )
+    this.db.exec(
+      'CREATE INDEX IF NOT EXISTS idx_notes_deleted ON notes (deleted)',
+    )
+    this.db.exec(
+      'CREATE INDEX IF NOT EXISTS idx_notes_last_modified ON notes (last_modified)',
+    )
+    this.db.exec(
+      'CREATE INDEX IF NOT EXISTS idx_changes_note_id ON changes (note_id)',
+    )
+    this.db.exec(
+      'CREATE INDEX IF NOT EXISTS idx_changes_applied ON changes (applied)',
+    )
+    this.db.exec(
+      'CREATE INDEX IF NOT EXISTS idx_changes_timestamp ON changes (timestamp)',
+    )
   }
 
   /**
@@ -203,8 +215,8 @@ export class ElectronStorageAdapter implements StorageAdapter {
     const stmt = db.prepare('SELECT * FROM notes ORDER BY last_modified DESC')
     const rows = stmt.all() as any[]
     stmt.finalize()
-    
-    return rows.map(row => this.rowToNote(row))
+
+    return rows.map((row) => this.rowToNote(row))
   }
 
   /**
@@ -215,7 +227,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     const stmt = db.prepare('SELECT * FROM notes WHERE id = ?')
     const row = stmt.get(id) as any
     stmt.finalize()
-    
+
     return row ? this.rowToNote(row) : null
   }
 
@@ -225,7 +237,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   async saveNote(note: Note): Promise<void> {
     const db = this.ensureDb()
     const row = this.noteToRow(note)
-    
+
     const stmt = db.prepare(`
       INSERT OR REPLACE INTO notes (
         id, title, content, is_folder, parent_id, version, device_id,
@@ -235,13 +247,24 @@ export class ElectronStorageAdapter implements StorageAdapter {
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
       )
     `)
-    
+
     stmt.run(
-      row.id, row.title, row.content, row.is_folder, row.parent_id, row.version,
-      row.device_id, row.last_modified, row.vector_clock, row.synced_at,
-      row.local_changes, row.deleted, row.created_at, row.updated_at
+      row.id,
+      row.title,
+      row.content,
+      row.is_folder,
+      row.parent_id,
+      row.version,
+      row.device_id,
+      row.last_modified,
+      row.vector_clock,
+      row.synced_at,
+      row.local_changes,
+      row.deleted,
+      row.created_at,
+      row.updated_at,
     )
-    
+
     stmt.finalize()
   }
 
@@ -260,11 +283,13 @@ export class ElectronStorageAdapter implements StorageAdapter {
    */
   async getPendingChanges(): Promise<ChangeSet[]> {
     const db = this.ensureDb()
-    const stmt = db.prepare('SELECT * FROM changes WHERE applied = 0 ORDER BY timestamp ASC')
+    const stmt = db.prepare(
+      'SELECT * FROM changes WHERE applied = 0 ORDER BY timestamp ASC',
+    )
     const rows = stmt.all() as any[]
     stmt.finalize()
-    
-    return rows.map(row => this.rowToChange(row))
+
+    return rows.map((row) => this.rowToChange(row))
   }
 
   /**
@@ -272,13 +297,13 @@ export class ElectronStorageAdapter implements StorageAdapter {
    */
   async saveChange(change: ChangeSet): Promise<void> {
     const db = this.ensureDb()
-    
+
     const stmt = db.prepare(`
       INSERT OR REPLACE INTO changes (
         id, note_id, operation, data, timestamp, device_id, vector_clock, applied
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `)
-    
+
     stmt.run(
       change.id,
       change.note_id,
@@ -287,9 +312,9 @@ export class ElectronStorageAdapter implements StorageAdapter {
       change.timestamp,
       change.device_id,
       JSON.stringify(change.vector_clock),
-      change.applied ? 1 : 0
+      change.applied ? 1 : 0,
     )
-    
+
     stmt.finalize()
   }
 
@@ -321,7 +346,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     const stmt = db.prepare('SELECT value FROM metadata WHERE key = ?')
     const row = stmt.get('last_sync_time') as any
     stmt.finalize()
-    
+
     return row ? row.value : null
   }
 
@@ -330,7 +355,9 @@ export class ElectronStorageAdapter implements StorageAdapter {
    */
   async setLastSyncTime(timestamp: string): Promise<void> {
     const db = this.ensureDb()
-    const stmt = db.prepare('INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)')
+    const stmt = db.prepare(
+      'INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)',
+    )
     stmt.run('last_sync_time', timestamp)
     stmt.finalize()
   }
@@ -343,7 +370,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     const stmt = db.prepare('SELECT value FROM metadata WHERE key = ?')
     const row = stmt.get('device_id') as any
     stmt.finalize()
-    
+
     return row ? row.value : ''
   }
 
@@ -352,7 +379,9 @@ export class ElectronStorageAdapter implements StorageAdapter {
    */
   async setDeviceId(deviceId: string): Promise<void> {
     const db = this.ensureDb()
-    const stmt = db.prepare('INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)')
+    const stmt = db.prepare(
+      'INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)',
+    )
     stmt.run('device_id', deviceId)
     stmt.finalize()
   }
@@ -362,13 +391,17 @@ export class ElectronStorageAdapter implements StorageAdapter {
    */
   async vacuum(): Promise<void> {
     const db = this.ensureDb()
-    
+
     // Clear old applied changes (older than 7 days)
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    const stmt = db.prepare('DELETE FROM changes WHERE applied = 1 AND timestamp < ?')
+    const sevenDaysAgo = new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000,
+    ).toISOString()
+    const stmt = db.prepare(
+      'DELETE FROM changes WHERE applied = 1 AND timestamp < ?',
+    )
     stmt.run(sevenDaysAgo)
     stmt.finalize()
-    
+
     // Vacuum the database to reclaim space
     db.exec('VACUUM')
   }

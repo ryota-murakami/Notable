@@ -1,6 +1,6 @@
 // IndexedDB storage adapter for Web platform
 
-import type { StorageAdapter, Note, ChangeSet } from '../types'
+import type { ChangeSet, Note, StorageAdapter } from '../types'
 
 /**
  * IndexedDB-based storage adapter for web browsers
@@ -38,12 +38,16 @@ export class WebStorageAdapter implements StorageAdapter {
           const notesStore = db.createObjectStore('notes', { keyPath: 'id' })
           notesStore.createIndex('parent_id', 'parent_id', { unique: false })
           notesStore.createIndex('deleted', 'deleted', { unique: false })
-          notesStore.createIndex('last_modified', 'last_modified', { unique: false })
+          notesStore.createIndex('last_modified', 'last_modified', {
+            unique: false,
+          })
         }
 
         // Create changes store
         if (!db.objectStoreNames.contains('changes')) {
-          const changesStore = db.createObjectStore('changes', { keyPath: 'id' })
+          const changesStore = db.createObjectStore('changes', {
+            keyPath: 'id',
+          })
           changesStore.createIndex('note_id', 'note_id', { unique: false })
           changesStore.createIndex('applied', 'applied', { unique: false })
           changesStore.createIndex('timestamp', 'timestamp', { unique: false })
@@ -75,7 +79,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async getAllNotes(): Promise<Note[]> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['notes'], 'readonly')
       const store = transaction.objectStore('notes')
@@ -91,7 +95,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async getNote(id: string): Promise<Note | null> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['notes'], 'readonly')
       const store = transaction.objectStore('notes')
@@ -107,13 +111,14 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async saveNote(note: Note): Promise<void> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['notes'], 'readwrite')
       const store = transaction.objectStore('notes')
       const request = store.put(note)
 
-      request.onerror = () => reject(new Error(`Failed to save note ${note.id}`))
+      request.onerror = () =>
+        reject(new Error(`Failed to save note ${note.id}`))
       request.onsuccess = () => resolve()
     })
   }
@@ -123,7 +128,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async deleteNote(id: string): Promise<void> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['notes'], 'readwrite')
       const store = transaction.objectStore('notes')
@@ -139,7 +144,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async getPendingChanges(): Promise<ChangeSet[]> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['changes'], 'readonly')
       const store = transaction.objectStore('changes')
@@ -156,13 +161,14 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async saveChange(change: ChangeSet): Promise<void> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['changes'], 'readwrite')
       const store = transaction.objectStore('changes')
       const request = store.put(change)
 
-      request.onerror = () => reject(new Error(`Failed to save change ${change.id}`))
+      request.onerror = () =>
+        reject(new Error(`Failed to save change ${change.id}`))
       request.onsuccess = () => resolve()
     })
   }
@@ -172,24 +178,26 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async markChangeApplied(changeId: string): Promise<void> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['changes'], 'readwrite')
       const store = transaction.objectStore('changes')
-      
+
       const getRequest = store.get(changeId)
       getRequest.onsuccess = () => {
         const change = getRequest.result
         if (change) {
           change.applied = true
           const putRequest = store.put(change)
-          putRequest.onerror = () => reject(new Error(`Failed to mark change ${changeId} as applied`))
+          putRequest.onerror = () =>
+            reject(new Error(`Failed to mark change ${changeId} as applied`))
           putRequest.onsuccess = () => resolve()
         } else {
           resolve() // Change doesn't exist, consider it applied
         }
       }
-      getRequest.onerror = () => reject(new Error(`Failed to get change ${changeId}`))
+      getRequest.onerror = () =>
+        reject(new Error(`Failed to get change ${changeId}`))
     })
   }
 
@@ -198,15 +206,16 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async clearAppliedChanges(): Promise<void> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['changes'], 'readwrite')
       const store = transaction.objectStore('changes')
       const index = store.index('applied')
       const request = index.openCursor(IDBKeyRange.only(true))
 
-      request.onerror = () => reject(new Error('Failed to clear applied changes'))
-      
+      request.onerror = () =>
+        reject(new Error('Failed to clear applied changes'))
+
       request.onsuccess = () => {
         const cursor = request.result
         if (cursor) {
@@ -224,7 +233,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async getLastSyncTime(): Promise<string | null> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['metadata'], 'readonly')
       const store = transaction.objectStore('metadata')
@@ -243,7 +252,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async setLastSyncTime(timestamp: string): Promise<void> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['metadata'], 'readwrite')
       const store = transaction.objectStore('metadata')
@@ -259,7 +268,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async getDeviceId(): Promise<string> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['metadata'], 'readonly')
       const store = transaction.objectStore('metadata')
@@ -278,7 +287,7 @@ export class WebStorageAdapter implements StorageAdapter {
    */
   async setDeviceId(deviceId: string): Promise<void> {
     const db = await this.ensureDb()
-    
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['metadata'], 'readwrite')
       const store = transaction.objectStore('metadata')
@@ -295,8 +304,10 @@ export class WebStorageAdapter implements StorageAdapter {
   async vacuum(): Promise<void> {
     // Clear old applied changes (older than 7 days)
     const db = await this.ensureDb()
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    
+    const sevenDaysAgo = new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000,
+    ).toISOString()
+
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(['changes'], 'readwrite')
       const store = transaction.objectStore('changes')
@@ -304,7 +315,7 @@ export class WebStorageAdapter implements StorageAdapter {
       const request = index.openCursor(IDBKeyRange.upperBound(sevenDaysAgo))
 
       request.onerror = () => reject(new Error('Failed to vacuum database'))
-      
+
       request.onsuccess = () => {
         const cursor = request.result
         if (cursor) {

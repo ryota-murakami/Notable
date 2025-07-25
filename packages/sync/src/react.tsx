@@ -1,21 +1,21 @@
 // React hooks and components for Notable sync
 
-import React, { 
-  createContext, 
-  useContext, 
-  useEffect, 
-  useState, 
+import React, {
+  createContext,
+  type ReactNode,
   useCallback,
-  ReactNode,
-  useMemo 
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react'
-import type { 
-  SyncService, 
-  SyncConfig, 
-  StorageAdapter, 
-  SyncStatus, 
-  SyncStats, 
-  DeviceInfo 
+import type {
+  DeviceInfo,
+  StorageAdapter,
+  SyncConfig,
+  SyncService,
+  SyncStats,
+  SyncStatus,
 } from './types'
 import { createSyncService } from './sync-service'
 
@@ -41,11 +41,11 @@ interface SyncProviderProps {
 /**
  * Provider component that manages the sync service instance
  */
-export const SyncProvider: React.FC<SyncProviderProps> = ({ 
-  children, 
-  config, 
-  storage, 
-  autoInit = true 
+export const SyncProvider: React.FC<SyncProviderProps> = ({
+  children,
+  config,
+  storage,
+  autoInit = true,
 }) => {
   const [syncService, setSyncService] = useState<SyncService | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -53,15 +53,15 @@ export const SyncProvider: React.FC<SyncProviderProps> = ({
 
   useEffect(() => {
     let mounted = true
-    
+
     const initializeSync = async () => {
       try {
         const service = createSyncService(config, storage)
-        
+
         if (autoInit) {
           await service.initialize()
         }
-        
+
         if (mounted) {
           setSyncService(service)
           setIsInitialized(autoInit)
@@ -69,7 +69,11 @@ export const SyncProvider: React.FC<SyncProviderProps> = ({
         }
       } catch (err) {
         if (mounted) {
-          setError(err instanceof Error ? err.message : 'Failed to initialize sync service')
+          setError(
+            err instanceof Error
+              ? err.message
+              : 'Failed to initialize sync service',
+          )
           console.error('Sync service initialization failed:', err)
         }
       }
@@ -85,16 +89,17 @@ export const SyncProvider: React.FC<SyncProviderProps> = ({
     }
   }, [config, storage, autoInit])
 
-  const contextValue = useMemo(() => ({
-    syncService,
-    isInitialized,
-    error,
-  }), [syncService, isInitialized, error])
+  const contextValue = useMemo(
+    () => ({
+      syncService,
+      isInitialized,
+      error,
+    }),
+    [syncService, isInitialized, error],
+  )
 
   return (
-    <SyncContext.Provider value={contextValue}>
-      {children}
-    </SyncContext.Provider>
+    <SyncContext.Provider value={contextValue}>{children}</SyncContext.Provider>
   )
 }
 
@@ -103,11 +108,11 @@ export const SyncProvider: React.FC<SyncProviderProps> = ({
  */
 export const useSyncService = () => {
   const context = useContext(SyncContext)
-  
+
   if (!context) {
     throw new Error('useSyncService must be used within a SyncProvider')
   }
-  
+
   return context
 }
 
@@ -154,15 +159,27 @@ export const useSyncStats = () => {
       updateStats()
     }
 
-    syncService.on('status-change', handleStatusChange as (data?: unknown) => void)
-    syncService.on('sync-complete', handleSyncComplete as (data?: unknown) => void)
+    syncService.on(
+      'status-change',
+      handleStatusChange as (data?: unknown) => void,
+    )
+    syncService.on(
+      'sync-complete',
+      handleSyncComplete as (data?: unknown) => void,
+    )
 
     // Set up periodic stats updates
     const interval = setInterval(updateStats, 30000) // Update every 30 seconds
 
     return () => {
-      syncService.off('status-change', handleStatusChange as (data?: unknown) => void)
-      syncService.off('sync-complete', handleSyncComplete as (data?: unknown) => void)
+      syncService.off(
+        'status-change',
+        handleStatusChange as (data?: unknown) => void,
+      )
+      syncService.off(
+        'sync-complete',
+        handleSyncComplete as (data?: unknown) => void,
+      )
       clearInterval(interval)
     }
   }, [syncService, isInitialized, updateStats])
@@ -280,7 +297,8 @@ export const useSyncOperations = () => {
     try {
       await syncService.syncUp()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Sync up failed'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Sync up failed'
       setLastError(errorMessage)
       throw error
     } finally {
@@ -299,7 +317,8 @@ export const useSyncOperations = () => {
     try {
       await syncService.syncDown()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Sync down failed'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Sync down failed'
       setLastError(errorMessage)
       throw error
     } finally {
@@ -318,7 +337,8 @@ export const useSyncOperations = () => {
     try {
       await syncService.syncAll()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Full sync failed'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Full sync failed'
       setLastError(errorMessage)
       throw error
     } finally {

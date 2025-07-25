@@ -1,6 +1,6 @@
 // AsyncStorage + SQLite storage adapter for React Native
 
-import type { StorageAdapter, Note, ChangeSet } from '../types'
+import type { ChangeSet, Note, StorageAdapter } from '../types'
 
 // Mock AsyncStorage interface - actual implementation would use @react-native-async-storage/async-storage
 interface AsyncStorageInterface {
@@ -24,8 +24,11 @@ interface MobileSqliteTransaction {
   executeSql(
     sqlStatement: string,
     args?: unknown[],
-    successCallback?: (tx: MobileSqliteTransaction, result: MobileSqliteResultSet) => void,
-    errorCallback?: (tx: MobileSqliteTransaction, error: Error) => boolean
+    successCallback?: (
+      tx: MobileSqliteTransaction,
+      result: MobileSqliteResultSet,
+    ) => void,
+    errorCallback?: (tx: MobileSqliteTransaction, error: Error) => boolean,
   ): void
 }
 
@@ -58,15 +61,24 @@ export class MobileStorageAdapter implements StorageAdapter {
    */
   private getMockAsyncStorage(): AsyncStorageInterface {
     const storage = new Map<string, string>()
-    
+
     return {
       getItem: async (key: string) => storage.get(key) || null,
-      setItem: async (key: string, value: string) => { storage.set(key, value) },
-      removeItem: async (key: string) => { storage.delete(key) },
+      setItem: async (key: string, value: string) => {
+        storage.set(key, value)
+      },
+      removeItem: async (key: string) => {
+        storage.delete(key)
+      },
       getAllKeys: async () => Array.from(storage.keys()),
-      multiGet: async (keys: string[]) => keys.map(key => [key, storage.get(key) || null]),
-      multiSet: async (pairs: [string, string][]) => { pairs.forEach(([key, value]) => storage.set(key, value)) },
-      clear: async () => { storage.clear() },
+      multiGet: async (keys: string[]) =>
+        keys.map((key) => [key, storage.get(key) || null]),
+      multiSet: async (pairs: [string, string][]) => {
+        pairs.forEach(([key, value]) => storage.set(key, value))
+      },
+      clear: async () => {
+        storage.clear()
+      },
     }
   }
 
@@ -89,7 +101,7 @@ export class MobileStorageAdapter implements StorageAdapter {
   private async openDatabase(name: string): Promise<MobileSqliteDatabase> {
     // In real implementation: SQLite.openDatabase({ name, location: 'default' })
     console.log(`Opening mobile SQLite database: ${name}`)
-    
+
     // Mock implementation
     return {
       transaction: async (fn: (tx: MobileSqliteTransaction) => void) => {
@@ -102,7 +114,7 @@ export class MobileStorageAdapter implements StorageAdapter {
                 rowsAffected: 1,
               })
             }
-          }
+          },
         }
         fn(mockTx)
       },
@@ -116,7 +128,7 @@ export class MobileStorageAdapter implements StorageAdapter {
                 rowsAffected: 0,
               })
             }
-          }
+          },
         }
         fn(mockTx)
       },
@@ -168,12 +180,24 @@ export class MobileStorageAdapter implements StorageAdapter {
       `)
 
       // Create indexes
-      tx.executeSql('CREATE INDEX IF NOT EXISTS idx_notes_parent_id ON notes (parent_id)')
-      tx.executeSql('CREATE INDEX IF NOT EXISTS idx_notes_deleted ON notes (deleted)')
-      tx.executeSql('CREATE INDEX IF NOT EXISTS idx_notes_last_modified ON notes (last_modified)')
-      tx.executeSql('CREATE INDEX IF NOT EXISTS idx_changes_note_id ON changes (note_id)')
-      tx.executeSql('CREATE INDEX IF NOT EXISTS idx_changes_applied ON changes (applied)')
-      tx.executeSql('CREATE INDEX IF NOT EXISTS idx_changes_timestamp ON changes (timestamp)')
+      tx.executeSql(
+        'CREATE INDEX IF NOT EXISTS idx_notes_parent_id ON notes (parent_id)',
+      )
+      tx.executeSql(
+        'CREATE INDEX IF NOT EXISTS idx_notes_deleted ON notes (deleted)',
+      )
+      tx.executeSql(
+        'CREATE INDEX IF NOT EXISTS idx_notes_last_modified ON notes (last_modified)',
+      )
+      tx.executeSql(
+        'CREATE INDEX IF NOT EXISTS idx_changes_note_id ON changes (note_id)',
+      )
+      tx.executeSql(
+        'CREATE INDEX IF NOT EXISTS idx_changes_applied ON changes (applied)',
+      )
+      tx.executeSql(
+        'CREATE INDEX IF NOT EXISTS idx_changes_timestamp ON changes (timestamp)',
+      )
     })
   }
 
@@ -238,7 +262,7 @@ export class MobileStorageAdapter implements StorageAdapter {
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -267,7 +291,7 @@ export class MobileStorageAdapter implements StorageAdapter {
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -290,17 +314,26 @@ export class MobileStorageAdapter implements StorageAdapter {
             created_at, updated_at
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
-            note.id, note.title, note.content, note.is_folder ? 1 : 0,
-            note.parent_id, note.version, note.device_id, note.last_modified,
-            JSON.stringify(note.vector_clock), note.synced_at,
-            note.local_changes ? 1 : 0, note.deleted ? 1 : 0,
-            note.created_at, note.updated_at
+            note.id,
+            note.title,
+            note.content,
+            note.is_folder ? 1 : 0,
+            note.parent_id,
+            note.version,
+            note.device_id,
+            note.last_modified,
+            JSON.stringify(note.vector_clock),
+            note.synced_at,
+            note.local_changes ? 1 : 0,
+            note.deleted ? 1 : 0,
+            note.created_at,
+            note.updated_at,
           ],
           () => resolve(),
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -323,7 +356,7 @@ export class MobileStorageAdapter implements StorageAdapter {
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -352,7 +385,7 @@ export class MobileStorageAdapter implements StorageAdapter {
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -373,15 +406,20 @@ export class MobileStorageAdapter implements StorageAdapter {
             id, note_id, operation, data, timestamp, device_id, vector_clock, applied
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           [
-            change.id, change.note_id, change.operation,
-            JSON.stringify(change.data), change.timestamp, change.device_id,
-            JSON.stringify(change.vector_clock), change.applied ? 1 : 0
+            change.id,
+            change.note_id,
+            change.operation,
+            JSON.stringify(change.data),
+            change.timestamp,
+            change.device_id,
+            JSON.stringify(change.vector_clock),
+            change.applied ? 1 : 0,
           ],
           () => resolve(),
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -404,7 +442,7 @@ export class MobileStorageAdapter implements StorageAdapter {
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -427,7 +465,7 @@ export class MobileStorageAdapter implements StorageAdapter {
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -470,7 +508,9 @@ export class MobileStorageAdapter implements StorageAdapter {
       throw new Error('Database not initialized')
     }
 
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    const sevenDaysAgo = new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000,
+    ).toISOString()
 
     return new Promise((resolve, reject) => {
       this.db!.transaction((tx) => {
@@ -481,7 +521,7 @@ export class MobileStorageAdapter implements StorageAdapter {
           (_, error) => {
             reject(error)
             return false
-          }
+          },
         )
       })
     })
@@ -503,7 +543,7 @@ export class MobileStorageAdapter implements StorageAdapter {
  */
 export function createMobileStorageAdapter(
   asyncStorage?: AsyncStorageInterface,
-  dbName?: string
+  dbName?: string,
 ): StorageAdapter {
   return new MobileStorageAdapter(asyncStorage, dbName)
 }

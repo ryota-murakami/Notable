@@ -1,16 +1,20 @@
 // Core sync service implementation for Notable cross-device sync
 
-import { createClient, SupabaseClient, RealtimeChannel } from '@supabase/supabase-js'
-import type { 
-  SyncService, 
-  SyncConfig, 
-  StorageAdapter, 
-  Note, 
-  ChangeSet, 
-  DeviceInfo, 
-  SyncStatus, 
+import {
+  createClient,
+  type RealtimeChannel,
+  type SupabaseClient,
+} from '@supabase/supabase-js'
+import type {
+  ChangeSet,
+  DeviceInfo,
+  Note,
+  StorageAdapter,
+  SyncConfig,
+  SyncService,
   SyncStats,
-  UserPresence 
+  SyncStatus,
+  UserPresence,
 } from './types'
 import { crdt } from './crdt'
 
@@ -25,11 +29,11 @@ export class SyncServiceImpl implements SyncService {
   private realtimeChannel: RealtimeChannel | null = null
   private syncInterval: NodeJS.Timeout | null = null
   private eventListeners = new Map<string, Set<(data?: unknown) => void>>()
-  
+
   constructor(config: SyncConfig, storage: StorageAdapter) {
     this.config = config
     this.storage = storage
-    
+
     this.supabase = createClient(config.supabaseUrl, config.supabaseKey, {
       realtime: {
         params: {
@@ -60,7 +64,7 @@ export class SyncServiceImpl implements SyncService {
       // Start auto-sync if interval is set
       if (this.config.syncInterval && this.config.syncInterval > 0) {
         this.syncInterval = setInterval(() => {
-          this.syncAll().catch(error => {
+          this.syncAll().catch((error) => {
             console.error('Auto-sync failed:', error)
             this.setStatus('error')
           })
@@ -120,7 +124,7 @@ export class SyncServiceImpl implements SyncService {
 
     try {
       const pendingChanges = await this.storage.getPendingChanges()
-      
+
       if (pendingChanges.length === 0) {
         this.setStatus('idle')
         return
@@ -137,9 +141,12 @@ export class SyncServiceImpl implements SyncService {
 
       // Update last sync time
       await this.storage.setLastSyncTime(new Date().toISOString())
-      
+
       this.setStatus('idle')
-      this.emit('sync-complete', { direction: 'up', changes: pendingChanges.length })
+      this.emit('sync-complete', {
+        direction: 'up',
+        changes: pendingChanges.length,
+      })
     } catch (error) {
       console.error('Sync up failed:', error)
       this.setStatus('error')
@@ -175,9 +182,12 @@ export class SyncServiceImpl implements SyncService {
 
       // Update last sync time
       await this.storage.setLastSyncTime(new Date().toISOString())
-      
+
       this.setStatus('idle')
-      this.emit('sync-complete', { direction: 'down', changes: remoteChanges.length })
+      this.emit('sync-complete', {
+        direction: 'down',
+        changes: remoteChanges.length,
+      })
     } catch (error) {
       console.error('Sync down failed:', error)
       this.setStatus('error')
@@ -195,10 +205,10 @@ export class SyncServiceImpl implements SyncService {
     }
 
     console.log('Starting full sync')
-    
+
     // First sync down to get latest remote changes
     await this.syncDown()
-    
+
     // Then sync up to push local changes
     await this.syncUp()
 
@@ -304,7 +314,7 @@ export class SyncServiceImpl implements SyncService {
         }
       }
 
-      return devices.filter(device => device.id !== this.config.deviceId)
+      return devices.filter((device) => device.id !== this.config.deviceId)
     } catch (error) {
       console.error('Failed to get online devices:', error)
       return []
@@ -329,7 +339,7 @@ export class SyncServiceImpl implements SyncService {
     return {
       last_sync: lastSync,
       pending_changes: pendingChanges.length,
-      total_notes: allNotes.filter(note => !note.deleted).length,
+      total_notes: allNotes.filter((note) => !note.deleted).length,
       sync_status: this.status,
     }
   }
@@ -358,8 +368,9 @@ export class SyncServiceImpl implements SyncService {
    */
   private async setupRealtimeSubscription(): Promise<void> {
     const channelName = `user-sync:${this.config.userId}`
-    
-    this.realtimeChannel = this.supabase.channel(channelName)
+
+    this.realtimeChannel = this.supabase
+      .channel(channelName)
       .on('broadcast', { event: 'note-change' }, (payload) => {
         this.handleRemoteChange(payload.payload as ChangeSet)
       })
@@ -389,7 +400,7 @@ export class SyncServiceImpl implements SyncService {
     try {
       // Apply the change locally
       await this.applyRemoteChanges([change])
-      
+
       // Notify listeners
       this.emit('remote-changes', [change])
     } catch (error) {
@@ -402,9 +413,7 @@ export class SyncServiceImpl implements SyncService {
    */
   private async syncChangesBatch(changes: ChangeSet[]): Promise<void> {
     // Insert changes into the database
-    const { error } = await this.supabase
-      .from('note_changes')
-      .insert(changes)
+    const { error } = await this.supabase.from('note_changes').insert(changes)
 
     if (error) {
       throw new Error(`Failed to sync changes: ${error.message}`)
@@ -452,7 +461,7 @@ export class SyncServiceImpl implements SyncService {
     for (const change of remoteChanges) {
       try {
         const existingNote = await this.storage.getNote(change.note_id)
-        
+
         if (change.operation === 'create' && !existingNote) {
           // Create new note
           const newNote: Note = {
@@ -519,6 +528,9 @@ export class SyncServiceImpl implements SyncService {
 /**
  * Factory function to create a sync service instance
  */
-export function createSyncService(config: SyncConfig, storage: StorageAdapter): SyncService {
+export function createSyncService(
+  config: SyncConfig,
+  storage: StorageAdapter,
+): SyncService {
   return new SyncServiceImpl(config, storage)
 }
