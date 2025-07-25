@@ -2,11 +2,26 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
 import type { Note } from '@/types/note'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
-import { CommandPalette } from '@/components/command-palette'
-import { KeyboardShortcutsDialog } from '@/components/keyboard-shortcuts-dialog'
+// Dynamically import heavy components for better code splitting
+const CommandPalette = dynamic(
+  () =>
+    import('@/components/command-palette').then((mod) => ({
+      default: mod.CommandPalette,
+    })),
+  { ssr: false }
+)
+
+const KeyboardShortcutsDialog = dynamic(
+  () =>
+    import('@/components/keyboard-shortcuts-dialog').then((mod) => ({
+      default: mod.KeyboardShortcutsDialog,
+    })),
+  { ssr: false }
+)
 
 // Dynamic import for PlateEditorComponent to prevent SSR issues
 const PlateEditorComponent = dynamic(
@@ -25,7 +40,14 @@ const PlateEditorComponent = dynamic(
 )
 import { useSupabaseNotes } from '@/hooks/use-supabase-notes'
 import { useSupabase } from '@/components/supabase-provider'
-import { AdvancedSearchDialog } from '@/components/advanced-search-dialog'
+// Dynamic import for search dialog
+const AdvancedSearchDialog = dynamic(
+  () =>
+    import('@/components/advanced-search-dialog').then((mod) => ({
+      default: mod.AdvancedSearchDialog,
+    })),
+  { ssr: false }
+)
 import { useToast } from '@/hooks/use-toast'
 import { WelcomeScreen } from '@/components/welcome-screen'
 import { Breadcrumb } from '@/components/breadcrumb'
@@ -38,14 +60,35 @@ import { ViewModeRenderer } from '@/components/view-mode-renderer'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Badge } from '@/components/ui/badge'
 import { CheckSquare, UserCheck, Users } from 'lucide-react'
-import { BulkOperationsToolbar } from '@/components/bulk-operations-toolbar'
+// Dynamic import for bulk operations
+const BulkOperationsToolbar = dynamic(
+  () =>
+    import('@/components/bulk-operations-toolbar').then((mod) => ({
+      default: mod.BulkOperationsToolbar,
+    })),
+  { ssr: false }
+)
 import { type ExportFormat, useExport } from '@/hooks/use-export'
 import { Button } from '@/components/ui/button'
 import { OfflineStatus } from '@/components/offline-status'
-import { ConflictResolutionDialog } from '@/components/conflict-resolution-dialog'
+// Dynamic import for conflict resolution
+const ConflictResolutionDialog = dynamic(
+  () =>
+    import('@/components/conflict-resolution-dialog').then((mod) => ({
+      default: mod.ConflictResolutionDialog,
+    })),
+  { ssr: false }
+)
+import { useUrlSync } from '@/hooks/use-url-sync'
+import { RoutePrefetcher } from '@/components/route-prefetcher'
 
-export function Shell() {
-  const [activeNoteId, setActiveNoteId] = useState<string>('')
+interface ShellProps {
+  initialNoteId?: string
+}
+
+export function Shell({ initialNoteId }: ShellProps = {}) {
+  const router = useRouter()
+  const [activeNoteId, setActiveNoteId] = useState<string>(initialNoteId || '')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
   const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false)
@@ -84,6 +127,12 @@ export function Shell() {
   const activeNote = notes.find((note) => note.id === activeNoteId) || notes[0]
   const folders = notes.filter((note) => note.isFolder)
 
+  // URL synchronization for deep linking
+  const { navigateToNote } = useUrlSync({
+    activeNoteId,
+    onNavigateToNote: setActiveNoteId,
+  })
+
   // Set initial active note when notes load
   useEffect(() => {
     if (notes.length > 0 && !activeNoteId && notes[0]) {
@@ -92,7 +141,7 @@ export function Shell() {
   }, [notes, activeNoteId])
 
   // Navigate between notes using keyboard
-  const navigateToNote = useCallback(
+  const navigateToAdjacentNote = useCallback(
     (direction: 'next' | 'previous') => {
       const currentIndex = notes.findIndex((note) => note.id === activeNoteId)
       if (currentIndex === -1) return
@@ -106,10 +155,10 @@ export function Shell() {
 
       const targetNote = notes[newIndex]
       if (targetNote) {
-        setActiveNoteId(targetNote.id)
+        navigateToNote(targetNote.id)
       }
     },
-    [notes, activeNoteId]
+    [notes, activeNoteId, navigateToNote]
   )
 
   // Show error toast if there's a connection error
@@ -176,7 +225,7 @@ export function Shell() {
       try {
         newNote = await createNote(parentId)
         if (newNote) {
-          setActiveNoteId(newNote.id)
+          navigateToNote(newNote.id)
           toast({
             title: 'Note created',
             description: 'Your new note has been created successfully.',
@@ -201,7 +250,7 @@ export function Shell() {
     try {
       newFolder = await createFolder(parentId)
       if (newFolder) {
-        setActiveNoteId(newFolder.id)
+        navigateToNote(newFolder.id)
         toast({
           title: 'Folder created',
           description: 'Your new folder has been created successfully.',
@@ -243,7 +292,7 @@ export function Shell() {
           const remainingNotes = notes.filter(
             (note) => !idsToDelete.includes(note.id)
           )
-          setActiveNoteId(remainingNotes[0]?.id || '')
+          navigateToNote(remainingNotes[0]?.id || '')
         }
 
         toast({
@@ -259,7 +308,7 @@ export function Shell() {
         })
       }
     },
-    [notes, deleteNote, activeNoteId, setActiveNoteId, toast]
+    [notes, deleteNote, activeNoteId, navigateToNote, toast]
   )
 
   // Multi-select handlers
@@ -431,18 +480,18 @@ export function Shell() {
     // Navigation shortcuts
     {
       id: 'navigate-next',
-      action: () => navigateToNote('next'),
+      action: () => navigateToAdjacentNote('next'),
     },
     {
       id: 'navigate-previous',
-      action: () => navigateToNote('previous'),
+      action: () => navigateToAdjacentNote('previous'),
     },
     // Quick switch shortcuts (1-9)
     ...Array.from({ length: 9 }, (_, i) => ({
       id: `quick-switch-${i + 1}`,
       action: () => {
         if (notes[i]) {
-          setActiveNoteId(notes[i].id)
+          navigateToNote(notes[i].id)
         }
       },
     })),
@@ -572,7 +621,7 @@ export function Shell() {
         <Sidebar
           notes={notes}
           activeNoteId={activeNoteId}
-          onSelectNote={(noteId) => setActiveNoteId(noteId)}
+          onSelectNote={navigateToNote}
           onCreateNote={handleCreateNote}
           onCreateFolder={handleCreateFolder}
           onDeleteNote={handleDeleteNote}
@@ -605,7 +654,7 @@ export function Shell() {
                 <Breadcrumb
                   currentNote={activeNote}
                   notes={notes}
-                  onNavigateToNote={setActiveNoteId}
+                  onNavigateToNote={navigateToNote}
                 />
                 <div className='flex items-center gap-3'>
                   {/* Offline status indicator */}
@@ -682,7 +731,7 @@ export function Shell() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         notes={notes}
-        onSelectNote={setActiveNoteId}
+        onSelectNote={navigateToNote}
         onCreateNote={() => handleCreateNote(null)}
       />
 
@@ -691,7 +740,7 @@ export function Shell() {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
         notes={notes}
-        onSelectNote={setActiveNoteId}
+        onSelectNote={navigateToNote}
         onCreateNote={handleCreateNote}
         onOpenSearch={() => setIsSearchOpen(true)}
         onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -723,6 +772,14 @@ export function Shell() {
 
       {/* Conflict Resolution Dialog */}
       <ConflictResolutionDialog />
+
+      {/* Route Prefetcher for optimized navigation */}
+      <RoutePrefetcher
+        notes={notes}
+        activeNoteId={activeNoteId}
+        prefetchStrategy='adjacent'
+        maxPrefetch={3}
+      />
     </div>
   )
 }
