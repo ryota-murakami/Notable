@@ -153,10 +153,9 @@ export const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
     }
 
     return createPlateEditor({
-      plugins,
-      value: editorValue
+      plugins
     })
-  }, [doc, getText, editorValue])
+  }, [doc, getText])
 
   // Sync initial value with Yjs document
   useEffect(() => {

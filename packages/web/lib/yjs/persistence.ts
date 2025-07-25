@@ -34,7 +34,7 @@ export class YjsDocumentPersistence {
   private autoSave: boolean
   private saveInterval: number
   private debug: boolean
-  private saveTimer: NodeJS.Timeout | null = null
+  private saveTimer: ReturnType<typeof setInterval> | null = null
   private pendingSaves = new Map<string, Doc>()
 
   constructor(options: PersistenceOptions) {
@@ -69,8 +69,7 @@ export class YjsDocumentPersistence {
         .from(this.tableName)
         .upsert({
           note_id: noteId,
-          user_id: userId,
-          state: Array.from(state), // Convert Uint8Array to array for JSON storage
+          state: state, // Store as binary data (BYTEA)
           version,
           updated_at: new Date().toISOString()
         }, {
@@ -115,7 +114,7 @@ export class YjsDocumentPersistence {
 
       // Reconstruct the document from saved state
       const doc = new Doc()
-      const state = new Uint8Array(data.state)
+      const state = data.state // Already Uint8Array from BYTEA column
       applyUpdate(doc, state)
 
       this.log('Document loaded successfully', { 

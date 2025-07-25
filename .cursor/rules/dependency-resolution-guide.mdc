@@ -1,0 +1,54 @@
+---
+description: "Dependency resolution and project issue management"
+---
+
+# Dependency Resolution & Project Management
+
+## Issue Priority Order
+Based on the current project state and Issue #15 completion, follow this resolution order:
+
+### ✅ Completed Issues
+1. **Issue #15** (TypeScript Configuration for Jest Types) - COMPLETED via PR #22
+
+### 🔥 High Priority (Affects All Packages)
+2. **Issue #16** (ESLint Configuration for Monorepo) - Critical for code quality
+3. **Issue #14** (Mobile Package Build Configuration) - Mobile-specific builds
+
+### 🟡 Medium Priority (Package-Specific)
+4. **Issue #17** (Mobile Package Jest Configuration) - Mobile testing
+5. **Issue #18** (Web Package E2E Tests Timeout) - Web testing reliability
+
+### 🟢 Low Priority (Cleanup & Enhancement)
+6. **Issue #19** (Peer Dependency Warnings) - Warning cleanup
+7. **Issue #20** (Shared Configuration Packages) - Future maintenance
+
+## Dependency Management Strategy
+- **Shared configs first**: Fix issues affecting all packages before package-specific ones
+- **Build before test**: Ensure packages can build before focusing on test configurations
+- **Core functionality before optimization**: Get basic functionality working before performance tuning
+
+## Configuration Inheritance
+The project uses a shared configuration pattern:
+
+### TypeScript Configuration
+- Base: [packages/configs/tsconfig/base.json](mdc:packages/configs/tsconfig/base.json)
+- Next.js: [packages/configs/tsconfig/nextjs.json](mdc:packages/configs/tsconfig/nextjs.json)
+- React Native: [packages/configs/tsconfig/react-native.json](mdc:packages/configs/tsconfig/react-native.json)
+
+### ESLint Configuration  
+- Base: [packages/configs/eslint-config/index.js](mdc:packages/configs/eslint-config/index.js)
+- Next.js: [packages/configs/eslint-config/next.js](mdc:packages/configs/eslint-config/next.js)
+- React Native: [packages/configs/eslint-config/react-native.js](mdc:packages/configs/eslint-config/react-native.js)
+- Electron: [packages/configs/eslint-config/electron.js](mdc:packages/configs/eslint-config/electron.js)
+
+### Jest Configuration
+- Base: [packages/configs/jest-config/index.js](mdc:packages/configs/jest-config/index.js)
+- Next.js: [packages/configs/jest-config/next.js](mdc:packages/configs/jest-config/next.js)
+- React Native: [packages/configs/jest-config/react-native.js](mdc:packages/configs/jest-config/react-native.js)
+
+## Resolution Pattern
+1. Identify root cause in shared configurations
+2. Fix shared configs first (affects all packages)
+3. Update package-specific configurations to inherit properly
+4. Test changes across all affected packages
+5. Document configuration patterns for future reference

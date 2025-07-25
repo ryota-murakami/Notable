@@ -1,0 +1,55 @@
+---
+alwaysApply: true
+description: "Operational conventions and workflow guidelines"
+---
+
+# Operational Conventions
+
+## General Workflow
+- **Immediate Action**: If you make a plan, follow it immediately without waiting for user confirmation
+- **Information Gathering**: Prefer tool calls over asking the user for information you can find
+- **Stop Only When**: You need information from the user that you can't find, or have different options for user input
+
+## Tool Usage & MCP Servers
+- Show all available tool names and each MCP server's tool count when user says 'hello' or 'やあ'
+- Use MCP servers when instructed via `use <mcp-server-name>`
+- Aggressively create memories using tool calls when acquiring new knowledge
+
+## Port Management
+- Use `npx kill-port <portnumber>` for killing specific port processes
+- Default development port is `3000`
+- Check port availability before starting servers
+
+## Testing Conventions
+- **Always re-run tests** after fixing failures to verify the fix
+- Use `--reporter=list` flag for Playwright to prevent HTML reporter issues
+- Take screenshots for visual verification of style changes
+
+## Memory Management
+- **IMPORTANT**: When you acquire new knowledge, aggressively create memories
+- Update/delete memories immediately when contradicted by user or new information
+- Cite memories using format: [[memory:MEMORY_ID]]
+- If memory is incorrect and user corrects you, mention they can correct you to update memory
+
+## Language Conventions  
+- **Respond in English** to English prompts
+- **Respond in Japanese** to Japanese prompts
+- **Code comments and docs**: ALWAYS use Japanese regardless of chat language (see [language.mdc](mdc:.cursor/rules/language.mdc))
+
+## File Management
+- **NEVER create files** unless absolutely necessary for the goal
+- **ALWAYS prefer editing** existing files over creating new ones
+- **NEVER proactively create** documentation files (*.md) or README files unless explicitly requested
+- Clean up any temporary files, scripts, or helper files at the end of tasks
+
+## Code Quality
+- Follow project's Prettier configuration strictly
+- Only fix TypeScript errors in valid JavaScript that runs correctly
+- Never change runtime behavior during type fixes
+- Generate implementation-ready code with all necessary imports and dependencies
+
+## Project Context
+- This is a **Turborepo monorepo** with **PNPM workspaces**
+- Three main packages: web (Next.js), mobile (React Native), electron
+- Shared configurations in `packages/configs/`
+- Follow established project patterns and structure

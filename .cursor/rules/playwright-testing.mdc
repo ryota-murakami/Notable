@@ -1,0 +1,54 @@
+---
+globs: "**/*.spec.ts,**/*.test.ts,**/playwright.config.ts"
+description: "Playwright testing configuration and best practices"
+---
+
+# Playwright Testing Guidelines
+
+## ❗ CRITICAL: Reporter Configuration
+When running Playwright tests, **always** use the `--reporter=list` option to prevent launching the HTML reporter, which can cause terminal output issues.
+
+```fish
+# Correct command
+npx playwright test --reporter=list
+
+# Also acceptable for CI/debugging
+npx playwright test --reporter=list --headed
+```
+
+## Test Structure
+Follow the established patterns in the project:
+
+### Web Package Tests
+- Location: [packages/web/e2e/](mdc:packages/web/e2e/)
+- Config: [packages/web/playwright.config.ts](mdc:packages/web/playwright.config.ts)
+- Examples:
+  - [app.spec.ts](mdc:packages/web/e2e/app.spec.ts)
+  - [auth.spec.ts](mdc:packages/web/e2e/auth.spec.ts)
+  - [note-creation.spec.ts](mdc:packages/web/e2e/note-creation.spec.ts)
+
+### Electron Package Tests
+- Location: [packages/electron/e2e/](mdc:packages/electron/e2e/)
+- Config: [packages/electron/playwright.config.ts](mdc:packages/electron/playwright.config.ts)
+- Examples:
+  - [app-lifecycle.test.ts](mdc:packages/electron/e2e/tests/app-lifecycle.test.ts)
+  - [file-operations.test.ts](mdc:packages/electron/e2e/tests/file-operations.test.ts)
+
+## Testing Workflow
+1. **After fixing app bugs**, **implementing features**, or **changing styles**:
+   - Use MCP server to run Playwright tests
+   - Verify behavior matches expectations
+   - Automatically generate Playwright code that replicates actions
+   - For style changes, include screenshots to verify visual correctness
+
+2. **Port Management**:
+   - Ensure port `3000` is available before starting local server
+   - If port is in use, likely a local instance is already running
+   - Use `npx kill-port 3000` if needed
+
+## Best Practices
+- Write descriptive test names that explain the behavior being tested
+- Use proper page object models for complex interactions
+- Implement proper wait strategies for dynamic content
+- Take screenshots for visual regression testing
+- Always re-run tests after fixing failures to verify the fix

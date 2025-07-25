@@ -1,0 +1,49 @@
+---
+globs: "packages/web/**/*.tsx,packages/web/**/*.ts"
+description: "Next.js App Router configuration and best practices"
+---
+
+# Next.js App Router Guidelines
+
+## ❗ CRITICAL: App Router Only
+- **DO NOT** reference Next.js Pages Router
+- All routing should use the `app/` directory structure
+- Use file-based routing with proper naming conventions
+
+## Directory Structure
+```
+app/
+├── layout.tsx          # Root layout
+├── page.tsx           # Home page
+├── globals.css        # Global styles
+├── (auth)/            # Route groups
+│   ├── _layout.tsx
+│   └── index.tsx
+└── api/               # API routes
+    └── route.ts
+```
+
+## Server vs Client Components
+### Use `'use server'` for:
+- Database operations
+- Server-side data fetching
+- API route handlers
+- Authentication logic that must stay on server
+
+### Use `'use client'` for:
+- Interactive components (onClick, onChange, etc.)
+- Browser APIs (localStorage, window, etc.)
+- State management (useState, useReducer)
+- **Only** at the top of the boundary component for the client-side tree
+
+## Best Practices
+- Leverage Server Components by default
+- Use Client Components only when necessary
+- Implement proper loading and error boundaries
+- Use Next.js built-in optimizations (Image, Link, etc.)
+- Follow the established patterns in [packages/web/app/](mdc:packages/web/app/)
+
+## Configuration Files
+- Refer to [next.config.mjs](mdc:packages/web/next.config.mjs)
+- Tailwind config: [tailwind.config.ts](mdc:packages/web/tailwind.config.ts)
+- TypeScript config: [tsconfig.json](mdc:packages/web/tsconfig.json)

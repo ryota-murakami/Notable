@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+description: "Language preferences for code comments and documentation"
+---
+
+# Language Configuration
+
+**CRITICAL RULE**: You **MUST** use **Japanese** for **ALL** code **COMMENTS** and **DOCS** regardless of chat language.
+
+## Examples:
+
+```typescript
+// ユーザー認証を処理する関数
+function authenticateUser(credentials: UserCredentials) {
+  // パスワードをハッシュ化
+  const hashedPassword = hashPassword(credentials.password);
+  
+  /**
+   * データベースからユーザー情報を取得
+   * @param email - ユーザーのメールアドレス
+   * @returns ユーザー情報またはnull
+   */
+  return findUserByEmail(credentials.email);
+}
+```
+
+```typescript
+/**
+ * ノートの作成と管理を行うコンポーネント
+ * 
+ * @description このコンポーネントは以下の機能を提供します：
+ * - ノートの新規作成
+ * - 既存ノートの編集
+ * - ノートの削除
+ */
+export default function NoteEditor() {
+  // コンポーネントのstate管理
+  const [notes, setNotes] = useState<Note[]>([]);
+}
+```
+
+This rule overrides chat language preferences and ensures consistency across the codebase.

@@ -1,0 +1,41 @@
+---
+globs: "*.ts,*.tsx,*.js,*.jsx"
+description: "TypeScript and React code style standards"
+---
+
+# Code Style & Standards
+
+## Core Principles
+- Adhere strictly to the project's Prettier configuration
+- **Only** fix TypeScript errors in code that is valid JavaScript and runs correctly at runtime
+- **Never** change runtime behavior during type fixes
+- Generate clean, modern, and stylish UIs inspired by platforms like Instagram
+
+## TypeScript Guidelines
+- Use strict type checking
+- Prefer type inference where possible
+- Use proper error handling with typed errors
+- Avoid `any` type unless absolutely necessary
+
+## React & Next.js Standards
+- **DO NOT** reference Next.js Pages Router - use App Router only
+- Use `'use server'` in files that must only run on the server
+- Use `'use client'` **only** at the top of the boundary component for the client-side tree
+- Prefer functional components with hooks
+- Use proper component composition patterns
+
+## File Organization
+- Keep components focused and single-responsibility
+- Use proper import/export patterns
+- Group related files in appropriate directories
+- Follow the established project structure in `packages/`
+
+## Error Handling
+- Use proper error boundaries in React
+- Implement comprehensive error handling in async operations
+- Log errors appropriately for debugging
+
+## Performance
+- Use React.memo() for expensive components
+- Implement proper loading states
+- Optimize bundle size and runtime performance

@@ -1,0 +1,65 @@
+---
+alwaysApply: true
+description: "PNPM project setup and management in Fish shell"
+---
+
+# PNPM Project Configuration
+
+## Initial Setup for PNPM Projects
+When working on this project that uses PNPM, follow these steps at the beginning of terminal sessions:
+
+### 🐚 Fish Shell Configuration
+```fish
+# Source Fish configuration to apply Volta environment
+source ~/.config/fish/config.fish
+```
+
+### 📦 PNPM Installation via Volta
+```fish
+# Install PNPM via Volta (if not already installed)
+volta install pnpm
+
+# Verify installation
+pnpm --version  # Should show version 10.12.1 or later
+```
+
+## Project Structure
+This is a Turborepo monorepo with PNPM workspaces:
+
+- **Root**: [package.json](mdc:package.json), [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml)
+- **Workspaces**: 
+  - `packages/web` - Next.js web application
+  - `packages/mobile` - React Native mobile app  
+  - `packages/electron` - Electron desktop app
+  - `packages/configs` - Shared configuration packages
+
+## Common Commands
+```fish
+# Install dependencies (from root)
+pnpm install
+
+# Run specific workspace command
+pnpm --filter web dev
+pnpm --filter mobile start
+pnpm --filter electron dev
+
+# Run commands across all workspaces
+pnpm run build
+pnpm run test
+pnpm run lint
+
+# Add dependencies to specific workspace
+pnpm --filter web add react-query
+pnpm --filter mobile add react-native-vector-icons
+```
+
+## Troubleshooting
+- If PNPM is not recognized, ensure Volta is properly configured
+- Use `volta list` to verify PNPM installation
+- Check [pnpm-lock.yaml](mdc:pnpm-lock.yaml) for dependency resolution issues
+- For port conflicts, use `npx kill-port <portnumber>`
+
+## Turborepo Integration
+- Build cache configuration: [turbo.json](mdc:turbo.json)
+- Shared configurations in `packages/configs/`
+- Cross-package dependencies managed automatically

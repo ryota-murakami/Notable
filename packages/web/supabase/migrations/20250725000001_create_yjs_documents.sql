@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS yjs_documents (
   id BIGSERIAL PRIMARY KEY,
   note_id TEXT NOT NULL UNIQUE REFERENCES notes(id) ON DELETE CASCADE,
   user_id TEXT NOT NULL,
-  state JSONB NOT NULL, -- Stored as JSON array of bytes from Yjs encodeStateAsUpdate
+  state BYTEA NOT NULL, -- Stored as binary data from Yjs encodeStateAsUpdate
   version INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

@@ -39,7 +39,6 @@ export async function updateSession(request: NextRequest) {
   // Allow access to test routes for screenshot purposes during development
   const isTestRoute = request.nextUrl.pathname.startsWith('/test-') || 
                      request.nextUrl.pathname === '/' ||
-                     request.nextUrl.pathname.startsWith('/dashboard') ||
                      request.nextUrl.pathname.startsWith('/privacy-policy') ||
                      request.nextUrl.pathname.startsWith('/terms-of-service') ||
                      request.nextUrl.pathname.startsWith('/support')

@@ -1,0 +1,61 @@
+---
+globs: "packages/web/**/*.tsx,packages/mobile/**/*.tsx"
+description: "UI development workflow and testing guidelines"
+---
+
+# UI Development Workflow
+
+## Development Process
+### Before Starting
+- Ensure port `3000` is available
+- If port is in use, a local instance is likely already running
+- Use `npx kill-port 3000` to free the port if needed
+
+### After Changes (Bug Fixes, Features, Style Changes)
+1. **Test with MCP Server**: Use the MCP server to run Playwright tests
+2. **Verify Behavior**: Ensure functionality works as expected
+3. **Generate Test Code**: Automatically generate Playwright code that replicates your actions
+4. **Visual Verification**: For style changes, include screenshots to verify visual correctness
+
+## UI Design Principles
+- Generate **clean, modern, and stylish UIs**
+- Draw inspiration from platforms like **Instagram**
+- Focus on user experience (UX) best practices
+- Implement responsive design patterns
+- Use the established design system
+
+## Design System
+The project includes a comprehensive design system:
+
+### Components
+- Location: [packages/web/design-system/components/](mdc:packages/web/design-system/components/)
+- Available components:
+  - [button.tsx](mdc:packages/web/design-system/components/button.tsx)
+  - [card.tsx](mdc:packages/web/design-system/components/card.tsx)
+  - [input.tsx](mdc:packages/web/design-system/components/input.tsx)
+  - [loading.tsx](mdc:packages/web/design-system/components/loading.tsx)
+  - [modal.tsx](mdc:packages/web/design-system/components/modal.tsx)
+
+### Theme System
+- Configuration: [packages/web/design-system/theme/theme-config.ts](mdc:packages/web/design-system/theme/theme-config.ts)
+- Provider: [packages/web/design-system/theme/theme-provider.tsx](mdc:packages/web/design-system/theme/theme-provider.tsx)
+- Customizer: [packages/web/design-system/theme/theme-customizer.tsx](mdc:packages/web/design-system/theme/theme-customizer.tsx)
+
+### Design Tokens
+- Colors: [packages/web/design-system/tokens/colors.ts](mdc:packages/web/design-system/tokens/colors.ts)
+- Typography: [packages/web/design-system/tokens/typography.ts](mdc:packages/web/design-system/tokens/typography.ts)
+- Spacing: [packages/web/design-system/tokens/spacing.ts](mdc:packages/web/design-system/tokens/spacing.ts)
+- Effects: [packages/web/design-system/tokens/effects.ts](mdc:packages/web/design-system/tokens/effects.ts)
+- Motion: [packages/web/design-system/tokens/motion.ts](mdc:packages/web/design-system/tokens/motion.ts)
+
+## Testing Workflow
+1. **Fix/Implement** → **Test** → **Verify** → **Document**
+2. Always re-run tests after fixing failures to verify the fix
+3. Use visual regression testing for style changes
+4. Ensure cross-platform compatibility (web, mobile, electron)
+
+## Mobile Considerations
+- Use React Native best practices in [packages/mobile/](mdc:packages/mobile/)
+- Implement responsive design for different screen sizes
+- Consider touch interactions and accessibility
+- Test on both iOS and Android platforms

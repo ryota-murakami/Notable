@@ -1,0 +1,31 @@
+---
+alwaysApply: true
+description: "Fish shell syntax and environment configuration"
+---
+
+# Fish Shell Environment
+
+The user environment uses **Fish Shell**, not bash/zsh. Generate commands using Fish shell syntax only.
+
+## ❗Important Syntax Differences:
+
+| Purpose                        | Bash/Zsh Syntax         | Fish Shell Syntax        |
+|-------------------------------|--------------------------|---------------------------|
+| Redirect stdout               | `> file.txt`             | `> file.txt`              |
+| Append stdout                 | `>> file.txt`            | `>> file.txt`             |
+| Redirect stderr               | `2> file.txt`            | `^ file.txt`              |
+| Append stderr                 | `2>> file.txt`           | `^>> file.txt`            |
+| Redirect both stdout & stderr| `> file 2>&1` or `&>`     | `&> file.txt`             |
+| Append both stdout & stderr  | `>> file 2>&1` or `&>>`   | `&>> file.txt`            |
+| stderr → stdout for piping   | `2>&1 | ...`              | `^&1 | ...`               |
+
+## Key Points:
+- In fish, `^` represents stderr
+- `&>` redirects both stdout and stderr
+- Always use Fish-compatible syntax for terminal commands
+- If unsure about syntax, ask for confirmation before proceeding
+
+## Environment Setup:
+- OS: macOS (darwin 24.5.0)
+- Shell: `/usr/local/bin/fish`
+- User: Raphtalia (@ryota-murakami)

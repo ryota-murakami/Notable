@@ -59,25 +59,55 @@ export class SupabaseYjsProvider {
   }
 
   private setupDocumentHandlers() {
-    // Listen for local document changes and broadcast them
+    let updateTimeout: ReturnType<typeof setTimeout> | null = null
+    let pendingUpdates: Uint8Array[] = []
+    
+    // Listen for local document changes and broadcast them with throttling
     const updateHandler = (update: Uint8Array, origin: any) => {
       // Don't broadcast updates that came from remote (avoid loops)
       if (origin === this) return
       
-      this.log('Broadcasting local update', { noteId: this.noteId, updateSize: update.length })
+      this.log('Queueing local update', { noteId: this.noteId, updateSize: update.length })
       
-      if (this.channel && this.isConnected) {
-        this.channel.send({
-          type: 'broadcast',
-          event: 'yjs-update',
-          payload: {
-            noteId: this.noteId,
-            userId: this.userId,
-            update: Array.from(update), // Convert Uint8Array to regular array for JSON
-            timestamp: Date.now()
-          }
-        })
-      }
+      // Add to pending updates
+      pendingUpdates.push(update)
+      
+      // Throttle updates to avoid rate limits
+      if (updateTimeout) clearTimeout(updateTimeout)
+      updateTimeout = setTimeout(() => {
+        if (this.channel && this.isConnected && pendingUpdates.length > 0) {
+          // Merge all pending updates
+          const mergedUpdate = pendingUpdates.reduce((acc, curr) => {
+            const merged = new Uint8Array(acc.length + curr.length)
+            merged.set(acc)
+            merged.set(curr, acc.length)
+            return merged
+          }, new Uint8Array(0))
+          
+          // Convert to base64 for more efficient transmission
+          const base64Update = btoa(String.fromCharCode(...mergedUpdate))
+          
+          this.channel.send({
+            type: 'broadcast',
+            event: 'yjs-update',
+            payload: {
+              noteId: this.noteId,
+              userId: this.userId,
+              update: base64Update,
+              timestamp: Date.now()
+            }
+          })
+          
+          this.log('Broadcasted merged update', { 
+            noteId: this.noteId, 
+            originalCount: pendingUpdates.length,
+            mergedSize: mergedUpdate.length,
+            compressedSize: base64Update.length
+          })
+          
+          pendingUpdates = []
+        }
+      }, 100) // 100ms throttle
     }
 
     this.doc.on('update', updateHandler)
@@ -108,8 +138,12 @@ export class SupabaseYjsProvider {
         })
 
         try {
-          // Convert array back to Uint8Array and apply to document
-          const updateArray = new Uint8Array(update)
+          // Convert base64 back to Uint8Array and apply to document
+          const binaryString = atob(update)
+          const updateArray = new Uint8Array(binaryString.length)
+          for (let i = 0; i < binaryString.length; i++) {
+            updateArray[i] = binaryString.charCodeAt(i)
+          }
           applyUpdate(this.doc, updateArray, this) // Use 'this' as origin to prevent loops
         } catch (error) {
           console.error('[SupabaseYjsProvider] Error applying remote update:', error)
