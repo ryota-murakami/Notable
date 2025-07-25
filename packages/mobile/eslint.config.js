@@ -66,7 +66,13 @@ export default [
     },
   },
   {
-    files: ['**/*.config.js', '**/babel.config.cjs', '**/.prettierrc.js', '**/jest.config.cjs'],
+    files: [
+      '**/*.config.js',
+      '**/babel.config.cjs',
+      '**/.prettierrc.js',
+      '**/jest.config.cjs',
+      '**/.detoxrc.js',
+    ],
     languageOptions: {
       globals: {
         // Node.js/CommonJS globals for config files

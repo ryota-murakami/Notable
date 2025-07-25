@@ -43,12 +43,6 @@
     "packages/electron/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
       "pnpm --filter @notable/electron lint:fix"
     ],
-    "packages/mobile/**/*.{ts,tsx}": [
-      "pnpm --filter @notable/mobile typecheck"
-    ],
-    "packages/electron/**/*.{ts,tsx}": [
-      "pnpm --filter @notable/electron typecheck"
-    ],
     "*": "prettier --ignore-unknown --write"
   },
   "pnpm": {

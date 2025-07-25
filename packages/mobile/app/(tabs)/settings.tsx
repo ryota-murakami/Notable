@@ -11,11 +11,15 @@ const SettingsScreen: FC = () => {
       <Text style={styles.title}>Settings</Text>
       {user ? (
         <View>
-          <Text style={styles.subtitle}>Signed in as: {user.email || 'Unknown'}</Text>
+          <Text style={styles.subtitle}>
+            Signed in as: {user.email || 'Unknown'}
+          </Text>
           <Button
-            mode="outlined"
+            mode='outlined'
             style={styles.button}
-            onPress={() => console.log('Sign out clicked')}
+            onPress={() => {
+              // Sign out functionality would go here
+            }}
           >
             <Text>Sign Out</Text>
           </Button>
