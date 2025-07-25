@@ -83,7 +83,11 @@ export function useSupabaseNotes({
             content: JSON.stringify([
               {
                 type: 'p',
-                children: [{ text: 'This is your first note! You can start editing right away.' }],
+                children: [
+                  {
+                    text: 'This is your first note! You can start editing right away.',
+                  },
+                ],
               },
             ]),
             createdAt: new Date().toISOString(),
@@ -101,7 +105,11 @@ export function useSupabaseNotes({
             content: JSON.stringify([
               {
                 type: 'p',
-                children: [{ text: 'Here are some tips to get you started with Notable:' }],
+                children: [
+                  {
+                    text: 'Here are some tips to get you started with Notable:',
+                  },
+                ],
               },
               {
                 type: 'ul',
@@ -420,7 +428,27 @@ export function useSupabaseNotes({
   // Create new note
   const createNote = useCallback(
     async (parentId: string | null = null) => {
-      if (!user || !supabase) return null
+      if (!user) {
+        const errorMessage = 'User not authenticated'
+        setError(errorMessage)
+        toast({
+          title: 'Authentication required',
+          description: 'Please log in to create notes',
+          variant: 'destructive',
+        })
+        return null
+      }
+
+      if (!supabase) {
+        const errorMessage = 'Database connection not available'
+        setError(errorMessage)
+        toast({
+          title: 'Connection error',
+          description: 'Unable to connect to the database. Please try again.',
+          variant: 'destructive',
+        })
+        return null
+      }
 
       setIsLoading(true)
       try {
@@ -544,7 +572,27 @@ export function useSupabaseNotes({
   // Create new folder
   const createFolder = useCallback(
     async (parentId: string | null = null) => {
-      if (!user || !supabase) return null
+      if (!user) {
+        const errorMessage = 'User not authenticated'
+        setError(errorMessage)
+        toast({
+          title: 'Authentication required',
+          description: 'Please log in to create folders',
+          variant: 'destructive',
+        })
+        return null
+      }
+
+      if (!supabase) {
+        const errorMessage = 'Database connection not available'
+        setError(errorMessage)
+        toast({
+          title: 'Connection error',
+          description: 'Unable to connect to the database. Please try again.',
+          variant: 'destructive',
+        })
+        return null
+      }
 
       setIsLoading(true)
       try {
