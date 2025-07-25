@@ -1,10 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react'
-
-interface User {
-  id: string
-  email?: string
-  name?: string
-}
+import { User } from '@/types'
 
 interface MockSupabaseAuth {
   signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
@@ -41,7 +36,9 @@ interface SupabaseProviderProps {
 }
 
 export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
-  // Mock implementation for build purposes
+  // Mock Supabase implementation - provides no real authentication functionality.
+  // All auth methods return successful responses without performing actual operations.
+  // This is used after removing real Supabase integration from the mobile package.
   const mockSupabase: MockSupabase = {
     auth: {
       signInWithPassword: async () => ({ error: null }),

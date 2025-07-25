@@ -1,18 +1,5 @@
 import { useState } from 'react'
-
-export interface Note {
-  id: string
-  title: string
-  content: string
-  is_folder?: boolean
-  created_at?: string
-  updated_at?: string
-}
-
-export interface User {
-  id: string
-  name: string
-}
+import { Note, User } from '@/types'
 
 export const useOfflineNotes = (_options: unknown = {}) => {
   const [notes] = useState<Note[]>([])
@@ -22,8 +9,13 @@ export const useOfflineNotes = (_options: unknown = {}) => {
   const [typingUsers] = useState<User[]>([])
 
   const createNote = async (_noteData: Partial<Note>): Promise<Note | null> => {
-    // Mock implementation
-    return null
+    // Mock implementation - return a basic note for development
+    return {
+      id: Math.random().toString(36),
+      title: _noteData.title || 'Untitled',
+      content: _noteData.content || '',
+      is_folder: _noteData.is_folder || false,
+    }
   }
 
   const updateNote = async (_id: string, _data: Partial<Note>): Promise<void> => {
