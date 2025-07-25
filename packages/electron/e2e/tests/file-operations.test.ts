@@ -358,7 +358,6 @@ test.describe('File Operations', () => {
 
     test('should verify notes file location', async ({ electronPage, electronMain }) => {
       const testNotes = [{ id: 'location-test', title: 'Location Test' }]
-      let testNotesPath: string
       
       // Setup test environment with controlled file path
       await evaluateInMain(electronMain, async ({ app }) => {
@@ -373,9 +372,6 @@ test.describe('File Operations', () => {
           unlinkSync(testPath)
         }
       })
-
-      // Get the test path for verification
-      testNotesPath = await evaluateInMain(electronMain, () => (global as any).__testNotesPath)
 
       // Override both save and load handlers to use test path
       await evaluateInMain(electronMain, async ({ ipcMain }) => {
