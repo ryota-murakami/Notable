@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Text, Button } from 'react-native-paper'
-import { useSupabase } from '@/components/SupabaseProvider'
+import { useSupabase } from '../../components/SupabaseProvider'
 
 const SettingsScreen: FC = () => {
   const { user } = useSupabase()

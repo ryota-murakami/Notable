@@ -5,7 +5,7 @@ interface SignUpOptions {
   email: string
   password: string
   options?: {
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   }
 }
 
