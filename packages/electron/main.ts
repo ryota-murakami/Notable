@@ -233,6 +233,7 @@ ipcMain.handle('get-theme', () => {
 
 ipcMain.handle('set-theme', (_, theme) => {
   nativeTheme.themeSource = theme
+  createMenu() // Rebuild menu to update radio button states
   return theme
 })
 
@@ -682,6 +683,11 @@ function setupAutoUpdater() {
       title: 'Notable Update Ready',
       message: 'Click to restart and apply the update.',
       wait: true,
+      timeout: false,
+    })
+
+    notifier.on('click', () => {
+      autoUpdater.quitAndInstall()
     })
   })
 

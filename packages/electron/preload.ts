@@ -29,40 +29,32 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onMenuAction: (callback: (action: string, data?: unknown) => void) => {
     const handler = (_event: unknown, action: string, data?: unknown) =>
       callback(action, data)
-    ipcRenderer.on('menu-new-note', handler)
-    ipcRenderer.on('menu-open-file', handler)
-    ipcRenderer.on('menu-save', handler)
-    ipcRenderer.on('menu-save-as', handler)
-    ipcRenderer.on('menu-export-pdf', handler)
-    ipcRenderer.on('menu-export-html', handler)
-    ipcRenderer.on('menu-export-markdown', handler)
-    ipcRenderer.on('menu-preferences', handler)
-    ipcRenderer.on('menu-find', handler)
-    ipcRenderer.on('menu-find-replace', handler)
-    ipcRenderer.on('menu-focus-mode', handler)
-    ipcRenderer.on('menu-shortcuts', handler)
-    ipcRenderer.on('shortcut-command-palette', handler)
-    ipcRenderer.on('shortcut-quick-open', handler)
-    ipcRenderer.on('theme-changed', handler)
-    ipcRenderer.on('native-theme-updated', handler)
+
+    const channels = [
+      'menu-new-note',
+      'menu-open-file',
+      'menu-save',
+      'menu-save-as',
+      'menu-export-pdf',
+      'menu-export-html',
+      'menu-export-markdown',
+      'menu-preferences',
+      'menu-find',
+      'menu-find-replace',
+      'menu-focus-mode',
+      'menu-shortcuts',
+      'shortcut-command-palette',
+      'shortcut-quick-open',
+      'theme-changed',
+      'native-theme-updated',
+    ]
+
+    channels.forEach((channel) => ipcRenderer.on(channel, handler))
 
     return () => {
-      ipcRenderer.removeAllListeners('menu-new-note')
-      ipcRenderer.removeAllListeners('menu-open-file')
-      ipcRenderer.removeAllListeners('menu-save')
-      ipcRenderer.removeAllListeners('menu-save-as')
-      ipcRenderer.removeAllListeners('menu-export-pdf')
-      ipcRenderer.removeAllListeners('menu-export-html')
-      ipcRenderer.removeAllListeners('menu-export-markdown')
-      ipcRenderer.removeAllListeners('menu-preferences')
-      ipcRenderer.removeAllListeners('menu-find')
-      ipcRenderer.removeAllListeners('menu-find-replace')
-      ipcRenderer.removeAllListeners('menu-focus-mode')
-      ipcRenderer.removeAllListeners('menu-shortcuts')
-      ipcRenderer.removeAllListeners('shortcut-command-palette')
-      ipcRenderer.removeAllListeners('shortcut-quick-open')
-      ipcRenderer.removeAllListeners('theme-changed')
-      ipcRenderer.removeAllListeners('native-theme-updated')
+      channels.forEach((channel) =>
+        ipcRenderer.removeListener(channel, handler)
+      )
     }
   },
 
