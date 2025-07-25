@@ -64,7 +64,98 @@ const createWindow = () => {
   const startUrl =
     process.env.ELECTRON_START_URL ||
     `file://${path.join(__dirname, '../../web/out/index.html')}`
-  mainWindow.loadURL(startUrl)
+  
+  console.log(`[Main] Attempting to load URL: ${startUrl}`)
+  
+  // Load URL with error handling
+  const loadUrlWithFallback = async () => {
+    try {
+      await mainWindow!.loadURL(startUrl)
+      console.log(`[Main] Successfully loaded URL: ${startUrl}`)
+    } catch (error) {
+      console.error(`[Main] Failed to load URL: ${startUrl}`, error)
+      
+      // If development URL fails, try to fall back to built files
+      if (process.env.ELECTRON_START_URL) {
+        const fallbackUrl = `file://${path.join(__dirname, '../../web/out/index.html')}`
+        console.log(`[Main] Attempting fallback to: ${fallbackUrl}`)
+        
+        try {
+          await mainWindow!.loadURL(fallbackUrl)
+          console.log(`[Main] Successfully loaded fallback URL: ${fallbackUrl}`)
+          
+          // Show a notification that we're running in offline mode
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.executeJavaScript(`
+              if (typeof window !== 'undefined' && window.electronAPI) {
+                console.log('Running in offline mode - development server not available');
+              }
+            `).catch(() => {
+              // Ignore errors if the page isn't ready yet
+            });
+          }
+        } catch (fallbackError) {
+          console.error(`[Main] Fallback URL also failed: ${fallbackUrl}`, fallbackError)
+          
+          // Create a basic error page as last resort
+          await mainWindow!.loadFile(path.join(__dirname, 'error-page.html')).catch(() => {
+            // Create inline error page if file doesn't exist
+            const errorHtml = `
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <title>Notable - Connection Error</title>
+                  <style>
+                    body { 
+                      font-family: system-ui, -apple-system, sans-serif; 
+                      display: flex; 
+                      justify-content: center; 
+                      align-items: center; 
+                      height: 100vh; 
+                      margin: 0; 
+                      background: #f5f5f5; 
+                    }
+                    .error-container { 
+                      text-align: center; 
+                      background: white; 
+                      padding: 2rem; 
+                      border-radius: 8px; 
+                      box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+                    }
+                    .error-title { color: #d32f2f; margin-bottom: 1rem; }
+                    .error-message { color: #666; margin-bottom: 2rem; line-height: 1.5; }
+                    .retry-button { 
+                      background: #1976d2; 
+                      color: white; 
+                      border: none; 
+                      padding: 12px 24px; 
+                      border-radius: 4px; 
+                      cursor: pointer; 
+                      font-size: 14px; 
+                    }
+                    .retry-button:hover { background: #1565c0; }
+                  </style>
+                </head>
+                <body>
+                  <div class="error-container">
+                    <h1 class="error-title">Connection Error</h1>
+                    <p class="error-message">
+                      Unable to connect to the development server.<br>
+                      Please ensure the Next.js development server is running on port 4378.
+                    </p>
+                    <button class="retry-button" onclick="location.reload()">Retry</button>
+                  </div>
+                </body>
+              </html>
+            `;
+            mainWindow!.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`);
+          });
+        }
+      }
+    }
+  }
+  
+  loadUrlWithFallback()
 
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
