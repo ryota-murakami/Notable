@@ -7,14 +7,14 @@
     "clean": "rm -rf node_modules pnpm-lock.yaml"
   },
   "dependencies": {
-    "@eslint/js": "^9.31.0",
+    "@eslint/js": "^9.32.0",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "eslint": "^9.31.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-native": "^5.0.0",
-    "@next/eslint-plugin-next": "^15.1.6",
+    "@next/eslint-plugin-next": "^15.4.4",
     "eslint-plugin-jsx-a11y": "^6.10.2"
   },
   "peerDependencies": {

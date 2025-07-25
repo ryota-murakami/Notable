@@ -1,7 +1,7 @@
 /* eslint-env jest */
  
 
-const adapter = require('detox/runners/jest/adapter')
+import adapter from 'detox/runners/jest/adapter'
 
 // Recommended by Detox docs
 beforeAll(async () => {
