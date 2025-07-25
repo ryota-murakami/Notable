@@ -50,7 +50,7 @@ export function RoutePrefetcher({
         }
         break
 
-      case 'recent':
+      case 'recent': {
         // Prefetch recently updated notes
         const sortedByDate = [...notes]
           .filter((note) => !note.isFolder && note.id !== activeNoteId)
@@ -64,6 +64,7 @@ export function RoutePrefetcher({
           routesToPrefetch.push(`/notes/${note.id}`)
         })
         break
+      }
 
       case 'all':
         // Prefetch all notes (use with caution)

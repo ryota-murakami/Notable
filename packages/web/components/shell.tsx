@@ -242,7 +242,7 @@ export function Shell({ initialNoteId }: ShellProps = {}) {
       }
       return newNote
     },
-    [createNote, setActiveNoteId, toast]
+    [createNote, navigateToNote, toast]
   )
 
   const handleCreateFolder = async (parentId: string | null = null) => {
