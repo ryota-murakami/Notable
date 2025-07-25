@@ -14,7 +14,7 @@ test.describe('File Operations', () => {
     await sendIPCMessage(electronPage, 'saveNotes', [])
   })
 
-  test.afterEach(async () => {
+  test.afterEach(() => {
     // Clean up temp files
     cleanupTempFiles(tempFiles)
     tempFiles = []
@@ -285,24 +285,25 @@ test.describe('File Operations', () => {
 
     test('should load empty array when notes file does not exist', async ({ electronPage, electronMain }) => {
       // First, clear any existing notes file by loading a temporary location
-      await evaluateInMain(electronMain, ({ app }) => {
+      await evaluateInMain(electronMain, async ({ app }) => {
         const tempPath = app.getPath('temp')
-        const tempNotesPath = require('path').join(tempPath, 'test-notes-nonexistent.json')
+        const { join } = await import('path')
+        const tempNotesPath = join(tempPath, 'test-notes-nonexistent.json')
         
         // Ensure file doesn't exist
-        const fs = require('fs')
-        if (fs.existsSync(tempNotesPath)) {
-          fs.unlinkSync(tempNotesPath)
+        const { existsSync, unlinkSync } = await import('fs')
+        if (existsSync(tempNotesPath)) {
+          unlinkSync(tempNotesPath)
         }
         
         // Temporarily override notesPath for this test
-        (global as any).__originalNotesPath = require('path').join(app.getPath('userData'), 'notes.json')
+        (global as any).__originalNotesPath = join(app.getPath('userData'), 'notes.json')
         ;(global as any).__testNotesPath = tempNotesPath
       })
 
       // Override the load-notes handler to use test path
-      await evaluateInMain(electronMain, ({ ipcMain }) => {
-        const fs = require('fs')
+      await evaluateInMain(electronMain, async ({ ipcMain }) => {
+        const { existsSync, readFileSync } = await import('fs')
         const testPath = (global as any).__testNotesPath
         
         // Remove existing handler
@@ -311,8 +312,8 @@ test.describe('File Operations', () => {
         // Add test handler
         ipcMain.handle('load-notes', () => {
           try {
-            if (fs.existsSync(testPath)) {
-              const data = fs.readFileSync(testPath, 'utf8')
+            if (existsSync(testPath)) {
+              const data = readFileSync(testPath, 'utf8')
               return JSON.parse(data)
             }
             return []
@@ -328,9 +329,8 @@ test.describe('File Operations', () => {
       expect(loadedNotes).toEqual([])
 
       // Restore original handler
-      await evaluateInMain(electronMain, ({ ipcMain, app }) => {
-        const fs = require('fs')
-        const path = require('path')
+      await evaluateInMain(electronMain, async ({ ipcMain, _app }) => {
+        const { existsSync, readFileSync } = await import('fs')
         const originalPath = (global as any).__originalNotesPath
         
         // Remove test handler
@@ -339,8 +339,8 @@ test.describe('File Operations', () => {
         // Restore original handler
         ipcMain.handle('load-notes', () => {
           try {
-            if (fs.existsSync(originalPath)) {
-              const data = fs.readFileSync(originalPath, 'utf8')
+            if (existsSync(originalPath)) {
+              const data = readFileSync(originalPath, 'utf8')
               return JSON.parse(data)
             }
             return []
@@ -361,15 +361,16 @@ test.describe('File Operations', () => {
       let testNotesPath: string
       
       // Setup test environment with controlled file path
-      await evaluateInMain(electronMain, ({ app }) => {
+      await evaluateInMain(electronMain, async ({ app }) => {
         const tempPath = app.getPath('temp')
-        const testPath = require('path').join(tempPath, 'test-notes-location.json')
+        const { join } = await import('path')
+        const testPath = join(tempPath, 'test-notes-location.json')
         ;(global as any).__testNotesPath = testPath
         
         // Clean up any existing test file
-        const fs = require('fs')
-        if (fs.existsSync(testPath)) {
-          fs.unlinkSync(testPath)
+        const { existsSync, unlinkSync } = await import('fs')
+        if (existsSync(testPath)) {
+          unlinkSync(testPath)
         }
       })
 
@@ -377,8 +378,8 @@ test.describe('File Operations', () => {
       testNotesPath = await evaluateInMain(electronMain, () => (global as any).__testNotesPath)
 
       // Override both save and load handlers to use test path
-      await evaluateInMain(electronMain, ({ ipcMain }) => {
-        const fs = require('fs')
+      await evaluateInMain(electronMain, async ({ ipcMain }) => {
+        const { writeFileSync, existsSync, readFileSync } = await import('fs')
         const testPath = (global as any).__testNotesPath
         
         // Remove existing handlers
@@ -388,7 +389,7 @@ test.describe('File Operations', () => {
         // Add test handlers
         ipcMain.handle('save-notes', (_, notes) => {
           try {
-            fs.writeFileSync(testPath, JSON.stringify(notes, null, 2), 'utf8')
+            writeFileSync(testPath, JSON.stringify(notes, null, 2), 'utf8')
             return { success: true }
           } catch (error) {
             console.error('Failed to save notes:', error)
@@ -401,8 +402,8 @@ test.describe('File Operations', () => {
         
         ipcMain.handle('load-notes', () => {
           try {
-            if (fs.existsSync(testPath)) {
-              const data = fs.readFileSync(testPath, 'utf8')
+            if (existsSync(testPath)) {
+              const data = readFileSync(testPath, 'utf8')
               return JSON.parse(data)
             }
             return []
@@ -418,10 +419,10 @@ test.describe('File Operations', () => {
       expect(saveResult.success).toBe(true)
       
       // Verify file exists at expected location
-      const fileExists = await evaluateInMain(electronMain, () => {
-        const fs = require('fs')
+      const fileExists = await evaluateInMain(electronMain, async () => {
+        const { existsSync } = await import('fs')
         const testPath = (global as any).__testNotesPath
-        return fs.existsSync(testPath)
+        return existsSync(testPath)
       })
       expect(fileExists).toBe(true)
       
@@ -430,23 +431,23 @@ test.describe('File Operations', () => {
       expect(loadedNotes).toEqual(testNotes)
 
       // Verify file content directly
-      const fileContent = await evaluateInMain(electronMain, () => {
-        const fs = require('fs')
+      const fileContent = await evaluateInMain(electronMain, async () => {
+        const { readFileSync } = await import('fs')
         const testPath = (global as any).__testNotesPath
-        return JSON.parse(fs.readFileSync(testPath, 'utf8'))
+        return JSON.parse(readFileSync(testPath, 'utf8'))
       })
       expect(fileContent).toEqual(testNotes)
 
       // Restore original handlers
-      await evaluateInMain(electronMain, ({ ipcMain, app }) => {
-        const fs = require('fs')
-        const path = require('path')
-        const originalPath = path.join(app.getPath('userData'), 'notes.json')
+      await evaluateInMain(electronMain, async ({ ipcMain, app }) => {
+        const { existsSync, unlinkSync, writeFileSync, readFileSync } = await import('fs')
+        const { join } = await import('path')
+        const originalPath = join(app.getPath('userData'), 'notes.json')
         
         // Clean up test file
         const testPath = (global as any).__testNotesPath
-        if (fs.existsSync(testPath)) {
-          fs.unlinkSync(testPath)
+        if (existsSync(testPath)) {
+          unlinkSync(testPath)
         }
         
         // Remove test handlers
@@ -456,7 +457,7 @@ test.describe('File Operations', () => {
         // Restore original handlers
         ipcMain.handle('save-notes', (_, notes) => {
           try {
-            fs.writeFileSync(originalPath, JSON.stringify(notes, null, 2), 'utf8')
+            writeFileSync(originalPath, JSON.stringify(notes, null, 2), 'utf8')
             return { success: true }
           } catch (error) {
             console.error('Failed to save notes:', error)
@@ -469,8 +470,8 @@ test.describe('File Operations', () => {
         
         ipcMain.handle('load-notes', () => {
           try {
-            if (fs.existsSync(originalPath)) {
-              const data = fs.readFileSync(originalPath, 'utf8')
+            if (existsSync(originalPath)) {
+              const data = readFileSync(originalPath, 'utf8')
               return JSON.parse(data)
             }
             return []
@@ -789,19 +790,20 @@ test.describe('File Operations', () => {
 
     test('should handle malformed notes file', async ({ electronPage, electronMain }) => {
       // Setup test environment with malformed JSON file
-      await evaluateInMain(electronMain, ({ app }) => {
+      await evaluateInMain(electronMain, async ({ app }) => {
         const tempPath = app.getPath('temp')
-        const testPath = require('path').join(tempPath, 'test-notes-malformed.json')
+        const { join } = await import('path')
+        const testPath = join(tempPath, 'test-notes-malformed.json')
         ;(global as any).__testNotesPath = testPath
         
         // Create a malformed JSON file
-        const fs = require('fs')
-        fs.writeFileSync(testPath, '{ "invalid": json, "content": }', 'utf8')
+        const { writeFileSync } = await import('fs')
+        writeFileSync(testPath, '{ "invalid": json, "content": }', 'utf8')
       })
 
       // Override the load-notes handler to use test path
-      await evaluateInMain(electronMain, ({ ipcMain }) => {
-        const fs = require('fs')
+      await evaluateInMain(electronMain, async ({ ipcMain }) => {
+        const { existsSync, readFileSync } = await import('fs')
         const testPath = (global as any).__testNotesPath
         
         // Remove existing handler
@@ -810,8 +812,8 @@ test.describe('File Operations', () => {
         // Add test handler
         ipcMain.handle('load-notes', () => {
           try {
-            if (fs.existsSync(testPath)) {
-              const data = fs.readFileSync(testPath, 'utf8')
+            if (existsSync(testPath)) {
+              const data = readFileSync(testPath, 'utf8')
               return JSON.parse(data)
             }
             return []
@@ -828,10 +830,10 @@ test.describe('File Operations', () => {
       expect(loadedNotes).toEqual([])
 
       // Test with another type of malformed JSON (incomplete)
-      await evaluateInMain(electronMain, () => {
-        const fs = require('fs')
+      await evaluateInMain(electronMain, async () => {
+        const { writeFileSync } = await import('fs')
         const testPath = (global as any).__testNotesPath
-        fs.writeFileSync(testPath, '[{"id": "test", "title": "incomplete"', 'utf8')
+        writeFileSync(testPath, '[{"id": "test", "title": "incomplete"', 'utf8')
       })
 
       const loadedNotes2 = await sendIPCMessage(electronPage, 'loadNotes')
@@ -839,10 +841,10 @@ test.describe('File Operations', () => {
       expect(loadedNotes2).toEqual([])
 
       // Test with completely invalid content
-      await evaluateInMain(electronMain, () => {
-        const fs = require('fs')
+      await evaluateInMain(electronMain, async () => {
+        const { writeFileSync } = await import('fs')
         const testPath = (global as any).__testNotesPath
-        fs.writeFileSync(testPath, 'this is not json at all!', 'utf8')
+        writeFileSync(testPath, 'this is not json at all!', 'utf8')
       })
 
       const loadedNotes3 = await sendIPCMessage(electronPage, 'loadNotes')
@@ -850,15 +852,15 @@ test.describe('File Operations', () => {
       expect(loadedNotes3).toEqual([])
 
       // Restore original handler and cleanup
-      await evaluateInMain(electronMain, ({ ipcMain, app }) => {
-        const fs = require('fs')
-        const path = require('path')
-        const originalPath = path.join(app.getPath('userData'), 'notes.json')
+      await evaluateInMain(electronMain, async ({ ipcMain, app }) => {
+        const { existsSync, unlinkSync, readFileSync } = await import('fs')
+        const { join } = await import('path')
+        const originalPath = join(app.getPath('userData'), 'notes.json')
         
         // Clean up test file
         const testPath = (global as any).__testNotesPath
-        if (fs.existsSync(testPath)) {
-          fs.unlinkSync(testPath)
+        if (existsSync(testPath)) {
+          unlinkSync(testPath)
         }
         
         // Remove test handler
@@ -867,8 +869,8 @@ test.describe('File Operations', () => {
         // Restore original handler
         ipcMain.handle('load-notes', () => {
           try {
-            if (fs.existsSync(originalPath)) {
-              const data = fs.readFileSync(originalPath, 'utf8')
+            if (existsSync(originalPath)) {
+              const data = readFileSync(originalPath, 'utf8')
               return JSON.parse(data)
             }
             return []
