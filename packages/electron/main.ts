@@ -357,6 +357,85 @@ ipcMain.handle('reload-window', () => {
   }
 })
 
+// Export functionality handlers
+ipcMain.handle('export-note', async (_, noteData, format, _options = {}) => {
+  if (!mainWindow) return { success: false, error: 'No window available' }
+  
+  try {
+    const { title = 'Untitled Note', content, filename } = noteData
+    
+    // Show save dialog with appropriate filter for the format
+    let filters: Electron.FileFilter[]
+    let defaultExtension: string
+    
+    switch (format) {
+      case 'markdown':
+        filters = [{ name: 'Markdown files', extensions: ['md'] }]
+        defaultExtension = 'md'
+        break
+      case 'html':
+        filters = [{ name: 'HTML files', extensions: ['html'] }]
+        defaultExtension = 'html'
+        break
+      case 'pdf':
+        filters = [{ name: 'PDF files', extensions: ['pdf'] }]
+        defaultExtension = 'pdf'
+        break
+      case 'react':
+        filters = [{ name: 'TypeScript files', extensions: ['tsx'] }]
+        defaultExtension = 'tsx'
+        break
+      default:
+        throw new Error(`Unsupported export format: ${format}`)
+    }
+    
+    const result = await dialog.showSaveDialog(mainWindow, {
+      defaultPath: filename || `${title}.${defaultExtension}`,
+      filters: [...filters, { name: 'All files', extensions: ['*'] }]
+    })
+    
+    if (result.canceled || !result.filePath) {
+      return { success: false, canceled: true }
+    }
+    
+    // For PDF, we can't directly save the content - the renderer needs to handle printing
+    if (format === 'pdf') {
+      return { 
+        success: true, 
+        filePath: result.filePath,
+        requiresPrint: true 
+      }
+    }
+    
+    // Write the exported content to file
+    fs.writeFileSync(result.filePath, content, 'utf8')
+    
+    return { 
+      success: true, 
+      filePath: result.filePath 
+    }
+  } catch (error) {
+    console.error('Export failed:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : String(error) 
+    }
+  }
+})
+
+// Handle export menu messages from renderer
+ipcMain.on('menu-export-pdf', (event) => {
+  event.sender.send('export-request', 'pdf')
+})
+
+ipcMain.on('menu-export-html', (event) => {
+  event.sender.send('export-request', 'html')
+})
+
+ipcMain.on('menu-export-markdown', (event) => {
+  event.sender.send('export-request', 'markdown')
+})
+
 // Helper function to get app icon
 function getIconPath(): string | undefined {
   const iconPath = isMac
@@ -443,21 +522,27 @@ function createMenu() {
               label: 'Export as PDF',
               click: () => {
                 const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
-                window?.webContents.send('menu-export-pdf')
+                if (window) {
+                  window.webContents.send('menu-export-pdf')
+                }
               },
             },
             {
               label: 'Export as HTML',
               click: () => {
                 const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
-                window?.webContents.send('menu-export-html')
+                if (window) {
+                  window.webContents.send('menu-export-html')
+                }
               },
             },
             {
               label: 'Export as Markdown',
               click: () => {
                 const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
-                window?.webContents.send('menu-export-markdown')
+                if (window) {
+                  window.webContents.send('menu-export-markdown')
+                }
               },
             },
           ],
