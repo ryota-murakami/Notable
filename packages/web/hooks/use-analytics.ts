@@ -100,6 +100,13 @@ export const useAnalytics = (): UseAnalyticsReturn => {
     [trackPerformance]
   )
 
+  // Cleanup effect to clear any remaining timers
+  useEffect(() => {
+    return () => {
+      timersRef.current.clear()
+    }
+  }, [])
+
   // User interactions
   const trackInteraction = useCallback(
     (

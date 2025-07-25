@@ -19,7 +19,7 @@ const customJestConfig = {
   },
   testEnvironment: 'jest-environment-jsdom',
   testEnvironmentOptions: {
-    customExportConditions: [''],
+    customExportConditions: ['node'],
   },
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
@@ -54,9 +54,7 @@ const customJestConfig = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!(msw|@mswjs)/)',
-  ],
+  transformIgnorePatterns: ['node_modules/(?!(msw|@mswjs)/)'],
   globals: {
     'ts-jest': {
       tsconfig: {

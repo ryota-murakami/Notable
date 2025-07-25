@@ -3,6 +3,9 @@
  *
  * Note: This test suite has limited functionality due to Jest mock hoisting issues
  * with static class properties that are initialized at module load time.
+ * Specifically, the VersionHistory.supabase static property is initialized before
+ * mocks can be applied, causing circular dependency issues when attempting to
+ * mock the Supabase client after module import.
  * The VersionHistory utility is working correctly in the application.
  */
 
@@ -81,6 +84,7 @@ describe('VersionHistory', () => {
       oldValue: 'Old Title',
       newValue: 'New Title',
     })
+    expect(diffs[0].type).toBe('modified')
   })
 
   it('should detect no changes when content is identical', () => {

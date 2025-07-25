@@ -248,16 +248,14 @@ export const performanceIntegration = {
           category: 'react-query',
         }
       )
-    })
 
-    // Report slow queries
-    if (duration > 1000) {
-      console.warn(
-        `Slow query detected: ${JSON.stringify(queryKey)} took ${duration}ms`
-      )
+      // Report slow queries
+      if (duration > 1000) {
+        console.warn(
+          `Slow query detected: ${JSON.stringify(queryKey)} took ${duration}ms`
+        )
 
-      // Track slow queries as potential performance issues
-      import('./analytics').then(({ analytics }) => {
+        // Track slow queries as potential performance issues
         analytics.track({
           name: 'slow_query_detected',
           properties: {
@@ -266,7 +264,7 @@ export const performanceIntegration = {
             threshold: 1000,
           },
         })
-      })
-    }
+      }
+    })
   },
 }
