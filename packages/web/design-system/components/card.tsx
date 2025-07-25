@@ -5,8 +5,8 @@ import { cn } from '../utils/theme'
 import { motion, type MotionProps } from 'framer-motion'
 
 export interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    MotionProps {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onDrag'>,
+    Omit<MotionProps, 'children'> {
   variant?: 'default' | 'elevated' | 'bordered' | 'ghost' | 'gradient'
   hover?: 'none' | 'lift' | 'glow' | 'scale' | 'tilt'
   interactive?: boolean

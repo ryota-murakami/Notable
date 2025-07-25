@@ -133,11 +133,9 @@ export function ThemeSwitcher({
           <option value='highContrastLight'>⚪ High Contrast Light</option>
           <option value='highContrastDark'>⚫ High Contrast Dark</option>
         </optgroup>
-        {enableSystem && (
-          <optgroup label='System'>
-            <option value='system'>💻 System</option>
-          </optgroup>
-        )}
+        <optgroup label='System'>
+          <option value='system'>💻 System</option>
+        </optgroup>
       </select>
       {showLabel && (
         <p className='mt-2 text-xs text-muted-foreground'>

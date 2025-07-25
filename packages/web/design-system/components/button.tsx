@@ -5,8 +5,8 @@ import { cn } from '../utils/theme'
 import { motion, type MotionProps } from 'framer-motion'
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    MotionProps {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
+    Omit<MotionProps, 'children'> {
   variant?:
     | 'default'
     | 'primary'
