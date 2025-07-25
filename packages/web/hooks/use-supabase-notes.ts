@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast'
 import type { Note } from '@/types/note'
 import { useSupabase } from '@/components/supabase-provider'
 import { offlineManager } from '@/lib/offline-manager'
+import { mapDatabaseNoteWithTagsToNote } from '@/lib/mappers/note-mapper'
 
 interface UseSupabaseNotesOptions {
   activeNoteId?: string
@@ -180,25 +181,9 @@ export function useSupabaseNotes({
 
       if (notesError) throw notesError
 
-      // Transform Supabase data to Note format
+      // Transform Supabase data to Note format using the mapper
       const transformedNotes: Note[] =
-        notesData?.map((note) => ({
-          id: note.id,
-          title: note.title,
-          content:
-            typeof note.content === 'string'
-              ? note.content
-              : JSON.stringify(note.content),
-          userId: note.user_id,
-          createdAt: note.created_at,
-          updatedAt: note.updated_at,
-          parentId: note.folder_id,
-          tags:
-            note.note_tags?.map((nt: any) => nt.tags.name).filter(Boolean) ||
-            [],
-          isFolder: false,
-          isHidden: note.is_hidden || false,
-        })) || []
+        notesData?.map((note) => mapDatabaseNoteWithTagsToNote(note)) || []
 
       // Load folders separately
       const { data: foldersData, error: foldersError } = await supabase
