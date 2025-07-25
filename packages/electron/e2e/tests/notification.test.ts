@@ -266,7 +266,7 @@ test.describe('Notification System', () => {
       // Mock node-notifier to throw an error
       await evaluateInMain(electronMain, () => {
         const mockNotifier = {
-          notify: (options: any) => {
+          notify: (_options: any) => {
             throw new Error('Notification service unavailable')
           }
         }
@@ -472,7 +472,7 @@ test.describe('Notification System', () => {
     })
 
     test('should handle multiple rapid notifications', async ({ electronPage, electronMain }) => {
-      const notifications: any[] = []
+      const _notifications: any[] = []
       
       await evaluateInMain(electronMain, () => {
         const mockNotifier = {

@@ -3,9 +3,7 @@ import {
   evaluateInMain, 
   getAllWindows, 
   sendIPCMessage, 
-  triggerMenuItem,
-  waitForIPCMessage,
-  waitForNewWindow
+  waitForIPCMessage
 } from '../utils/electron-utils'
 
 // Helper function to trigger menu items and wait for IPC messages
@@ -156,10 +154,10 @@ test.describe('Menu System', () => {
       await expect(messagePromise).resolves.toBeDefined()
     })
 
-    test('should show Open dialog when Open menu is clicked', async ({ electronMain, electronPage }) => {
+    test('should show Open dialog when Open menu is clicked', async ({ electronMain, electronPage: _electronPage }) => {
       // This test verifies the dialog is attempted to be shown
       // We can't actually interact with the system dialog in E2E tests
-      const dialogShown = await evaluateInMain(electronMain, async ({ Menu, dialog, BrowserWindow }) => {
+      const dialogShown = await evaluateInMain(electronMain, async ({ Menu, dialog, BrowserWindow: _BrowserWindow }) => {
         const menu = Menu.getApplicationMenu()
         const fileMenu = menu?.items.find(item => item.label === 'File')
         const openItem = fileMenu?.submenu?.items.find(item => item.label === 'Open...')
@@ -460,7 +458,7 @@ test.describe('Menu System', () => {
     })
 
     test('should show About dialog when About Notable is clicked', async ({ electronMain }) => {
-      const dialogShown = await evaluateInMain(electronMain, async ({ Menu, dialog, BrowserWindow }) => {
+      const dialogShown = await evaluateInMain(electronMain, async ({ Menu, dialog, BrowserWindow: _BrowserWindow }) => {
         const menu = Menu.getApplicationMenu()
         const helpMenu = menu?.items.find(item => item.label === 'Help')
         const aboutItem = helpMenu?.submenu?.items.find(item => item.label === 'About Notable')

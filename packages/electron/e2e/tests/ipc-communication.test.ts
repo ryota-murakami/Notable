@@ -24,7 +24,7 @@ test.describe('IPC Communication', () => {
       expect(Array.isArray(result)).toBe(true)
     })
 
-    test('should handle save-notes IPC call', async ({ electronPage, electronMain }) => {
+    test('should handle save-notes IPC call', async ({ electronPage, _electronMain }) => {
       const testNotes = [
         { id: '1', title: 'Test Note 1', content: 'Content 1' },
         { id: '2', title: 'Test Note 2', content: 'Content 2' }
@@ -39,7 +39,7 @@ test.describe('IPC Communication', () => {
       expect(loadedNotes).toEqual(testNotes)
     })
 
-    test('should handle save-notes error gracefully', async ({ electronPage, electronMain }) => {
+    test('should handle save-notes error gracefully', async ({ electronPage, _electronMain }) => {
       // Try to save invalid data that would cause JSON.stringify to fail
       const circularRef: any = {}
       circularRef.self = circularRef
@@ -295,7 +295,7 @@ test.describe('IPC Communication', () => {
       await evaluateInMain(electronMain, ({ BrowserWindow }) => {
         const focusedWindow = BrowserWindow.getFocusedWindow()
         if (focusedWindow) {
-          const originalReload = focusedWindow.webContents.reload
+          const _originalReload = focusedWindow.webContents.reload
           focusedWindow.webContents.reload = function() {
             (global as any).__reloadCalled = true
             // Don't actually reload to avoid disrupting tests

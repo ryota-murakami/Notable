@@ -4,8 +4,7 @@ import {
   getAllWindows, 
   getAppName, 
   getAppVersion, 
-  isAppPackaged,
-  waitForWindowReady 
+  isAppPackaged
 } from '../utils/electron-utils'
 
 test.describe('Electron App Lifecycle', () => {

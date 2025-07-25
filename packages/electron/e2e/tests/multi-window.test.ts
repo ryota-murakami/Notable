@@ -156,7 +156,7 @@ test.describe('Multi-Window Management', () => {
       
       // Count how many windows changed their maximize state
       let changedWindows = 0
-      beforeStates.forEach((beforeState, index) => {
+      beforeStates.forEach((beforeState, _index) => {
         const afterState = afterStates.find(s => s.id === beforeState.id)
         if (afterState && beforeState.isMaximized !== afterState.isMaximized) {
           changedWindows++
@@ -324,7 +324,7 @@ test.describe('Multi-Window Management', () => {
       const targetTheme = initialTheme === 'light' ? 'dark' : 'light'
       
       // Get initial menu state for all windows
-      const initialMenuState = await evaluateInMain(electronMain, ({ Menu, nativeTheme }) => {
+      const _initialMenuState = await evaluateInMain(electronMain, ({ Menu, nativeTheme }) => {
         const menu = Menu.getApplicationMenu()
         const viewMenu = menu?.items.find(item => item.label === 'View')
         const themeItem = viewMenu?.submenu?.items.find(item => item.label === 'Theme')
@@ -385,7 +385,7 @@ test.describe('Multi-Window Management', () => {
         
         // Test that closing a window doesn't quit the app on macOS
         const appQuitPromise = new Promise(resolve => {
-          const timeout = setTimeout(() => resolve('no-quit'), 2000)
+          const _timeout = setTimeout(() => resolve('no-quit'), 2000)
           // This would resolve if app quit, but we expect it to timeout
         })
         
@@ -421,7 +421,7 @@ test.describe('Multi-Window Management', () => {
         expect(hiddenWindowCount).toBeGreaterThan(0)
         
         // Simulate app activation
-        await evaluateInMain(electronMain, ({ app, BrowserWindow }) => {
+        await evaluateInMain(electronMain, ({ app: _app, BrowserWindow }) => {
           // Simulate the activate event
           if (BrowserWindow.getAllWindows().length === 0) {
             // This would create a new window, but we have hidden windows
