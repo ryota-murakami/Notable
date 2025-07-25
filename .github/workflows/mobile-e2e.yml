@@ -97,6 +97,10 @@ jobs:
               fi
             done
 
+            # Wait for simulator to fully initialize and appear as booted
+            echo "Waiting for simulator to fully initialize..."
+            sleep 10
+
             # Abort if still not booted
             if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
               echo "Simulator failed to boot after 3 attempts" >&2
@@ -197,7 +201,7 @@ jobs:
           ls -la $HOME/.config/.android/avd/ || echo "Config AVD directory does not exist"
 
           # Use the directory where the AVD was actually created
-          export ANDROID_AVD_HOME=$HOME/.android/avd
+          export ANDROID_AVD_HOME=$HOME/.config/.android/avd
           echo "Using ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
 
           # List available AVDs to confirm
@@ -330,6 +334,10 @@ jobs:
                 sleep 5
               fi
             done
+
+            # Wait for simulator to fully initialize and appear as booted
+            echo "Waiting for simulator to fully initialize..."
+            sleep 10
 
             # Abort if still not booted
             if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
