@@ -2,8 +2,7 @@ import { expect, test } from '../fixtures/electron-fixtures'
 import { 
   evaluateInMain, 
   sendIPCMessage, 
-  waitForIPCMessage,
-  waitForThemeChange
+  waitForIPCMessage
 } from '../utils/electron-utils'
 
 test.describe('Theme System', () => {
@@ -391,7 +390,7 @@ test.describe('Theme System', () => {
       expect(mainTheme).toBe('dark')
     })
 
-    test('should handle theme during window lifecycle', async ({ electronPage, electronMain }) => {
+    test('should handle theme during window lifecycle', async ({ electronPage, _electronMain }) => {
       // Set initial theme
       await sendIPCMessage(electronPage, 'setTheme', 'light')
       
@@ -453,7 +452,7 @@ test.describe('Theme System', () => {
       expect(['light', 'dark', 'system']).toContain(finalTheme)
     })
 
-    test('should handle theme switching during heavy operations', async ({ electronPage, electronMain }) => {
+    test('should handle theme switching during heavy operations', async ({ electronPage, _electronMain }) => {
       // Start some heavy operations
       const operationPromises = [
         sendIPCMessage(electronPage, 'create-window'),

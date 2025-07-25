@@ -220,6 +220,8 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
     options.onUserLeave,
     options.onTypingStart,
     options.onTypingStop,
+    isDevelopmentMode,
+    supabase,
   ])
 
   // Cleanup typing indicators

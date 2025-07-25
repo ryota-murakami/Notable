@@ -117,7 +117,6 @@ test.describe('Electron App Lifecycle', () => {
 
   test('should handle app quit properly', async ({ electronMain }) => {
     // Register quit event listener
-    const _quitFired = false
     await evaluateInMain(electronMain, ({ app }) => {
       app.once('before-quit', () => {
         // This would fire when app.quit() is called

@@ -3,13 +3,9 @@ import {
   cleanupTempFiles, 
   evaluateInMain, 
   getAllWindows,
-  getTempFilePath,
-  mockNotifications,
   sendIPCMessage,
   waitForIPCMessage
 } from '../utils/electron-utils'
-import * as fs from 'fs'
-import * as path from 'path'
 
 test.describe('IPC Communication', () => {
   let tempFiles: string[] = []
@@ -28,7 +24,7 @@ test.describe('IPC Communication', () => {
       expect(Array.isArray(result)).toBe(true)
     })
 
-    test('should handle save-notes IPC call', async ({ electronPage, electronMain }) => {
+    test('should handle save-notes IPC call', async ({ electronPage, _electronMain }) => {
       const testNotes = [
         { id: '1', title: 'Test Note 1', content: 'Content 1' },
         { id: '2', title: 'Test Note 2', content: 'Content 2' }

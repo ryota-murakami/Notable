@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { launchElectronApp, closeElectronApp, waitForWindowReady } from '../utils/electron-utils'
-import type { ElectronTestContext } from '../utils/electron-utils'
+import { launchElectronApp, closeElectronApp, waitForWindowReady, type ElectronTestContext } from '../utils/electron-utils'
 
 test.describe('Electron Startup Behavior', () => {
   let electronContext: ElectronTestContext
@@ -47,7 +46,7 @@ test.describe('Electron Startup Behavior', () => {
     // For now, we'll just verify the error handling code exists
 
     electronContext = await launchElectronApp()
-    const { app, page } = electronContext
+    const { app: _app, page } = electronContext
 
     await waitForWindowReady(page)
 
