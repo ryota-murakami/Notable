@@ -6,15 +6,6 @@ module.exports = (async () => {
   // Optimize asset resolution
   config.resolver.assetExts = [...config.resolver.assetExts, 'db', 'sqlite']
 
-  // Enhanced caching for faster builds
-  config.cacheStores = [
-    ...config.cacheStores,
-    {
-      name: 'local-storage',
-      path: '.metro-cache',
-    },
-  ]
-
   // Optimize transformer for better performance
   config.transformer.minifierConfig = {
     compress: {
