@@ -18,7 +18,6 @@
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
     "e2e:with-server": "node scripts/test-e2e-with-dev-server.js",
-    "e2e:headed-demo": "node scripts/run-headed-e2e.js",
     "clean": "rm -rf dist build node_modules pnpm-lock.yaml",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
