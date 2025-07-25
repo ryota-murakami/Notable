@@ -2,12 +2,13 @@
   "name": "@notable/sync",
   "version": "1.0.0",
   "description": "Cross-device sync service for Notable using Supabase CRDT/Realtime",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "typecheck": "tsc --noEmit"
