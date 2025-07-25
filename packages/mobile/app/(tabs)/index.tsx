@@ -60,7 +60,7 @@ export default function NotesScreen() {
         <EmptyState
           title='No notes yet'
           description='Create a new note to get started.'
-          icon='note-plus-outline'
+          icon='add-outline'
         />
       ) : (
         <FlatList

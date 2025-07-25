@@ -6,8 +6,18 @@ interface User {
   name?: string
 }
 
+interface MockSupabaseAuth {
+  signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: null }>
+  signInWithOAuth: (options: { provider: string }) => Promise<{ error: null }>
+  signUp: (options: any) => Promise<{ error: null }>
+}
+
+interface MockSupabase {
+  auth: MockSupabaseAuth
+}
+
 interface SupabaseContextType {
-  supabase: unknown
+  supabase: MockSupabase | null
   user: User | null
   loading: boolean
 }
@@ -32,8 +42,16 @@ interface SupabaseProviderProps {
 
 export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
   // Mock implementation for build purposes
+  const mockSupabase: MockSupabase = {
+    auth: {
+      signInWithPassword: async () => ({ error: null }),
+      signInWithOAuth: async () => ({ error: null }),
+      signUp: async () => ({ error: null }),
+    },
+  }
+
   const value: SupabaseContextType = {
-    supabase: null,
+    supabase: mockSupabase,
     user: null,
     loading: false,
   }

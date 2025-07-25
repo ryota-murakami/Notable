@@ -1,9 +1,9 @@
-import React from 'react'
+import { FC } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Text, Button } from 'react-native-paper'
 import { useSupabase } from '@/components/SupabaseProvider'
 
-export default function SettingsScreen() {
+const SettingsScreen: FC = () => {
   const { user } = useSupabase()
 
   return (
@@ -41,3 +41,5 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 })
+
+export default SettingsScreen

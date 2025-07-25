@@ -6,6 +6,7 @@ export interface Note {
   created_at?: string
   updated_at?: string
   user_id?: string
+  tags?: string[] | { name: string }[]
 }
 
 export interface User {
