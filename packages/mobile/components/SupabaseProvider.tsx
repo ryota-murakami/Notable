@@ -1,5 +1,5 @@
-import React, { createContext, useContext, ReactNode } from 'react'
-import { User } from '../types'
+import React, { createContext, type ReactNode, useContext } from 'react'
+import { type User } from '../types'
 
 interface SignUpOptions {
   email: string

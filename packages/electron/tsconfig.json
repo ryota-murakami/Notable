@@ -7,7 +7,7 @@
     "types": ["node"],
     "outDir": "./build",
     "noEmit": false,
-    "module": "commonjs",
+    "module": "ES2020",
     "moduleResolution": "node",
     "declaration": true,
     "declarationMap": true,

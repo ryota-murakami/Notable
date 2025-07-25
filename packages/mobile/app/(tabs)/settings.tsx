@@ -1,6 +1,6 @@
-import { FC } from 'react'
+import { type FC } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Text, Button } from 'react-native-paper'
+import { Button, Text } from 'react-native-paper'
 import { useSupabase } from '../../components/SupabaseProvider'
 
 const SettingsScreen: FC = () => {

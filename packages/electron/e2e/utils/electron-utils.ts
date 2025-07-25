@@ -281,8 +281,8 @@ export async function mockNotifications(app: ElectronApplication): Promise<void>
  * Test file operations with temporary files
  */
 export function getTempFilePath(filename: string): string {
-  const os = require('os') // eslint-disable-line @typescript-eslint/no-require-imports
-  const pathLib = require('path') // eslint-disable-line @typescript-eslint/no-require-imports
+  const os = require('os')  
+  const pathLib = require('path')  
   return pathLib.join(os.tmpdir(), `notable-test-${Date.now()}-${filename}`)
 }
 
@@ -290,7 +290,7 @@ export function getTempFilePath(filename: string): string {
  * Clean up temp files
  */
 export function cleanupTempFiles(filePaths: string[]): void {
-  const fs = require('fs') // eslint-disable-line @typescript-eslint/no-require-imports
+  const fs = require('fs')  
   filePaths.forEach(filePath => {
     try {
       if (fs.existsSync(filePath)) { // eslint-disable-line no-sync

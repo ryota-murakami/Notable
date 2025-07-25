@@ -1,5 +1,5 @@
 /* eslint-env jest */
-/* eslint-disable no-undef */
+ 
 
 const adapter = require('detox/runners/jest/adapter')
 

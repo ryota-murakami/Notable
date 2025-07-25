@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
-import { Card, Text, IconButton } from 'react-native-paper'
-import { Note } from '../types'
+import { Card, IconButton, Text } from 'react-native-paper'
+import { type Note } from '../types'
 
 interface NoteCardProps {
   note: Note
