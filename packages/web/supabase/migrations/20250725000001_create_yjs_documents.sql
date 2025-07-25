@@ -42,21 +42,6 @@ CREATE POLICY "Users can write yjs documents for their notes" ON yjs_documents
     )
   );
 
--- Function to update updated_at automatically
-CREATE OR REPLACE FUNCTION update_yjs_documents_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger for updated_at
-DROP TRIGGER IF EXISTS trigger_update_yjs_documents_updated_at ON yjs_documents;
-CREATE TRIGGER trigger_update_yjs_documents_updated_at
-  BEFORE UPDATE ON yjs_documents
-  FOR EACH ROW
-  EXECUTE FUNCTION update_yjs_documents_updated_at();
 
 -- Enable real-time for Yjs documents table
 ALTER PUBLICATION supabase_realtime ADD TABLE yjs_documents;
@@ -160,7 +145,7 @@ SELECT
     version,
     created_at,
     updated_at,
-    octet_length(state::text) as state_size_bytes
+    octet_length(state) as state_size_bytes
 FROM yjs_documents;
 
 -- Add comment explaining the table purpose

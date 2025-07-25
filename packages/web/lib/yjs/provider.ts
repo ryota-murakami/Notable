@@ -79,8 +79,8 @@ export class SupabaseYjsProvider {
           // Properly merge Yjs updates using mergeUpdates
           const mergedUpdate = mergeUpdates(pendingUpdates)
           
-          // Convert to base64 for more efficient transmission
-          const base64Update = btoa(String.fromCharCode(...mergedUpdate))
+          // Convert to base64 safely
+          const base64Update = btoa(Array.from(mergedUpdate, byte => String.fromCharCode(byte)).join(''))
           
           this.channel.send({
             type: 'broadcast',
@@ -133,12 +133,8 @@ export class SupabaseYjsProvider {
         })
 
         try {
-          // Convert base64 back to Uint8Array and apply to document
-          const binaryString = atob(update)
-          const updateArray = new Uint8Array(binaryString.length)
-          for (let i = 0; i < binaryString.length; i++) {
-            updateArray[i] = binaryString.charCodeAt(i)
-          }
+          // Convert base64 back to Uint8Array safely
+          const updateArray = Uint8Array.from(atob(update), char => char.charCodeAt(0))
           applyUpdate(this.doc, updateArray, this) // Use 'this' as origin to prevent loops
         } catch (error) {
           console.error('[SupabaseYjsProvider] Error applying remote update:', error)
