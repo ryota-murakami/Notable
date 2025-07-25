@@ -1,27 +1,43 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
-// Polyfill for TextEncoder/TextDecoder for MSW
+// Polyfill for TextEncoder/TextDecoder (still needed for other packages)
 const { TextEncoder, TextDecoder } = require('util')
 global.TextEncoder = TextEncoder
 global.TextDecoder = TextDecoder
 
-// Add fetch polyfill for MSW in Node environment
-require('whatwg-fetch')
+// MSW setup is temporarily disabled due to complex polyfill requirements in Jest environment
+// The MSW server and handlers are available in __mocks__/msw/ for future use
+// To enable MSW, uncomment the lines below and ensure proper polyfills are configured
 
-// Import MSW server for API mocking
-// TODO: Fix MSW import issue
-// import { server } from './__mocks__/msw/server'
+// MSW server setup (currently disabled)
+// let server
 
-// Enable API mocking before tests
-// beforeAll(() => server.listen())
+// Enable API mocking before tests (currently disabled)
+// beforeAll(async () => {
+//   // Note: MSW v2 requires comprehensive polyfills including:
+//   // - fetch, Headers, Request, Response from undici
+//   // - ReadableStream, WritableStream, TransformStream from node:stream/web  
+//   // - crypto from node:crypto
+//   // - MessagePort and other Web APIs
+//   // const mswModule = await import('./__mocks__/msw/server')
+//   // server = mswModule.server
+//   // server.listen()
+// })
 
-// Reset any runtime request handlers we may add during the tests
-// so they don't affect other tests.
-// afterEach(() => server.resetHandlers())
+// Reset handlers between tests (currently disabled)
+// afterEach(() => {
+//   if (server) {
+//     server.resetHandlers()
+//   }
+// })
 
-// Disable API mocking after tests are done
-// afterAll(() => server.close())
+// Disable API mocking after tests (currently disabled)
+// afterAll(() => {
+//   if (server) {
+//     server.close()
+//   }
+// })
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
