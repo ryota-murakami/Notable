@@ -53,23 +53,20 @@ jobs:
           echo "Available runtimes:"
           xcrun simctl list runtimes
 
-          # Find the latest iOS 18 runtime available
-          LATEST_IOS18_RUNTIME=$(xcrun simctl list runtimes | grep "iOS 18" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
-          echo "Using runtime: $LATEST_IOS18_RUNTIME"
+          # Find iOS 17 runtime (more stable on GitHub Actions)
+          IOS17_RUNTIME=$(xcrun simctl list runtimes | grep "iOS 17" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
+          echo "Found iOS 17 runtime: $IOS17_RUNTIME"
 
-          # Delete existing simulator if it exists, then create new one
-          xcrun simctl delete "iPhone 15" 2>/dev/null || true
-
-          if [ -n "$LATEST_IOS18_RUNTIME" ]; then
-            xcrun simctl create "iPhone 15" "iPhone 15" "$LATEST_IOS18_RUNTIME"
-          else
-            # Fallback to any available iOS runtime
-            FALLBACK_RUNTIME=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
-            echo "Fallback to runtime: $FALLBACK_RUNTIME"
-            xcrun simctl create "iPhone 15" "iPhone 15" "$FALLBACK_RUNTIME"
+          # Fallback to any iOS runtime if iOS 17 not available
+          if [ -z "$IOS17_RUNTIME" ]; then
+            IOS17_RUNTIME=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
+            echo "Fallback runtime: $IOS17_RUNTIME"
           fi
 
-          xcrun simctl boot "iPhone 15"
+          # Delete existing simulator if it exists, then create new one with iPhone 14
+          xcrun simctl delete "iPhone 14" 2>/dev/null || true
+          xcrun simctl create "iPhone 14" "iPhone 14" "$IOS17_RUNTIME"
+          xcrun simctl boot "iPhone 14"
 
       - name: Build iOS app for testing
         working-directory: packages/mobile
@@ -204,23 +201,20 @@ jobs:
           echo "Available runtimes:"
           xcrun simctl list runtimes
 
-          # Find the latest iOS 18 runtime available
-          LATEST_IOS18_RUNTIME=$(xcrun simctl list runtimes | grep "iOS 18" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
-          echo "Using runtime: $LATEST_IOS18_RUNTIME"
+          # Find iOS 17 runtime (more stable on GitHub Actions)
+          IOS17_RUNTIME=$(xcrun simctl list runtimes | grep "iOS 17" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
+          echo "Found iOS 17 runtime: $IOS17_RUNTIME"
 
-          # Delete existing simulator if it exists, then create new one
-          xcrun simctl delete "iPhone 15" 2>/dev/null || true
-
-          if [ -n "$LATEST_IOS18_RUNTIME" ]; then
-            xcrun simctl create "iPhone 15" "iPhone 15" "$LATEST_IOS18_RUNTIME"
-          else
-            # Fallback to any available iOS runtime
-            FALLBACK_RUNTIME=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
-            echo "Fallback to runtime: $FALLBACK_RUNTIME"
-            xcrun simctl create "iPhone 15" "iPhone 15" "$FALLBACK_RUNTIME"
+          # Fallback to any iOS runtime if iOS 17 not available
+          if [ -z "$IOS17_RUNTIME" ]; then
+            IOS17_RUNTIME=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | sed -n 's/.*iOS \([0-9.]*\) (\([^)]*\)).*/\2/p')
+            echo "Fallback runtime: $IOS17_RUNTIME"
           fi
 
-          xcrun simctl boot "iPhone 15"
+          # Delete existing simulator if it exists, then create new one with iPhone 14
+          xcrun simctl delete "iPhone 14" 2>/dev/null || true
+          xcrun simctl create "iPhone 14" "iPhone 14" "$IOS17_RUNTIME"
+          xcrun simctl boot "iPhone 14"
 
       - name: Build iOS app for performance testing
         working-directory: packages/mobile
