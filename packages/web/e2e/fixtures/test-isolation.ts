@@ -1,7 +1,7 @@
-import { test as base } from '@playwright/test'
+import { test as base, Page } from '@playwright/test'
 
 type TestFixtures = {
-  isolatedPage: any
+  isolatedPage: Page
 }
 
 /**
