@@ -10,9 +10,9 @@ interface SignUpOptions {
 }
 
 interface MockSupabaseAuth {
-  signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
-  signInWithOAuth: (options: { provider: string }) => Promise<{ error: { message: string } | null }>
-  signUp: (options: SignUpOptions) => Promise<{ error: { message: string } | null }>
+  signInWithPassword: (_credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
+  signInWithOAuth: (_options: { provider: string }) => Promise<{ error: { message: string } | null }>
+  signUp: (_options: SignUpOptions) => Promise<{ error: { message: string } | null }>
 }
 
 interface MockSupabase {
@@ -49,9 +49,12 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
   // This is used after removing real Supabase integration from the mobile package.
   const mockSupabase: MockSupabase = {
     auth: {
-      signInWithPassword: async () => ({ error: null }),
-      signInWithOAuth: async () => ({ error: null }),
-      signUp: async () => ({ error: null }),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      signInWithPassword: async (_credentials: { email: string; password: string }) => ({ error: null }),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      signInWithOAuth: async (_options: { provider: string }) => ({ error: null }),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      signUp: async (_options: SignUpOptions) => ({ error: null }),
     },
   }
 

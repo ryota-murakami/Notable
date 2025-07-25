@@ -39,6 +39,7 @@ export default [
     },
     rules: {
       // TypeScript specific rules
+      'no-unused-vars': 'off', // Must turn off the base rule as it can report incorrect errors
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
