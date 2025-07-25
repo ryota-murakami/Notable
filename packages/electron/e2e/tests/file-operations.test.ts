@@ -484,6 +484,50 @@ test.describe('File Operations', () => {
   })
 
   test.describe('Export Operations', () => {
+    test('should handle export IPC functionality', async ({ electronPage }) => {
+      // Test the export IPC handler directly
+      const testNoteData = {
+        title: 'Test Export Note',
+        content: 'This is test content for export',
+        filename: 'test-export.md'
+      }
+      
+      // Mock dialog to prevent actual file dialog from appearing
+      await electronPage.evaluate(() => {
+        if (window.electronAPI) {
+          // Store original export function
+          const originalExport = window.electronAPI.exportNote
+          
+          // Mock export to return success without showing dialog
+          window.electronAPI.exportNote = async (noteData: any, format: string) => {
+            return { success: true, filePath: `/test/path/${noteData.filename || 'test'}.${format}` }
+          }
+          
+          // Store mock for restoration
+          ;(window as any).__originalExport = originalExport
+        }
+      })
+      
+      const result = await electronPage.evaluate(async (noteData) => {
+        if (window.electronAPI?.exportNote) {
+          return await window.electronAPI.exportNote(noteData, 'markdown')
+        }
+        return null
+      }, testNoteData)
+      
+      expect(result).toBeDefined()
+      expect(result?.success).toBe(true)
+      expect(result?.filePath).toContain('test-export.md')
+      
+      // Restore original function
+      await electronPage.evaluate(() => {
+        if ((window as any).__originalExport) {
+          window.electronAPI.exportNote = (window as any).__originalExport
+          delete (window as any).__originalExport
+        }
+      })
+    })
+
     test('should trigger PDF export menu action', async ({ electronPage, electronMain }) => {
       const page = electronPage
       

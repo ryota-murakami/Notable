@@ -68,7 +68,7 @@ export const discussionPlugin = {
 export const useChat = () => ({
   messages: [],
   input: '',
-  setInput: () => {},
+  setInput: (_value: string) => {},
   handleSubmit: () => {},
   isLoading: false,
   status: 'idle' as 'idle' | 'streaming' | 'submitted',

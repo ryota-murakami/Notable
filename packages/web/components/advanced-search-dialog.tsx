@@ -20,9 +20,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import type { Note } from '@/types/note'
 import { NoSearchResultsEmptyState } from '@/components/empty-states'
 import { LoadingSpinner } from '@/components/loading-states'
+import { useIsMobile } from '@/components/ui/use-mobile'
 import {
   Bookmark,
   Clock,
@@ -31,6 +42,7 @@ import {
   Info,
   Search,
   Star,
+  Trash2,
   X,
 } from 'lucide-react'
 import { SearchEngine, type SearchResult } from '@/utils/search-engine'
@@ -43,6 +55,7 @@ interface AdvancedSearchDialogProps {
   notes: Note[]
   onSelectNote: (id: string) => void
   onCreateNote?: () => void
+  onDeleteNote?: (id: string) => Promise<boolean>
 }
 
 export function AdvancedSearchDialog({
@@ -51,6 +64,7 @@ export function AdvancedSearchDialog({
   notes,
   onSelectNote,
   onCreateNote,
+  onDeleteNote,
 }: AdvancedSearchDialogProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
@@ -63,7 +77,11 @@ export function AdvancedSearchDialog({
     null
   )
   const [savedSearchName, setSavedSearchName] = useState('')
+  const [noteToDelete, setNoteToDelete] = useState<Note | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
   const { toast } = useToast()
+
+  const isMobile = useIsMobile()
 
   // Initialize search engine
   const searchEngine = useMemo(() => new SearchEngine(notes), [notes])
@@ -118,6 +136,36 @@ export function AdvancedSearchDialog({
   const handleSelectNote = (id: string) => {
     onSelectNote(id)
     onClose()
+  }
+
+  const handleDeleteNote = async (note: Note) => {
+    if (!onDeleteNote) return
+
+    setNoteToDelete(note)
+  }
+
+  const confirmDelete = async () => {
+    if (!noteToDelete || !onDeleteNote) return
+
+    setIsDeleting(true)
+    try {
+      const success = await onDeleteNote(noteToDelete.id)
+      if (success) {
+        // Remove from search results immediately
+        setSearchResults((prev) =>
+          prev.filter((result) => result.note.id !== noteToDelete.id)
+        )
+        setNoteToDelete(null)
+      }
+    } catch (error) {
+      console.error('Failed to delete note:', error)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  const cancelDelete = () => {
+    setNoteToDelete(null)
   }
 
   const handleSaveSearch = () => {
@@ -247,44 +295,67 @@ export function AdvancedSearchDialog({
           <Card
             key={result.note.id}
             className='cursor-pointer hover:shadow-md transition-shadow'
-            onClick={() => handleSelectNote(result.note.id)}
           >
             <CardContent className='p-4'>
               <div className='flex items-start justify-between mb-2'>
-                <h3 className='font-medium'>
+                <h3
+                  className='font-medium flex-1'
+                  onClick={() => handleSelectNote(result.note.id)}
+                >
                   {highlightMatches(
                     result.note.title || 'Untitled',
                     result.matches.filter((m) => m.key === 'title')
                   )}
                 </h3>
-                <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                  <Clock className='h-3 w-3' />
-                  {new Date(result.note.updatedAt).toLocaleDateString()}
+                <div className='flex items-center gap-2'>
+                  {/* Mobile delete button */}
+                  {isMobile && onDeleteNote && !result.note.isFolder && (
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteNote(result.note)
+                      }}
+                    >
+                      <Trash2 className='h-4 w-4' />
+                    </Button>
+                  )}
+                  <div className='flex items-center gap-1 text-xs text-muted-foreground'>
+                    <Clock className='h-3 w-3' />
+                    {new Date(result.note.updatedAt).toLocaleDateString()}
+                  </div>
                 </div>
               </div>
 
-              {result.note.content && (
-                <p className='text-sm text-muted-foreground line-clamp-2 mb-2'>
-                  {highlightMatches(
-                    `${result.note.content.slice(0, 150)}...`,
-                    result.matches.filter((m) => m.key === 'content')
-                  )}
-                </p>
-              )}
+              <div
+                className='cursor-pointer'
+                onClick={() => handleSelectNote(result.note.id)}
+              >
+                {result.note.content && (
+                  <p className='text-sm text-muted-foreground line-clamp-2 mb-2'>
+                    {highlightMatches(
+                      `${result.note.content.slice(0, 150)}...`,
+                      result.matches.filter((m) => m.key === 'content')
+                    )}
+                  </p>
+                )}
 
-              <div className='flex items-center justify-between'>
-                <div className='flex flex-wrap gap-1'>
-                  {result.note.tags?.map((tag) => (
-                    <Badge key={tag} variant='secondary' className='text-xs'>
-                      {tag}
+                <div className='flex items-center justify-between'>
+                  <div className='flex flex-wrap gap-1'>
+                    {result.note.tags?.map((tag) => (
+                      <Badge key={tag} variant='secondary' className='text-xs'>
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                    <Badge variant='outline' className='text-xs'>
+                      {result.matchedFields.join(', ')}
                     </Badge>
-                  ))}
-                </div>
-                <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                  <Badge variant='outline' className='text-xs'>
-                    {result.matchedFields.join(', ')}
-                  </Badge>
-                  <span>Score: {result.score.toFixed(2)}</span>
+                    <span>Score: {result.score.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -607,6 +678,35 @@ export function AdvancedSearchDialog({
           </Tabs>
         </div>
       </DialogContent>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog
+        open={!!noteToDelete}
+        onOpenChange={() => setNoteToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Note</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "
+              {noteToDelete?.title || 'Untitled'}"? This action cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelDelete} disabled={isDeleting}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={isDeleting}
+              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   )
 }

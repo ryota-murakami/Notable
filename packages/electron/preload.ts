@@ -38,6 +38,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
       'menu-export-pdf',
       'menu-export-html',
       'menu-export-markdown',
+      'export-request',
       'menu-preferences',
       'menu-find',
       'menu-find-replace',
@@ -66,6 +67,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openDevTools: () => ipcRenderer.invoke('open-dev-tools'),
   reloadWindow: () => ipcRenderer.invoke('reload-window'),
   
+  // Export functionality
+  exportNote: (noteData: any, format: string, options?: any) => 
+    ipcRenderer.invoke('export-note', noteData, format, options),
+
   // Generic message listener (for testing)
   onMessage: (channel: string, callback: (data: any) => void) => {
     const handler = (_event: unknown, data: any) => callback(data)

@@ -1,0 +1,575 @@
+/**
+ * Version History utility tests
+ * Fixed Jest mock hoisting issues by properly structuring mocks
+ */
+
+// Mock Supabase client
+jest.mock('@/utils/supabase/client', () => ({
+  createClient: jest.fn(() => ({
+    rpc: jest.fn(),
+    from: jest.fn(),
+    auth: {
+      getUser: jest.fn(),
+    },
+  })),
+}))
+
+// Mock toast
+jest.mock('@/hooks/use-toast', () => ({
+  toast: jest.fn(),
+}))
+
+import { VersionHistory } from '../version-history'
+import { createClient } from '@/utils/supabase/client'
+import { toast } from '@/hooks/use-toast'
+
+describe('VersionHistory', () => {
+  let mockRpc: jest.MockedFunction<any>
+  let mockFrom: jest.MockedFunction<any>
+  let mockGetUser: jest.MockedFunction<any>
+  let mockToast: jest.MockedFunction<any>
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    
+    // Get references to the mocked functions
+    const mockClient = (createClient as jest.MockedFunction<typeof createClient>)()
+    mockRpc = mockClient.rpc as jest.MockedFunction<any>
+    mockFrom = mockClient.from as jest.MockedFunction<any>
+    mockGetUser = mockClient.auth.getUser as jest.MockedFunction<any>
+    mockToast = toast as jest.MockedFunction<any>
+  })
+
+  describe('getHistory', () => {
+    it('should fetch version history for a note', async () => {
+      const mockData = [
+        {
+          version_id: '1',
+          version_number: 2,
+          title: 'Test Note v2',
+          created_at: '2025-07-24T21:00:00Z',
+          created_by: 'user-123',
+          is_milestone: false,
+        },
+        {
+          version_id: '2',
+          version_number: 1,
+          title: 'Test Note v1',
+          created_at: '2025-07-24T20:00:00Z',
+          created_by: 'user-123',
+          is_milestone: true,
+        },
+      ]
+
+      mockRpc.mockResolvedValue({
+        data: mockData,
+        error: null,
+      })
+
+      const result = await VersionHistory.getHistory('note-123')
+
+      expect(mockRpc).toHaveBeenCalledWith('get_note_version_history', {
+        p_note_id: 'note-123',
+        p_limit: 50,
+        p_offset: 0,
+      })
+      expect(result).toEqual(mockData)
+    })
+
+    it('should handle errors when fetching history', async () => {
+      mockRpc.mockResolvedValue({
+        data: null,
+        error: { message: 'Database error' },
+      })
+
+      await expect(VersionHistory.getHistory('note-123')).rejects.toThrow()
+    })
+
+    it('should use custom limit and offset', async () => {
+      mockRpc.mockResolvedValue({
+        data: [],
+        error: null,
+      })
+
+      await VersionHistory.getHistory('note-123', 25, 10)
+
+      expect(mockRpc).toHaveBeenCalledWith('get_note_version_history', {
+        p_note_id: 'note-123',
+        p_limit: 25,
+        p_offset: 10,
+      })
+    })
+  })
+
+  describe('getVersion', () => {
+    beforeEach(() => {
+      // Reset mockFrom for each test
+      mockFrom.mockClear()
+    })
+
+    it('should fetch a specific version', async () => {
+      const mockVersion = {
+        id: 'version-123',
+        note_id: 'note-123',
+        version_number: 2,
+        title: 'Test Note v2',
+        content: { type: 'doc', content: [] },
+        created_by: 'user-123',
+        created_at: '2025-07-24T21:00:00Z',
+        is_milestone: false,
+        metadata: { word_count: 100 },
+        version_name: null,
+        version_message: null,
+      }
+
+      // Setup the mock chain for getVersion
+      const mockSingle = jest.fn().mockResolvedValue({
+        data: mockVersion,
+        error: null,
+      })
+      const mockEq2 = jest.fn().mockReturnValue({ single: mockSingle })
+      const mockEq1 = jest.fn().mockReturnValue({ eq: mockEq2 })
+      const mockSelect = jest.fn().mockReturnValue({ eq: mockEq1 })
+      
+      mockFrom.mockReturnValue({
+        select: mockSelect,
+        update: jest.fn(),
+      })
+
+      const result = await VersionHistory.getVersion('note-123', 2)
+
+      expect(mockFrom).toHaveBeenCalledWith('note_versions')
+      expect(mockSelect).toHaveBeenCalledWith('*')
+      expect(mockEq1).toHaveBeenCalledWith('note_id', 'note-123')
+      expect(mockEq2).toHaveBeenCalledWith('version_number', 2)
+      expect(result).toEqual({
+        id: mockVersion.id,
+        noteId: mockVersion.note_id,
+        versionNumber: mockVersion.version_number,
+        title: mockVersion.title,
+        content: mockVersion.content,
+        contentDiff: undefined,
+        versionName: mockVersion.version_name,
+        versionMessage: mockVersion.version_message,
+        createdBy: mockVersion.created_by,
+        createdAt: mockVersion.created_at,
+        isMilestone: mockVersion.is_milestone,
+        metadata: mockVersion.metadata,
+      })
+    })
+
+    it('should return null for non-existent version', async () => {
+      const mockSingle = jest.fn().mockResolvedValue({
+        data: null,
+        error: { message: 'Not found' },
+      })
+      const mockEq2 = jest.fn().mockReturnValue({ single: mockSingle })
+      const mockEq1 = jest.fn().mockReturnValue({ eq: mockEq2 })
+      const mockSelect = jest.fn().mockReturnValue({ eq: mockEq1 })
+      
+      mockFrom.mockReturnValue({
+        select: mockSelect,
+        update: jest.fn(),
+      })
+
+      const result = await VersionHistory.getVersion('note-123', 999)
+
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('compareVersions', () => {
+    it('should compare two versions', async () => {
+      const mockComparisonData = [
+        {
+          version_1_data: {
+            version_number: 1,
+            title: 'Old Title',
+            content: { type: 'doc', content: [] },
+            created_at: '2025-07-24T20:00:00Z',
+            created_by: 'user-123',
+          },
+          version_2_data: {
+            version_number: 2,
+            title: 'New Title',
+            content: { type: 'doc', content: [] },
+            created_at: '2025-07-24T21:00:00Z',
+            created_by: 'user-123',
+          },
+        },
+      ]
+
+      mockRpc.mockResolvedValue({
+        data: mockComparisonData,
+        error: null,
+      })
+
+      const result = await VersionHistory.compareVersions('note-123', 1, 2)
+
+      expect(mockRpc).toHaveBeenCalledWith('compare_note_versions', {
+        p_note_id: 'note-123',
+        p_version_1: 1,
+        p_version_2: 2,
+      })
+      expect(result).toEqual({
+        version1Data: mockComparisonData[0].version_1_data,
+        version2Data: mockComparisonData[0].version_2_data,
+      })
+    })
+
+    it('should return null for empty comparison data', async () => {
+      mockRpc.mockResolvedValue({
+        data: [],
+        error: null,
+      })
+
+      const result = await VersionHistory.compareVersions('note-123', 1, 2)
+
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('restoreVersion', () => {
+    it('should restore a version successfully', async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: 'user-123' } },
+        error: null,
+      })
+
+      mockRpc.mockResolvedValue({
+        data: true,
+        error: null,
+      })
+
+      const result = await VersionHistory.restoreVersion({
+        noteId: 'note-123',
+        versionNumber: 2,
+      })
+
+      expect(mockGetUser).toHaveBeenCalled()
+      expect(mockRpc).toHaveBeenCalledWith('restore_note_version', {
+        p_note_id: 'note-123',
+        p_version_number: 2,
+        p_user_id: 'user-123',
+      })
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Version Restored',
+        description: 'Note has been restored to version 2',
+      })
+      expect(result).toBe(true)
+    })
+
+    it('should handle authentication errors', async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: null,
+      })
+
+      const result = await VersionHistory.restoreVersion({
+        noteId: 'note-123',
+        versionNumber: 2,
+      })
+
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Restore Error',
+        description: 'An error occurred while restoring the version.',
+        variant: 'destructive',
+      })
+      expect(result).toBe(false)
+    })
+
+    it('should handle database errors', async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: 'user-123' } },
+        error: null,
+      })
+
+      mockRpc.mockResolvedValue({
+        data: null,
+        error: { message: 'Database error' },
+      })
+
+      const result = await VersionHistory.restoreVersion({
+        noteId: 'note-123',
+        versionNumber: 2,
+      })
+
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Restore Failed',
+        description: 'Failed to restore the selected version. Please try again.',
+        variant: 'destructive',
+      })
+      expect(result).toBe(false)
+    })
+  })
+
+  describe('markAsMilestone', () => {
+    beforeEach(() => {
+      mockFrom.mockClear()
+    })
+
+    it('should mark a version as milestone', async () => {
+      const mockEq2 = jest.fn().mockResolvedValue({ error: null })
+      const mockEq1 = jest.fn().mockReturnValue({ eq: mockEq2 })
+      const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq1 })
+      
+      mockFrom.mockReturnValue({
+        select: jest.fn(),
+        update: mockUpdate,
+      })
+
+      const result = await VersionHistory.markAsMilestone(
+        'note-123',
+        2,
+        'Important Version',
+        'This is a milestone'
+      )
+
+      expect(mockFrom).toHaveBeenCalledWith('note_versions')
+      expect(mockUpdate).toHaveBeenCalledWith({
+        is_milestone: true,
+        version_name: 'Important Version',
+        version_message: 'This is a milestone',
+      })
+      expect(mockEq1).toHaveBeenCalledWith('note_id', 'note-123')
+      expect(mockEq2).toHaveBeenCalledWith('version_number', 2)
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Milestone Created',
+        description: 'Version has been marked as a milestone',
+      })
+      expect(result).toBe(true)
+    })
+
+    it('should handle database errors when marking milestone', async () => {
+      const mockEq2 = jest.fn().mockResolvedValue({ error: { message: 'Database error' } })
+      const mockEq1 = jest.fn().mockReturnValue({ eq: mockEq2 })
+      const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq1 })
+      
+      mockFrom.mockReturnValue({
+        select: jest.fn(),
+        update: mockUpdate,
+      })
+
+      const result = await VersionHistory.markAsMilestone('note-123', 2)
+
+      expect(result).toBe(false)
+    })
+  })
+
+  describe('removeMilestone', () => {
+    beforeEach(() => {
+      mockFrom.mockClear()
+    })
+
+    it('should remove milestone status', async () => {
+      const mockEq2 = jest.fn().mockResolvedValue({ error: null })
+      const mockEq1 = jest.fn().mockReturnValue({ eq: mockEq2 })
+      const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq1 })
+      
+      mockFrom.mockReturnValue({
+        select: jest.fn(),
+        update: mockUpdate,
+      })
+
+      const result = await VersionHistory.removeMilestone('note-123', 2)
+
+      expect(mockFrom).toHaveBeenCalledWith('note_versions')
+      expect(mockUpdate).toHaveBeenCalledWith({
+        is_milestone: false,
+        version_name: null,
+        version_message: null,
+      })
+      expect(result).toBe(true)
+    })
+  })
+
+  describe('getMilestones', () => {
+    beforeEach(() => {
+      mockFrom.mockClear()
+    })
+
+    it('should fetch milestone versions', async () => {
+      const mockData = [
+        {
+          id: 'milestone-1',
+          version_number: 3,
+          title: 'Milestone Version',
+          version_name: 'v1.0',
+          version_message: 'First stable release',
+          created_by: 'user-123',
+          created_at: '2025-07-24T22:00:00Z',
+          is_milestone: true,
+          metadata: { word_count: 150 },
+        },
+      ]
+
+      const mockOrder = jest.fn().mockResolvedValue({ data: mockData, error: null })
+      const mockEq2 = jest.fn().mockReturnValue({ order: mockOrder })
+      const mockEq1 = jest.fn().mockReturnValue({ eq: mockEq2 })
+      const mockSelect = jest.fn().mockReturnValue({ eq: mockEq1 })
+      
+      mockFrom.mockReturnValue({
+        select: mockSelect,
+        update: jest.fn(),
+      })
+
+      const result = await VersionHistory.getMilestones('note-123')
+
+      expect(result).toEqual([
+        {
+          versionId: 'milestone-1',
+          versionNumber: 3,
+          title: 'Milestone Version',
+          versionName: 'v1.0',
+          versionMessage: 'First stable release',
+          createdBy: 'user-123',
+          createdAt: '2025-07-24T22:00:00Z',
+          isMilestone: true,
+          wordCount: 150,
+          characterCount: undefined,
+        },
+      ])
+    })
+  })
+
+  describe('calculateDiff', () => {
+    it('should calculate basic differences', () => {
+      const oldContent = {
+        title: 'Old Title',
+        content: { type: 'doc', content: [] },
+      }
+
+      const newContent = {
+        title: 'New Title',
+        content: { type: 'doc', content: [] },
+      }
+
+      const diffs = VersionHistory.calculateDiff(oldContent, newContent)
+
+      expect(diffs).toHaveLength(1)
+      expect(diffs[0]).toEqual({
+        type: 'modified',
+        path: ['title'],
+        oldValue: 'Old Title',
+        newValue: 'New Title',
+      })
+    })
+
+    it('should detect content changes', () => {
+      const oldContent = {
+        title: 'Same Title',
+        content: { type: 'doc', content: [{ type: 'paragraph', children: [{ text: 'Old content' }] }] },
+      }
+
+      const newContent = {
+        title: 'Same Title',
+        content: { type: 'doc', content: [{ type: 'paragraph', children: [{ text: 'New content' }] }] },
+      }
+
+      const diffs = VersionHistory.calculateDiff(oldContent, newContent)
+
+      expect(diffs).toHaveLength(1)
+      expect(diffs[0].type).toBe('modified')
+      expect(diffs[0].path).toEqual(['content'])
+    })
+
+    it('should detect no changes when content is identical', () => {
+      const content = {
+        title: 'Same Title',
+        content: { type: 'doc', content: [] },
+      }
+
+      const diffs = VersionHistory.calculateDiff(content, content)
+
+      expect(diffs).toHaveLength(0)
+    })
+  })
+
+  describe('cleanupOldVersions', () => {
+    it('should cleanup old versions', async () => {
+      mockRpc.mockResolvedValue({
+        data: 5, // 5 versions deleted
+        error: null,
+      })
+
+      const result = await VersionHistory.cleanupOldVersions('note-123', 30)
+
+      expect(mockRpc).toHaveBeenCalledWith('cleanup_old_versions', {
+        p_note_id: 'note-123',
+        p_keep_count: 30,
+      })
+      expect(result).toBe(5)
+    })
+
+    it('should use default keep count', async () => {
+      mockRpc.mockResolvedValue({
+        data: 3,
+        error: null,
+      })
+
+      const result = await VersionHistory.cleanupOldVersions('note-123')
+
+      expect(mockRpc).toHaveBeenCalledWith('cleanup_old_versions', {
+        p_note_id: 'note-123',
+        p_keep_count: 30,
+      })
+      expect(result).toBe(3)
+    })
+
+    it('should handle cleanup errors', async () => {
+      mockRpc.mockResolvedValue({
+        data: null,
+        error: { message: 'Cleanup failed' },
+      })
+
+      const result = await VersionHistory.cleanupOldVersions('note-123')
+
+      expect(result).toBe(0)
+    })
+  })
+
+  describe('exportHistory', () => {
+    it('should export version history as JSON', async () => {
+      const mockHistory = [
+        {
+          versionId: '1',
+          versionNumber: 2,
+          title: 'Test Note v2',
+          createdAt: '2025-07-24T21:00:00Z',
+          createdBy: 'user-123',
+          isMilestone: false,
+        },
+      ]
+
+      // Mock the RPC call used by getHistory
+      mockRpc.mockResolvedValue({
+        data: mockHistory,
+        error: null,
+      })
+
+      const result = await VersionHistory.exportHistory('note-123')
+
+      expect(mockRpc).toHaveBeenCalledWith('get_note_version_history', {
+        p_note_id: 'note-123',
+        p_limit: 1000,
+        p_offset: 0,
+      })
+
+      const exportData = JSON.parse(result)
+
+      expect(exportData).toHaveProperty('noteId', 'note-123')
+      expect(exportData).toHaveProperty('exportDate')
+      expect(exportData).toHaveProperty('versions', mockHistory)
+      expect(new Date(exportData.exportDate)).toBeInstanceOf(Date)
+    })
+
+    it('should handle export errors', async () => {
+      mockRpc.mockResolvedValue({
+        data: null,
+        error: { message: 'Export failed' },
+      })
+
+      await expect(VersionHistory.exportHistory('note-123')).rejects.toThrow()
+    })
+  })
+})

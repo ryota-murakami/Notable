@@ -18,6 +18,9 @@ const customJestConfig = {
     '^@/store/(.*)$': '<rootDir>/store/$1',
   },
   testEnvironment: 'jest-environment-jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: ['node'],
+  },
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.next/',
@@ -51,6 +54,7 @@ const customJestConfig = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
+  transformIgnorePatterns: ['node_modules/(?!(msw|@mswjs)/)'],
   globals: {
     'ts-jest': {
       tsconfig: {

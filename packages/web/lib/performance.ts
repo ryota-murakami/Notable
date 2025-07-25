@@ -3,7 +3,7 @@
  * Tracks application performance metrics and provides optimization insights
  */
 
-// import { Analytics } from './analytics' // TODO: Create analytics module
+import { analytics, Analytics } from './analytics'
 
 export interface PerformanceMetric {
   name: string
@@ -29,11 +29,11 @@ export interface PerformanceReport {
 class PerformanceMonitor {
   private metrics: PerformanceMetric[] = []
   private startTime: number = Date.now()
-  private analytics?: unknown // TODO: Define Analytics interface
+  private analytics?: Analytics
   private observers: Map<string, PerformanceObserver> = new Map()
 
-  constructor(analytics?: unknown) {
-    this.analytics = analytics
+  constructor(analyticsInstance?: Analytics) {
+    this.analytics = analyticsInstance || analytics
     this.initializeWebVitals()
     this.initializeResourceTiming()
   }
@@ -87,11 +87,7 @@ class PerformanceMonitor {
    */
   private trackWebVital(name: string, value: number, unit: string) {
     this.track(`webvital_${name}`, value, unit as PerformanceMetric['unit'])
-    // this.analytics?.track('Web Vital', {
-    //   metric: name,
-    //   value,
-    //   unit,
-    // })
+    this.analytics?.performance(name, value, unit as PerformanceMetric['unit'])
   }
 
   /**
@@ -114,9 +110,9 @@ class PerformanceMonitor {
     this.metrics.push(metric)
 
     // Send to analytics if available
-    // if (this.analytics) {
-    //   this.analytics.performance(name, value, unit, metadata)
-    // }
+    if (this.analytics) {
+      this.analytics.performance(name, value, unit, metadata)
+    }
 
     // Trigger alert if threshold exceeded
     this.checkThresholds(metric)
@@ -171,12 +167,15 @@ class PerformanceMonitor {
       )
 
       // Track threshold violation
-      // this.analytics?.track('Performance Threshold Exceeded', {
-      //   metric: metric.name,
-      //   value: metric.value,
-      //   threshold,
-      //   unit: metric.unit,
-      // })
+      this.analytics?.track({
+        name: 'performance_threshold_exceeded',
+        properties: {
+          metric: metric.name,
+          value: metric.value,
+          threshold,
+          unit: metric.unit,
+        },
+      })
     }
   }
 
