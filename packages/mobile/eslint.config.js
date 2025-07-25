@@ -71,7 +71,7 @@ export default [
       '**/babel.config.cjs',
       '**/.prettierrc.js',
       '**/jest.config.cjs',
-      '**/.detoxrc.js',
+      '**/.detoxrc.cjs',
     ],
     languageOptions: {
       globals: {

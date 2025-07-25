@@ -176,6 +176,21 @@ jobs:
 
       - name: Start Android Emulator
         run: |
+          # Debug AVD location and setup
+          echo "=== AVD Debug Info ==="
+          echo "HOME: $HOME"
+          echo "ANDROID_HOME: $ANDROID_HOME"
+          echo "ANDROID_AVD_HOME: ${ANDROID_AVD_HOME:-'not set'}"
+          ls -la $HOME/.android/avd/ || echo "Default AVD directory does not exist"
+          ls -la $HOME/.config/.android/avd/ || echo "Config AVD directory does not exist"
+
+          # Set AVD home to the correct location
+          export ANDROID_AVD_HOME=$HOME/.config/.android/avd
+          echo "Set ANDROID_AVD_HOME to: $ANDROID_AVD_HOME"
+
+          # List available AVDs to confirm
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
+
           # Start emulator with optimized settings for CI
           $ANDROID_HOME/emulator/emulator -avd test_avd \
             -no-audio \
