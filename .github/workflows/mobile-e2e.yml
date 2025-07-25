@@ -34,7 +34,10 @@ jobs:
       - name: Get pnpm store directory
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          STORE_PATH=$(pnpm store path --silent)
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
+          # Ensure the directory exists so actions/cache has something to target
+          mkdir -p "$STORE_PATH"
 
       - name: Setup pnpm cache
         uses: actions/cache@v4
@@ -93,6 +96,12 @@ jobs:
                 sleep 5
               fi
             done
+
+            # Abort if still not booted
+            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
+              echo "Simulator failed to boot after 3 attempts" >&2
+              exit 1
+            fi
           fi
 
           # Verify simulator is ready
@@ -139,7 +148,10 @@ jobs:
       - name: Get pnpm store directory
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          STORE_PATH=$(pnpm store path --silent)
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
+          # Ensure the directory exists so actions/cache has something to target
+          mkdir -p "$STORE_PATH"
 
       - name: Setup pnpm cache
         uses: actions/cache@v4
@@ -184,9 +196,9 @@ jobs:
           ls -la $HOME/.android/avd/ || echo "Default AVD directory does not exist"
           ls -la $HOME/.config/.android/avd/ || echo "Config AVD directory does not exist"
 
-          # Set AVD home to the correct location
-          export ANDROID_AVD_HOME=$HOME/.config/.android/avd
-          echo "Set ANDROID_AVD_HOME to: $ANDROID_AVD_HOME"
+          # Use the directory where the AVD was actually created
+          export ANDROID_AVD_HOME=$HOME/.android/avd
+          echo "Using ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
 
           # List available AVDs to confirm
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
@@ -256,7 +268,10 @@ jobs:
       - name: Get pnpm store directory
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          STORE_PATH=$(pnpm store path --silent)
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
+          # Ensure the directory exists so actions/cache has something to target
+          mkdir -p "$STORE_PATH"
 
       - name: Setup pnpm cache
         uses: actions/cache@v4
@@ -315,6 +330,12 @@ jobs:
                 sleep 5
               fi
             done
+
+            # Abort if still not booted
+            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
+              echo "Simulator failed to boot after 3 attempts" >&2
+              exit 1
+            fi
           fi
 
           # Verify simulator is ready
