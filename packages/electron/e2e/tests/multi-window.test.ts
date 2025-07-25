@@ -2,11 +2,7 @@ import { expect, test } from '../fixtures/electron-fixtures'
 import { 
   evaluateInMain, 
   getAllWindows, 
-  getWindowState,
-  sendIPCMessage,
-  setWindowState,
-  waitForIPCMessage,
-  waitForNewWindow
+  sendIPCMessage
 } from '../utils/electron-utils'
 
 test.describe('Multi-Window Management', () => {
@@ -51,7 +47,7 @@ test.describe('Multi-Window Management', () => {
       // Create new window
       await evaluateInMain(electronMain, () => {
         // Access the createWindow function through the module's scope
-        const { createWindow } = require('./main')
+        const { createWindow } = require('./main') // eslint-disable-line @typescript-eslint/no-require-imports
         createWindow()
       })
       

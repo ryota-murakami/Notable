@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test'
-import { launchElectronApp, closeElectronApp, waitForWindowReady, type ElectronTestContext } from '../utils/electron-utils'
+import { expect, test } from '@playwright/test'
+import { closeElectronApp, type ElectronTestContext, launchElectronApp, waitForWindowReady } from '../utils/electron-utils'
 
 test.describe('Electron Startup Behavior', () => {
   let electronContext: ElectronTestContext
