@@ -237,11 +237,36 @@ export const performanceIntegration = {
       `query-end-${JSON.stringify(queryKey)}`
     )
 
+    // Track query performance in analytics
+    import('./analytics').then(({ analytics }) => {
+      analytics.performance(
+        `query_${queryKey[0] || 'unknown'}`,
+        duration,
+        'ms',
+        {
+          queryKey: JSON.stringify(queryKey),
+          category: 'react-query',
+        }
+      )
+    })
+
     // Report slow queries
     if (duration > 1000) {
       console.warn(
         `Slow query detected: ${JSON.stringify(queryKey)} took ${duration}ms`
       )
+
+      // Track slow queries as potential performance issues
+      import('./analytics').then(({ analytics }) => {
+        analytics.track({
+          name: 'slow_query_detected',
+          properties: {
+            queryKey: JSON.stringify(queryKey),
+            duration,
+            threshold: 1000,
+          },
+        })
+      })
     }
   },
 }
