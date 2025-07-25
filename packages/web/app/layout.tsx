@@ -1,5 +1,5 @@
 import type React from 'react'
-import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeProvider } from '@/design-system/theme'
 import { SupabaseProvider } from '@/components/supabase-provider'
 import { QueryProvider } from '@/components/providers/query-provider'
 import { Toaster } from '@/components/ui/toaster'
@@ -28,8 +28,7 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
+          defaultTheme='light'
           enableSystem
           disableTransitionOnChange
         >
