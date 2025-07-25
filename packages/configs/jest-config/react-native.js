@@ -14,7 +14,13 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^~/(.*)$': '<rootDir>/$1',
   },
-  testPathIgnorePatterns: ['/node_modules/', '/.expo/', '/dist/', '/coverage/'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/.expo/',
+    '/dist/',
+    '/coverage/',
+    '/e2e/',
+  ],
   collectCoverageFrom: [
     '**/*.(ts|tsx|js|jsx)',
     '!**/*.d.ts',
