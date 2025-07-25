@@ -4,10 +4,10 @@ import { render } from '../utils/test-utils'
 
 // Mock Expo vector icons
 jest.mock('@expo/vector-icons', () => ({
-  Ionicons: ({ name, size, color, ...props }: any) => {
+  Ionicons: ({ name, _size, _color, ...props }: any) => {
     const MockIcon = require('react-native').View
     return (
-      <MockIcon 
+      <MockIcon
         testID={`icon-${name}`}
         accessibilityLabel={`${name} icon`}
         {...props}
@@ -24,9 +24,7 @@ describe('EmptyState', () => {
   }
 
   it('renders correctly with all props', () => {
-    const { getByText, getByTestId } = render(
-      <EmptyState {...defaultProps} />
-    )
+    const { getByText, getByTestId } = render(<EmptyState {...defaultProps} />)
 
     expect(getByText('No Notes Found')).toBeTruthy()
     expect(getByText('Create your first note to get started')).toBeTruthy()
@@ -39,9 +37,7 @@ describe('EmptyState', () => {
       icon: 'search-outline' as const,
     }
 
-    const { getByTestId } = render(
-      <EmptyState {...props} />
-    )
+    const { getByTestId } = render(<EmptyState {...props} />)
 
     expect(getByTestId('icon-search-outline')).toBeTruthy()
   })
@@ -53,9 +49,7 @@ describe('EmptyState', () => {
       icon: 'search-outline' as const,
     }
 
-    const { getByText } = render(
-      <EmptyState {...props} />
-    )
+    const { getByText } = render(<EmptyState {...props} />)
 
     expect(getByText('Search Results Empty')).toBeTruthy()
     expect(getByText('No notes match your search criteria')).toBeTruthy()
@@ -64,22 +58,19 @@ describe('EmptyState', () => {
   it('handles long text content', () => {
     const props = {
       title: 'This is a very long title that might wrap to multiple lines',
-      description: 'This is a very long description that provides detailed information about the current state and what the user can do to resolve it. It should handle text wrapping gracefully.',
+      description:
+        'This is a very long description that provides detailed information about the current state and what the user can do to resolve it. It should handle text wrapping gracefully.',
       icon: 'information-circle-outline' as const,
     }
 
-    const { getByText } = render(
-      <EmptyState {...props} />
-    )
+    const { getByText } = render(<EmptyState {...props} />)
 
     expect(getByText(props.title)).toBeTruthy()
     expect(getByText(props.description)).toBeTruthy()
   })
 
   it('applies correct styles to title', () => {
-    const { getByText } = render(
-      <EmptyState {...defaultProps} />
-    )
+    const { getByText } = render(<EmptyState {...defaultProps} />)
 
     const titleText = getByText(defaultProps.title)
     expect(titleText.props.style).toEqual(
@@ -93,9 +84,7 @@ describe('EmptyState', () => {
   })
 
   it('applies correct styles to description', () => {
-    const { getByText } = render(
-      <EmptyState {...defaultProps} />
-    )
+    const { getByText } = render(<EmptyState {...defaultProps} />)
 
     const descriptionText = getByText(defaultProps.description)
     expect(descriptionText.props.style).toEqual(
@@ -107,9 +96,7 @@ describe('EmptyState', () => {
   })
 
   it('renders icon with correct accessibility label', () => {
-    const { getByLabelText } = render(
-      <EmptyState {...defaultProps} />
-    )
+    const { getByLabelText } = render(<EmptyState {...defaultProps} />)
 
     expect(getByLabelText('document-text-outline icon')).toBeTruthy()
   })

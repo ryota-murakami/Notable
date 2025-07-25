@@ -1,7 +1,7 @@
 import React from 'react'
 import { fireEvent } from '@testing-library/react-native'
 import { NoteCard } from '../../components/NoteCard'
-import { render, createMockNote } from '../utils/test-utils'
+import { createMockNote, render } from '../utils/test-utils'
 
 describe('NoteCard', () => {
   const mockOnPress = jest.fn()
@@ -18,11 +18,7 @@ describe('NoteCard', () => {
     })
 
     const { getByText } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     expect(getByText('Test Note Title')).toBeTruthy()
@@ -33,16 +29,12 @@ describe('NoteCard', () => {
     const mockNote = createMockNote()
 
     const { getByTestId } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     // Since Card might not have testID, we'll look for the Card content
-    const cardContent = getByTestId('card-content') || getByText(mockNote.title).parent?.parent
-    
+    const cardContent = getByTestId('card-content')
+
     if (cardContent) {
       fireEvent.press(cardContent)
       expect(mockOnPress).toHaveBeenCalledTimes(1)
@@ -53,31 +45,24 @@ describe('NoteCard', () => {
     const mockNote = createMockNote()
 
     const { getByLabelText } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     const deleteButton = getByLabelText('delete')
     fireEvent.press(deleteButton)
-    
+
     expect(mockOnDelete).toHaveBeenCalledTimes(1)
     expect(mockOnPress).not.toHaveBeenCalled()
   })
 
   it('truncates content to 2 lines', () => {
     const mockNote = createMockNote({
-      content: 'This is a very long content that should be truncated after two lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      content:
+        'This is a very long content that should be truncated after two lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     })
 
     const { getByText } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     const contentText = getByText(mockNote.content)
@@ -91,11 +76,7 @@ describe('NoteCard', () => {
     })
 
     const { getByText, queryByText } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     expect(getByText('Content without title')).toBeTruthy()
@@ -110,11 +91,7 @@ describe('NoteCard', () => {
     })
 
     const { getByText } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     expect(getByText('Title Only')).toBeTruthy()
@@ -125,11 +102,7 @@ describe('NoteCard', () => {
     const mockNote = createMockNote()
 
     const { getByText } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     const titleText = getByText(mockNote.title)
@@ -155,11 +128,7 @@ describe('NoteCard', () => {
     const mockNote = createMockNote()
 
     const { getByLabelText } = render(
-      <NoteCard 
-        note={mockNote} 
-        onPress={mockOnPress} 
-        onDelete={mockOnDelete} 
-      />
+      <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     const deleteButton = getByLabelText('delete')

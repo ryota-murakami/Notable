@@ -17,7 +17,9 @@ jest.mock('expo-file-system', () => ({
   readAsStringAsync: jest.fn(() => Promise.resolve('test file content')),
   writeAsStringAsync: jest.fn(() => Promise.resolve()),
   deleteAsync: jest.fn(() => Promise.resolve()),
-  getInfoAsync: jest.fn(() => Promise.resolve({ exists: true, isDirectory: false })),
+  getInfoAsync: jest.fn(() =>
+    Promise.resolve({ exists: true, isDirectory: false })
+  ),
   makeDirectoryAsync: jest.fn(() => Promise.resolve()),
   readDirectoryAsync: jest.fn(() => Promise.resolve(['file1', 'file2'])),
   copyAsync: jest.fn(() => Promise.resolve()),
@@ -48,7 +50,7 @@ jest.mock('expo-router', () => ({
   }),
   usePathname: () => '/',
   useSearchParams: () => ({}),
-  Link: ({ children, ...props }) => children,
+  Link: ({ children, ..._props }) => children,
   router: {
     push: jest.fn(),
     replace: jest.fn(),
@@ -68,27 +70,41 @@ jest.mock('react-native-reanimated', () => {
 jest.mock('@supabase/supabase-js', () => {
   const mockSupabase = {
     auth: {
-      signInWithPassword: jest.fn(() => Promise.resolve({ 
-        data: { user: { id: 'test-user', email: 'test@example.com' }, session: { access_token: 'test-token' } }, 
-        error: null 
-      })),
-      signUp: jest.fn(() => Promise.resolve({ 
-        data: { user: { id: 'test-user', email: 'test@example.com' }, session: null }, 
-        error: null 
-      })),
+      signInWithPassword: jest.fn(() =>
+        Promise.resolve({
+          data: {
+            user: { id: 'test-user', email: 'test@example.com' },
+            session: { access_token: 'test-token' },
+          },
+          error: null,
+        })
+      ),
+      signUp: jest.fn(() =>
+        Promise.resolve({
+          data: {
+            user: { id: 'test-user', email: 'test@example.com' },
+            session: null,
+          },
+          error: null,
+        })
+      ),
       signOut: jest.fn(() => Promise.resolve({ error: null })),
-      onAuthStateChange: jest.fn(() => ({ 
-        data: { subscription: {} }, 
-        unsubscribe: jest.fn() 
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: {} },
+        unsubscribe: jest.fn(),
       })),
-      getSession: jest.fn(() => Promise.resolve({ 
-        data: { session: { access_token: 'test-token' } }, 
-        error: null 
-      })),
-      getUser: jest.fn(() => Promise.resolve({ 
-        data: { user: { id: 'test-user', email: 'test@example.com' } }, 
-        error: null 
-      })),
+      getSession: jest.fn(() =>
+        Promise.resolve({
+          data: { session: { access_token: 'test-token' } },
+          error: null,
+        })
+      ),
+      getUser: jest.fn(() =>
+        Promise.resolve({
+          data: { user: { id: 'test-user', email: 'test@example.com' } },
+          error: null,
+        })
+      ),
     },
     from: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
@@ -98,8 +114,18 @@ jest.mock('@supabase/supabase-js', () => {
     eq: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
     limit: jest.fn().mockReturnThis(),
-    single: jest.fn(() => Promise.resolve({ data: { id: 'test-id', title: 'Test Note' }, error: null })),
-    then: jest.fn(() => Promise.resolve({ data: [{ id: 'test-id', title: 'Test Note' }], error: null })),
+    single: jest.fn(() =>
+      Promise.resolve({
+        data: { id: 'test-id', title: 'Test Note' },
+        error: null,
+      })
+    ),
+    then: jest.fn(() =>
+      Promise.resolve({
+        data: [{ id: 'test-id', title: 'Test Note' }],
+        error: null,
+      })
+    ),
   }
 
   return {
@@ -110,7 +136,7 @@ jest.mock('@supabase/supabase-js', () => {
 // Mock React Native Paper
 jest.mock('react-native-paper', () => {
   const RN = require('react-native')
-  
+
   return {
     ...jest.requireActual('react-native-paper'),
     Portal: ({ children }) => children,
@@ -152,7 +178,7 @@ jest.mock('react-native-paper', () => {
 jest.mock('react-native-markdown-display', () => {
   const React = require('react')
   const { Text } = require('react-native')
-  
+
   return {
     __esModule: true,
     default: ({ children }) => React.createElement(Text, null, children),

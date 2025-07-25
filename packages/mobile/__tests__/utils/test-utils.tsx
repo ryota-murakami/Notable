@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react'
-import { render, RenderOptions } from '@testing-library/react-native'
+import React, { type ReactElement } from 'react'
+import { render, type RenderOptions } from '@testing-library/react-native'
 import { PaperProvider } from 'react-native-paper'
 
 // Default theme for testing
@@ -20,17 +20,13 @@ const testTheme = {
 
 // Custom wrapper with providers
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <PaperProvider theme={testTheme}>
-      {children}
-    </PaperProvider>
-  )
+  return <PaperProvider theme={testTheme}>{children}</PaperProvider>
 }
 
 // Custom render function with providers
 const customRender = (
   ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
+  options?: Omit<RenderOptions, 'wrapper'>
 ) => render(ui, { wrapper: AllTheProviders, ...options })
 
 // Re-export everything from React Native Testing Library
@@ -83,9 +79,9 @@ export const createMockRoute = (params = {}) => ({
 })
 
 // Wait for async operations in tests
-export const waitForAsyncOperations = () => 
-  new Promise(resolve => setTimeout(resolve, 0))
+export const waitForAsyncOperations = () =>
+  new Promise((resolve) => setTimeout(resolve, 0))
 
 // Create a promise that resolves after a timeout
-export const delay = (ms: number) => 
-  new Promise(resolve => setTimeout(resolve, ms))
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms))
