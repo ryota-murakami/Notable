@@ -65,4 +65,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Development helpers
   openDevTools: () => ipcRenderer.invoke('open-dev-tools'),
   reloadWindow: () => ipcRenderer.invoke('reload-window'),
+  
+  // Generic message listener (for testing)
+  onMessage: (channel: string, callback: (data: any) => void) => {
+    const handler = (_event: unknown, data: any) => callback(data)
+    ipcRenderer.on(channel, handler)
+    return () => {
+      ipcRenderer.removeListener(channel, handler)
+    }
+  },
 })

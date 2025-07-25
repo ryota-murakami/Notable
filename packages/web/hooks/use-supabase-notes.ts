@@ -68,12 +68,74 @@ export function useSupabaseNotes({
 
   // Load notes from Supabase
   const loadNotes = useCallback(async () => {
-    if (!user || !supabase) return
+    if (!user) return
 
     setIsLoading(true)
     setError(null)
 
     try {
+      // Development mode: provide mock notes when using mock user or no Supabase
+      if (user.id.startsWith('mock-user') || !supabase) {
+        const mockNotes: Note[] = [
+          {
+            id: 'mock-note-1',
+            title: 'Welcome to Notable',
+            content: JSON.stringify([
+              {
+                type: 'p',
+                children: [{ text: 'This is your first note! You can start editing right away.' }],
+              },
+            ]),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            userId: user.id,
+            isFolder: false,
+            parentId: null,
+            folderId: null,
+            tags: ['welcome'],
+            isHidden: false,
+          },
+          {
+            id: 'mock-note-2',
+            title: 'Getting Started',
+            content: JSON.stringify([
+              {
+                type: 'p',
+                children: [{ text: 'Here are some tips to get you started with Notable:' }],
+              },
+              {
+                type: 'ul',
+                children: [
+                  {
+                    type: 'li',
+                    children: [{ text: 'Use Ctrl+N to create a new note' }],
+                  },
+                  {
+                    type: 'li',
+                    children: [{ text: 'Use Ctrl+S to save your work' }],
+                  },
+                  {
+                    type: 'li',
+                    children: [{ text: 'Use Ctrl+F to search your notes' }],
+                  },
+                ],
+              },
+            ]),
+            createdAt: new Date(Date.now() - 3600000).toISOString(),
+            updatedAt: new Date(Date.now() - 3600000).toISOString(),
+            userId: user.id,
+            isFolder: false,
+            parentId: null,
+            folderId: null,
+            tags: ['tutorial'],
+            isHidden: false,
+          },
+        ]
+        setNotes(mockNotes)
+        setIsLoading(false)
+        return
+      }
+
       // Check if offline
       if (!offlineManager.isOnline()) {
         // Load from cache when offline

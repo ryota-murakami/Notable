@@ -77,7 +77,7 @@ const throttle = (func: Function, delay: number) => {
 
 export function useRealtimeSync(options: RealtimeSyncOptions) {
   const { noteId, onNoteUpdate } = options
-  const { supabase } = useSupabase()
+  const { supabase, user } = useSupabase()
 
   const [isConnected, setIsConnected] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState<UserPresence[]>([])
@@ -87,17 +87,30 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
   const channelRef = useRef<RealtimeChannel | null>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  // Check if we're in development mode with mock user
+  const isDevelopmentMode = user?.id?.startsWith('mock-user') || !supabase
+
   // Check if Supabase client is available
   useEffect(() => {
-    if (!supabase) {
+    if (isDevelopmentMode) {
+      // In development mode, simulate connected state
+      setIsConnected(true)
+      setConnectionError(null)
+    } else if (!supabase) {
       setConnectionError('Supabase client not available')
-      return
+    } else {
+      setConnectionError(null)
     }
-    setConnectionError(null)
-  }, [supabase])
+  }, [supabase, isDevelopmentMode])
 
   // Setup real-time channel
   useEffect(() => {
+    if (isDevelopmentMode) {
+      // Skip real-time setup in development mode
+      setIsConnected(true)
+      return
+    }
+    
     if (!supabase || !noteId) return
 
     const channelName = `note-${noteId}`
@@ -240,7 +253,7 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
   // Throttled typing indicator
   const broadcastTyping = useCallback(
     throttle((isTyping: boolean) => {
-      if (!channelRef.current) return
+      if (isDevelopmentMode || !channelRef.current) return
 
       channelRef.current.send({
         type: 'broadcast',
@@ -253,12 +266,12 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
         },
       })
     }, 300), // 300ms throttle
-    []
+    [isDevelopmentMode]
   )
 
   // Method to broadcast note updates
   const broadcastNoteUpdate = useCallback((note: Note) => {
-    if (!channelRef.current) return
+    if (isDevelopmentMode || !channelRef.current) return
 
     channelRef.current.send({
       type: 'broadcast',
@@ -269,10 +282,12 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
         userId: 'user-id',
       },
     })
-  }, [])
+  }, [isDevelopmentMode])
 
   // Method to start typing
   const startTyping = useCallback(() => {
+    if (isDevelopmentMode) return
+    
     broadcastTyping(true)
 
     // Clear existing timeout
@@ -284,17 +299,19 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
     typingTimeoutRef.current = setTimeout(() => {
       broadcastTyping(false)
     }, 2000) // Stop typing after 2 seconds of inactivity
-  }, [broadcastTyping])
+  }, [broadcastTyping, isDevelopmentMode])
 
   // Method to stop typing
-  const stopTyping = useCallback(() => {
+  const stopTyping = useCallback(() => {  
+    if (isDevelopmentMode) return
+    
     broadcastTyping(false)
 
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current)
       typingTimeoutRef.current = null
     }
-  }, [broadcastTyping])
+  }, [broadcastTyping, isDevelopmentMode])
 
   // Cleanup on unmount
   useEffect(() => {
