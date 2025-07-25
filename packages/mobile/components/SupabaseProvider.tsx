@@ -10,9 +10,16 @@ interface SignUpOptions {
 }
 
 interface MockSupabaseAuth {
-  signInWithPassword: (_credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
-  signInWithOAuth: (_options: { provider: string }) => Promise<{ error: { message: string } | null }>
-  signUp: (_options: SignUpOptions) => Promise<{ error: { message: string } | null }>
+  signInWithPassword: (_credentials: {
+    email: string
+    password: string
+  }) => Promise<{ error: { message: string } | null }>
+  signInWithOAuth: (_options: {
+    provider: string
+  }) => Promise<{ error: { message: string } | null }>
+  signUp: (
+    _options: SignUpOptions
+  ) => Promise<{ error: { message: string } | null }>
 }
 
 interface MockSupabase {
@@ -43,17 +50,23 @@ interface SupabaseProviderProps {
   children: ReactNode
 }
 
-export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
+export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({
+  children,
+}) => {
   // Mock Supabase implementation - provides no real authentication functionality.
   // All auth methods return successful responses without performing actual operations.
   // This is used after removing real Supabase integration from the mobile package.
   const mockSupabase: MockSupabase = {
     auth: {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      signInWithPassword: async (_credentials: { email: string; password: string }) => ({ error: null }),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      signInWithOAuth: async (_options: { provider: string }) => ({ error: null }),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      signInWithPassword: async (_credentials: {
+        email: string
+        password: string
+      }) => ({ error: null }),
+
+      signInWithOAuth: async (_options: { provider: string }) => ({
+        error: null,
+      }),
+
       signUp: async (_options: SignUpOptions) => ({ error: null }),
     },
   }

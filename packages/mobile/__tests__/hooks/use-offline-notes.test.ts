@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-native'
+import { act, renderHook } from '@testing-library/react-native'
 import { useOfflineNotes } from '../../hooks/use-offline-notes'
 
 describe('useOfflineNotes', () => {
@@ -141,7 +141,7 @@ describe('useOfflineNotes', () => {
       const initialNotes = result.current.notes
       const initialIsLoading = result.current.isLoading
 
-      rerender()
+      rerender({})
 
       expect(result.current.notes).toBe(initialNotes)
       expect(result.current.isLoading).toBe(initialIsLoading)

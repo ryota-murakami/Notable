@@ -1,4 +1,3 @@
-import React from 'react'
 import { fireEvent } from '@testing-library/react-native'
 import { NoteCard } from '../../components/NoteCard'
 import { createMockNote, render } from '../utils/test-utils'
