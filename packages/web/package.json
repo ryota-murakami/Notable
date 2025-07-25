@@ -30,6 +30,7 @@
     "clean": "rm -rf .next dist node_modules pnpm-lock.yaml"
   },
   "dependencies": {
+    "@platejs/basic-nodes": "^49.0.0",
     "@platejs/mention": "^49.0.0",
     "@platejs/resizable": "^49.0.0",
     "@platejs/selection": "^49.0.15",
@@ -66,7 +67,9 @@
     "@tanstack/react-query": "^5.83.0",
     "@tanstack/react-query-devtools": "^5.83.0",
     "@udecode/cn": "^49.0.15",
+    "@udecode/plate": "^49.0.0",
     "@udecode/plate-ai": "^49.0.0",
+    "@udecode/plate-basic-elements": "^49.0.0",
     "@udecode/plate-basic-marks": "^49.0.0",
     "@udecode/plate-common": "^42.0.0",
     "@udecode/plate-markdown": "^49.0.0",
