@@ -281,7 +281,6 @@ export async function mockNotifications(app: ElectronApplication): Promise<void>
  * Test file operations with temporary files
  */
 import os from 'os'
-import path from 'path'
 
 export function getTempFilePath(filename: string): string {
   return path.join(os.tmpdir(), `notable-test-${Date.now()}-${filename}`)

@@ -8,7 +8,7 @@
  * 4. Handling conflict resolution through Yjs CRDT algorithms
  */
 
-import { Doc, Transaction, YEvent, encodeStateAsUpdate, applyUpdate } from 'yjs'
+import { Doc, Transaction, YEvent, encodeStateAsUpdate, applyUpdate, mergeUpdates } from 'yjs'
 import { createClient, SupabaseClient, RealtimeChannel } from '@supabase/supabase-js'
 
 export interface SupabaseYjsProviderOptions {
@@ -76,13 +76,8 @@ export class SupabaseYjsProvider {
       if (updateTimeout) clearTimeout(updateTimeout)
       updateTimeout = setTimeout(() => {
         if (this.channel && this.isConnected && pendingUpdates.length > 0) {
-          // Merge all pending updates
-          const mergedUpdate = pendingUpdates.reduce((acc, curr) => {
-            const merged = new Uint8Array(acc.length + curr.length)
-            merged.set(acc)
-            merged.set(curr, acc.length)
-            return merged
-          }, new Uint8Array(0))
+          // Properly merge Yjs updates using mergeUpdates
+          const mergedUpdate = mergeUpdates(pendingUpdates)
           
           // Convert to base64 for more efficient transmission
           const base64Update = btoa(String.fromCharCode(...mergedUpdate))
