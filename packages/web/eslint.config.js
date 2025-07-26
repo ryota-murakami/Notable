@@ -59,6 +59,18 @@ export default [
         Buffer: 'readonly',
         console: 'readonly',
         NodeJS: 'readonly',
+
+        // Service Worker globals
+        self: 'readonly',
+        caches: 'readonly',
+        clients: 'readonly',
+        AbortController: 'readonly',
+
+        // IndexedDB globals
+        IDBDatabase: 'readonly',
+        indexedDB: 'readonly',
+        IDBOpenDBRequest: 'readonly',
+        IDBKeyRange: 'readonly',
       },
     },
     rules: {
