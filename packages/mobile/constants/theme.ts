@@ -4,7 +4,7 @@ import {
 } from 'react-native-paper'
 
 const fontConfig = {
-  default: {
+  web: {
     regular: {
       fontFamily: 'System',
       fontWeight: '400' as const,
@@ -13,13 +13,49 @@ const fontConfig = {
       fontFamily: 'System',
       fontWeight: '500' as const,
     },
-    bold: {
+    light: {
       fontFamily: 'System',
-      fontWeight: '700' as const,
+      fontWeight: '300' as const,
     },
-    heavy: {
+    thin: {
       fontFamily: 'System',
-      fontWeight: '900' as const,
+      fontWeight: '100' as const,
+    },
+  },
+  ios: {
+    regular: {
+      fontFamily: 'System',
+      fontWeight: '400' as const,
+    },
+    medium: {
+      fontFamily: 'System',
+      fontWeight: '500' as const,
+    },
+    light: {
+      fontFamily: 'System',
+      fontWeight: '300' as const,
+    },
+    thin: {
+      fontFamily: 'System',
+      fontWeight: '100' as const,
+    },
+  },
+  android: {
+    regular: {
+      fontFamily: 'System',
+      fontWeight: '400' as const,
+    },
+    medium: {
+      fontFamily: 'System',
+      fontWeight: '500' as const,
+    },
+    light: {
+      fontFamily: 'System',
+      fontWeight: '300' as const,
+    },
+    thin: {
+      fontFamily: 'System',
+      fontWeight: '100' as const,
     },
   },
 }

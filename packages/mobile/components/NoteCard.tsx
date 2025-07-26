@@ -102,7 +102,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                   { color: theme.colors.onSurfaceVariant },
                 ]}
               >
-                {getTimeAgo(new Date(note.updated_at))}
+                {note.updated_at
+                  ? getTimeAgo(new Date(note.updated_at))
+                  : 'Just now'}
               </Text>
               {note.tags && note.tags.length > 0 && (
                 <View style={styles.tags}>
@@ -116,7 +118,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                       textStyle={styles.tagText}
                       compact
                     >
-                      {tag}
+                      {typeof tag === 'string' ? tag : tag.name}
                     </Chip>
                   ))}
                   {note.tags.length > 2 && (

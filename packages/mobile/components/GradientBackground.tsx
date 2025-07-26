@@ -5,7 +5,7 @@ import { useTheme } from 'react-native-paper'
 
 interface GradientBackgroundProps {
   children: React.ReactNode
-  colors?: string[]
+  colors?: readonly [string, string, ...string[]]
   style?: StyleProp<ViewStyle>
 }
 
@@ -16,7 +16,10 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
 }) => {
   const theme = useTheme()
 
-  const defaultColors = [theme.colors.background, theme.colors.surfaceVariant]
+  const defaultColors: readonly [string, string] = [
+    theme.colors.background,
+    theme.colors.surfaceVariant,
+  ] as const
 
   return (
     <LinearGradient

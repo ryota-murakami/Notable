@@ -183,7 +183,7 @@ export default function NotesScreen() {
           <EmptyState
             title='No notes yet'
             description='Create your first note to get started.'
-            icon='note-text-outline'
+            icon='document-text-outline'
           />
         ) : (
           <FlatList
@@ -196,7 +196,7 @@ export default function NotesScreen() {
               <EmptyState
                 title='No results found'
                 description='Try adjusting your search or filters.'
-                icon='magnify'
+                icon='search'
               />
             }
             refreshControl={
