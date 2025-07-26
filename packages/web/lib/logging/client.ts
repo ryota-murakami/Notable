@@ -79,7 +79,6 @@ export function createClientLogger() {
         [LogLevel.VERBOSE]: 'color: lightgray',
       }
 
-      // eslint-disable-next-line no-console
       console.log(
         `%c[${level.toUpperCase()}] ${message}`,
         style[level] || '',

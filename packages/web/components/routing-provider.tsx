@@ -8,8 +8,7 @@ import {
   useEffect,
 } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { initializePlatformRouting } from '@notable/routing'
-import { webAdapter } from '@notable/routing'
+import { initializePlatformRouting, webAdapter } from '@notable/routing'
 
 interface RoutingProviderProps {
   children: ReactNode
@@ -64,22 +63,23 @@ class RoutingErrorBoundary extends Component<
 }
 
 function RoutingProviderInner({ children }: RoutingProviderProps) {
+  // Always call hooks first, before any conditional logic
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   // In test mode, skip all routing logic entirely
   const isTestMode =
     process.env.NODE_ENV === 'test' ||
     (typeof window !== 'undefined' &&
       document.cookie.includes('dev-auth-bypass=true'))
 
-  // If in test mode, just render children without any routing logic
-  if (isTestMode) {
-    return <>{children}</>
-  }
-
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
   useEffect(() => {
+    // If in test mode, skip routing initialization
+    if (isTestMode) {
+      return
+    }
+
     try {
       // Initialize platform routing for web
       const { cleanup } = initializePlatformRouting('web', {
@@ -95,16 +95,21 @@ function RoutingProviderInner({ children }: RoutingProviderProps) {
       console.error('Failed to initialize routing:', error)
       // Don't throw in production, just log the error
     }
-  }, [router, pathname, searchParams])
+  }, [router, pathname, searchParams, isTestMode])
 
   // Update current location when pathname or search params change
   useEffect(() => {
+    // If in test mode, skip location updates
+    if (isTestMode) {
+      return
+    }
+
     try {
       webAdapter.setCurrentLocation(pathname, searchParams)
     } catch (error) {
       console.error('Failed to update location:', error)
     }
-  }, [pathname, searchParams])
+  }, [pathname, searchParams, isTestMode])
 
   return <>{children}</>
 }

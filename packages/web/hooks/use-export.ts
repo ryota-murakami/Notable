@@ -427,13 +427,10 @@ export function useExport(options: UseExportOptions = {}) {
    * Share export result
    */
   const shareResult = useCallback(
-    async (result: ExportResult) => {
+    async (_result: ExportResult) => {
       try {
         // Sharing not implemented in current export service
         throw new Error('Sharing is not yet supported')
-        if (showToasts) {
-          toast.success('Export shared successfully')
-        }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : 'Sharing failed'
@@ -541,20 +538,13 @@ export function useExportHistory(userId: string) {
    * Get export statistics
    */
   const getStats = useCallback(async () => {
-    try {
-      // Export stats not implemented in current export service
-      return {
-        totalExports: 0,
-        byFormat: {},
-        totalSize: 0,
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to get stats'
-      setError(errorMessage)
-      throw error
+    // Export stats not implemented in current export service
+    return {
+      totalExports: 0,
+      byFormat: {},
+      totalSize: 0,
     }
-  }, [userId])
+  }, [])
 
   return {
     history,

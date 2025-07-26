@@ -29,7 +29,7 @@ const createSimpleServerLogger = (): Logger => {
         console.warn(logEntry)
         break
       default:
-        console.log(logEntry) // eslint-disable-line no-console
+        console.log(logEntry)
     }
   }
 
