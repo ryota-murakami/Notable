@@ -69,9 +69,7 @@ type DesktopPlatformConfig = {
       params: Record<string, string>
       query: Record<string, string>
     }
-    pathToRoute?: (
-      path: string,
-    ) => {
+    pathToRoute?: (path: string) => {
       route: unknown | null
       params: Record<string, string>
       query: Record<string, string>
@@ -120,8 +118,8 @@ export { WebAdapter, webAdapter } from './adapters/web'
 export { MobileAdapter, mobileAdapter } from './adapters/mobile'
 export { DesktopAdapter, desktopAdapter } from './adapters/desktop'
 
-// Import DesktopAdapter for type assertion
-import { DesktopAdapter } from './adapters/desktop'
+// Import for type assertion only - cannot use export above since it conflicts with import
+import type { DesktopAdapter as DesktopAdapterType } from './adapters/desktop'
 
 // Utility functions
 export const createPlatformAdapter = (platform: Platform) => {
@@ -176,7 +174,7 @@ export const initializePlatformRouting = (
           config.electronAPI &&
           'setElectronAPI' in adapter
         ) {
-          const desktopAdapter = adapter as DesktopAdapter
+          const desktopAdapter = adapter as DesktopAdapterType
           if (typeof desktopAdapter.setElectronAPI === 'function') {
             desktopAdapter.setElectronAPI(config.electronAPI)
           }
@@ -186,7 +184,7 @@ export const initializePlatformRouting = (
           config.webAdapter &&
           'setWebAdapter' in adapter
         ) {
-          const desktopAdapter = adapter as DesktopAdapter
+          const desktopAdapter = adapter as DesktopAdapterType
           if (typeof desktopAdapter.setWebAdapter === 'function') {
             desktopAdapter.setWebAdapter(config.webAdapter)
           }
