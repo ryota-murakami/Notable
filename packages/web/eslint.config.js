@@ -63,6 +63,7 @@ export default [
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_?error$',
           ignoreRestSiblings: true,
         },
       ],
