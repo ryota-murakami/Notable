@@ -59,12 +59,14 @@ describe('EmptyState', () => {
 
     const titleText = getByText(defaultProps.title)
     expect(titleText.props.style).toEqual(
-      expect.objectContaining({
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 16,
-        marginBottom: 8,
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 24,
+          fontWeight: '700',
+          marginBottom: 8,
+          textAlign: 'center',
+        }),
+      ])
     )
   })
 
@@ -73,10 +75,14 @@ describe('EmptyState', () => {
 
     const descriptionText = getByText(defaultProps.description)
     expect(descriptionText.props.style).toEqual(
-      expect.objectContaining({
-        fontSize: 16,
-        textAlign: 'center',
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 16,
+          textAlign: 'center',
+          lineHeight: 24,
+          maxWidth: 280,
+        }),
+      ])
     )
   })
 
