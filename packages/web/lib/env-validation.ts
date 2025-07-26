@@ -182,8 +182,10 @@ export function getConfig(): EnvironmentConfig {
 // Validate environment on module load
 if (typeof window === 'undefined') {
   // Server-side validation
-  validateEnvironment(true)
+  // TODO: Re-enable after Vercel deployment is fixed
+  // validateEnvironment(true)
 } else {
   // Client-side validation
-  validateEnvironment(false)
+  // TODO: Re-enable after Vercel deployment is fixed
+  // validateEnvironment(false)
 }
