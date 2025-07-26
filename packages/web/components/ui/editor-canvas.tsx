@@ -2,14 +2,34 @@
 
 import * as React from 'react'
 import { cn } from '../../lib/utils'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  MaximizeIcon,
+  MinimizeIcon,
+  EyeIcon,
+  EditIcon,
+  BookOpenIcon,
+  TypeIcon,
+} from 'lucide-react'
+import { Button } from '../../design-system/components/button'
 
 interface EditorCanvasProps {
   children: React.ReactNode
   className?: string
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | 'full'
+  width?: 'narrow' | 'medium' | 'wide' | 'full'
   padding?: 'sm' | 'md' | 'lg' | 'xl'
   centered?: boolean
   focusMode?: boolean
+  mode?: 'edit' | 'preview' | 'split'
+  showModeToggle?: boolean
+  showWidthToggle?: boolean
+  onModeChange?: (mode: 'edit' | 'preview' | 'split') => void
+  onWidthChange?: (width: 'narrow' | 'medium' | 'wide' | 'full') => void
+  onFocusModeToggle?: () => void
+  toolbar?: React.ReactNode
+  header?: React.ReactNode
+  footer?: React.ReactNode
 }
 
 const maxWidthClasses = {
@@ -22,6 +42,14 @@ const maxWidthClasses = {
   full: 'max-w-full',
 }
 
+// New optimal width classes for writing experience
+const widthClasses = {
+  narrow: 'max-w-2xl', // ~672px - focused writing
+  medium: 'max-w-4xl', // ~896px - comfortable reading
+  wide: 'max-w-6xl', // ~1152px - wide layouts
+  full: 'max-w-none', // full width
+}
+
 const paddingClasses = {
   sm: 'p-4',
   md: 'p-6',
@@ -29,34 +57,258 @@ const paddingClasses = {
   xl: 'p-12',
 }
 
+const modeVariants = {
+  edit: { opacity: 1, scale: 1 },
+  preview: { opacity: 1, scale: 1 },
+  split: { opacity: 1, scale: 1 },
+}
+
 export function EditorCanvas({
   children,
   className,
   maxWidth = '4xl',
+  width = 'medium',
   padding = 'lg',
   centered = true,
   focusMode = false,
+  mode = 'edit',
+  showModeToggle = false,
+  showWidthToggle = false,
+  onModeChange,
+  onWidthChange,
+  onFocusModeToggle,
+  toolbar,
+  header,
+  footer,
 }: EditorCanvasProps) {
+  const [isHovering, setIsHovering] = React.useState(false)
+
+  // Use new width classes if width prop is provided, otherwise fall back to maxWidth
+  const currentWidthClass = width
+    ? widthClasses[width]
+    : maxWidthClasses[maxWidth]
+
+  const modeIcons = {
+    edit: <EditIcon className='h-4 w-4' />,
+    preview: <EyeIcon className='h-4 w-4' />,
+    split: <BookOpenIcon className='h-4 w-4' />,
+  }
+
+  const widthIcons = {
+    narrow: <TypeIcon className='h-3 w-3' />,
+    medium: <TypeIcon className='h-4 w-4' />,
+    wide: <TypeIcon className='h-5 w-5' />,
+    full: <MaximizeIcon className='h-4 w-4' />,
+  }
+
   return (
     <div
       className={cn(
-        'flex-1 flex flex-col h-full overflow-hidden',
-        focusMode && 'bg-background/95 backdrop-blur-sm',
+        'relative flex flex-col h-full bg-background transition-all duration-300',
+        focusMode && 'bg-background',
         className
       )}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
     >
-      <div className='flex-1 overflow-y-auto'>
+      {/* Header */}
+      {header && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className='flex-shrink-0 border-b border-border bg-background/80 backdrop-blur-sm'
+        >
+          {header}
+        </motion.div>
+      )}
+
+      {/* Toolbar with Controls */}
+      {toolbar && (
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className='flex-shrink-0 border-b border-border bg-background/80 backdrop-blur-sm'
+          >
+            <div
+              className={cn(
+                'mx-auto px-6 py-3',
+                currentWidthClass,
+                centered && 'container'
+              )}
+            >
+              <div className='flex items-center justify-between'>
+                <div className='flex-1'>{toolbar}</div>
+
+                {/* Mode and Width Controls */}
+                <div className='flex items-center gap-2 ml-4'>
+                  {/* Mode Toggle */}
+                  {showModeToggle && onModeChange && (
+                    <div className='flex items-center rounded-md border border-border bg-background p-1'>
+                      {(['edit', 'preview', 'split'] as const).map(
+                        (modeOption) => (
+                          <Button
+                            key={modeOption}
+                            variant={mode === modeOption ? 'default' : 'ghost'}
+                            size='sm'
+                            onClick={() => onModeChange(modeOption)}
+                            className='h-7 w-7 p-0'
+                            title={`${modeOption.charAt(0).toUpperCase() + modeOption.slice(1)} mode`}
+                          >
+                            {modeIcons[modeOption]}
+                          </Button>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                  {/* Width Control */}
+                  {showWidthToggle && onWidthChange && width && (
+                    <div className='flex items-center rounded-md border border-border bg-background p-1'>
+                      {(['narrow', 'medium', 'wide', 'full'] as const).map(
+                        (widthOption) => (
+                          <Button
+                            key={widthOption}
+                            variant={
+                              width === widthOption ? 'default' : 'ghost'
+                            }
+                            size='sm'
+                            onClick={() => onWidthChange(widthOption)}
+                            className='h-7 w-7 p-0'
+                            title={`${widthOption.charAt(0).toUpperCase() + widthOption.slice(1)} width`}
+                          >
+                            {widthIcons[widthOption]}
+                          </Button>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                  {/* Focus Mode Toggle */}
+                  {onFocusModeToggle && (
+                    <Button
+                      variant={focusMode ? 'default' : 'ghost'}
+                      size='sm'
+                      onClick={onFocusModeToggle}
+                      className='h-7 w-7 p-0'
+                      title='Toggle focus mode'
+                    >
+                      {focusMode ? (
+                        <MinimizeIcon className='h-4 w-4' />
+                      ) : (
+                        <MaximizeIcon className='h-4 w-4' />
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      {/* Main Content Area */}
+      <div className='flex-1 overflow-hidden'>
         <div
           className={cn(
-            'min-h-full w-full',
-            centered && 'mx-auto',
-            maxWidthClasses[maxWidth],
-            paddingClasses[padding]
+            'h-full mx-auto',
+            currentWidthClass,
+            paddingClasses[padding],
+            centered && 'container',
+            focusMode && 'px-12 py-16'
           )}
         >
-          {children}
+          <motion.div
+            key={mode}
+            variants={modeVariants}
+            initial='edit'
+            animate={mode}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className='h-full'
+          >
+            {mode === 'split' ? (
+              <div className='grid grid-cols-2 gap-6 h-full'>
+                <div className='border-r border-border pr-6'>
+                  <div className='h-full overflow-y-auto'>{children}</div>
+                </div>
+                <div className='pl-6'>
+                  <div className='h-full overflow-y-auto prose prose-sm max-w-none'>
+                    {/* Preview content would go here */}
+                    <div className='text-muted-foreground italic'>
+                      Preview mode coming soon...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className='h-full overflow-y-auto'>
+                {mode === 'preview' ? (
+                  <div className='prose prose-lg max-w-none'>
+                    {/* Preview content would go here */}
+                    <div className='text-muted-foreground italic'>
+                      Preview mode coming soon...
+                    </div>
+                  </div>
+                ) : (
+                  children
+                )}
+              </div>
+            )}
+          </motion.div>
         </div>
       </div>
+
+      {/* Footer */}
+      {footer && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className='flex-shrink-0 border-t border-border bg-background/80 backdrop-blur-sm'
+        >
+          {footer}
+        </motion.div>
+      )}
+
+      {/* Focus Mode Overlay */}
+      <AnimatePresence>
+        {focusMode && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className='fixed inset-0 bg-background/95 backdrop-blur-sm z-10 pointer-events-none'
+            style={{ marginTop: 0, marginLeft: 0 }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Floating Focus Mode Toggle */}
+      <AnimatePresence>
+        {focusMode && isHovering && onFocusModeToggle && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className='fixed top-4 right-4 z-20'
+          >
+            <Button
+              variant='secondary'
+              size='sm'
+              onClick={onFocusModeToggle}
+              className='shadow-lg'
+            >
+              <MinimizeIcon className='h-4 w-4 mr-2' />
+              Exit Focus
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -239,4 +491,61 @@ export function EditorFAB({
       {children}
     </button>
   )
+}
+
+// Hook for managing editor canvas state
+export function useEditorCanvas() {
+  const [mode, setMode] = React.useState<'edit' | 'preview' | 'split'>('edit')
+  const [width, setWidth] = React.useState<
+    'narrow' | 'medium' | 'wide' | 'full'
+  >('medium')
+  const [focusMode, setFocusMode] = React.useState(false)
+
+  const toggleMode = React.useCallback(() => {
+    setMode((current) => {
+      switch (current) {
+        case 'edit':
+          return 'preview'
+        case 'preview':
+          return 'split'
+        case 'split':
+          return 'edit'
+        default:
+          return 'edit'
+      }
+    })
+  }, [])
+
+  const toggleWidth = React.useCallback(() => {
+    setWidth((current) => {
+      switch (current) {
+        case 'narrow':
+          return 'medium'
+        case 'medium':
+          return 'wide'
+        case 'wide':
+          return 'full'
+        case 'full':
+          return 'narrow'
+        default:
+          return 'medium'
+      }
+    })
+  }, [])
+
+  const toggleFocusMode = React.useCallback(() => {
+    setFocusMode((current) => !current)
+  }, [])
+
+  return {
+    mode,
+    width,
+    focusMode,
+    setMode,
+    setWidth,
+    setFocusMode,
+    toggleMode,
+    toggleWidth,
+    toggleFocusMode,
+  }
 }
