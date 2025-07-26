@@ -45,9 +45,9 @@ test.describe('Multi-Window Management', () => {
       })
       
       // Create new window
-      await evaluateInMain(electronMain, () => {
-        // Access the createWindow function through the module's scope
-        const { createWindow } = require('./main') // eslint-disable-line @typescript-eslint/no-require-imports
+      await evaluateInMain(electronMain, async () => {
+        // Access the createWindow function through ES module import
+        const { createWindow } = await import('../../main.js')
         createWindow()
       })
       

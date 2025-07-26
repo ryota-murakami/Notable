@@ -1,5 +1,5 @@
 /* eslint-env jest, detox/detox */
-const { device, element, by, expect } = require('detox')
+import { by, device, element, expect } from 'detox'
 
 describe('Authentication Flow', () => {
   beforeEach(async () => {

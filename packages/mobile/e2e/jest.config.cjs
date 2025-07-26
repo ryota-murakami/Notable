@@ -10,4 +10,9 @@ module.exports = {
   testEnvironment: 'detox/runners/jest/testEnvironment',
   verbose: true,
   setupFilesAfterEnv: ['<rootDir>/e2e/jest.setup.js'],
+  // Enable ES module support for import syntax
+  extensionsToTreatAsEsm: ['.js'],
+  transform: {
+    '^.+\\.js$': ['babel-jest', { presets: ['babel-preset-expo'] }],
+  },
 }

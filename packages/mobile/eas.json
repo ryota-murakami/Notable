@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 13.2.1"
+    "version": ">= 13.2.1",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -8,21 +9,52 @@
       "distribution": "internal",
       "channel": "development",
       "env": {
-        "EXPO_NO_CAPABILITY_SYNC": "1"
+        "EXPO_NO_CAPABILITY_SYNC": "1",
+        "APP_ENV": "development",
+        "NODE_ENV": "development"
+      },
+      "cache": {
+        "key": "development-v1"
       }
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "APP_ENV": "staging",
+        "NODE_ENV": "production"
+      },
+      "cache": {
+        "key": "preview-v1"
+      },
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
       "channel": "production",
       "env": {
-        "EXPO_NO_CAPABILITY_SYNC": "1"
-      }
+        "EXPO_NO_CAPABILITY_SYNC": "1",
+        "APP_ENV": "production",
+        "NODE_ENV": "production"
+      },
+      "cache": {
+        "key": "production-v1"
+      },
+      "autoIncrement": true
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "${APPLE_ID}",
+        "ascAppId": "${ASC_APP_ID}",
+        "appleTeamId": "${APPLE_TEAM_ID}"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "production"
+      }
+    }
   }
 }

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Notable web application built with Next.js",
   "private": true,
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "next dev --port 4378",
@@ -145,6 +146,7 @@
     "@types/stripe-v3": "^3.1.33",
     "@types/winston": "^2.4.4",
     "chalk": "^5.4.1",
+    "eslint": "^9.31.0",
     "eslint-config-next": "^15.4.3",
     "jest": "^29.7.0",
     "prompts": "^2.4.2",

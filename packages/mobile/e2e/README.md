@@ -101,8 +101,8 @@ Tests are automatically run in GitHub Actions on:
 
 ### Configuration Files
 
-- `.detoxrc.js` - Main Detox configuration
-- `jest.config.js` - Jest configuration for E2E tests
+- `.detoxrc.cjs` - Main Detox configuration
+- `jest.config.cjs` - Jest configuration for E2E tests
 - `jest.setup.js` - Test setup and global hooks
 
 ## Writing Tests
