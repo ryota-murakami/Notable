@@ -1,3 +1,5 @@
+/* eslint-env jest */
+/* eslint-disable no-undef */
 // Base Jest setup file - mocks problematic Flow-typed modules
 // This must be loaded before other setup files
 
@@ -31,7 +33,8 @@ jest.mock('react-native', () => ({
   Pressable: 'Pressable',
   StyleSheet: {
     create: (styles) => styles,
-    flatten: (styles) => (Array.isArray(styles) ? Object.assign({}, ...styles) : styles || {}),
+    flatten: (styles) =>
+      Array.isArray(styles) ? Object.assign({}, ...styles) : styles || {},
   },
   Dimensions: {
     get: () => ({ width: 375, height: 667 }),

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4F46E5;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Main background circle -->
+  <circle cx="512" cy="512" r="480" fill="url(#grad)" filter="url(#shadow)"/>
+  
+  <!-- Notebook background -->
+  <rect x="288" y="256" width="448" height="512" rx="32" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="4"/>
+  
+  <!-- Red margin line -->
+  <line x1="352" y1="280" x2="352" y2="744" stroke="#EF4444" stroke-width="3"/>
+  
+  <!-- Spiral binding holes -->
+  <circle cx="336" cy="304" r="12" fill="#6366F1"/>
+  <circle cx="336" cy="368" r="12" fill="#6366F1"/>
+  <circle cx="336" cy="432" r="12" fill="#6366F1"/>
+  <circle cx="336" cy="496" r="12" fill="#6366F1"/>
+  <circle cx="336" cy="560" r="12" fill="#6366F1"/>
+  <circle cx="336" cy="624" r="12" fill="#6366F1"/>
+  <circle cx="336" cy="688" r="12" fill="#6366F1"/>
+  
+  <!-- Note lines -->
+  <line x1="384" y1="340" x2="672" y2="340" stroke="#D1D5DB" stroke-width="2"/>
+  <line x1="384" y1="380" x2="672" y2="380" stroke="#D1D5DB" stroke-width="2"/>
+  <line x1="384" y1="420" x2="640" y2="420" stroke="#D1D5DB" stroke-width="2"/>
+  <line x1="384" y1="460" x2="672" y2="460" stroke="#D1D5DB" stroke-width="2"/>
+  <line x1="384" y1="500" x2="656" y2="500" stroke="#D1D5DB" stroke-width="2"/>
+  <line x1="384" y1="540" x2="672" y2="540" stroke="#D1D5DB" stroke-width="2"/>
+  <line x1="384" y1="580" x2="624" y2="580" stroke="#D1D5DB" stroke-width="2"/>
+  
+  <!-- Pen -->
+  <g transform="translate(600, 280)">
+    <!-- Pen body -->
+    <rect x="0" y="0" width="80" height="12" rx="6" fill="#F59E0B"/>
+    <rect x="72" y="0" width="16" height="12" rx="6" fill="#DC2626"/>
+    <!-- Pen tip -->
+    <polygon points="88,2 100,6 88,10" fill="#991B1B"/>
+    <!-- Pen clip -->
+    <rect x="16" y="-4" width="4" height="20" rx="2" fill="#FBBF24"/>
+  </g>
+  
+  <!-- Writing on the paper -->
+  <text x="384" y="335" font-family="Inter, system-ui, sans-serif" font-size="24" fill="#6366F1" font-weight="600">Notable</text>
+  <line x1="384" y1="370" x2="480" y2="370" stroke="#6366F1" stroke-width="3"/>
+  <text x="384" y="410" font-family="Inter, system-ui, sans-serif" font-size="18" fill="#374151">Your notes,</text>
+  <text x="384" y="450" font-family="Inter, system-ui, sans-serif" font-size="18" fill="#374151">perfectly organized</text>
+</svg>
