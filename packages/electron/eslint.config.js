@@ -13,4 +13,13 @@ export default [
     ],
   },
   ...electronConfig,
+  // Relaxed rules for test files
+  {
+    files: ['e2e/**/*.test.ts', '__tests__/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'require-await': 'off',
+      'no-return-await': 'off',
+    },
+  },
 ]
