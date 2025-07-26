@@ -193,4 +193,16 @@ export default [
       'no-unused-expressions': 'off', // For Service Worker event listeners
     },
   },
+  // Library/utility files configuration - allow some warnings for async patterns
+  {
+    files: [
+      'lib/search/**/*.{ts,tsx,js,jsx}',
+      'lib/export/**/*.{ts,tsx,js,jsx}',
+      'lib/performance/**/*.{ts,tsx,js,jsx}',
+    ],
+    rules: {
+      'require-await': 'off', // These functions may be async for interface consistency
+      '@typescript-eslint/no-non-null-assertion': 'off', // Allow in utility functions where type safety is ensured
+    },
+  },
 ]
