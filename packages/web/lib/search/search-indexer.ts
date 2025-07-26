@@ -1,5 +1,6 @@
 // Efficient Search Indexing System
 
+import { stemmer } from 'stemmer'
 import { SearchableNote, SearchIndex, SearchStats } from './types'
 
 export interface IndexerOptions {
@@ -384,18 +385,16 @@ export class SearchIndexer {
   }
 
   private stem(word: string): string {
-    // Simple English stemmer - in production you'd use a proper stemming library
+    // Use Porter stemmer algorithm for proper word stemming
     if (word.length < 3) return word
 
-    // Remove common suffixes
-    const suffixes = ['ing', 'ed', 'er', 'est', 'ly', 's']
-    for (const suffix of suffixes) {
-      if (word.endsWith(suffix) && word.length > suffix.length + 2) {
-        return word.slice(0, -suffix.length)
-      }
+    try {
+      return stemmer(word)
+    } catch (error) {
+      // Fallback to original word if stemming fails
+      console.warn(`Stemming failed for word "${word}":`, error)
+      return word
     }
-
-    return word
   }
 
   private updateStats(): void {
@@ -492,12 +491,12 @@ export class SearchIndexer {
   }
 }
 
-// Singleton instance for global use
+// Singleton instance for global use with Porter stemmer
 export const globalSearchIndexer = new SearchIndexer({
   enableTrigrams: true,
   minTokenLength: 2,
   maxTokenLength: 50,
-  stemming: true,
+  stemming: true, // Now using proper Porter stemmer algorithm
   debounceMs: 200,
 })
 
