@@ -193,8 +193,8 @@ redirect_uri = ""
 url = ""
 
 [auth.external.google]
-enabled = false
-client_id = ""
+enabled = true
+client_id = "env(GOOGLE_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 # Overrides the default auth redirectURL used when the OAuth provider doesn't support PKCE.
 redirect_uri = ""

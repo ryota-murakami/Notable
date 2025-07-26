@@ -1,49 +1,59 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
+import { SignInForm } from '@/components/auth/sign-in-form'
+import { SignUpForm } from '@/components/auth/sign-up-form'
+import { PasswordResetForm } from '@/components/auth/password-reset-form'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
+
+type AuthMode = 'signin' | 'signup' | 'reset'
 
 export default function AuthPage() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [mode, setMode] = useState<AuthMode>('signin')
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
+  const supabase = createClient()
 
-  const handleDemoLogin = async () => {
-    setIsLoading(true)
-    // For testing purposes, let's simulate a login by setting some demo session
-    // In a real app, this would integrate with Supabase Auth
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      if (session) {
+        router.push('/')
+        return
+      }
+      setIsLoading(false)
+    }
 
-    // Set dev-auth-bypass cookie for middleware
-    document.cookie = 'dev-auth-bypass=true; path=/; max-age=86400' // 24 hours
+    checkAuth()
+  }, [supabase.auth, router])
 
-    // Simulate loading
-    setTimeout(() => {
-      // For now, just redirect to the home page to test the sync functionality
-      window.location.href = '/'
-    }, 1000)
+  if (isLoading) {
+    return (
+      <div className='flex h-screen bg-background items-center justify-center'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
+      </div>
+    )
   }
 
   return (
-    <div className='flex h-screen bg-background items-center justify-center'>
-      <div className='max-w-md w-full space-y-8 p-8'>
-        <div className='text-center'>
-          <h2 className='text-3xl font-bold'>Welcome to Notable</h2>
-          <p className='mt-2 text-muted-foreground'>
-            Sign in to access your synced notes
-          </p>
-        </div>
-
-        <div className='space-y-4'>
-          <button
-            onClick={handleDemoLogin}
-            disabled={isLoading}
-            className='w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50'
-          >
-            {isLoading ? 'Signing in...' : 'Demo Login (Testing)'}
-          </button>
-
-          <div className='text-center text-sm text-muted-foreground'>
-            <p>This is a demo auth page for testing sync functionality.</p>
-            <p>In production, this would integrate with Supabase Auth.</p>
-          </div>
-        </div>
+    <div className='flex h-screen bg-background items-center justify-center p-4'>
+      <div className='w-full max-w-md'>
+        {mode === 'signin' && (
+          <SignInForm
+            onToggleMode={() => setMode('signup')}
+            onForgotPassword={() => setMode('reset')}
+          />
+        )}
+        {mode === 'signup' && (
+          <SignUpForm onToggleMode={() => setMode('signin')} />
+        )}
+        {mode === 'reset' && (
+          <PasswordResetForm onBack={() => setMode('signin')} />
+        )}
       </div>
     </div>
   )

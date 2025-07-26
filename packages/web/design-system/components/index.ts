@@ -41,3 +41,32 @@ export {
   ModalFooter,
   ConfirmModal,
 } from './modal'
+
+// Label Component
+export { Label, type LabelProps } from './label'
+
+// Alert Components
+export { Alert, AlertTitle, AlertDescription } from './alert'
+
+// Avatar Components
+export { Avatar, AvatarImage, AvatarFallback } from './avatar'
+
+// Badge Component
+export { Badge, type BadgeProps } from './badge'
+
+// Separator Component
+export { Separator } from './separator'
+
+// Dialog Components
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from './dialog'
