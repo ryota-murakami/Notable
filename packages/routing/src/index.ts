@@ -18,18 +18,67 @@ import type { Platform } from './types'
 // Platform-specific configuration types
 type WebPlatformConfig = {
   platform: 'web'
-  router?: any // Next.js router
+  router?: {
+    push: (url: string) => void
+    replace: (url: string) => void
+    back: () => void
+    forward: () => void
+    refresh: () => void
+    prefetch: (href: string) => void
+  } // Next.js router
 }
 
 type MobilePlatformConfig = {
   platform: 'mobile'
-  router?: any // Expo router
+  router?: {
+    push: (path: string) => void
+    replace: (path: string) => void
+    back: () => void
+    setParams: (params: Record<string, string>) => void
+  } // Expo router
 }
 
 type DesktopPlatformConfig = {
   platform: 'desktop'
-  electronAPI?: any
-  webAdapter?: any
+  electronAPI?: {
+    onMenuNavigation?: (
+      callback: (data: {
+        routeId: string
+        params?: Record<string, string>
+      }) => void,
+    ) => void
+    onRouteChange?: (callback: (data: { path: string }) => void) => void
+    onDeepLink?: (callback: (url: string) => void) => void
+    setAlwaysOnTop?: (alwaysOnTop: boolean) => void
+    createWindow?: (config: unknown) => Promise<void>
+    sendRouteChange?: (data: {
+      route: string
+      params: Record<string, string>
+      query: Record<string, string>
+      path: string
+    }) => void
+  }
+  webAdapter?: {
+    navigate?: (
+      route: unknown,
+      params?: Record<string, string>,
+      query?: Record<string, string>,
+    ) => void
+    getCurrentRoute?: () => {
+      route: unknown | null
+      params: Record<string, string>
+      query: Record<string, string>
+    }
+    pathToRoute?: (
+      path: string,
+    ) => {
+      route: unknown | null
+      params: Record<string, string>
+      query: Record<string, string>
+    } | null
+    onRouteChange?: (callback: unknown) => () => void
+    router?: { push: (path: string) => void }
+  }
 }
 
 type PlatformConfig =
@@ -39,9 +88,9 @@ type PlatformConfig =
 import {
   initializeNavigation,
   useCurrentRoute,
+  useNavigation,
   useNavigationHistory,
   useNavigationState,
-  useNavigation,
 } from './store'
 import { getBreadcrumb } from './routes'
 
@@ -70,6 +119,9 @@ export {
 export { WebAdapter, webAdapter } from './adapters/web'
 export { MobileAdapter, mobileAdapter } from './adapters/mobile'
 export { DesktopAdapter, desktopAdapter } from './adapters/desktop'
+
+// Import DesktopAdapter for type assertion
+import { DesktopAdapter } from './adapters/desktop'
 
 // Utility functions
 export const createPlatformAdapter = (platform: Platform) => {
@@ -124,7 +176,7 @@ export const initializePlatformRouting = (
           config.electronAPI &&
           'setElectronAPI' in adapter
         ) {
-          const desktopAdapter = adapter as any
+          const desktopAdapter = adapter as DesktopAdapter
           if (typeof desktopAdapter.setElectronAPI === 'function') {
             desktopAdapter.setElectronAPI(config.electronAPI)
           }
@@ -134,7 +186,7 @@ export const initializePlatformRouting = (
           config.webAdapter &&
           'setWebAdapter' in adapter
         ) {
-          const desktopAdapter = adapter as any
+          const desktopAdapter = adapter as DesktopAdapter
           if (typeof desktopAdapter.setWebAdapter === 'function') {
             desktopAdapter.setWebAdapter(config.webAdapter)
           }
