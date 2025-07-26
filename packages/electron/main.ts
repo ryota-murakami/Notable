@@ -14,6 +14,7 @@ import * as fs from 'fs'
 import * as localShortcut from 'electron-localshortcut'
 import { autoUpdater } from 'electron-updater'
 import * as notifier from 'node-notifier'
+import { setupRoutingInMainProcess } from './routing'
 
 // __dirname is automatically available in CommonJS
 
@@ -64,9 +65,9 @@ const createWindow = () => {
   const startUrl =
     process.env.ELECTRON_START_URL ||
     `file://${path.join(__dirname, '../../web/out/index.html')}`
-  
+
   console.log(`[Main] Attempting to load URL: ${startUrl}`)
-  
+
   // Load URL with error handling
   const loadUrlWithFallback = async () => {
     try {
@@ -74,33 +75,42 @@ const createWindow = () => {
       console.log(`[Main] Successfully loaded URL: ${startUrl}`)
     } catch (error) {
       console.error(`[Main] Failed to load URL: ${startUrl}`, error)
-      
+
       // If development URL fails, try to fall back to built files
       if (process.env.ELECTRON_START_URL) {
         const fallbackUrl = `file://${path.join(__dirname, '../../web/out/index.html')}`
         console.log(`[Main] Attempting fallback to: ${fallbackUrl}`)
-        
+
         try {
           await mainWindow!.loadURL(fallbackUrl)
           console.log(`[Main] Successfully loaded fallback URL: ${fallbackUrl}`)
-          
+
           // Show a notification that we're running in offline mode
           if (mainWindow && !mainWindow.isDestroyed()) {
-            mainWindow.webContents.executeJavaScript(`
+            mainWindow.webContents
+              .executeJavaScript(
+                `
               if (typeof window !== 'undefined' && window.electronAPI) {
                 console.log('Running in offline mode - development server not available');
               }
-            `).catch(() => {
-              // Ignore errors if the page isn't ready yet
-            });
+            `
+              )
+              .catch(() => {
+                // Ignore errors if the page isn't ready yet
+              })
           }
         } catch (fallbackError) {
-          console.error(`[Main] Fallback URL also failed: ${fallbackUrl}`, fallbackError)
-          
+          console.error(
+            `[Main] Fallback URL also failed: ${fallbackUrl}`,
+            fallbackError
+          )
+
           // Create a basic error page as last resort
-          await mainWindow!.loadFile(path.join(__dirname, 'error-page.html')).catch(() => {
-            // Create inline error page if file doesn't exist
-            const errorHtml = `
+          await mainWindow!
+            .loadFile(path.join(__dirname, 'error-page.html'))
+            .catch(() => {
+              // Create inline error page if file doesn't exist
+              const errorHtml = `
               <!DOCTYPE html>
               <html>
                 <head>
@@ -147,14 +157,16 @@ const createWindow = () => {
                   </div>
                 </body>
               </html>
-            `;
-            mainWindow!.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`);
-          });
+            `
+              mainWindow!.loadURL(
+                `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
+              )
+            })
         }
       }
     }
   }
-  
+
   loadUrlWithFallback()
 
   // Show window when ready
@@ -201,6 +213,9 @@ app.whenReady().then(() => {
   // Create main window
   createWindow()
 
+  // Setup routing
+  setupRoutingInMainProcess()
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
@@ -226,7 +241,7 @@ app.on('will-quit', () => {
 // Handle theme changes
 nativeTheme.on('updated', () => {
   // Send theme update to all windows
-  BrowserWindow.getAllWindows().forEach(window => {
+  BrowserWindow.getAllWindows().forEach((window) => {
     window.webContents.send(
       'native-theme-updated',
       nativeTheme.shouldUseDarkColors
@@ -295,21 +310,24 @@ ipcMain.handle('create-window', () => {
 })
 
 ipcMain.handle('close-window', () => {
-  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  const window =
+    BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
   if (window) {
     window.close()
   }
 })
 
 ipcMain.handle('minimize-window', () => {
-  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  const window =
+    BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
   if (window) {
     window.minimize()
   }
 })
 
 ipcMain.handle('maximize-window', () => {
-  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  const window =
+    BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
   if (window) {
     if (window.isMaximized()) {
       window.unmaximize()
@@ -320,7 +338,8 @@ ipcMain.handle('maximize-window', () => {
 })
 
 ipcMain.handle('is-maximized', () => {
-  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  const window =
+    BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
   return window ? window.isMaximized() : false
 })
 
@@ -360,14 +379,14 @@ ipcMain.handle('reload-window', () => {
 // Export functionality handlers
 ipcMain.handle('export-note', async (_, noteData, format, _options = {}) => {
   if (!mainWindow) return { success: false, error: 'No window available' }
-  
+
   try {
     const { title = 'Untitled Note', content, filename } = noteData
-    
+
     // Show save dialog with appropriate filter for the format
     let filters: Electron.FileFilter[]
     let defaultExtension: string
-    
+
     switch (format) {
       case 'markdown':
         filters = [{ name: 'Markdown files', extensions: ['md'] }]
@@ -388,37 +407,37 @@ ipcMain.handle('export-note', async (_, noteData, format, _options = {}) => {
       default:
         throw new Error(`Unsupported export format: ${format}`)
     }
-    
+
     const result = await dialog.showSaveDialog(mainWindow, {
       defaultPath: filename || `${title}.${defaultExtension}`,
-      filters: [...filters, { name: 'All files', extensions: ['*'] }]
+      filters: [...filters, { name: 'All files', extensions: ['*'] }],
     })
-    
+
     if (result.canceled || !result.filePath) {
       return { success: false, canceled: true }
     }
-    
+
     // For PDF, we can't directly save the content - the renderer needs to handle printing
     if (format === 'pdf') {
-      return { 
-        success: true, 
+      return {
+        success: true,
         filePath: result.filePath,
-        requiresPrint: true 
+        requiresPrint: true,
       }
     }
-    
+
     // Write the exported content to file
     fs.writeFileSync(result.filePath, content, 'utf8')
-    
-    return { 
-      success: true, 
-      filePath: result.filePath 
+
+    return {
+      success: true,
+      filePath: result.filePath,
     }
   } catch (error) {
     console.error('Export failed:', error)
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : String(error) 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
     }
   }
 })
@@ -465,8 +484,15 @@ function createMenu() {
           label: 'New Note',
           accelerator: 'CmdOrCtrl+N',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
-            console.log('[Menu] New Note clicked, window:', window?.id, 'all windows:', BrowserWindow.getAllWindows().map(w => w.id))
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
+            console.log(
+              '[Menu] New Note clicked, window:',
+              window?.id,
+              'all windows:',
+              BrowserWindow.getAllWindows().map((w) => w.id)
+            )
             if (window) {
               window.webContents.send('menu-new-note')
               console.log('[Menu] Sent menu-new-note message')
@@ -479,7 +505,9 @@ function createMenu() {
           label: 'Open...',
           accelerator: 'CmdOrCtrl+O',
           click: async () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             if (!window) return
             const result = await dialog.showOpenDialog(window, {
               properties: ['openFile'],
@@ -490,10 +518,7 @@ function createMenu() {
             })
 
             if (!result.canceled && result.filePaths.length > 0) {
-              window.webContents.send(
-                'menu-open-file',
-                result.filePaths[0]
-              )
+              window.webContents.send('menu-open-file', result.filePaths[0])
             }
           },
         },
@@ -502,7 +527,9 @@ function createMenu() {
           label: 'Save',
           accelerator: 'CmdOrCtrl+S',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             window?.webContents.send('menu-save')
           },
         },
@@ -510,7 +537,9 @@ function createMenu() {
           label: 'Save As...',
           accelerator: 'CmdOrCtrl+Shift+S',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             window?.webContents.send('menu-save-as')
           },
         },
@@ -521,7 +550,9 @@ function createMenu() {
             {
               label: 'Export as PDF',
               click: () => {
-                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                const window =
+                  BrowserWindow.getFocusedWindow() ||
+                  BrowserWindow.getAllWindows()[0]
                 if (window) {
                   window.webContents.send('menu-export-pdf')
                 }
@@ -530,7 +561,9 @@ function createMenu() {
             {
               label: 'Export as HTML',
               click: () => {
-                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                const window =
+                  BrowserWindow.getFocusedWindow() ||
+                  BrowserWindow.getAllWindows()[0]
                 if (window) {
                   window.webContents.send('menu-export-html')
                 }
@@ -539,7 +572,9 @@ function createMenu() {
             {
               label: 'Export as Markdown',
               click: () => {
-                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                const window =
+                  BrowserWindow.getFocusedWindow() ||
+                  BrowserWindow.getAllWindows()[0]
                 if (window) {
                   window.webContents.send('menu-export-markdown')
                 }
@@ -552,7 +587,9 @@ function createMenu() {
           label: 'Preferences',
           accelerator: 'CmdOrCtrl+,',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             window?.webContents.send('menu-preferences')
           },
         },
@@ -575,7 +612,9 @@ function createMenu() {
           label: 'Find',
           accelerator: 'CmdOrCtrl+F',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             window?.webContents.send('menu-find')
           },
         },
@@ -583,7 +622,9 @@ function createMenu() {
           label: 'Find and Replace',
           accelerator: 'CmdOrCtrl+H',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             window?.webContents.send('menu-find-replace')
           },
         },
@@ -611,7 +652,9 @@ function createMenu() {
               checked: nativeTheme.themeSource === 'light',
               click: () => {
                 nativeTheme.themeSource = 'light'
-                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                const window =
+                  BrowserWindow.getFocusedWindow() ||
+                  BrowserWindow.getAllWindows()[0]
                 window?.webContents.send('theme-changed', 'light')
               },
             },
@@ -621,7 +664,9 @@ function createMenu() {
               checked: nativeTheme.themeSource === 'dark',
               click: () => {
                 nativeTheme.themeSource = 'dark'
-                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                const window =
+                  BrowserWindow.getFocusedWindow() ||
+                  BrowserWindow.getAllWindows()[0]
                 window?.webContents.send('theme-changed', 'dark')
               },
             },
@@ -631,7 +676,9 @@ function createMenu() {
               checked: nativeTheme.themeSource === 'system',
               click: () => {
                 nativeTheme.themeSource = 'system'
-                const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+                const window =
+                  BrowserWindow.getFocusedWindow() ||
+                  BrowserWindow.getAllWindows()[0]
                 window?.webContents.send('theme-changed', 'system')
               },
             },
@@ -656,7 +703,9 @@ function createMenu() {
           label: 'Focus Mode',
           accelerator: 'CmdOrCtrl+Shift+F',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             window?.webContents.send('menu-focus-mode')
           },
         },
@@ -680,7 +729,9 @@ function createMenu() {
         {
           label: 'Keyboard Shortcuts',
           click: () => {
-            const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+            const window =
+              BrowserWindow.getFocusedWindow() ||
+              BrowserWindow.getAllWindows()[0]
             window?.webContents.send('menu-shortcuts')
           },
         },

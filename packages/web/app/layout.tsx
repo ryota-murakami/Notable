@@ -1,5 +1,6 @@
 import { ThemeProvider } from '../components/theme-provider'
 import { SyncProviderWrapper } from '../components/sync-provider-wrapper'
+import { RoutingProvider } from '../components/routing-provider'
 import './globals.css'
 import type { Metadata } from 'next'
 
@@ -42,7 +43,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SyncProviderWrapper>{children}</SyncProviderWrapper>
+          <RoutingProvider>
+            <SyncProviderWrapper>{children}</SyncProviderWrapper>
+          </RoutingProvider>
         </ThemeProvider>
       </body>
     </html>
