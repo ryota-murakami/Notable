@@ -91,6 +91,10 @@ export default [
         IntersectionObserverInit: 'readonly',
         IntersectionObserverEntry: 'readonly',
         HTMLImageElement: 'readonly',
+
+        // Animation globals
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
       },
     },
     rules: {
@@ -220,6 +224,44 @@ export default [
       'no-useless-escape': 'off', // Allow regex escapes for compatibility
       'no-return-await': 'off', // Allow return await for consistency
       '@typescript-eslint/consistent-type-imports': 'off', // Allow dynamic imports
+    },
+  },
+  // Jest setup and hook files configuration
+  {
+    files: ['jest.setup.js', 'hooks/**/*.{ts,tsx,js,jsx}'],
+    languageOptions: {
+      globals: {
+        // Jest globals
+        jest: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+
+        // Node.js globals for Jest setup
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
+      '@typescript-eslint/no-empty-function': 'off', // Allow empty constructors in mocks
+      'require-await': 'off', // Allow async hooks without await
     },
   },
 ]
