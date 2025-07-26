@@ -74,12 +74,14 @@ const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
 }) => {
   const alignClasses = {
     start: 'left-0',
-    center: 'left-1/2 transform -translate-x-1/2',
+    center: 'left-1/2 -translate-x-1/2',
     end: 'right-0',
-  }
+  } as const
 
   return (
     <div
+      role='menu'
+      aria-orientation='vertical'
       className={cn(
         'min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
         alignClasses[align],

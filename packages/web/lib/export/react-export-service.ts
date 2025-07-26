@@ -630,13 +630,6 @@ ${props.join('\n')}
         )
       }
     }
-
-    if (
-      reactOptions.styling === 'styled-components' &&
-      !reactOptions.useTypeScript
-    ) {
-      // Styled components work fine with JS, this is just a style preference
-    }
   }
 }
 
