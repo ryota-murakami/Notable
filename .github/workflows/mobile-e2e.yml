@@ -198,12 +198,12 @@ jobs:
 
       - name: Create Android AVD
         run: |
-          # Use a smaller, faster API 30 for better performance
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
+          # Use ARM64 architecture to avoid KVM requirement in GitHub CI
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;arm64-v8a"
           # Delete existing AVD if it exists
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name test_avd || true
-          # Create AVD with simpler name and verify creation
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
+          # Create AVD with ARM64 architecture - no KVM needed
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/arm64-v8a --package "system-images;android-30;google_apis;arm64-v8a" --device "pixel_xl"
           # List AVDs to verify creation
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
           # Verify AVD files exist
