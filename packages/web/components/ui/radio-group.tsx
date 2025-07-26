@@ -20,9 +20,10 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
     <div className={cn('grid gap-2', className)}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, {
-            checked: child.props.value === value,
-            onChange: () => onValueChange?.(child.props.value),
+          const childWithProps = child as React.ReactElement<{ value?: string }>
+          return React.cloneElement(childWithProps, {
+            checked: childWithProps.props.value === value,
+            onChange: () => onValueChange?.(childWithProps.props.value || ''),
           })
         }
         return child

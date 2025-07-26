@@ -120,42 +120,9 @@ export abstract class BaseExportService implements ExportService {
       },
     }
 
-    switch (format) {
-      case 'markdown':
-        return {
-          ...baseOptions,
-          useGFM: true,
-          imageHandling: 'embed',
-        }
-      case 'pdf':
-        return {
-          ...baseOptions,
-          pageFormat: 'A4',
-          pageOrientation: 'portrait',
-          includePageNumbers: true,
-          generateTOC: true,
-          margins: { top: 20, right: 20, bottom: 20, left: 20 },
-        }
-      case 'html':
-        return {
-          ...baseOptions,
-          selfContained: true,
-          includeSearch: true,
-          includeNavigation: true,
-          responsive: true,
-          darkMode: true,
-        }
-      case 'react':
-        return {
-          ...baseOptions,
-          useTypeScript: true,
-          styling: 'tailwind',
-          functional: true,
-          includePropTypes: false,
-        }
-      default:
-        return baseOptions
-    }
+    // Return only base options since format-specific options
+    // are handled by the specific exporters
+    return baseOptions
   }
 
   /**

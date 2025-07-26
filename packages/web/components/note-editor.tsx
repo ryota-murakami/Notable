@@ -207,7 +207,7 @@ export function NoteEditor({
           ) : (
             <Button
               onClick={() => setIsEditing(true)}
-              variant='outline'
+              variant='secondary'
               size='sm'
               className='gap-2'
             >
@@ -218,7 +218,7 @@ export function NoteEditor({
 
           {/* Export functionality */}
           <ExportDialog note={note}>
-            <Button variant='outline' size='sm' className='gap-2'>
+            <Button variant='secondary' size='sm' className='gap-2'>
               <Share2 className='h-4 w-4' />
               Export
             </Button>

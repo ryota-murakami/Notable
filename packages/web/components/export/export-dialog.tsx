@@ -63,15 +63,16 @@ export function ExportDialog({
   } | null>(null)
 
   const { formats } = useExportFormats()
-  const { exportNote, previewExport, isExporting, progress, error, utils } =
-    useExport({
+  const { exportNote, previewExport, isExporting, progress, error } = useExport(
+    {
       onSuccess: (result) => {
         setOpen(false)
         onExportComplete?.(result.format)
       },
       autoDownload: true,
       showToasts: true,
-    })
+    }
+  )
 
   // Update options when format changes
   React.useEffect(() => {
@@ -107,7 +108,7 @@ export function ExportDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button variant='outline' className='gap-2'>
+          <Button variant='secondary' className='gap-2'>
             <Settings className='h-4 w-4' />
             Export Options
           </Button>
@@ -303,7 +304,7 @@ export function ExportDialog({
                 <div className='flex gap-2'>
                   <Badge variant='outline'>{preview.wordCount} words</Badge>
                   <Badge variant='outline'>
-                    {utils.formatFileSize(preview.estimatedSize)}
+                    {formatFileSize(preview.estimatedSize)}
                   </Badge>
                 </div>
               )}
@@ -343,7 +344,7 @@ export function ExportDialog({
 
           <div className='flex gap-2'>
             <Button
-              variant='outline'
+              variant='secondary'
               onClick={() => setOpen(false)}
               disabled={isExporting}
             >
@@ -394,16 +395,23 @@ function MarkdownOptions({
         </div>
         <Switch
           id='use-gfm'
-          checked={options.useGFM}
-          onCheckedChange={(checked) => onChange({ useGFM: checked })}
+          checked={(options as MarkdownExportOptions).useGFM}
+          onCheckedChange={(checked) =>
+            onChange({ ...options, useGFM: checked } as Partial<ExportOptions>)
+          }
         />
       </div>
 
       <div className='space-y-2'>
         <Label>Image Handling</Label>
         <RadioGroup
-          value={options.imageHandling}
-          onValueChange={(value) => onChange({ imageHandling: value as any })}
+          value={(options as MarkdownExportOptions).imageHandling}
+          onValueChange={(value) =>
+            onChange({
+              ...options,
+              imageHandling: value as 'embed' | 'link' | 'copy',
+            } as Partial<ExportOptions>)
+          }
         >
           <div className='flex items-center space-x-2'>
             <RadioGroupItem value='embed' id='embed' />
@@ -438,7 +446,9 @@ function PDFOptions({
         <Label>Page Format</Label>
         <RadioGroup
           value={options.pageFormat}
-          onValueChange={(value) => onChange({ pageFormat: value as any })}
+          onValueChange={(value) =>
+            onChange({ pageFormat: value as 'A4' | 'Letter' | 'Legal' | 'A3' })
+          }
         >
           {['A4', 'Letter', 'Legal', 'A3'].map((format) => (
             <div key={format} className='flex items-center space-x-2'>
@@ -458,9 +468,12 @@ function PDFOptions({
         </div>
         <Switch
           id='include-page-numbers'
-          checked={options.includePageNumbers}
+          checked={(options as PDFExportOptions).includePageNumbers}
           onCheckedChange={(checked) =>
-            onChange({ includePageNumbers: checked })
+            onChange({
+              ...options,
+              includePageNumbers: checked,
+            } as Partial<ExportOptions>)
           }
         />
       </div>
@@ -474,8 +487,13 @@ function PDFOptions({
         </div>
         <Switch
           id='generate-toc'
-          checked={options.generateTOC}
-          onCheckedChange={(checked) => onChange({ generateTOC: checked })}
+          checked={(options as PDFExportOptions).generateTOC}
+          onCheckedChange={(checked) =>
+            onChange({
+              ...options,
+              generateTOC: checked,
+            } as Partial<ExportOptions>)
+          }
         />
       </div>
     </div>
@@ -502,8 +520,13 @@ function HTMLOptions({
         </div>
         <Switch
           id='self-contained'
-          checked={options.selfContained}
-          onCheckedChange={(checked) => onChange({ selfContained: checked })}
+          checked={(options as HTMLExportOptions).selfContained}
+          onCheckedChange={(checked) =>
+            onChange({
+              ...options,
+              selfContained: checked,
+            } as Partial<ExportOptions>)
+          }
         />
       </div>
 
@@ -516,8 +539,13 @@ function HTMLOptions({
         </div>
         <Switch
           id='include-search'
-          checked={options.includeSearch}
-          onCheckedChange={(checked) => onChange({ includeSearch: checked })}
+          checked={(options as HTMLExportOptions).includeSearch}
+          onCheckedChange={(checked) =>
+            onChange({
+              ...options,
+              includeSearch: checked,
+            } as Partial<ExportOptions>)
+          }
         />
       </div>
 
@@ -530,8 +558,13 @@ function HTMLOptions({
         </div>
         <Switch
           id='dark-mode'
-          checked={options.darkMode}
-          onCheckedChange={(checked) => onChange({ darkMode: checked })}
+          checked={(options as HTMLExportOptions).darkMode}
+          onCheckedChange={(checked) =>
+            onChange({
+              ...options,
+              darkMode: checked,
+            } as Partial<ExportOptions>)
+          }
         />
       </div>
     </div>
@@ -558,16 +591,30 @@ function ReactOptions({
         </div>
         <Switch
           id='use-typescript'
-          checked={options.useTypeScript}
-          onCheckedChange={(checked) => onChange({ useTypeScript: checked })}
+          checked={(options as ReactExportOptions).useTypeScript}
+          onCheckedChange={(checked) =>
+            onChange({
+              ...options,
+              useTypeScript: checked,
+            } as Partial<ExportOptions>)
+          }
         />
       </div>
 
       <div className='space-y-2'>
         <Label>Styling Approach</Label>
         <RadioGroup
-          value={options.styling}
-          onValueChange={(value) => onChange({ styling: value as any })}
+          value={(options as ReactExportOptions).styling}
+          onValueChange={(value) =>
+            onChange({
+              ...options,
+              styling: value as
+                | 'tailwind'
+                | 'css-modules'
+                | 'styled-components'
+                | 'css-in-js',
+            } as Partial<ExportOptions>)
+          }
         >
           {[
             { value: 'tailwind', label: 'Tailwind CSS' },
@@ -587,8 +634,13 @@ function ReactOptions({
         <Label htmlFor='component-name'>Component Name</Label>
         <Input
           id='component-name'
-          value={options.componentName || ''}
-          onChange={(e) => onChange({ componentName: e.target.value })}
+          value={(options as ReactExportOptions).componentName || ''}
+          onChange={(e) =>
+            onChange({
+              ...options,
+              componentName: e.target.value,
+            } as Partial<ExportOptions>)
+          }
           placeholder='NoteComponent'
         />
       </div>
@@ -597,9 +649,17 @@ function ReactOptions({
 }
 
 // Helper functions
+function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
 function getDefaultOptionsForFormat(format: ExportFormat): ExportOptions {
   // This would typically use the export service
-  const baseOptions = {
+  const baseOptions: ExportOptions = {
     format,
     includeFrontMatter: true,
     includeDates: true,
@@ -616,35 +676,39 @@ function getDefaultOptionsForFormat(format: ExportFormat): ExportOptions {
     case 'markdown':
       return {
         ...baseOptions,
+        format: 'markdown',
         useGFM: true,
-        imageHandling: 'embed',
-      }
+        imageHandling: 'embed' as const,
+      } as MarkdownExportOptions
     case 'pdf':
       return {
         ...baseOptions,
-        pageFormat: 'A4',
-        pageOrientation: 'portrait',
+        format: 'pdf',
+        pageFormat: 'A4' as const,
+        pageOrientation: 'portrait' as const,
         includePageNumbers: true,
         generateTOC: true,
         margins: { top: 20, right: 20, bottom: 20, left: 20 },
-      }
+      } as PDFExportOptions
     case 'html':
       return {
         ...baseOptions,
+        format: 'html',
         selfContained: true,
         includeSearch: true,
         includeNavigation: true,
         responsive: true,
         darkMode: true,
-      }
+      } as HTMLExportOptions
     case 'react':
       return {
         ...baseOptions,
+        format: 'react',
         useTypeScript: true,
-        styling: 'tailwind',
+        styling: 'tailwind' as const,
         functional: true,
         includePropTypes: false,
-      }
+      } as ReactExportOptions
     default:
       return baseOptions
   }

@@ -17,12 +17,11 @@ export class ExportService implements IExportService {
   private exporters: Map<ExportFormat, BaseExporter>
 
   constructor() {
-    this.exporters = new Map([
-      ['markdown', new MarkdownExporter()],
-      ['html', new HTMLExporter()],
-      ['pdf', new PDFExporter()],
-      ['react', new ReactExporter()],
-    ])
+    this.exporters = new Map<ExportFormat, BaseExporter>()
+    this.exporters.set('markdown', new MarkdownExporter())
+    this.exporters.set('html', new HTMLExporter())
+    this.exporters.set('pdf', new PDFExporter())
+    this.exporters.set('react', new ReactExporter())
   }
 
   async export(
