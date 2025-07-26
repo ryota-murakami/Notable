@@ -81,12 +81,19 @@ const requiredAuthEnvVars = [
 export function validateEnvironment(isServer = false): void {
   const missingVars: string[] = []
 
-  // Check required vars
-  const varsToCheck = isServer ? requiredServerEnvVars : requiredEnvVars
-
-  for (const envVar of varsToCheck) {
+  // Always check core required vars
+  for (const envVar of requiredEnvVars) {
     if (!process.env[envVar]) {
       missingVars.push(envVar)
+    }
+  }
+
+  // Only check server vars if not in build mode or if explicitly required
+  if (isServer && process.env.NODE_ENV !== 'production') {
+    for (const envVar of requiredServerEnvVars) {
+      if (!process.env[envVar] && !requiredEnvVars.includes(envVar as any)) {
+        missingVars.push(envVar)
+      }
     }
   }
 
@@ -102,7 +109,10 @@ export function validateEnvironment(isServer = false): void {
   if (missingVars.length > 0) {
     const errorMessage = `Missing required environment variables:\n${missingVars.join('\n')}`
 
-    if (process.env.NODE_ENV === 'production') {
+    if (
+      process.env.NODE_ENV === 'production' &&
+      missingVars.some((v) => requiredEnvVars.includes(v as any))
+    ) {
       throw new Error(errorMessage)
     } else {
       console.warn(`⚠️  Warning: ${errorMessage}`)
@@ -147,7 +157,11 @@ export function getConfig(): EnvironmentConfig {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 
     // Security
-    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_SECRET:
+      process.env.JWT_SECRET ||
+      (process.env.NODE_ENV === 'production'
+        ? undefined
+        : 'development-jwt-secret'),
 
     // Analytics
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
