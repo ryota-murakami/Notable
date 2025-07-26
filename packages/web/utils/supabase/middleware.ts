@@ -36,8 +36,10 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Check for dev auth bypass cookie for e2e testing
-  const devAuthBypass = request.cookies.get('dev-auth-bypass')?.value === 'true'
+  // Check for dev auth bypass cookie for e2e testing (only in development)
+  const devAuthBypass =
+    process.env.NODE_ENV !== 'production' &&
+    request.cookies.get('dev-auth-bypass')?.value === 'true'
 
   if (
     !user &&

@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useSyncService } from '@notable/sync'
+import { Note } from '../types/note'
 
 export function Shell() {
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState<Note[]>([])
   const { syncService, isInitialized } = useSyncService()
 
   if (!isInitialized) {
@@ -50,7 +51,7 @@ export function Shell() {
                 No notes yet. Create your first note to get started.
               </div>
             ) : (
-              notes.map((note: any) => (
+              notes.map((note) => (
                 <div
                   key={note.id}
                   className='flex items-center space-x-2 p-2 rounded-md hover:bg-muted cursor-pointer'
