@@ -13,21 +13,28 @@ export default function EditorTestPage() {
     },
   ])
 
-  const metadata = {
+  const note = {
+    id: 'test-note',
     title: 'Test Note',
-    author: 'Notable User',
+    content: JSON.stringify(value),
     createdAt: new Date(),
     updatedAt: new Date(),
+    userId: 'test-user',
+    isPublic: false,
+    isPinned: false,
+    isFavorite: false,
     tags: ['test', 'demo'],
-    description:
+    summary:
       'This is a test note demonstrating the rich text editor and export functionality.',
+    color: 'blue',
+    icon: '📝',
   }
 
   return (
     <div className='container mx-auto py-10'>
       <div className='flex justify-between items-center mb-6'>
         <h1 className='text-3xl font-bold'>Rich Text Editor Test</h1>
-        <ExportButton content={value} metadata={metadata} />
+        <ExportButton note={note} />
       </div>
 
       <BasicEditor

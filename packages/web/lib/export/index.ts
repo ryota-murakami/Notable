@@ -14,10 +14,4 @@ export {
   ReactExportService,
   ReactContentProcessor,
 } from './react-export-service'
-export {
-  NotableExportService as ExportService,
-  ExportUtils,
-} from './export-service'
-
-// Export default service instance
-export { default } from './export-service'
+export { ExportService, exportService } from './export-service'
