@@ -225,7 +225,7 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}) {
 
       // Convert to suggestions and sort by relevance
       const suggestions: SearchSuggestion[] = Array.from(queryStats.entries())
-        .map(([queryText, stats]) => ({
+        .map(([_queryText, stats]) => ({
           query: stats.entries[0].query, // Use original casing from most recent entry
           count: stats.count,
           lastUsed: stats.lastUsed,

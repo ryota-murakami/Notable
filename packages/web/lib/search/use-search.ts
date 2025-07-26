@@ -46,7 +46,7 @@ export function useSearch(
   const {
     debounceMs = 300,
     maxResults = 100,
-    enableHistory = true,
+    enableHistory: _enableHistory = true,
     enableAnalytics = true,
     persistFilters = true,
   } = options

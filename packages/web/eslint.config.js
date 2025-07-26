@@ -71,6 +71,19 @@ export default [
         indexedDB: 'readonly',
         IDBOpenDBRequest: 'readonly',
         IDBKeyRange: 'readonly',
+
+        // Performance API globals
+        PerformanceObserver: 'readonly',
+        PerformanceResourceTiming: 'readonly',
+        PerformanceEntry: 'readonly',
+
+        // Crypto API globals
+        crypto: 'readonly',
+
+        // Service Worker API globals
+        ServiceWorkerRegistration: 'readonly',
+        ServiceWorker: 'readonly',
+        CustomEvent: 'readonly',
       },
     },
     rules: {
@@ -157,6 +170,27 @@ export default [
           ignoreRestSiblings: true,
         },
       ],
+    },
+  },
+  // Service Worker and public files configuration
+  {
+    files: [
+      'public/**/*.{js,ts}',
+      '**/sw.js',
+      'lib/sw-register.ts',
+      'lib/logging/**/*.{ts,tsx,js,jsx}',
+    ],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
+      'no-unused-expressions': 'off', // For Service Worker event listeners
     },
   },
 ]
