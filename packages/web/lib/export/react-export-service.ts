@@ -582,15 +582,21 @@ ${props.join('\n')}
    * Sanitize component name
    */
   private sanitizeComponentName(title: string): string {
-    return (
-      title
-        .replace(/[^a-zA-Z0-9\s]/g, '')
-        .split(' ')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join('')
-        .replace(/^\d+/, '') || // Remove leading numbers
-      'NoteComponent'
-    )
+    // Remove special characters and split into words
+    const words = title.replace(/[^a-zA-Z0-9\s]/g, '').split(/\s+/)
+
+    // Convert to PascalCase, filtering out empty strings
+    const pascalCase = words
+      .filter((word) => word.length > 0)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('')
+
+    // Ensure valid component name (must start with letter)
+    if (!pascalCase || !/^[A-Z]/.test(pascalCase)) {
+      return 'NoteComponent'
+    }
+
+    return pascalCase
   }
 
   /**

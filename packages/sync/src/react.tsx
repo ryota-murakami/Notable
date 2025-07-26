@@ -360,7 +360,7 @@ export const useSyncOperations = () => {
       setIsSyncing(false)
     }
 
-    const handleSyncError = (data: any) => {
+    const handleSyncError = (data: { error?: { message?: string } }) => {
       setIsSyncing(false)
       setLastError(data?.error?.message || 'Sync error occurred')
     }
@@ -388,7 +388,7 @@ export const useSyncOperations = () => {
 /**
  * Hook for listening to real-time changes
  */
-export const useRealtimeChanges = (callback: (changes: any[]) => void) => {
+export const useRealtimeChanges = (callback: (changes: unknown[]) => void) => {
   const { syncService, isInitialized } = useSyncService()
 
   useEffect(() => {

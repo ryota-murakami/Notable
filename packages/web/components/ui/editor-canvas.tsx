@@ -282,7 +282,6 @@ export function EditorCanvas({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className='fixed inset-0 bg-background/95 backdrop-blur-sm z-10 pointer-events-none'
-            style={{ marginTop: 0, marginLeft: 0 }}
           />
         )}
       </AnimatePresence>

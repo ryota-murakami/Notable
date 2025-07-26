@@ -227,7 +227,8 @@ export class CRDTOperationsImpl implements CRDTOperations {
       const processedChanges: ChangeSet[] = []
 
       for (let i = 0; i < changes.length; i++) {
-        const current = changes[i]!
+        const current = changes[i]
+        if (!current) continue
         const conflicts = changes.filter(
           (c) =>
             c !== current &&

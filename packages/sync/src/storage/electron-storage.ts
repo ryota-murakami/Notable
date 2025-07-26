@@ -51,6 +51,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     // return new Database(path)
 
     // Mock implementation for typing
+    await Promise.resolve() // Satisfy async requirement
     console.log(`Opening SQLite database at: ${path}`)
     return {
       prepare: (_sql: string) => ({
@@ -71,6 +72,8 @@ export class ElectronStorageAdapter implements StorageAdapter {
     if (!this.db) {
       throw new Error('Database not initialized')
     }
+
+    await Promise.resolve() // Satisfy async requirement
 
     // Create notes table
     this.db.exec(`
@@ -150,7 +153,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   /**
    * Convert SQLite row to Note object
    */
-  private rowToNote(row: any): Note {
+  private rowToNote(row: Record<string, unknown>): Note {
     return {
       id: row.id,
       title: row.title,
@@ -172,7 +175,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   /**
    * Convert Note object to SQLite row data
    */
-  private noteToRow(note: Note): any {
+  private noteToRow(note: Note): Record<string, unknown> {
     return {
       id: note.id,
       title: note.title,
@@ -194,7 +197,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   /**
    * Convert SQLite row to ChangeSet object
    */
-  private rowToChange(row: any): ChangeSet {
+  private rowToChange(row: Record<string, unknown>): ChangeSet {
     return {
       id: row.id,
       note_id: row.note_id,
@@ -213,7 +216,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   async getAllNotes(): Promise<Note[]> {
     const db = this.ensureDb()
     const stmt = db.prepare('SELECT * FROM notes ORDER BY last_modified DESC')
-    const rows = stmt.all() as any[]
+    const rows = stmt.all() as Record<string, unknown>[]
     stmt.finalize()
 
     return rows.map((row) => this.rowToNote(row))
@@ -225,7 +228,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   async getNote(id: string): Promise<Note | null> {
     const db = this.ensureDb()
     const stmt = db.prepare('SELECT * FROM notes WHERE id = ?')
-    const row = stmt.get(id) as any
+    const row = stmt.get(id) as Record<string, unknown> | undefined
     stmt.finalize()
 
     return row ? this.rowToNote(row) : null
@@ -286,7 +289,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     const stmt = db.prepare(
       'SELECT * FROM changes WHERE applied = 0 ORDER BY timestamp ASC',
     )
-    const rows = stmt.all() as any[]
+    const rows = stmt.all() as Record<string, unknown>[]
     stmt.finalize()
 
     return rows.map((row) => this.rowToChange(row))
@@ -344,7 +347,9 @@ export class ElectronStorageAdapter implements StorageAdapter {
   async getLastSyncTime(): Promise<string | null> {
     const db = this.ensureDb()
     const stmt = db.prepare('SELECT value FROM metadata WHERE key = ?')
-    const row = stmt.get('last_sync_time') as any
+    const row = stmt.get('last_sync_time') as
+      | Record<string, unknown>
+      | undefined
     stmt.finalize()
 
     return row ? row.value : null
@@ -368,7 +373,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
   async getDeviceId(): Promise<string> {
     const db = this.ensureDb()
     const stmt = db.prepare('SELECT value FROM metadata WHERE key = ?')
-    const row = stmt.get('device_id') as any
+    const row = stmt.get('device_id') as Record<string, unknown> | undefined
     stmt.finalize()
 
     return row ? row.value : ''

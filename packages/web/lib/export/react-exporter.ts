@@ -80,13 +80,16 @@ export class ReactExporter extends BaseExporter {
         const fileName =
           options.fileName ||
           `${componentName}.${reactOptions.typescript ? 'tsx' : 'jsx'}`
-        const blob = this.createBlob(componentCode, 'text/javascript')
+        const mimeType = reactOptions.typescript
+          ? 'text/typescript'
+          : 'text/javascript'
+        const blob = this.createBlob(componentCode, mimeType)
 
         return {
           success: true,
           data: blob,
           fileName,
-          mimeType: 'text/javascript',
+          mimeType,
         }
       }
 
