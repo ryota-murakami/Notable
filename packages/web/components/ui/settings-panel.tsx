@@ -271,8 +271,8 @@ export function KeyboardSettings({
                             size='sm'
                             onClick={() => {
                               // TODO: Implement shortcut editing logic
-                              alert('Shortcut editing coming soon!')
                             }}
+                            disabled
                             title='Coming soon: Shortcut editing'
                           >
                             Edit

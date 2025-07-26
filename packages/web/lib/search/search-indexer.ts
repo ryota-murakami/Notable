@@ -217,18 +217,29 @@ export class SearchIndexer {
     this.updateQueue = []
 
     try {
+      const failedUpdates: IndexUpdate[] = []
       for (const update of updates) {
-        switch (update.type) {
-          case 'add':
-          case 'update':
-            if (update.note) {
-              await this.addToIndex(update.note)
-            }
-            break
-          case 'delete':
-            await this.removeFromIndex(update.noteId)
-            break
+        try {
+          switch (update.type) {
+            case 'add':
+            case 'update':
+              if (update.note) {
+                await this.addToIndex(update.note)
+              }
+              break
+            case 'delete':
+              await this.removeFromIndex(update.noteId)
+              break
+          }
+        } catch (error) {
+          console.error(`Failed to process update for ${update.noteId}:`, error)
+          failedUpdates.push(update)
         }
+      }
+
+      // Re-queue failed updates for retry
+      if (failedUpdates.length > 0) {
+        this.updateQueue.unshift(...failedUpdates)
       }
 
       this.updateStats()
