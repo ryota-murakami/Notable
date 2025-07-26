@@ -344,11 +344,17 @@ export class ReactExporter extends BaseExporter {
     components: Array<{ name: string; content: string }>
   ): string {
     const exports: string[] = []
+    const exportedNames = new Set<string>()
 
     components.forEach(({ name }) => {
       if (name === 'index.js' || name === 'README.md') return
 
       const componentName = name.replace(/\.(jsx|tsx)$/, '')
+
+      // Skip if already exported (duplicate name)
+      if (exportedNames.has(componentName)) return
+
+      exportedNames.add(componentName)
       exports.push(
         `export { default as ${componentName} } from './${componentName}';`
       )

@@ -40,7 +40,7 @@ export class SlateToMarkdownConverter {
 
     switch (element.type) {
       case 'paragraph':
-        return children || '\u200B' // Zero-width space for empty paragraphs
+        return children || '' // Empty string for empty paragraphs
 
       case 'heading-one':
         return `# ${children}`

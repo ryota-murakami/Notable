@@ -3,11 +3,10 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
-interface RadioGroupProps {
+interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: string
   onValueChange?: (value: string) => void
   children: React.ReactNode
-  className?: string
 }
 
 const RadioGroup: React.FC<RadioGroupProps> = ({
@@ -15,9 +14,10 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   onValueChange,
   children,
   className,
+  ...props
 }) => {
   return (
-    <div className={cn('grid gap-2', className)}>
+    <div className={cn('grid gap-2', className)} {...props}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           const childWithProps = child as React.ReactElement<any>

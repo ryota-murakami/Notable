@@ -83,10 +83,9 @@ export class ArchiveCreator {
 
     files.forEach((file) => {
       const extension = file.name.split('.').pop()?.toLowerCase() || 'other'
-      if (!filesByType.has(extension)) {
-        filesByType.set(extension, [])
-      }
-      filesByType.get(extension)!.push(file)
+      const existing = filesByType.get(extension) || []
+      existing.push(file)
+      filesByType.set(extension, existing)
     })
 
     // Create organized structure

@@ -158,8 +158,12 @@ export class MarkdownExporter extends BaseExporter {
     }
 
     if (metadata.description) {
+      // Escape quotes and ensure proper indentation
+      const escapedDescription = metadata.description
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\n  ')
       frontMatter.push(`description: |`)
-      frontMatter.push(`  ${metadata.description.replace(/\n/g, '\n  ')}`)
+      frontMatter.push(`  ${escapedDescription}`)
     }
 
     frontMatter.push('---')

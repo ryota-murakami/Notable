@@ -284,7 +284,7 @@ export class PDFExporter extends BaseExporter {
     // For now, we'll return a blob containing the HTML
     // The actual PDF generation would happen on the server or using a client-side library
 
-    console.info('PDF generation would happen here with options:', options)
+    // TODO: Implement actual PDF generation using Puppeteer or similar
 
     // Simulating PDF generation by returning HTML as a blob
     // In production, this would be actual PDF binary data
