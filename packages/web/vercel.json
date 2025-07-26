@@ -1,13 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && pnpm -F @notable/sync build && pnpm -F @notable/web build",
+  "buildCommand": "cd ../.. && pnpm install && pnpm -F @notable/sync build && pnpm -F @notable/web build",
   "devCommand": "pnpm run dev",
-  "installCommand": "cd ../.. && pnpm install",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "regions": ["iad1"],
   "trailingSlash": false,
   "cleanUrls": true,
+  "env": {
+    "ENABLE_EXPERIMENTAL_COREPACK": "1",
+    "NODE_ENV": "production"
+  },
 
   "headers": [
     {
