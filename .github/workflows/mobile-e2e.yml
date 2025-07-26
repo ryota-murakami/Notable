@@ -16,8 +16,8 @@ jobs:
   ios-e2e:
     runs-on: macos-latest
     timeout-minutes: 45
-    # Skip iOS E2E tests until mobile UI is implemented
-    if: false
+    # Enable iOS E2E tests now that mobile UI is implemented
+    if: true
 
     steps:
       - name: Checkout code
@@ -136,8 +136,8 @@ jobs:
   android-e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Skip Android E2E tests until mobile UI is implemented
-    if: false
+    # Enable Android E2E tests now that mobile UI is implemented
+    if: true
 
     steps:
       - name: Checkout code
@@ -258,8 +258,8 @@ jobs:
   performance-test:
     runs-on: macos-latest
     timeout-minutes: 30
-    # Skip performance tests until mobile UI is implemented
-    if: false
+    # Enable performance tests now that mobile UI is implemented
+    if: true
 
     steps:
       - name: Checkout code
