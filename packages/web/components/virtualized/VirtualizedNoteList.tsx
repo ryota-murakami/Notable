@@ -86,7 +86,7 @@ const NoteRow = React.memo<{
       </p>
       <div className='flex items-center gap-2 mt-2'>
         <span className='text-xs text-gray-400 dark:text-gray-500'>
-          {new Date(note.updatedAt).toLocaleDateString()}
+          {new Date(note.updated_at).toLocaleDateString()}
         </span>
         {note.tags && note.tags.length > 0 && (
           <div className='flex gap-1'>
