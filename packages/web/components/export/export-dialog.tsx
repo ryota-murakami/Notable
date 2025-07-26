@@ -1,285 +1,661 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Descendant } from 'slate'
+import * as React from 'react'
+import {
+  Settings,
+  Download,
+  FileText,
+  File,
+  Globe,
+  Code,
+  X,
+} from 'lucide-react'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
+  DialogTrigger,
+} from '@radix-ui/react-dialog'
+import { Button } from '../../design-system/components/button'
+import { Badge } from '../../design-system/components/badge'
+import { Switch } from '@radix-ui/react-switch'
+import { Label } from '@radix-ui/react-label'
+import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group'
+import { Slider } from '../../design-system/components/slider'
+import { Textarea } from '../../design-system/components/textarea'
+import { Input } from '../../design-system/components/input'
+import { cn } from '../../lib/utils'
+import { Note } from '../../types/note'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  exportService,
   ExportFormat,
-  ExportMetadata,
-} from '@/lib/export/export-service'
-import { FileText, Globe, FileCode, Component } from 'lucide-react'
+  ExportOptions,
+  MarkdownExportOptions,
+  PDFExportOptions,
+  HTMLExportOptions,
+  ReactExportOptions,
+} from '../../types/export'
+import { useExport, useExportFormats } from '../../hooks/use-export'
 
 interface ExportDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  content: Descendant[]
-  metadata?: ExportMetadata
+  note: Note
+  children?: React.ReactNode
+  defaultFormat?: ExportFormat
+  onExportComplete?: (format: ExportFormat) => void
 }
 
 export function ExportDialog({
-  open,
-  onOpenChange,
-  content,
-  metadata,
+  note,
+  children,
+  defaultFormat = 'markdown',
+  onExportComplete,
 }: ExportDialogProps) {
-  const [format, setFormat] = useState<ExportFormat>('markdown')
-  const [includeMetadata, setIncludeMetadata] = useState(true)
-  const [fileName, setFileName] = useState('')
-  const [isExporting, setIsExporting] = useState(false)
-
-  // Format-specific options
-  const [markdownFlavor, setMarkdownFlavor] = useState<'standard' | 'gfm'>(
-    'gfm'
+  const [open, setOpen] = React.useState(false)
+  const [selectedFormat, setSelectedFormat] =
+    React.useState<ExportFormat>(defaultFormat)
+  const [options, setOptions] = React.useState<ExportOptions>(() =>
+    getDefaultOptionsForFormat(defaultFormat)
   )
-  const [htmlSelfContained, setHtmlSelfContained] = useState(true)
-  const [pdfPageSize, setPdfPageSize] = useState<'A4' | 'Letter'>('A4')
-  const [reactTypeScript, setReactTypeScript] = useState(true)
+  const [preview, setPreview] = React.useState<{
+    content: string
+    wordCount: number
+    estimatedSize: number
+  } | null>(null)
 
-  const formatIcons = {
-    markdown: <FileText className='h-4 w-4' />,
-    html: <Globe className='h-4 w-4' />,
-    pdf: <FileCode className='h-4 w-4' />,
-    react: <Component className='h-4 w-4' />,
-  }
+  const { formats } = useExportFormats()
+  const { exportNote, previewExport, isExporting, progress, error, utils } =
+    useExport({
+      onSuccess: (result) => {
+        setOpen(false)
+        onExportComplete?.(result.format)
+      },
+      autoDownload: true,
+      showToasts: true,
+    })
+
+  // Update options when format changes
+  React.useEffect(() => {
+    setOptions(getDefaultOptionsForFormat(selectedFormat))
+  }, [selectedFormat])
+
+  // Generate preview
+  React.useEffect(() => {
+    const generatePreview = async () => {
+      try {
+        const result = await previewExport(note, selectedFormat, options)
+        setPreview(result)
+      } catch (err) {
+        console.error('Preview generation failed:', err)
+        setPreview(null)
+      }
+    }
+
+    if (open && note) {
+      generatePreview()
+    }
+  }, [open, note, selectedFormat, options, previewExport])
 
   const handleExport = async () => {
-    setIsExporting(true)
+    await exportNote(note, options)
+  }
 
-    try {
-      let options: any = {
-        format,
-        includeMetadata,
-        fileName: fileName || undefined,
-      }
-
-      // Add format-specific options
-      switch (format) {
-        case 'markdown':
-          options.flavor = markdownFlavor
-          break
-        case 'html':
-          options.selfContained = htmlSelfContained
-          options.includeNavigation = true
-          options.responsiveDesign = true
-          break
-        case 'pdf':
-          options.pageSize = pdfPageSize
-          options.includePageNumbers = true
-          options.includeTableOfContents = true
-          break
-        case 'react':
-          options.typescript = reactTypeScript
-          options.styleType = 'css-in-js'
-          options.includeProps = true
-          options.includeDocs = true
-          break
-      }
-
-      const result = await exportService.export(content, options, metadata)
-
-      if (result.success) {
-        exportService.downloadFile(result)
-        onOpenChange(false)
-      } else {
-        console.error('Export failed:', result.error)
-        // In a real app, show error toast
-      }
-    } catch (error) {
-      console.error('Export error:', error)
-    } finally {
-      setIsExporting(false)
-    }
+  const updateOptions = (updates: Partial<ExportOptions>) => {
+    setOptions((prev) => ({ ...prev, ...updates }))
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-[500px]'>
-        <DialogHeader>
-          <DialogTitle>Export Note</DialogTitle>
-          <DialogDescription>
-            Choose a format to export your note. Each format has different
-            options and use cases.
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {children || (
+          <Button variant='outline' className='gap-2'>
+            <Settings className='h-4 w-4' />
+            Export Options
+          </Button>
+        )}
+      </DialogTrigger>
+
+      <DialogContent className='max-w-4xl max-h-[90vh] overflow-y-auto'>
+        <div className='flex flex-col space-y-1.5 text-center sm:text-left mb-4'>
+          <DialogTitle className='flex items-center gap-2 text-lg font-semibold leading-none tracking-tight'>
+            <Download className='h-5 w-5' />
+            Export Note
+          </DialogTitle>
+          <DialogDescription className='text-sm text-muted-foreground'>
+            Choose your export format and customize the output options.
           </DialogDescription>
-        </DialogHeader>
+        </div>
 
-        <div className='grid gap-4 py-4'>
-          {/* Format Selection */}
-          <div className='space-y-3'>
-            <Label>Export Format</Label>
-            <RadioGroup
-              value={format}
-              onValueChange={(v) => setFormat(v as ExportFormat)}
-            >
-              <div className='flex items-center space-x-2'>
-                <RadioGroupItem value='markdown' id='markdown' />
-                <Label
-                  htmlFor='markdown'
-                  className='flex items-center gap-2 cursor-pointer'
-                >
-                  {formatIcons.markdown}
-                  <span>Markdown</span>
-                  <span className='text-sm text-muted-foreground'>(.md)</span>
-                </Label>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          {/* Left Panel - Options */}
+          <div className='space-y-6'>
+            {/* Format Selection */}
+            <div className='space-y-3'>
+              <Label className='text-sm font-medium'>Export Format</Label>
+              <RadioGroup
+                value={selectedFormat}
+                onValueChange={(value) =>
+                  setSelectedFormat(value as ExportFormat)
+                }
+                className='grid grid-cols-2 gap-3'
+              >
+                {formats.map((format) => {
+                  const Icon = getFormatIcon(format.value)
+                  return (
+                    <div
+                      key={format.value}
+                      className={cn(
+                        'flex items-center space-x-2 rounded-lg border p-3 cursor-pointer transition-colors',
+                        selectedFormat === format.value
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:bg-accent/50'
+                      )}
+                    >
+                      <RadioGroupItem value={format.value} id={format.value} />
+                      <div className='flex items-center gap-2 flex-1'>
+                        <Icon className='h-4 w-4' />
+                        <div>
+                          <div className='font-medium'>{format.label}</div>
+                          <div className='text-xs text-muted-foreground'>
+                            {format.description.split(' - ')[0]}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </RadioGroup>
+            </div>
+
+            {/* General Options */}
+            <div className='space-y-4'>
+              <Label className='text-sm font-medium'>General Options</Label>
+
+              <div className='flex items-center justify-between'>
+                <div>
+                  <Label htmlFor='include-dates'>Include Dates</Label>
+                  <div className='text-xs text-muted-foreground'>
+                    Show creation and modification dates
+                  </div>
+                </div>
+                <Switch
+                  id='include-dates'
+                  checked={options.includeDates}
+                  onCheckedChange={(checked) =>
+                    updateOptions({ includeDates: checked })
+                  }
+                />
               </div>
-              <div className='flex items-center space-x-2'>
-                <RadioGroupItem value='html' id='html' />
-                <Label
-                  htmlFor='html'
-                  className='flex items-center gap-2 cursor-pointer'
-                >
-                  {formatIcons.html}
-                  <span>HTML</span>
-                  <span className='text-sm text-muted-foreground'>(.html)</span>
-                </Label>
+
+              <div className='flex items-center justify-between'>
+                <div>
+                  <Label htmlFor='include-tags'>Include Tags</Label>
+                  <div className='text-xs text-muted-foreground'>
+                    Show note tags if available
+                  </div>
+                </div>
+                <Switch
+                  id='include-tags'
+                  checked={options.includeTags}
+                  onCheckedChange={(checked) =>
+                    updateOptions({ includeTags: checked })
+                  }
+                />
               </div>
-              <div className='flex items-center space-x-2'>
-                <RadioGroupItem value='pdf' id='pdf' />
-                <Label
-                  htmlFor='pdf'
-                  className='flex items-center gap-2 cursor-pointer'
-                >
-                  {formatIcons.pdf}
-                  <span>PDF</span>
-                  <span className='text-sm text-muted-foreground'>(.pdf)</span>
-                </Label>
+
+              <div className='flex items-center justify-between'>
+                <div>
+                  <Label htmlFor='include-frontmatter'>
+                    Include Front Matter
+                  </Label>
+                  <div className='text-xs text-muted-foreground'>
+                    Add YAML metadata header
+                  </div>
+                </div>
+                <Switch
+                  id='include-frontmatter'
+                  checked={options.includeFrontMatter}
+                  onCheckedChange={(checked) =>
+                    updateOptions({ includeFrontMatter: checked })
+                  }
+                />
               </div>
-              <div className='flex items-center space-x-2'>
-                <RadioGroupItem value='react' id='react' />
-                <Label
-                  htmlFor='react'
-                  className='flex items-center gap-2 cursor-pointer'
-                >
-                  {formatIcons.react}
-                  <span>React Component</span>
+            </div>
+
+            {/* Format-specific Options */}
+            {selectedFormat === 'markdown' && (
+              <MarkdownOptions
+                options={options as MarkdownExportOptions}
+                onChange={updateOptions}
+              />
+            )}
+
+            {selectedFormat === 'pdf' && (
+              <PDFOptions
+                options={options as PDFExportOptions}
+                onChange={updateOptions}
+              />
+            )}
+
+            {selectedFormat === 'html' && (
+              <HTMLOptions
+                options={options as HTMLExportOptions}
+                onChange={updateOptions}
+              />
+            )}
+
+            {selectedFormat === 'react' && (
+              <ReactOptions
+                options={options as ReactExportOptions}
+                onChange={updateOptions}
+              />
+            )}
+
+            {/* Quality Settings */}
+            <div className='space-y-4'>
+              <Label className='text-sm font-medium'>Quality Settings</Label>
+
+              <div className='space-y-2'>
+                <div className='flex items-center justify-between'>
+                  <Label>Image Quality</Label>
                   <span className='text-sm text-muted-foreground'>
-                    (.jsx/.tsx)
+                    {options.quality?.imageQuality || 85}%
                   </span>
-                </Label>
+                </div>
+                <Slider
+                  value={[options.quality?.imageQuality || 85]}
+                  onValueChange={([value]) =>
+                    updateOptions({
+                      quality: { ...options.quality, imageQuality: value },
+                    })
+                  }
+                  min={10}
+                  max={100}
+                  step={5}
+                  className='w-full'
+                />
               </div>
-            </RadioGroup>
+
+              <div className='flex items-center justify-between'>
+                <div>
+                  <Label htmlFor='optimize-size'>Optimize File Size</Label>
+                  <div className='text-xs text-muted-foreground'>
+                    Reduce file size when possible
+                  </div>
+                </div>
+                <Switch
+                  id='optimize-size'
+                  checked={options.quality?.optimizeSize}
+                  onCheckedChange={(checked) =>
+                    updateOptions({
+                      quality: { ...options.quality, optimizeSize: checked },
+                    })
+                  }
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Format-specific options */}
-          <div className='space-y-3'>
-            {format === 'markdown' && (
-              <div className='space-y-2'>
-                <Label>Markdown Flavor</Label>
-                <Select
-                  value={markdownFlavor}
-                  onValueChange={(v) => setMarkdownFlavor(v as any)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='standard'>Standard Markdown</SelectItem>
-                    <SelectItem value='gfm'>
-                      GitHub Flavored Markdown
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {format === 'html' && (
-              <div className='flex items-center space-x-2'>
-                <Checkbox
-                  id='selfContained'
-                  checked={htmlSelfContained}
-                  onCheckedChange={(c) => setHtmlSelfContained(!!c)}
-                />
-                <Label htmlFor='selfContained' className='cursor-pointer'>
-                  Self-contained (embed CSS/JS)
-                </Label>
-              </div>
-            )}
-
-            {format === 'pdf' && (
-              <div className='space-y-2'>
-                <Label>Page Size</Label>
-                <Select
-                  value={pdfPageSize}
-                  onValueChange={(v) => setPdfPageSize(v as any)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='A4'>A4</SelectItem>
-                    <SelectItem value='Letter'>Letter</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {format === 'react' && (
-              <div className='flex items-center space-x-2'>
-                <Checkbox
-                  id='typescript'
-                  checked={reactTypeScript}
-                  onCheckedChange={(c) => setReactTypeScript(!!c)}
-                />
-                <Label htmlFor='typescript' className='cursor-pointer'>
-                  Generate TypeScript component
-                </Label>
-              </div>
-            )}
-          </div>
-
-          {/* Common options */}
-          <div className='space-y-3'>
-            <div className='flex items-center space-x-2'>
-              <Checkbox
-                id='includeMetadata'
-                checked={includeMetadata}
-                onCheckedChange={(c) => setIncludeMetadata(!!c)}
-              />
-              <Label htmlFor='includeMetadata' className='cursor-pointer'>
-                Include metadata (title, author, date, etc.)
-              </Label>
+          {/* Right Panel - Preview */}
+          <div className='space-y-4'>
+            <div className='flex items-center justify-between'>
+              <Label className='text-sm font-medium'>Preview</Label>
+              {preview && (
+                <div className='flex gap-2'>
+                  <Badge variant='outline'>{preview.wordCount} words</Badge>
+                  <Badge variant='outline'>
+                    {utils.formatFileSize(preview.estimatedSize)}
+                  </Badge>
+                </div>
+              )}
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='fileName'>Custom filename (optional)</Label>
-              <Input
-                id='fileName'
-                value={fileName}
-                onChange={(e) => setFileName(e.target.value)}
-                placeholder={`export.${exportService.getFormatDetails(format).extension}`}
-              />
+            <div className='border rounded-lg p-4 h-96 overflow-y-auto bg-muted/50'>
+              {preview ? (
+                <pre className='text-xs whitespace-pre-wrap font-mono'>
+                  {preview.content}
+                </pre>
+              ) : (
+                <div className='flex items-center justify-center h-full text-muted-foreground'>
+                  <div className='text-center'>
+                    <FileText className='h-8 w-8 mx-auto mb-2 opacity-50' />
+                    <div>Generating preview...</div>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {error && (
+              <div className='p-3 bg-destructive/10 border border-destructive/20 rounded-lg'>
+                <div className='flex items-center gap-2 text-destructive text-sm'>
+                  <X className='h-4 w-4' />
+                  {error}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant='outline' onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleExport} disabled={isExporting}>
-            {isExporting ? 'Exporting...' : 'Export'}
-          </Button>
-        </DialogFooter>
+        {/* Footer */}
+        <div className='flex items-center justify-between pt-4 border-t'>
+          <div className='text-sm text-muted-foreground'>
+            {note.title && `Exporting: ${note.title}`}
+          </div>
+
+          <div className='flex gap-2'>
+            <Button
+              variant='outline'
+              onClick={() => setOpen(false)}
+              disabled={isExporting}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleExport}
+              disabled={isExporting}
+              className='gap-2'
+            >
+              {isExporting ? (
+                <>
+                  <div className='h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                  Exporting... {progress}%
+                </>
+              ) : (
+                <>
+                  <Download className='h-4 w-4' />
+                  Export {selectedFormat.toUpperCase()}
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )
+}
+
+// Format-specific option components
+function MarkdownOptions({
+  options,
+  onChange,
+}: {
+  options: MarkdownExportOptions
+  onChange: (updates: Partial<ExportOptions>) => void
+}) {
+  return (
+    <div className='space-y-4'>
+      <Label className='text-sm font-medium'>Markdown Options</Label>
+
+      <div className='flex items-center justify-between'>
+        <div>
+          <Label htmlFor='use-gfm'>GitHub Flavored Markdown</Label>
+          <div className='text-xs text-muted-foreground'>
+            Use GFM syntax for tables and task lists
+          </div>
+        </div>
+        <Switch
+          id='use-gfm'
+          checked={options.useGFM}
+          onCheckedChange={(checked) => onChange({ useGFM: checked })}
+        />
+      </div>
+
+      <div className='space-y-2'>
+        <Label>Image Handling</Label>
+        <RadioGroup
+          value={options.imageHandling}
+          onValueChange={(value) => onChange({ imageHandling: value as any })}
+        >
+          <div className='flex items-center space-x-2'>
+            <RadioGroupItem value='embed' id='embed' />
+            <Label htmlFor='embed'>Embed images</Label>
+          </div>
+          <div className='flex items-center space-x-2'>
+            <RadioGroupItem value='link' id='link' />
+            <Label htmlFor='link'>Link to images</Label>
+          </div>
+          <div className='flex items-center space-x-2'>
+            <RadioGroupItem value='copy' id='copy' />
+            <Label htmlFor='copy'>Copy images</Label>
+          </div>
+        </RadioGroup>
+      </div>
+    </div>
+  )
+}
+
+function PDFOptions({
+  options,
+  onChange,
+}: {
+  options: PDFExportOptions
+  onChange: (updates: Partial<ExportOptions>) => void
+}) {
+  return (
+    <div className='space-y-4'>
+      <Label className='text-sm font-medium'>PDF Options</Label>
+
+      <div className='space-y-2'>
+        <Label>Page Format</Label>
+        <RadioGroup
+          value={options.pageFormat}
+          onValueChange={(value) => onChange({ pageFormat: value as any })}
+        >
+          {['A4', 'Letter', 'Legal', 'A3'].map((format) => (
+            <div key={format} className='flex items-center space-x-2'>
+              <RadioGroupItem value={format} id={format} />
+              <Label htmlFor={format}>{format}</Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+
+      <div className='flex items-center justify-between'>
+        <div>
+          <Label htmlFor='include-page-numbers'>Page Numbers</Label>
+          <div className='text-xs text-muted-foreground'>
+            Add page numbers to footer
+          </div>
+        </div>
+        <Switch
+          id='include-page-numbers'
+          checked={options.includePageNumbers}
+          onCheckedChange={(checked) =>
+            onChange({ includePageNumbers: checked })
+          }
+        />
+      </div>
+
+      <div className='flex items-center justify-between'>
+        <div>
+          <Label htmlFor='generate-toc'>Table of Contents</Label>
+          <div className='text-xs text-muted-foreground'>
+            Generate TOC from headings
+          </div>
+        </div>
+        <Switch
+          id='generate-toc'
+          checked={options.generateTOC}
+          onCheckedChange={(checked) => onChange({ generateTOC: checked })}
+        />
+      </div>
+    </div>
+  )
+}
+
+function HTMLOptions({
+  options,
+  onChange,
+}: {
+  options: HTMLExportOptions
+  onChange: (updates: Partial<ExportOptions>) => void
+}) {
+  return (
+    <div className='space-y-4'>
+      <Label className='text-sm font-medium'>HTML Options</Label>
+
+      <div className='flex items-center justify-between'>
+        <div>
+          <Label htmlFor='self-contained'>Self-contained</Label>
+          <div className='text-xs text-muted-foreground'>
+            Embed all CSS and assets inline
+          </div>
+        </div>
+        <Switch
+          id='self-contained'
+          checked={options.selfContained}
+          onCheckedChange={(checked) => onChange({ selfContained: checked })}
+        />
+      </div>
+
+      <div className='flex items-center justify-between'>
+        <div>
+          <Label htmlFor='include-search'>Search functionality</Label>
+          <div className='text-xs text-muted-foreground'>
+            Add in-page search feature
+          </div>
+        </div>
+        <Switch
+          id='include-search'
+          checked={options.includeSearch}
+          onCheckedChange={(checked) => onChange({ includeSearch: checked })}
+        />
+      </div>
+
+      <div className='flex items-center justify-between'>
+        <div>
+          <Label htmlFor='dark-mode'>Dark mode support</Label>
+          <div className='text-xs text-muted-foreground'>
+            Include dark theme styles
+          </div>
+        </div>
+        <Switch
+          id='dark-mode'
+          checked={options.darkMode}
+          onCheckedChange={(checked) => onChange({ darkMode: checked })}
+        />
+      </div>
+    </div>
+  )
+}
+
+function ReactOptions({
+  options,
+  onChange,
+}: {
+  options: ReactExportOptions
+  onChange: (updates: Partial<ExportOptions>) => void
+}) {
+  return (
+    <div className='space-y-4'>
+      <Label className='text-sm font-medium'>React Options</Label>
+
+      <div className='flex items-center justify-between'>
+        <div>
+          <Label htmlFor='use-typescript'>TypeScript</Label>
+          <div className='text-xs text-muted-foreground'>
+            Generate TypeScript component
+          </div>
+        </div>
+        <Switch
+          id='use-typescript'
+          checked={options.useTypeScript}
+          onCheckedChange={(checked) => onChange({ useTypeScript: checked })}
+        />
+      </div>
+
+      <div className='space-y-2'>
+        <Label>Styling Approach</Label>
+        <RadioGroup
+          value={options.styling}
+          onValueChange={(value) => onChange({ styling: value as any })}
+        >
+          {[
+            { value: 'tailwind', label: 'Tailwind CSS' },
+            { value: 'css-modules', label: 'CSS Modules' },
+            { value: 'styled-components', label: 'Styled Components' },
+            { value: 'css-in-js', label: 'CSS-in-JS' },
+          ].map((style) => (
+            <div key={style.value} className='flex items-center space-x-2'>
+              <RadioGroupItem value={style.value} id={style.value} />
+              <Label htmlFor={style.value}>{style.label}</Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='component-name'>Component Name</Label>
+        <Input
+          id='component-name'
+          value={options.componentName || ''}
+          onChange={(e) => onChange({ componentName: e.target.value })}
+          placeholder='NoteComponent'
+        />
+      </div>
+    </div>
+  )
+}
+
+// Helper functions
+function getDefaultOptionsForFormat(format: ExportFormat): ExportOptions {
+  // This would typically use the export service
+  const baseOptions = {
+    format,
+    includeFrontMatter: true,
+    includeDates: true,
+    includeTags: true,
+    quality: {
+      imageQuality: 85,
+      imageFormat: 'jpeg' as const,
+      imageMaxWidth: 1200,
+      optimizeSize: true,
+    },
+  }
+
+  switch (format) {
+    case 'markdown':
+      return {
+        ...baseOptions,
+        useGFM: true,
+        imageHandling: 'embed',
+      }
+    case 'pdf':
+      return {
+        ...baseOptions,
+        pageFormat: 'A4',
+        pageOrientation: 'portrait',
+        includePageNumbers: true,
+        generateTOC: true,
+        margins: { top: 20, right: 20, bottom: 20, left: 20 },
+      }
+    case 'html':
+      return {
+        ...baseOptions,
+        selfContained: true,
+        includeSearch: true,
+        includeNavigation: true,
+        responsive: true,
+        darkMode: true,
+      }
+    case 'react':
+      return {
+        ...baseOptions,
+        useTypeScript: true,
+        styling: 'tailwind',
+        functional: true,
+        includePropTypes: false,
+      }
+    default:
+      return baseOptions
+  }
+}
+
+function getFormatIcon(format: ExportFormat) {
+  const icons = {
+    markdown: FileText,
+    pdf: File,
+    html: Globe,
+    react: Code,
+  }
+  return icons[format] || FileText
 }

@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Descendant } from 'slate'
-import { Button } from '@/components/ui/button'
+import * as React from 'react'
+import { Download, FileText, Globe, FileCode, Component } from 'lucide-react'
+import { Button } from '../../design-system/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,63 +10,62 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Download, FileText, Globe, FileCode, Component } from 'lucide-react'
+} from '@radix-ui/react-dropdown-menu'
 import { ExportDialog } from './export-dialog'
-import {
-  exportService,
-  ExportFormat,
-  ExportMetadata,
-} from '@/lib/export/export-service'
+import { Note } from '../../types/note'
+import { ExportFormat } from '../../types/export'
+import { useExport } from '../../hooks/use-export'
 
 interface ExportButtonProps {
-  content: Descendant[]
-  metadata?: ExportMetadata
+  note: Note
   variant?: 'default' | 'outline' | 'ghost'
   size?: 'default' | 'sm' | 'lg' | 'icon'
+  compact?: boolean
 }
 
 export function ExportButton({
-  content,
-  metadata,
+  note,
   variant = 'outline',
   size = 'sm',
+  compact = false,
 }: ExportButtonProps) {
-  const [showDialog, setShowDialog] = useState(false)
-  const [selectedFormat, setSelectedFormat] = useState<ExportFormat | null>(
-    null
-  )
+  const { exportNote } = useExport({
+    autoDownload: true,
+    showToasts: true,
+  })
 
   const handleQuickExport = async (format: ExportFormat) => {
     try {
       const options = {
         format,
-        includeMetadata: true,
+        includeFrontMatter: true,
+        includeDates: true,
+        includeTags: true,
       }
 
-      const result = await exportService.export(content, options, metadata)
-
-      if (result.success) {
-        exportService.downloadFile(result)
-      } else {
-        console.error('Export failed:', result.error)
-      }
+      await exportNote(note, options)
     } catch (error) {
       console.error('Export error:', error)
     }
   }
 
-  const handleExportWithOptions = (format: ExportFormat) => {
-    setSelectedFormat(format)
-    setShowDialog(true)
+  if (compact) {
+    return (
+      <ExportDialog note={note} defaultFormat='markdown'>
+        <Button variant={variant} size={size} className='gap-2'>
+          <Download className='h-4 w-4' />
+          Export
+        </Button>
+      </ExportDialog>
+    )
   }
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant={variant} size={size}>
-            <Download className='h-4 w-4 mr-2' />
+          <Button variant={variant} size={size} className='gap-2'>
+            <Download className='h-4 w-4' />
             Export
           </Button>
         </DropdownMenuTrigger>
@@ -91,32 +90,17 @@ export function ExportButton({
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuLabel>Export with Options</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => handleExportWithOptions('markdown')}>
-            <FileText className='h-4 w-4 mr-2' />
-            Markdown Options...
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleExportWithOptions('html')}>
-            <Globe className='h-4 w-4 mr-2' />
-            HTML Options...
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleExportWithOptions('pdf')}>
-            <FileCode className='h-4 w-4 mr-2' />
-            PDF Options...
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleExportWithOptions('react')}>
-            <Component className='h-4 w-4 mr-2' />
-            React Options...
+          <DropdownMenuLabel>Advanced Options</DropdownMenuLabel>
+          <DropdownMenuItem asChild>
+            <ExportDialog note={note} defaultFormat='markdown'>
+              <div className='flex items-center gap-2 cursor-pointer w-full'>
+                <FileText className='h-4 w-4' />
+                Export with Options...
+              </div>
+            </ExportDialog>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <ExportDialog
-        open={showDialog}
-        onOpenChange={setShowDialog}
-        content={content}
-        metadata={metadata}
-      />
     </>
   )
 }
