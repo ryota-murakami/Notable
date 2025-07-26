@@ -83,7 +83,7 @@ export class SearchEngine {
     return fuseResults.map((result) => ({
       note: result.item,
       score: 1 - (result.score || 0), // Invert score so higher is better
-      matches: this.extractMatches(result.matches || []),
+      matches: this.extractMatches([...(result.matches || [])]),
       snippet: this.generateSnippet(result.item, text),
     }))
   }

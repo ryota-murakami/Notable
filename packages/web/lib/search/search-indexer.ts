@@ -46,6 +46,11 @@ export class SearchIndexer {
       searchTime: 0,
       resultCount: 0,
     }
+
+    // Initialize debounced function after options are set
+    this.processUpdatesDebounced = this.debounce(() => {
+      this.processUpdates()
+    }, this.options.debounceMs)
   }
 
   // Add or update a note in the index
@@ -117,7 +122,7 @@ export class SearchIndexer {
       }
 
       // Add notes with significant trigram matches
-      const threshold = Math.max(1, Math.floor(trigrams.length * 0.3))
+      const threshold = Math.max(1, Math.floor(trigrams.size * 0.3))
       trigramMatches.forEach((count, noteId) => {
         if (count >= threshold) {
           noteIds.add(noteId)
@@ -202,9 +207,7 @@ export class SearchIndexer {
   }
 
   // Private methods
-  private processUpdatesDebounced = this.debounce(() => {
-    this.processUpdates()
-  }, this.options.debounceMs)
+  private processUpdatesDebounced!: () => void
 
   private async processUpdates(): Promise<void> {
     if (this.isProcessing || this.updateQueue.length === 0) return
