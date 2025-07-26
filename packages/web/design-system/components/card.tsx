@@ -4,14 +4,14 @@ import * as React from 'react'
 import { cn } from '../utils/theme'
 import { motion, type MotionProps } from 'framer-motion'
 
-export interface CardProps
-  extends Omit<React.ComponentProps<typeof motion.div>, 'children'> {
+export interface CardProps extends Omit<MotionProps, 'children'> {
   children?: React.ReactNode
   variant?: 'default' | 'elevated' | 'bordered' | 'ghost' | 'gradient'
   hover?: 'none' | 'lift' | 'glow' | 'scale' | 'tilt'
   interactive?: boolean
   loading?: boolean
   blur?: boolean
+  className?: string
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(

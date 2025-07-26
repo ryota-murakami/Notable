@@ -1,5 +1,5 @@
-import React, { createContext, useContext, ReactNode } from 'react'
-import { User } from '../types'
+import React, { createContext, type ReactNode, useContext } from 'react'
+import { type User } from '../types'
 
 interface SignUpOptions {
   email: string
@@ -10,9 +10,16 @@ interface SignUpOptions {
 }
 
 interface MockSupabaseAuth {
-  signInWithPassword: (credentials: { email: string; password: string }) => Promise<{ error: { message: string } | null }>
-  signInWithOAuth: (options: { provider: string }) => Promise<{ error: { message: string } | null }>
-  signUp: (options: SignUpOptions) => Promise<{ error: { message: string } | null }>
+  signInWithPassword: (_credentials: {
+    email: string
+    password: string
+  }) => Promise<{ error: { message: string } | null }>
+  signInWithOAuth: (_options: {
+    provider: string
+  }) => Promise<{ error: { message: string } | null }>
+  signUp: (
+    _options: SignUpOptions
+  ) => Promise<{ error: { message: string } | null }>
 }
 
 interface MockSupabase {
@@ -43,15 +50,24 @@ interface SupabaseProviderProps {
   children: ReactNode
 }
 
-export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
+export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({
+  children,
+}) => {
   // Mock Supabase implementation - provides no real authentication functionality.
   // All auth methods return successful responses without performing actual operations.
   // This is used after removing real Supabase integration from the mobile package.
   const mockSupabase: MockSupabase = {
     auth: {
-      signInWithPassword: async () => ({ error: null }),
-      signInWithOAuth: async () => ({ error: null }),
-      signUp: async () => ({ error: null }),
+      signInWithPassword: async (_credentials: {
+        email: string
+        password: string
+      }) => ({ error: null }),
+
+      signInWithOAuth: async (_options: { provider: string }) => ({
+        error: null,
+      }),
+
+      signUp: async (_options: SignUpOptions) => ({ error: null }),
     },
   }
 

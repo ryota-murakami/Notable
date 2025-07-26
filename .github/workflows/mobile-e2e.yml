@@ -25,22 +25,92 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9.15.0
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          STORE_PATH=$(pnpm store path --silent)
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
+          # Ensure the directory exists so actions/cache has something to target
+          mkdir -p "$STORE_PATH"
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Setup iOS Simulator
         run: |
-          # Delete existing simulator if it exists, then create new one
-          xcrun simctl delete "iPhone 15" 2>/dev/null || true
-          xcrun simctl create "iPhone 15" "iPhone 15" latest
-          xcrun simctl boot "iPhone 15"
+          set -euo pipefail
+
+          echo "=== Available Devices and Runtimes ==="
+          xcrun simctl list devicetypes | grep iPhone
+          xcrun simctl list runtimes | grep iOS
+          xcrun simctl list devices | head -20
+
+          # Try to find and use pre-existing iPhone simulator
+          EXISTING_IPHONE=$(xcrun simctl list devices booted | grep iPhone | head -1 | sed -n 's/.*(\([^)]*\)).*/\1/p' || true)
+
+          if [ -n "$EXISTING_IPHONE" ]; then
+            echo "Using existing booted iPhone simulator: $EXISTING_IPHONE"
+            SIMULATOR_UDID="$EXISTING_IPHONE"
+          else
+            # Create new simulator with more robust approach
+            DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-14"
+            
+            # Find best available iOS runtime (prefer 17.x, fallback to any iOS)
+            RUNTIME_ID=$(xcrun simctl list runtimes | grep -E "iOS (17\.|16\.|15\.)" | tail -1 | grep -o 'com\.apple\.CoreSimulator\.SimRuntime\.iOS[^,]*' || true)
+            
+            if [ -z "$RUNTIME_ID" ]; then
+              RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | tail -1 | grep -o 'com\.apple\.CoreSimulator\.SimRuntime[^,]*')
+            fi
+            
+            echo "Using device type: $DEVICE_TYPE"
+            echo "Using runtime: $RUNTIME_ID"
+            
+            # Clean up any existing test simulators
+            xcrun simctl delete "E2E-iPhone" 2>/dev/null || true
+            
+            # Create and boot simulator
+            SIMULATOR_UDID=$(xcrun simctl create "E2E-iPhone" "$DEVICE_TYPE" "$RUNTIME_ID")
+            echo "Created simulator with UDID: $SIMULATOR_UDID"
+            
+            # Boot with retry logic
+            for i in {1..3}; do
+              if xcrun simctl boot "$SIMULATOR_UDID"; then
+                echo "Successfully booted simulator on attempt $i"
+                break
+              else
+                echo "Boot attempt $i failed, retrying..."
+                sleep 5
+              fi
+            done
+
+            # Wait for simulator to fully initialize and appear as booted
+            echo "Waiting for simulator to fully initialize..."
+            sleep 10
+
+            # Abort if still not booted
+            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
+              echo "Simulator failed to boot after 3 attempts" >&2
+              exit 1
+            fi
+          fi
+
+          # Verify simulator is ready
+          echo "=== Final Simulator Status ==="
+          xcrun simctl list devices | grep Booted || true
 
       - name: Build iOS app for testing
         working-directory: packages/mobile
@@ -63,7 +133,7 @@ jobs:
 
   android-e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -73,12 +143,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9.15.0
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          STORE_PATH=$(pnpm store path --silent)
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
+          # Ensure the directory exists so actions/cache has something to target
+          mkdir -p "$STORE_PATH"
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -94,15 +179,58 @@ jobs:
 
       - name: Create Android AVD
         run: |
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-34;google_apis;x86_64"
+          # Use a smaller, faster API 30 for better performance
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
           # Delete existing AVD if it exists
-          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name Pixel_6_API_34 || true
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_6_API_34 --abi google_apis/x86_64 --package "system-images;android-34;google_apis;x86_64"
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name test_avd || true
+          # Create AVD with simpler name and verify creation
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
+          # List AVDs to verify creation
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
+          # Verify AVD files exist
+          ls -la $HOME/.android/avd/ || true
 
       - name: Start Android Emulator
         run: |
-          $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_34 -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -wipe-data &
-          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+          # Debug AVD location and setup
+          echo "=== AVD Debug Info ==="
+          echo "HOME: $HOME"
+          echo "ANDROID_HOME: $ANDROID_HOME"
+          echo "ANDROID_AVD_HOME: ${ANDROID_AVD_HOME:-'not set'}"
+          ls -la $HOME/.android/avd/ || echo "Default AVD directory does not exist"
+          ls -la $HOME/.config/.android/avd/ || echo "Config AVD directory does not exist"
+
+          # Use the directory where the AVD was actually created
+          export ANDROID_AVD_HOME=$HOME/.config/.android/avd
+          echo "Using ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
+
+          # List available AVDs to confirm
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
+
+          # Start emulator with optimized settings for CI
+          $ANDROID_HOME/emulator/emulator -avd test_avd \
+            -no-audio \
+            -no-window \
+            -gpu swiftshader_indirect \
+            -no-snapshot \
+            -camera-back none \
+            -camera-front none \
+            -memory 4096 \
+            -partition-size 4096 \
+            -cores 2 &
+
+          # Wait for device with timeout and better error handling
+          echo "Waiting for Android emulator to start..."
+          timeout 600 adb wait-for-device || { echo "Emulator failed to start within 10 minutes"; exit 1; }
+
+          # Wait for boot completion with timeout
+          echo "Waiting for Android system to boot..."
+          timeout 300 bash -c 'while [[ -z $(adb shell getprop sys.boot_completed | tr -d "\r") ]]; do sleep 2; echo "Still booting..."; done'
+
+          # Unlock screen
+          adb shell input keyevent 82
+
+          echo "Android emulator is ready!"
 
       - name: Build Android app for testing
         working-directory: packages/mobile
@@ -135,20 +263,92 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9.15.0
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          STORE_PATH=$(pnpm store path --silent)
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
+          # Ensure the directory exists so actions/cache has something to target
+          mkdir -p "$STORE_PATH"
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Setup iOS Simulator
         run: |
-          xcrun simctl create "iPhone 15" "iPhone 15" latest
-          xcrun simctl boot "iPhone 15"
+          set -euo pipefail
+
+          echo "=== Available Devices and Runtimes ==="
+          xcrun simctl list devicetypes | grep iPhone
+          xcrun simctl list runtimes | grep iOS
+          xcrun simctl list devices | head -20
+
+          # Try to find and use pre-existing iPhone simulator
+          EXISTING_IPHONE=$(xcrun simctl list devices booted | grep iPhone | head -1 | sed -n 's/.*(\([^)]*\)).*/\1/p' || true)
+
+          if [ -n "$EXISTING_IPHONE" ]; then
+            echo "Using existing booted iPhone simulator: $EXISTING_IPHONE"
+            SIMULATOR_UDID="$EXISTING_IPHONE"
+          else
+            # Create new simulator with more robust approach
+            DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-14"
+            
+            # Find best available iOS runtime (prefer 17.x, fallback to any iOS)
+            RUNTIME_ID=$(xcrun simctl list runtimes | grep -E "iOS (17\.|16\.|15\.)" | tail -1 | grep -o 'com\.apple\.CoreSimulator\.SimRuntime\.iOS[^,]*' || true)
+            
+            if [ -z "$RUNTIME_ID" ]; then
+              RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | tail -1 | grep -o 'com\.apple\.CoreSimulator\.SimRuntime[^,]*')
+            fi
+            
+            echo "Using device type: $DEVICE_TYPE"
+            echo "Using runtime: $RUNTIME_ID"
+            
+            # Clean up any existing test simulators
+            xcrun simctl delete "E2E-iPhone" 2>/dev/null || true
+            
+            # Create and boot simulator
+            SIMULATOR_UDID=$(xcrun simctl create "E2E-iPhone" "$DEVICE_TYPE" "$RUNTIME_ID")
+            echo "Created simulator with UDID: $SIMULATOR_UDID"
+            
+            # Boot with retry logic
+            for i in {1..3}; do
+              if xcrun simctl boot "$SIMULATOR_UDID"; then
+                echo "Successfully booted simulator on attempt $i"
+                break
+              else
+                echo "Boot attempt $i failed, retrying..."
+                sleep 5
+              fi
+            done
+
+            # Wait for simulator to fully initialize and appear as booted
+            echo "Waiting for simulator to fully initialize..."
+            sleep 10
+
+            # Abort if still not booted
+            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
+              echo "Simulator failed to boot after 3 attempts" >&2
+              exit 1
+            fi
+          fi
+
+          # Verify simulator is ready
+          echo "=== Final Simulator Status ==="
+          xcrun simctl list devices | grep Booted || true
 
       - name: Build iOS app for performance testing
         working-directory: packages/mobile

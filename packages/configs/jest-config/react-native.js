@@ -1,3 +1,32 @@
+// Modules that need to be transformed by Jest (not ignored)
+const nodeModulesToTransform = [
+  'react-native',
+  '@react-native',
+  '@react-native-community',
+  'expo',
+  '@expo',
+  '@expo-google-fonts',
+  'react-navigation',
+  '@react-navigation',
+  '@unimodules',
+  'unimodules',
+  'sentry-expo',
+  'native-base',
+  'react-native-svg',
+  'react-native-paper',
+  'react-native-vector-icons',
+  'react-native-markdown-display',
+  '@supabase',
+  'fuse.js',
+  '@testing-library',
+  'jest-',
+  'react-native-gesture-handler',
+  'react-native-reanimated',
+  'react-native-screens',
+  'react-native-safe-area-context',
+  'react-native-web'
+];
+
 /** @type {import('jest').Config} */
 module.exports = {
   preset: 'jest-expo',
@@ -8,10 +37,11 @@ module.exports = {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-native-paper|react-native-vector-icons|react-native-markdown-display|@supabase|fuse.js|@testing-library)',
+    `node_modules/(?!(${nodeModulesToTransform.join('|')}))`,
   ],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/$1',
+    '^@/types$': '<rootDir>/types',
     '^~/(.*)$': '<rootDir>/$1',
   },
   testPathIgnorePatterns: [
@@ -33,4 +63,27 @@ module.exports = {
     '!**/app.json',
     '!**/babel.config.js',
   ],
+  
+  // Performance optimizations
+  maxWorkers: '50%', // Utilize half of available cores
+  maxConcurrency: 5,
+  
+  // Cache settings
+  cacheDirectory: '<rootDir>/.jest-cache',
+  
+  // Coverage thresholds
+  coverageThreshold: {
+    global: {
+      statements: 70,
+      branches: 60,
+      functions: 70,
+      lines: 70,
+    },
+  },
+  
+  // Test environment for React Native
+  testEnvironment: 'node',
+  
+  // Verbose output for better debugging
+  verbose: false,
 }

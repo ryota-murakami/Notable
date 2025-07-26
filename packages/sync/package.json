@@ -1,0 +1,36 @@
+{
+  "name": "@notable/sync",
+  "version": "1.0.0",
+  "description": "Cross-device sync service for Notable using Supabase CRDT/Realtime",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "@types/jest": "^30.0.0",
+    "jest": "^29.7.0",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

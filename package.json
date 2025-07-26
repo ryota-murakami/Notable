@@ -22,12 +22,19 @@
     "prettier": "prettier --ignore-unknown --write .",
     "sherif": "pnpm dlx sherif -r unsync-similar-dependencies",
     "sherif:fix": "pnpm run sherif --fix -r unsync-similar-dependencies",
-    "knip": "knip"
+    "knip": "knip",
+    "deps:dedupe": "pnpm dedupe",
+    "deps:check": "pnpm dlx sherif -r unsync-similar-dependencies",
+    "deps:fix": "pnpm dlx sherif -r unsync-similar-dependencies --fix",
+    "deps:cleanup": "pnpm dedupe && pnpm install --force",
+    "deps:unused": "pnpm dlx depcheck",
+    "security:audit": "pnpm audit",
+    "security:fix": "pnpm audit --fix"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^22.16.5",
-    "eslint": "^8.57.1",
+    "eslint": "^9.31.0",
     "husky": "^9.1.7",
     "knip": "5.40.0",
     "lint-staged": "^16.1.2",
@@ -43,17 +50,28 @@
     "packages/electron/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
       "pnpm --filter @notable/electron lint:fix"
     ],
-    "packages/mobile/**/*.{ts,tsx}": [
-      "pnpm --filter @notable/mobile typecheck"
-    ],
-    "packages/electron/**/*.{ts,tsx}": [
-      "pnpm --filter @notable/electron typecheck"
-    ],
     "*": "prettier --ignore-unknown --write"
   },
   "pnpm": {
     "overrides": {
-      "napi-postinstall": "0.3.2"
+      "napi-postinstall": "0.3.2",
+      "react": "^19",
+      "react-dom": "^19",
+      "@types/react": "^19",
+      "@types/react-dom": "^19",
+      "next": "15.2.4",
+      "undici": "^6.0.0",
+      "slate": "^0.117.2",
+      "slate-react": "^0.117.4",
+      "yjs": "^13.6.27",
+      "typescript": "^5"
     }
+  },
+  "resolutions": {
+    "slate": "^0.117.2",
+    "slate-react": "^0.117.4",
+    "yjs": "^13.6.27",
+    "undici": "^6.0.0",
+    "typescript": "^5"
   }
 }

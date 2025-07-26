@@ -1,4 +1,3 @@
-import { useMemo, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { ActivityIndicator, FAB, Text } from 'react-native-paper'
 import { useRouter } from 'expo-router'
@@ -13,7 +12,6 @@ export default function NotesScreen() {
   const { notes, isLoading, createNote, deleteNote } = useOfflineNotes(
     user?.id ? { user_id: user.id } : {}
   )
-  const [filter, _setFilter] = useState<'all' | 'folders' | 'notes'>('all')
   const router = useRouter()
 
   const handleCreateNote = async (isFolder = false) => {
@@ -27,21 +25,13 @@ export default function NotesScreen() {
     }
   }
 
-  const filteredNotes = useMemo(() => {
-    return notes.filter((note) => {
-      if (filter === 'all') return true
-      const isFolder = 'name' in note
-      if (filter === 'notes') return !isFolder
-      if (filter === 'folders') return isFolder
-      return true
-    })
-  }, [notes, filter])
+  const filteredNotes = notes
 
   const renderItem = ({ item }: { item: Note }) => (
     <NoteCard
       note={item}
       onPress={() => router.push(`/note/${item.id}`)}
-      onDelete={() => deleteNote(item.id)}
+      onDelete={() => deleteNote()}
     />
   )
 

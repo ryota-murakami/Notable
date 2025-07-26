@@ -3,21 +3,21 @@
   "version": "1.0.0",
   "description": "Notable Electron desktop application",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "main": "build/main.js",
   "scripts": {
     "build": "rm -rf build && mkdir -p build && echo 'TypeScript compilation starting...' && tsc && echo 'TypeScript compilation done. Moving files...' && mv build/packages/electron/* build/ 2>/dev/null || true && rm -rf build/packages && echo 'Build directory contents:' && ls -la build/ && electron-builder",
-    "dev": "node scripts/dev-with-server.js",
+    "dev": "node scripts/dev-with-server.cjs",
     "dev:electron-only": "ELECTRON_START_URL=http://localhost:4378 electron .",
     "start": "electron .",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --ext .ts,.tsx --fix",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "jest",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
-    "e2e:with-server": "node scripts/test-e2e-with-dev-server.js",
+    "e2e:with-server": "node scripts/test-e2e-with-dev-server.cjs",
     "clean": "rm -rf dist build node_modules pnpm-lock.yaml",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
@@ -34,13 +34,14 @@
     "@types/node-notifier": "^8.0.5",
     "electron": "^35.2.1",
     "electron-builder": "^26.0.12",
-    "eslint": "^8.57.1",
+    "eslint": "^9.31.0",
     "jest": "^29.7.0",
     "typescript": "^5"
   },
   "build": {
     "appId": "com.notable.electron",
     "productName": "Notable",
+    "electronVersion": "35.2.1",
     "directories": {
       "output": "dist"
     },

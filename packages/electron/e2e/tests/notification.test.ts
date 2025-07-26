@@ -26,7 +26,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -50,7 +50,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__capturedNotificationOptions
         delete (global as any).__originalRequire
@@ -69,7 +69,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -93,7 +93,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__capturedNotificationOptions
         delete (global as any).__originalRequire
@@ -112,7 +112,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -136,7 +136,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__capturedNotificationOptions
         delete (global as any).__originalRequire
@@ -245,7 +245,7 @@ test.describe('Notification System', () => {
       const errorHandlingTest = await evaluateInMain(electronMain, () => {
         try {
           // Simulate error in auto-updater
-          const { autoUpdater } = require('electron-updater') // eslint-disable-line @typescript-eslint/no-require-imports
+          const { autoUpdater } = require('electron-updater')  
           
           // Test that error event can be emitted without crashing
           const mockError = new Error('Test auto-updater error')
@@ -271,7 +271,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -288,7 +288,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__originalRequire
       })
@@ -307,7 +307,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -330,7 +330,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__strictNotificationOptions
         delete (global as any).__originalRequire
@@ -351,7 +351,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -373,7 +373,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__notificationWithTimeout
         delete (global as any).__originalRequire
@@ -406,7 +406,7 @@ test.describe('Notification System', () => {
         const notificationTest = await evaluateInMain(electronMain, () => {
           try {
             // Test that we can check notification permissions without crashing
-            const { systemPreferences } = require('electron') // eslint-disable-line @typescript-eslint/no-require-imports
+            const { systemPreferences } = require('electron')  
             
             // This would normally check actual permissions, but in test we just verify the API exists
             const canCheckPermissions = typeof systemPreferences.getMediaAccessStatus === 'function'
@@ -440,7 +440,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -464,7 +464,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__notificationFlow
         delete (global as any).__originalRequire
@@ -489,7 +489,7 @@ test.describe('Notification System', () => {
           }
         }
         
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         const originalRequire = Module._load
         Module._load = function(request: string, _parent: any, ...args: any[]) {
           if (request === 'node-notifier') {
@@ -527,7 +527,7 @@ test.describe('Notification System', () => {
       
       // Cleanup
       await evaluateInMain(electronMain, () => {
-        const Module = require('module') // eslint-disable-line @typescript-eslint/no-require-imports
+        const Module = require('module')  
         Module._load = (global as any).__originalRequire
         delete (global as any).__rapidNotifications
         delete (global as any).__originalRequire

@@ -1,5 +1,5 @@
 /* eslint-env jest, detox/detox */
-const { device, element, by, waitFor, expect } = require('detox')
+import { by, device, element, expect, waitFor } from 'detox'
 
 describe('Search Functionality', () => {
   beforeAll(async () => {
