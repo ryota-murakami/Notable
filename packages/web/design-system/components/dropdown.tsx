@@ -119,13 +119,6 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
     const searchInputRef = React.useRef<HTMLInputElement>(null)
     const optionRefs = React.useRef<(HTMLDivElement | null)[]>([])
 
-    // Clean up option refs when options change
-    React.useEffect(() => {
-      if (optionRefs.current.length !== filteredOptions.length) {
-        optionRefs.current = new Array(filteredOptions.length).fill(null)
-      }
-    }, [filteredOptions.length])
-
     // Clean up option refs on unmount
     React.useEffect(() => {
       return () => {
@@ -151,6 +144,13 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
           option.description?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     }, [options, searchQuery])
+
+    // Clean up option refs when options change
+    React.useEffect(() => {
+      if (optionRefs.current.length !== filteredOptions.length) {
+        optionRefs.current = new Array(filteredOptions.length).fill(null)
+      }
+    }, [filteredOptions.length])
 
     // Calculate dropdown position
     const calculatePosition = React.useCallback(() => {

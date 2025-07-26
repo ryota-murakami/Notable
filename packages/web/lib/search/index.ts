@@ -14,8 +14,6 @@ export { useSearchHistory } from './use-search-history'
 export {
   type SearchQuery,
   type SearchFilterSet,
-  type SearchOptions,
-  type SearchResult,
   type SearchableNote,
   type SearchMatch,
   type SearchIndex,
