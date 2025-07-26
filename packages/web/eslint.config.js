@@ -142,4 +142,21 @@ export default [
       ],
     },
   },
+  // Script files configuration - allow console statements for deployment/operational scripts
+  {
+    files: ['scripts/**/*.{ts,tsx,js,jsx}', '**/scripts/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      'no-console': 'off',
+      'require-await': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_?error$',
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
 ]
