@@ -1,12 +1,12 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { type StyleProp, StyleSheet, type ViewStyle } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useTheme } from 'react-native-paper'
 
 interface GradientBackgroundProps {
   children: React.ReactNode
   colors?: string[]
-  style?: any
+  style?: StyleProp<ViewStyle>
 }
 
 export const GradientBackground: React.FC<GradientBackgroundProps> = ({

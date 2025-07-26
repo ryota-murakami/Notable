@@ -93,7 +93,7 @@ export default function NotesScreen() {
         <NoteCard
           note={item}
           onPress={() => router.push(`/note/${item.id}`)}
-          onDelete={() => deleteNote()}
+          onDelete={() => deleteNote(item.id)}
         />
       </Animated.View>
     )
@@ -183,7 +183,7 @@ export default function NotesScreen() {
           <EmptyState
             title='No notes yet'
             description='Create your first note to get started.'
-            icon='note-plus-outline'
+            icon='note-text-outline'
           />
         ) : (
           <FlatList

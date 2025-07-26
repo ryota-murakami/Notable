@@ -58,7 +58,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
               { backgroundColor: theme.colors.surface },
             ]}
           >
-            <Ionicons name={icon} size={48} color={theme.colors.onPrimary} />
+            <Ionicons name={icon} size={48} color={theme.colors.primary} />
           </View>
         </LinearGradient>
       </Animated.View>
