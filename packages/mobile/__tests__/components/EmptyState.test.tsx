@@ -1,20 +1,6 @@
 import { EmptyState } from '../../components/EmptyState'
 import { render } from '../utils/test-utils'
 
-// Mock Expo vector icons
-jest.mock('@expo/vector-icons', () => ({
-  Ionicons: ({ name, _size, _color, ...props }: any) => {
-    const MockIcon = require('react-native').View
-    return (
-      <MockIcon
-        testID={`icon-${name}`}
-        accessibilityLabel={`${name} icon`}
-        {...props}
-      />
-    )
-  },
-}))
-
 describe('EmptyState', () => {
   const defaultProps = {
     title: 'No Notes Found',
@@ -73,12 +59,14 @@ describe('EmptyState', () => {
 
     const titleText = getByText(defaultProps.title)
     expect(titleText.props.style).toEqual(
-      expect.objectContaining({
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 16,
-        marginBottom: 8,
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 24,
+          fontWeight: '700',
+          marginBottom: 8,
+          textAlign: 'center',
+        }),
+      ])
     )
   })
 
@@ -87,10 +75,14 @@ describe('EmptyState', () => {
 
     const descriptionText = getByText(defaultProps.description)
     expect(descriptionText.props.style).toEqual(
-      expect.objectContaining({
-        fontSize: 16,
-        textAlign: 'center',
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 16,
+          textAlign: 'center',
+          lineHeight: 24,
+          maxWidth: 280,
+        }),
+      ])
     )
   })
 

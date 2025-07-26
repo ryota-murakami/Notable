@@ -115,7 +115,9 @@ describe('useOfflineNotes', () => {
       const { result } = renderHook(() => useOfflineNotes())
 
       await act(async () => {
-        await expect(result.current.deleteNote()).resolves.toBeUndefined()
+        await expect(
+          result.current.deleteNote('test-id')
+        ).resolves.toBeUndefined()
       })
     })
   })

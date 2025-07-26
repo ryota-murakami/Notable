@@ -15,7 +15,7 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-native-community|@react-native/js-polyfills|expo|@expo|@unimodules|react-native-.*|@react-native-.*|expo-.*|@expo/.*|react-navigation|@react-navigation|@react-navigation/.*|react-native-paper|react-native-vector-icons|react-native-markdown-display|@supabase|@supabase/.*|fuse\\.js|@testing-library|@testing-library/.*|react-native-gesture-handler|react-native-reanimated|react-native-screens|react-native-safe-area-context|react-native-web)/)',
+    'node_modules/(?!(react-native|@react-native|@react-native-community|@react-native/js-polyfills|expo|@expo|@unimodules|react-native-.*|@react-native-.*|expo-.*|@expo/.*|react-navigation|@react-navigation|@react-navigation/.*|react-native-paper|react-native-vector-icons|react-native-markdown-display|@supabase|@supabase/.*|fuse\\.js|@testing-library|@testing-library/.*|react-native-gesture-handler|react-native-reanimated|react-native-screens|react-native-safe-area-context|react-native-web|expo-linear-gradient)/)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',

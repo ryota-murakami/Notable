@@ -25,7 +25,7 @@ export const useOfflineNotes = (_options: unknown = {}) => {
     // Mock implementation
   }
 
-  const deleteNote = async (): Promise<void> => {
+  const deleteNote = async (_id: string): Promise<void> => {
     // Mock implementation
   }
 

@@ -27,17 +27,14 @@ describe('NoteCard', () => {
   it('calls onPress when card is pressed', () => {
     const mockNote = createMockNote()
 
-    const { getByTestId } = render(
+    const { getByText } = render(
       <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
-    // Since Card might not have testID, we'll look for the Card content
-    const cardContent = getByTestId('card-content')
-
-    if (cardContent) {
-      fireEvent.press(cardContent)
-      expect(mockOnPress).toHaveBeenCalledTimes(1)
-    }
+    // Press on the card by pressing the title text
+    const titleElement = getByText(mockNote.title)
+    fireEvent.press(titleElement)
+    expect(mockOnPress).toHaveBeenCalledTimes(1)
   })
 
   it('calls onDelete when delete button is pressed', () => {
@@ -74,13 +71,13 @@ describe('NoteCard', () => {
       content: 'Content without title',
     })
 
-    const { getByText, queryByText } = render(
+    const { getByText } = render(
       <NoteCard note={mockNote} onPress={mockOnPress} onDelete={mockOnDelete} />
     )
 
     expect(getByText('Content without title')).toBeTruthy()
-    // Empty title should still render but be empty
-    expect(queryByText('')).toBeTruthy()
+    // Empty title should render as "Untitled"
+    expect(getByText('Untitled')).toBeTruthy()
   })
 
   it('handles empty content gracefully', () => {
@@ -109,17 +106,23 @@ describe('NoteCard', () => {
 
     // Check if styles are applied (note: exact style checking in RN testing can be limited)
     expect(titleText.props.style).toEqual(
-      expect.objectContaining({
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 18,
+          fontWeight: '600',
+          flex: 1,
+        }),
+      ])
     )
 
     expect(contentText.props.style).toEqual(
-      expect.objectContaining({
-        fontSize: 14,
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 14,
+          lineHeight: 20,
+          marginBottom: 12,
+        }),
+      ])
     )
   })
 
