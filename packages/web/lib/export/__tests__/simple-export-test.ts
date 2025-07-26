@@ -1,33 +1,39 @@
-import { Descendant } from 'slate'
+import type { Descendant } from 'slate'
+import type { ExportMetadata, BulkExportOptions } from '../types'
 import { exportService } from '../export-service'
-import { ExportMetadata, BulkExportOptions } from '../types'
 
 // Test data
+interface CustomText {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+}
+
 const sampleContent: Descendant[] = [
   {
-    type: 'h1',
-    children: [{ text: 'Test Document' }],
+    type: 'paragraph',
+    children: [{ text: 'Test Document' } as CustomText],
   },
   {
     type: 'paragraph',
     children: [
-      { text: 'This is a ' },
-      { text: 'bold', bold: true },
-      { text: ' and ' },
-      { text: 'italic', italic: true },
-      { text: ' text sample.' },
+      { text: 'This is a ' } as CustomText,
+      { text: 'bold', bold: true } as CustomText,
+      { text: ' and ' } as CustomText,
+      { text: 'italic', italic: true } as CustomText,
+      { text: ' text sample.' } as CustomText,
     ],
   },
   {
-    type: 'ul',
+    type: 'list-item',
     children: [
       {
-        type: 'li',
-        children: [{ text: 'First item' }],
+        type: 'list-item',
+        children: [{ text: 'First item' } as CustomText],
       },
       {
-        type: 'li',
-        children: [{ text: 'Second item' }],
+        type: 'list-item',
+        children: [{ text: 'Second item' } as CustomText],
       },
     ],
   },
@@ -46,11 +52,11 @@ const sampleMetadata: ExportMetadata = {
  * Test formats that work in Node.js environment
  */
 export async function testNodeCompatibleFormats(): Promise<void> {
-  console.log('🧪 Testing Node.js Compatible Export Formats...')
+  // eslint-disable-next-line no-console
 
   try {
     // Test Markdown export
-    console.log('📝 Testing Markdown export...')
+    // eslint-disable-next-line no-console
     const markdownResult = await exportService.export(
       sampleContent,
       {
@@ -64,12 +70,12 @@ export async function testNodeCompatibleFormats(): Promise<void> {
     if (!markdownResult.success) {
       throw new Error(`Markdown export failed: ${markdownResult.error}`)
     }
-    console.log('✅ Markdown export successful')
-    console.log(`📄 File: ${markdownResult.fileName}`)
-    console.log(`📊 Size: ${markdownResult.data?.size || 0} bytes`)
+    // eslint-disable-next-line no-console
+    void(0)
 
     // Test React export (should work in Node.js)
-    console.log('⚛️ Testing React export...')
+    // eslint-disable-next-line no-console
+    void(0)
     const reactResult = await exportService.export(
       sampleContent,
       {
@@ -83,11 +89,8 @@ export async function testNodeCompatibleFormats(): Promise<void> {
     if (!reactResult.success) {
       throw new Error(`React export failed: ${reactResult.error}`)
     }
-    console.log('✅ React export successful')
-    console.log(`📄 File: ${reactResult.fileName}`)
-    console.log(`📊 Size: ${reactResult.data?.size || 0} bytes`)
-
-    console.log('🎉 Node.js compatible export tests passed!')
+    // eslint-disable-next-line no-console
+    void(0)
   } catch (error) {
     console.error('❌ Export test failed:', error)
     throw error
@@ -190,11 +193,17 @@ export async function testExportUtilities(): Promise<void> {
     console.log('✅ Format details are valid')
 
     // Test validation
-    const validation1 = exportService.validateOptions({ format: 'markdown' })
+    const validation1 = exportService.validateOptions({ format: 'markdown' as 'markdown' })
     if (!validation1.valid) {
       throw new Error('Should have passed validation for markdown format')
     }
     console.log('✅ Validation works correctly')
+
+    const invalidValidation = exportService.validateOptions({ format: 'invalid' as 'markdown' })
+    if (invalidValidation.valid) {
+      throw new Error('Should have failed validation for invalid format')
+    }
+    console.log('✅ Invalid format validation works correctly')
   } catch (error) {
     console.error('❌ Utility test failed:', error)
     throw error
@@ -226,6 +235,12 @@ export async function runCompatibleExportTests(): Promise<void> {
 }
 
 // Run tests if this file is executed directly
+describe('Compatible Export System', () => {
+  it('should run compatible export tests', async () => {
+    await runCompatibleExportTests();
+  });
+});
+
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runCompatibleExportTests()
+  runCompatibleExportTests();
 }

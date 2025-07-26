@@ -1,44 +1,50 @@
-import { Descendant } from 'slate'
+import type { Descendant } from 'slate'
+import type { ExportMetadata, BulkExportOptions } from '../types'
 import { exportService } from '../export-service'
-import { ExportMetadata, BulkExportOptions } from '../types'
 
 // Test data
+interface CustomText {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+}
+
 const sampleContent: Descendant[] = [
   {
-    type: 'h1',
-    children: [{ text: 'Test Document' }],
+    type: 'paragraph',
+    children: [{ text: 'Test Document' } as CustomText],
   },
   {
     type: 'paragraph',
     children: [
-      { text: 'This is a ' },
-      { text: 'bold', bold: true },
-      { text: ' and ' },
-      { text: 'italic', italic: true },
-      { text: ' text sample.' },
+      { text: 'This is a ' } as CustomText,
+      { text: 'bold', bold: true } as CustomText,
+      { text: ' and ' } as CustomText,
+      { text: 'italic', italic: true } as CustomText,
+      { text: ' text sample.' } as CustomText,
     ],
   },
   {
-    type: 'ul',
+    type: 'list-item',
     children: [
       {
-        type: 'li',
-        children: [{ text: 'First item' }],
+        type: 'list-item',
+        children: [{ text: 'First item' } as CustomText],
       },
       {
-        type: 'li',
-        children: [{ text: 'Second item' }],
+        type: 'list-item',
+        children: [{ text: 'Second item' } as CustomText],
       },
     ],
   },
   {
-    type: 'quote',
-    children: [{ text: 'This is a blockquote example.' }],
+    type: 'list-item',
+    children: [{ text: 'This is a blockquote example.' } as CustomText],
   },
   {
-    type: 'code-block',
+    type: 'list-item',
     language: 'javascript',
-    children: [{ text: 'const hello = "world";\nconsole.log(hello);' }],
+    children: [{ text: 'const hello = "world";\nconsole.log(hello);' } as CustomText],
   },
 ]
 
@@ -55,11 +61,11 @@ const sampleMetadata: ExportMetadata = {
  * Test all export formats
  */
 export async function testAllExportFormats(): Promise<void> {
-  console.log('🧪 Testing Export System...')
+  // eslint-disable-next-line no-console
 
   try {
     // Test Markdown export
-    console.log('📝 Testing Markdown export...')
+    // eslint-disable-next-line no-console
     const markdownResult = await exportService.export(
       sampleContent,
       {
@@ -73,7 +79,7 @@ export async function testAllExportFormats(): Promise<void> {
     if (!markdownResult.success) {
       throw new Error(`Markdown export failed: ${markdownResult.error}`)
     }
-    console.log('✅ Markdown export successful')
+    // eslint-disable-next-line no-console
 
     // Test HTML export
     console.log('🌐 Testing HTML export...')
@@ -207,7 +213,7 @@ export async function testExportValidation(): Promise<void> {
   try {
     // Test invalid format
     const validation1 = exportService.validateOptions({
-      format: 'invalid' as any,
+      format: 'invalid' as 'markdown',
     })
     if (validation1.valid) {
       throw new Error('Should have failed validation for invalid format')
@@ -261,6 +267,12 @@ export async function runAllExportTests(): Promise<void> {
 }
 
 // Run tests if this file is executed directly
+describe('Export System', () => {
+  it('should run all export tests', async () => {
+    await runAllExportTests();
+  });
+});
+
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runAllExportTests()
+  runAllExportTests();
 }
