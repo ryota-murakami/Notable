@@ -6,23 +6,23 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "composite": true,
     "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "noEmit": false
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "dist",
     "node_modules",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ]
 }

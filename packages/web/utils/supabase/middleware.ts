@@ -36,7 +36,16 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user && !request.nextUrl.pathname.startsWith('/auth')) {
+  // Check for dev auth bypass cookie for e2e testing (only in development or CI)
+  const devAuthBypass =
+    (process.env.NODE_ENV !== 'production' || process.env.CI === 'true') &&
+    request.cookies.get('dev-auth-bypass')?.value === 'true'
+
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith('/auth') &&
+    !devAuthBypass
+  ) {
     // no user, potentially respond by redirecting the user to the auth page
     const url = request.nextUrl.clone()
     url.pathname = '/auth'

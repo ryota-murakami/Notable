@@ -1,3 +1,4 @@
+/* eslint-env jest */
 // Jest setup file for mobile package
 require('react-native-gesture-handler/jestSetup')
 
@@ -135,10 +136,14 @@ jest.mock('@supabase/supabase-js', () => {
 
 // Mock React Native Paper
 jest.mock('react-native-paper', () => {
+  const React = require('react')
   const RN = require('react-native')
 
+  const PaperProvider = ({ children, theme: _theme }) =>
+    React.createElement(RN.View, { testID: 'paper-provider' }, children)
+
   return {
-    ...jest.requireActual('react-native-paper'),
+    PaperProvider,
     Portal: ({ children }) => children,
     Modal: RN.Modal,
     Surface: RN.View,
@@ -149,15 +154,33 @@ jest.mock('react-native-paper', () => {
       BackAction: RN.TouchableOpacity,
     },
     Button: RN.TouchableOpacity,
-    Card: {
-      ...RN.View,
-      Title: RN.Text,
-      Content: RN.View,
-      Actions: RN.View,
-    },
+    Card: Object.assign(
+      ({ children, style, onPress, ...props }) =>
+        React.createElement(
+          RN.TouchableOpacity,
+          { style, onPress, ...props },
+          children
+        ),
+      {
+        Title: RN.Text,
+        Content: ({ children, style, ...props }) =>
+          React.createElement(
+            RN.View,
+            { style, testID: 'card-content', ...props },
+            children
+          ),
+        Actions: RN.View,
+      }
+    ),
     Chip: RN.TouchableOpacity,
     FAB: RN.TouchableOpacity,
-    IconButton: RN.TouchableOpacity,
+    IconButton: ({ icon, onPress, ...props }) =>
+      React.createElement(RN.TouchableOpacity, {
+        onPress,
+        accessibilityLabel: icon,
+        testID: `icon-button-${icon}`,
+        ...props,
+      }),
     List: {
       Item: RN.TouchableOpacity,
       Section: RN.View,

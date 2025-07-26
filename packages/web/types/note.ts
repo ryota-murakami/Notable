@@ -1,12 +1,7 @@
-export interface Note {
-  id: string
-  title: string
-  content: string
+import { Note as SyncNote } from '@notable/sync'
+
+export interface Note extends SyncNote {
   userId: string
-  createdAt: string
-  updatedAt: string
-  parentId?: string | null
   tags?: string[]
-  isFolder?: boolean
   isHidden?: boolean
 }
