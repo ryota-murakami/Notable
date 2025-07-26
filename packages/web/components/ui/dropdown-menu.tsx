@@ -88,9 +88,7 @@ const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
     >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          const childWithProps = child as React.ReactElement<{
-            onClick?: () => void
-          }>
+          const childWithProps = child as React.ReactElement<any>
           return React.cloneElement(childWithProps, {
             onSelect: () => {
               if (childWithProps.props.onClick) {

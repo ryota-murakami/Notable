@@ -105,19 +105,19 @@ export function useExport(options: UseExportOptions = {}) {
         onProgress?.(100)
 
         // Convert lib/export ExportResult to types/export ExportResult
-        let content = ''
+        let exportContent = ''
         if (result.data) {
           if (result.data instanceof Blob) {
             // For blob data, we'll store as string (base64 or text depending on type)
             // For now, we'll just indicate it's a blob
-            content = '[Binary content]'
+            exportContent = '[Binary content]'
           } else {
-            content = result.data
+            exportContent = result.data
           }
         }
 
         const exportResult: ExportResult = {
-          content,
+          content: exportContent,
           filename: result.fileName,
           mimeType: result.mimeType,
           size: result.data
@@ -229,17 +229,17 @@ export function useExport(options: UseExportOptions = {}) {
           }
 
           // Convert to ExportResult type
-          let content = ''
+          let exportContent = ''
           if (singleResult.data) {
             if (singleResult.data instanceof Blob) {
-              content = '[Binary content]'
+              exportContent = '[Binary content]'
             } else {
-              content = singleResult.data
+              exportContent = singleResult.data
             }
           }
 
           const exportResult: ExportResult = {
-            content,
+            content: exportContent,
             filename: singleResult.fileName,
             mimeType: singleResult.mimeType,
             size: singleResult.data

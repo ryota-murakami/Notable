@@ -264,7 +264,7 @@ export function ExportDialog({
                 </div>
                 <Slider
                   value={[options.quality?.imageQuality || 85]}
-                  onValueChange={([value]) =>
+                  onValueChange={([value]: number[]) =>
                     updateOptions({
                       quality: { ...options.quality, imageQuality: value },
                     })
