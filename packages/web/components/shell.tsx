@@ -8,6 +8,7 @@ import { useRouting } from '../hooks/use-routing'
 export function Shell() {
   const [notes, setNotes] = useState<Note[]>([])
   const { syncService, isInitialized } = useSyncService()
+  // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current, title, navigate } = useRouting()
 
   if (!isInitialized) {

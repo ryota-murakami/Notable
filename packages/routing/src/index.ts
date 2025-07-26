@@ -14,6 +14,28 @@ export type {
 
 // Internal imports for use within this file
 import type { Platform } from './types'
+
+// Platform-specific configuration types
+type WebPlatformConfig = {
+  platform: 'web'
+  router?: any // Next.js router
+}
+
+type MobilePlatformConfig = {
+  platform: 'mobile'
+  router?: any // Expo router
+}
+
+type DesktopPlatformConfig = {
+  platform: 'desktop'
+  electronAPI?: any
+  webAdapter?: any
+}
+
+type PlatformConfig =
+  | WebPlatformConfig
+  | MobilePlatformConfig
+  | DesktopPlatformConfig
 import {
   initializeNavigation,
   useCurrentRoute,
@@ -52,15 +74,18 @@ export { DesktopAdapter, desktopAdapter } from './adapters/desktop'
 // Utility functions
 export const createPlatformAdapter = (platform: Platform) => {
   switch (platform) {
-    case 'web':
+    case 'web': {
       const { webAdapter } = require('./adapters/web')
       return webAdapter
-    case 'mobile':
+    }
+    case 'mobile': {
       const { mobileAdapter } = require('./adapters/mobile')
       return mobileAdapter
-    case 'desktop':
+    }
+    case 'desktop': {
       const { desktopAdapter } = require('./adapters/desktop')
       return desktopAdapter
+    }
     default:
       throw new Error(`Unsupported platform: ${platform}`)
   }
@@ -70,27 +95,50 @@ export const createPlatformAdapter = (platform: Platform) => {
  * Initialize routing for a specific platform
  * This should be called early in the application lifecycle
  */
-export const initializePlatformRouting = (platform: Platform, config?: any) => {
+export const initializePlatformRouting = (
+  platform: Platform,
+  config?: Omit<PlatformConfig, 'platform'>,
+) => {
   const adapter = createPlatformAdapter(platform)
 
-  // Platform-specific initialization
+  // Platform-specific initialization with proper type checking
   switch (platform) {
     case 'web':
-      if (config?.router) {
-        adapter.setRouter(config.router)
+      if (config && 'router' in config && config.router) {
+        if ('setRouter' in adapter && typeof adapter.setRouter === 'function') {
+          adapter.setRouter(config.router)
+        }
       }
       break
     case 'mobile':
-      if (config?.router) {
-        adapter.setRouter(config.router)
+      if (config && 'router' in config && config.router) {
+        if ('setRouter' in adapter && typeof adapter.setRouter === 'function') {
+          adapter.setRouter(config.router)
+        }
       }
       break
     case 'desktop':
-      if ((adapter as any).setElectronAPI && config?.electronAPI) {
-        ;(adapter as any).setElectronAPI(config.electronAPI)
-      }
-      if ((adapter as any).setWebAdapter && config?.webAdapter) {
-        ;(adapter as any).setWebAdapter(config.webAdapter)
+      if (config) {
+        if (
+          'electronAPI' in config &&
+          config.electronAPI &&
+          'setElectronAPI' in adapter
+        ) {
+          const desktopAdapter = adapter as any
+          if (typeof desktopAdapter.setElectronAPI === 'function') {
+            desktopAdapter.setElectronAPI(config.electronAPI)
+          }
+        }
+        if (
+          'webAdapter' in config &&
+          config.webAdapter &&
+          'setWebAdapter' in adapter
+        ) {
+          const desktopAdapter = adapter as any
+          if (typeof desktopAdapter.setWebAdapter === 'function') {
+            desktopAdapter.setWebAdapter(config.webAdapter)
+          }
+        }
       }
       break
   }

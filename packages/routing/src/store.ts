@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { subscribeWithSelector } from 'zustand/middleware'
-import { NavigationStore, RouteDefinition, PlatformAdapter } from './types'
+import { NavigationStore, PlatformAdapter } from './types'
 import { getRouteById } from './routes'
 
 interface NavigationStoreState extends NavigationStore {
