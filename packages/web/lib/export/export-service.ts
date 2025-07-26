@@ -1,17 +1,17 @@
-import { Descendant } from 'slate'
+import { type Descendant } from 'slate'
 import {
-  ExportFormat,
-  ExportOptions,
-  ExportMetadata,
-  ExportResult,
-  BulkExportOptions,
-  ExportService as IExportService,
+  type BulkExportOptions,
+  type ExportFormat,
+  type ExportMetadata,
+  type ExportOptions,
+  type ExportResult,
+  type ExportService as IExportService,
 } from './types'
 import { MarkdownExporter } from './markdown-exporter'
 import { HTMLExporter } from './html-exporter'
 import { PDFExporter } from './pdf-exporter'
 import { ReactExporter } from './react-exporter'
-import { BaseExporter } from './base-exporter'
+import { type BaseExporter } from './base-exporter'
 
 export class ExportService implements IExportService {
   private exporters: Map<ExportFormat, BaseExporter>

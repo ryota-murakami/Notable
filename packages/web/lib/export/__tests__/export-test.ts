@@ -1,5 +1,5 @@
 import type { Descendant } from 'slate'
-import type { ExportMetadata, BulkExportOptions } from '../types'
+import type { BulkExportOptions, ExportMetadata } from '../types'
 import { exportService } from '../export-service'
 
 // Test data
@@ -54,7 +54,7 @@ const sampleContent: Descendant[] = [
     type: 'list-item',
     children: [
       {
-        text: 'const hello = "world";\nconsole.log(hello);',
+        text: 'const hello = "world";\nconsole.info(hello);',
         type: 'list-item',
         language: 'javascript',
       } as CustomText,
@@ -75,11 +75,9 @@ const sampleMetadata: ExportMetadata = {
  * Test all export formats
  */
 export async function testAllExportFormats(): Promise<void> {
-  // eslint-disable-next-line no-console
-
   try {
     // Test Markdown export
-    // eslint-disable-next-line no-console
+
     const markdownResult = await exportService.export(
       sampleContent,
       {
@@ -93,10 +91,9 @@ export async function testAllExportFormats(): Promise<void> {
     if (!markdownResult.success) {
       throw new Error(`Markdown export failed: ${markdownResult.error}`)
     }
-    // eslint-disable-next-line no-console
 
     // Test HTML export
-    console.log('🌐 Testing HTML export...')
+    console.info('🌐 Testing HTML export...')
     const htmlResult = await exportService.export(
       sampleContent,
       {
@@ -111,10 +108,10 @@ export async function testAllExportFormats(): Promise<void> {
     if (!htmlResult.success) {
       throw new Error(`HTML export failed: ${htmlResult.error}`)
     }
-    console.log('✅ HTML export successful')
+    console.info('✅ HTML export successful')
 
     // Test PDF export
-    console.log('📄 Testing PDF export...')
+    console.info('📄 Testing PDF export...')
     const pdfResult = await exportService.export(
       sampleContent,
       {
@@ -128,10 +125,10 @@ export async function testAllExportFormats(): Promise<void> {
     if (!pdfResult.success) {
       throw new Error(`PDF export failed: ${pdfResult.error}`)
     }
-    console.log('✅ PDF export successful')
+    console.info('✅ PDF export successful')
 
     // Test React export
-    console.log('⚛️ Testing React export...')
+    console.info('⚛️ Testing React export...')
     const reactResult = await exportService.export(
       sampleContent,
       {
@@ -145,9 +142,9 @@ export async function testAllExportFormats(): Promise<void> {
     if (!reactResult.success) {
       throw new Error(`React export failed: ${reactResult.error}`)
     }
-    console.log('✅ React export successful')
+    console.info('✅ React export successful')
 
-    console.log('🎉 All individual export tests passed!')
+    console.info('🎉 All individual export tests passed!')
   } catch (error) {
     console.error('❌ Export test failed:', error)
     throw error
@@ -158,7 +155,7 @@ export async function testAllExportFormats(): Promise<void> {
  * Test bulk export functionality
  */
 export async function testBulkExport(): Promise<void> {
-  console.log('📦 Testing Bulk Export...')
+  console.info('📦 Testing Bulk Export...')
 
   try {
     const bulkOptions: BulkExportOptions = {
@@ -235,9 +232,9 @@ export async function testBulkExport(): Promise<void> {
       throw new Error(`Bulk export failed: ${bulkResult.error}`)
     }
 
-    console.log('✅ Bulk export successful')
-    console.log(`📁 Archive: ${bulkResult.fileName}`)
-    console.log(
+    console.info('✅ Bulk export successful')
+    console.info(`📁 Archive: ${bulkResult.fileName}`)
+    console.info(
       `📊 Size: ${bulkResult.data && typeof bulkResult.data !== 'string' ? bulkResult.data.size : 0} bytes`
     )
   } catch (error) {
@@ -250,7 +247,7 @@ export async function testBulkExport(): Promise<void> {
  * Test export validation
  */
 export async function testExportValidation(): Promise<void> {
-  console.log('🔍 Testing Export Validation...')
+  console.info('🔍 Testing Export Validation...')
 
   try {
     // Test invalid format
@@ -260,14 +257,14 @@ export async function testExportValidation(): Promise<void> {
     if (validation1.valid) {
       throw new Error('Should have failed validation for invalid format')
     }
-    console.log('✅ Invalid format validation works')
+    console.info('✅ Invalid format validation works')
 
     // Test valid format
     const validation2 = exportService.validateOptions({ format: 'markdown' })
     if (!validation2.valid) {
       throw new Error('Should have passed validation for valid format')
     }
-    console.log('✅ Valid format validation works')
+    console.info('✅ Valid format validation works')
 
     // Test supported formats
     const formats = exportService.getSupportedFormats()
@@ -278,7 +275,7 @@ export async function testExportValidation(): Promise<void> {
         throw new Error(`Missing supported format: ${format}`)
       }
     }
-    console.log('✅ All expected formats are supported')
+    console.info('✅ All expected formats are supported')
   } catch (error) {
     console.error('❌ Validation test failed:', error)
     throw error
@@ -289,19 +286,19 @@ export async function testExportValidation(): Promise<void> {
  * Run all export tests
  */
 export async function runAllExportTests(): Promise<void> {
-  console.log('🚀 Starting Export System Tests...\n')
+  console.info('🚀 Starting Export System Tests...\n')
 
   try {
     await testAllExportFormats()
-    console.log('')
+    console.info('')
 
     await testBulkExport()
-    console.log('')
+    console.info('')
 
     await testExportValidation()
-    console.log('')
+    console.info('')
 
-    console.log('🎉 All export tests completed successfully!')
+    console.info('🎉 All export tests completed successfully!')
   } catch (error) {
     console.error('💥 Export tests failed:', error)
     process.exit(1)

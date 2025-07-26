@@ -1,11 +1,11 @@
-import { Descendant } from 'slate'
+import { type Descendant } from 'slate'
 import { BaseExporter } from './base-exporter'
 import {
-  ExportOptions,
-  ExportMetadata,
-  ExportResult,
-  BulkExportOptions,
-  HTMLExportOptions,
+  type BulkExportOptions,
+  type ExportMetadata,
+  type ExportOptions,
+  type ExportResult,
+  type HTMLExportOptions,
 } from './types'
 import { SlateToHTMLConverter } from './converters/slate-to-html'
 
@@ -278,7 +278,7 @@ export class HTMLExporter extends BaseExporter {
       </style>
     `
 
-    return html.replace('</head>', searchScript + '</head>')
+    return html.replace('</head>', `${searchScript}</head>`)
   }
 
   private getBulkExportStyles(): string {

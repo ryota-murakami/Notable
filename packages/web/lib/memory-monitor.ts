@@ -83,7 +83,7 @@ class MemoryMonitor {
   getCurrentMetrics(): MemoryMetrics {
     if (typeof window !== 'undefined' && 'memory' in performance) {
       // Browser environment with memory API
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const memory = (performance as any).memory
       return {
         timestamp: Date.now(),
@@ -320,12 +320,11 @@ class MemoryMonitor {
    * Force garbage collection (if available)
    */
   forceGarbageCollection() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (typeof global !== 'undefined' && (global as any).gc) {
       // eslint-disable-next-line no-console
       console.log('[MemoryMonitor] Forcing garbage collection...')
       const before = this.getCurrentMetrics()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       ;(global as any).gc()
       const after = this.getCurrentMetrics()
       const freed = before.heapUsed - after.heapUsed

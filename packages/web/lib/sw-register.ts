@@ -72,7 +72,6 @@ export async function registerServiceWorker(): Promise<
 
     return registration
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Service Worker registration failed:', error)
     return undefined
   }

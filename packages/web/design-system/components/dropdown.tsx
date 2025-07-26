@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '../utils/theme'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { createPortal } from 'react-dom'
 
 export interface DropdownOption {
@@ -350,7 +350,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
               left: dropdownPosition.x,
               top: dropdownPosition.y,
               width: dropdownPosition.width,
-              maxHeight: maxHeight,
+              maxHeight,
             }}
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

@@ -1,8 +1,8 @@
 import { createClient } from '@/utils/supabase/client'
 import type {
   NoteVersion,
-  VersionHistoryResponse,
   VersionComparisonResult,
+  VersionHistoryResponse,
   VersionRestoreOptions,
 } from '@/types/version'
 import { toast } from '@/hooks/use-toast'

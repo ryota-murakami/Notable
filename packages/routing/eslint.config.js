@@ -3,6 +3,9 @@ import baseConfig from '../configs/eslint-config/index.js'
 export default [
   ...baseConfig,
   {
+    ignores: ['dist/', 'dist/**/*'],
+  },
+  {
     files: ['src/**/*.ts'],
     languageOptions: {
       globals: {

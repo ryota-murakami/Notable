@@ -2,12 +2,12 @@
 
 import Fuse from 'fuse.js'
 import {
-  SearchQuery,
-  SearchResult,
-  SearchableNote,
-  SearchMatch,
-  SearchOptions,
-  SearchFilterSet,
+  type SearchableNote,
+  type SearchFilterSet,
+  type SearchMatch,
+  type SearchOptions,
+  type SearchQuery,
+  type SearchResult,
 } from './types'
 
 export class SearchEngine {

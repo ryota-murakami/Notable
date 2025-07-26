@@ -1,13 +1,13 @@
-import { Node } from 'slate'
-import { Note } from '../../types/note'
+import { type Node } from 'slate'
+import { type Note } from '../../types/note'
 import {
-  ExportFormat,
-  ExportOptions,
-  ExportResult,
-  ExportService,
-  ContentProcessor,
-  ExportHistoryEntry,
-  BulkExportOptions,
+  type BulkExportOptions,
+  type ContentProcessor,
+  type ExportFormat,
+  type ExportHistoryEntry,
+  type ExportOptions,
+  type ExportResult,
+  type ExportService,
 } from '../../types/export'
 
 /**

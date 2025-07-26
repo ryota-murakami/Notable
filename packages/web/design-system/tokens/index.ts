@@ -10,14 +10,14 @@ export * from './effects'
 import { colors, semanticColors } from './colors'
 import { typography } from './typography'
 import {
-  spacing,
   componentSpacing,
-  layout,
   iconSize,
+  layout,
   radius,
+  spacing,
   zIndex,
 } from './spacing'
-import { motion, microInteractions } from './motion'
+import { microInteractions, motion } from './motion'
 import { effects } from './effects'
 
 // Create a unified tokens object

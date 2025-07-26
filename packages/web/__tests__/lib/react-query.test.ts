@@ -2,7 +2,7 @@
  * React Query Configuration Tests
  */
 
-import { createQueryClient, queryKeys, queryConfigs } from '@/lib/react-query'
+import { createQueryClient, queryConfigs, queryKeys } from '@/lib/react-query'
 import { QueryClient } from '@tanstack/react-query'
 
 // Mock the toast hook to avoid import issues in tests

@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { render, cleanup } from '@testing-library/react'
+import { cleanup, render } from '@testing-library/react'
 import { performanceMonitor } from '../../lib/performance'
 import { memoryMonitor } from '../../lib/memory-monitor'
 

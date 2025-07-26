@@ -1,11 +1,11 @@
-import { Descendant } from 'slate'
+import { type Descendant } from 'slate'
 import { BaseExporter } from './base-exporter'
 import {
-  ExportOptions,
-  ExportMetadata,
-  ExportResult,
-  BulkExportOptions,
-  ReactExportOptions,
+  type BulkExportOptions,
+  type ExportMetadata,
+  type ExportOptions,
+  type ExportResult,
+  type ReactExportOptions,
 } from './types'
 import { SlateToReactConverter } from './converters/slate-to-react'
 
@@ -29,7 +29,7 @@ export class ReactExporter extends BaseExporter {
         this.generateComponentName(metadata?.title)
 
       let componentCode: string
-      let additionalFiles: Array<{ name: string; content: string }> = []
+      const additionalFiles: Array<{ name: string; content: string }> = []
 
       // Generate component based on options
       if (reactOptions.typescript) {

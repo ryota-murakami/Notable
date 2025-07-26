@@ -3,7 +3,7 @@
  * Provides easy integration of performance tracking in React components
  */
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { performanceMonitor } from '@/lib/performance'
 import { memoryMonitor } from '@/lib/memory-monitor'
 

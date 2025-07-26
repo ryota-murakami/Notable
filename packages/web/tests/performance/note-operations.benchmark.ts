@@ -310,7 +310,7 @@ function generateLargeContent(wordCount: number): string {
   ]
   let content = ''
   for (let i = 0; i < wordCount; i++) {
-    content += words[i % words.length] + ' '
+    content += `${words[i % words.length]} `
   }
   return content.trim()
 }

@@ -1,9 +1,9 @@
-import { BaseExportService, BaseContentProcessor } from './base-export-service'
-import { Note } from '../../types/note'
+import { BaseContentProcessor, BaseExportService } from './base-export-service'
+import { type Note } from '../../types/note'
 import {
-  ExportOptions,
-  ReactExportOptions,
-  ExportResult,
+  type ExportOptions,
+  type ExportResult,
+  type ReactExportOptions,
 } from '../../types/export'
 
 /**
@@ -118,7 +118,7 @@ export class ReactExportService extends BaseExportService {
       imports.push('Component')
     }
 
-    let reactImport = `import ${imports.join(', ')} from 'react'`
+    const reactImport = `import ${imports.join(', ')} from 'react'`
 
     const additionalImports: string[] = []
 
@@ -182,7 +182,7 @@ export class ReactExportService extends BaseExportService {
 
     const destructuredProps = this.getDestructuredProps(options)
 
-    return `const ${componentName}${options.useTypeScript ? ': React.FC' + (propsType || '<{}>') : ''} = (${destructuredProps}) => {
+    return `const ${componentName}${options.useTypeScript ? `: React.FC${propsType || '<{}>'}` : ''} = (${destructuredProps}) => {
   return (
     <div${styling.container}>
       ${metadata}

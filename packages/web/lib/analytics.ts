@@ -3,7 +3,7 @@
  * GDPR compliant with privacy-first approach
  */
 
-import { PerformanceMetric } from './performance'
+import { type PerformanceMetric } from './performance'
 
 // Analytics event types
 export interface AnalyticsEvent {

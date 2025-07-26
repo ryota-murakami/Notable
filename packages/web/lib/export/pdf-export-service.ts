@@ -1,10 +1,10 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
-import { BaseExportService, BaseContentProcessor } from './base-export-service'
-import { Note } from '../../types/note'
+import { BaseContentProcessor, BaseExportService } from './base-export-service'
+import { type Note } from '../../types/note'
 import {
-  ExportOptions,
-  PDFExportOptions,
-  ExportResult,
+  type ExportOptions,
+  type ExportResult,
+  type PDFExportOptions,
 } from '../../types/export'
 
 /**

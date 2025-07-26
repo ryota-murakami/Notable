@@ -4,7 +4,7 @@
  */
 
 import { useCallback, useEffect, useRef } from 'react'
-import { analytics, AnalyticsConfig } from '@/lib/analytics'
+import { analytics, type AnalyticsConfig } from '@/lib/analytics'
 import { performanceMonitor } from '@/lib/performance'
 
 export interface UseAnalyticsReturn {

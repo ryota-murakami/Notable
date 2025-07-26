@@ -1,7 +1,7 @@
 // React Hook for Search History Management
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SearchHistoryEntry, SearchFilterSet } from './types'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { type SearchFilterSet, type SearchHistoryEntry } from './types'
 
 export interface UseSearchHistoryOptions {
   maxEntries?: number

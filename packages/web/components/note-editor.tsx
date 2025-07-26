@@ -1,16 +1,16 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
-  Save,
-  MoreHorizontal,
-  Share2,
-  Trash2,
+  Calendar,
   Edit3,
   Eye,
-  Calendar,
+  MoreHorizontal,
+  Save,
+  Share2,
   Tag,
+  Trash2,
 } from 'lucide-react'
 import { Button } from '../design-system/components/button'
 import { Input } from '../design-system/components/input'
@@ -24,7 +24,7 @@ import {
 } from '@radix-ui/react-dropdown-menu'
 import { Badge } from '../design-system/components/badge'
 import { cn } from '../lib/utils'
-import { Note } from '../types/note'
+import { type Note } from '../types/note'
 import { ExportButton } from './export/export-button'
 import { ExportDialog } from './export/export-dialog'
 import { toast } from 'sonner'

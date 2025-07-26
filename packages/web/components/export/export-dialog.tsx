@@ -2,12 +2,12 @@
 
 import * as React from 'react'
 import {
-  Settings,
-  Download,
-  FileText,
-  File,
-  Globe,
   Code,
+  Download,
+  File,
+  FileText,
+  Globe,
+  Settings,
   X,
 } from 'lucide-react'
 import {
@@ -26,14 +26,14 @@ import { Slider } from '../../design-system/components/slider'
 import { Textarea } from '../../design-system/components/textarea'
 import { Input } from '../../design-system/components/input'
 import { cn } from '../../lib/utils'
-import { Note } from '../../types/note'
+import { type Note } from '../../types/note'
 import {
-  ExportFormat,
-  ExportOptions,
-  MarkdownExportOptions,
-  PDFExportOptions,
-  HTMLExportOptions,
-  ReactExportOptions,
+  type ExportFormat,
+  type ExportOptions,
+  type HTMLExportOptions,
+  type MarkdownExportOptions,
+  type PDFExportOptions,
+  type ReactExportOptions,
 } from '../../types/export'
 import { useExport, useExportFormats } from '../../hooks/use-export'
 
@@ -654,7 +654,7 @@ function formatFileSize(bytes: number): string {
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
 }
 
 function getDefaultOptionsForFormat(format: ExportFormat): ExportOptions {

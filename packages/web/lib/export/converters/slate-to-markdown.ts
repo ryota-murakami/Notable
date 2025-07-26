@@ -1,4 +1,4 @@
-import { Descendant, Text, Element } from 'slate'
+import { type Descendant, Element, Text } from 'slate'
 
 export class SlateToMarkdownConverter {
   private listDepth = 0

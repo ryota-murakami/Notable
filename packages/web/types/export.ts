@@ -1,4 +1,4 @@
-import { Note } from './note'
+import { type Note } from './note'
 
 /**
  * Export format types supported by the system

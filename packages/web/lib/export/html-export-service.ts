@@ -1,9 +1,9 @@
-import { BaseExportService, BaseContentProcessor } from './base-export-service'
-import { Note } from '../../types/note'
+import { BaseContentProcessor, BaseExportService } from './base-export-service'
+import { type Note } from '../../types/note'
 import {
-  ExportOptions,
-  HTMLExportOptions,
-  ExportResult,
+  type ExportOptions,
+  type ExportResult,
+  type HTMLExportOptions,
 } from '../../types/export'
 
 /**

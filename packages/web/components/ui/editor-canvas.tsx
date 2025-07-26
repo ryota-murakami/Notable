@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 import { cn } from '../../lib/utils'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
+  BookOpenIcon,
+  EditIcon,
+  EyeIcon,
   MaximizeIcon,
   MinimizeIcon,
-  EyeIcon,
-  EditIcon,
-  BookOpenIcon,
   TypeIcon,
 } from 'lucide-react'
 import { Button } from '../../design-system/components/button'

@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Download, FileText, Globe, FileCode, Component } from 'lucide-react'
+import { Component, Download, FileCode, FileText, Globe } from 'lucide-react'
 import { Button } from '../../design-system/components/button'
 import {
   DropdownMenu,
@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu'
 import { ExportDialog } from './export-dialog'
-import { Note } from '../../types/note'
-import { ExportFormat } from '../../types/export'
+import { type Note } from '../../types/note'
+import { type ExportFormat } from '../../types/export'
 import { useExport } from '../../hooks/use-export'
 
 interface ExportButtonProps {

@@ -3,7 +3,7 @@
 import { BasicEditor } from '@/components/editor/basic-editor'
 import { ExportButton } from '@/components/export/export-button'
 import { useState } from 'react'
-import { Descendant } from 'slate'
+import { type Descendant } from 'slate'
 
 export default function EditorTestPage() {
   const [value, setValue] = useState<Descendant[]>([

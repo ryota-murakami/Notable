@@ -1,15 +1,15 @@
 import { createClient } from '@/utils/supabase/client'
 import type {
   NoteTemplate,
-  TemplateSearchOptions,
-  TemplateCreateRequest,
-  TemplateUpdateRequest,
-  TemplateProcessingResult,
-  TemplateVariableValues,
   PopularTemplate,
+  TemplateCategory,
+  TemplateCreateRequest,
+  TemplateProcessingResult,
+  TemplateSearchOptions,
+  TemplateUpdateRequest,
   TemplateUsage,
   TemplateUsageType,
-  TemplateCategory,
+  TemplateVariableValues,
 } from '@/types/template'
 import { toast } from '@/hooks/use-toast'
 

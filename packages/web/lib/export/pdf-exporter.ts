@@ -1,11 +1,11 @@
-import { Descendant } from 'slate'
+import { type Descendant } from 'slate'
 import { BaseExporter } from './base-exporter'
 import {
-  ExportOptions,
-  ExportMetadata,
-  ExportResult,
-  BulkExportOptions,
-  PDFExportOptions,
+  type BulkExportOptions,
+  type ExportMetadata,
+  type ExportOptions,
+  type ExportResult,
+  type PDFExportOptions,
 } from './types'
 import { SlateToHTMLConverter } from './converters/slate-to-html'
 
@@ -284,7 +284,7 @@ export class PDFExporter extends BaseExporter {
     // For now, we'll return a blob containing the HTML
     // The actual PDF generation would happen on the server or using a client-side library
 
-    console.log('PDF generation would happen here with options:', options)
+    console.info('PDF generation would happen here with options:', options)
 
     // Simulating PDF generation by returning HTML as a blob
     // In production, this would be actual PDF binary data

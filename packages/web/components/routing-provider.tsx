@@ -1,7 +1,13 @@
 'use client'
 
-import { useEffect, ReactNode, Suspense, Component, ErrorInfo } from 'react'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import {
+  Component,
+  type ErrorInfo,
+  type ReactNode,
+  Suspense,
+  useEffect,
+} from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { initializePlatformRouting } from '@notable/routing'
 import { webAdapter } from '@notable/routing'
 

@@ -1,11 +1,11 @@
-import { Descendant } from 'slate'
+import { type Descendant } from 'slate'
 import {
-  ExportFormat,
-  ExportOptions,
-  ExportMetadata,
-  ExportResult,
-  BulkExportOptions,
-  ExportService,
+  type BulkExportOptions,
+  type ExportFormat,
+  type ExportMetadata,
+  type ExportOptions,
+  type ExportResult,
+  type ExportService,
 } from './types'
 
 export abstract class BaseExporter implements ExportService {
