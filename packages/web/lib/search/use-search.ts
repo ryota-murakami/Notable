@@ -84,8 +84,8 @@ export function useSearch(
   // Refs for stable instances
   const searchEngineRef = useRef(new SearchEngine())
   const searchFiltersRef = useRef(new SearchFilters())
-  const debounceTimeoutRef = useRef<NodeJS.Timeout>()
-  const abortControllerRef = useRef<AbortController>()
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const abortControllerRef = useRef<AbortController | undefined>(undefined)
 
   // Update search index when notes change
   useEffect(() => {
