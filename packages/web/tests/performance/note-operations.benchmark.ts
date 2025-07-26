@@ -285,7 +285,7 @@ async function simulateNoteSearch(query: string): Promise<any[]> {
   return results
 }
 
-async function simulateBulkUpdate(count: number): Promise<void> {
+async function simulateBulkUpdate(_count: number): Promise<void> {
   // Simulate network latency for bulk operation
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 100 + 50))
 

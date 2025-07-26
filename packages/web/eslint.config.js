@@ -21,9 +21,15 @@ export default [
   },
   // Jest test files configuration
   {
-    files: ['__tests__/**/*.{ts,tsx,js,jsx}', '**/*.test.{ts,tsx,js,jsx}'],
+    files: [
+      '__tests__/**/*.{ts,tsx,js,jsx}',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/__tests__/**/*.{ts,tsx,js,jsx}',
+      '**/tests/**/*.{ts,tsx,js,jsx}',
+    ],
     languageOptions: {
       globals: {
+        // Jest globals
         jest: 'readonly',
         describe: 'readonly',
         it: 'readonly',
@@ -33,16 +39,33 @@ export default [
         beforeAll: 'readonly',
         afterAll: 'readonly',
         test: 'readonly',
+
+        // Browser/Node globals for tests
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+        global: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        console: 'readonly',
       },
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       'require-await': 'off',
       'no-return-await': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
     },
   },
 ]
