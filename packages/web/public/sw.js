@@ -26,7 +26,7 @@ const STATIC_ASSETS = [
 ]
 
 // Cache configuration
-const CACHE_STRATEGIES = {
+const _CACHE_STRATEGIES = {
   CACHE_FIRST: 'cache-first',
   NETWORK_FIRST: 'network-first',
   STALE_WHILE_REVALIDATE: 'stale-while-revalidate',

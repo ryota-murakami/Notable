@@ -1,7 +1,11 @@
 // Efficient Search Indexing System
 
 import { stemmer } from 'stemmer'
-import { SearchableNote, SearchIndex, SearchStats } from './types'
+import {
+  type SearchableNote,
+  type SearchIndex,
+  type SearchStats,
+} from './types'
 
 export interface IndexerOptions {
   enableTrigrams?: boolean

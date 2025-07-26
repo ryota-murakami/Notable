@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { themes, type ThemeConfig } from './theme-config'
+import { type ThemeConfig, themes } from './theme-config'
 import { useTheme } from './theme-provider'
 import { cn } from '../utils/theme'
 

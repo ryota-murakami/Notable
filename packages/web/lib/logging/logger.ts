@@ -17,12 +17,11 @@ const createUniversalLogger = (): Logger => {
             : 'log'
       if (metadata) {
         console[logMethod](
-          // eslint-disable-line no-console
           `[${timestamp}] [${level.toUpperCase()}] ${message}`,
           metadata
         )
       } else {
-        console[logMethod](`[${timestamp}] [${level.toUpperCase()}] ${message}`) // eslint-disable-line no-console
+        console[logMethod](`[${timestamp}] [${level.toUpperCase()}] ${message}`)
       }
     }
   }

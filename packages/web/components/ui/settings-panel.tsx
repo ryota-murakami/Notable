@@ -5,25 +5,25 @@ import { cn } from '../../lib/utils'
 import { Button } from '../../design-system/components/button'
 import {
   Modal,
-  ModalHeader,
-  ModalTitle,
   ModalBody,
   ModalFooter,
+  ModalHeader,
+  ModalTitle,
 } from '../../design-system/components/modal'
 import {
-  XIcon,
-  UserIcon,
-  PaletteIcon,
-  SettingsIcon,
-  KeyboardIcon,
-  ShieldIcon,
+  BellIcon,
   DatabaseIcon,
   HelpCircleIcon,
-  BellIcon,
+  KeyboardIcon,
   MonitorIcon,
   MoonIcon,
-  SunIcon,
+  PaletteIcon,
+  SettingsIcon,
+  ShieldIcon,
   SmartphoneIcon,
+  SunIcon,
+  UserIcon,
+  XIcon,
 } from 'lucide-react'
 
 export interface SettingsSection {

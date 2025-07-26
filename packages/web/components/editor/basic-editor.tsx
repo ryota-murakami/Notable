@@ -2,38 +2,38 @@
 
 import React, { useCallback, useMemo, useState } from 'react'
 import {
+  type BaseEditor,
   createEditor,
+  type Descendant,
   Editor,
-  Transforms,
   Element as SlateElement,
-  BaseEditor,
-  Descendant,
+  Transforms,
 } from 'slate'
 import {
-  Slate,
   Editable,
+  type ReactEditor,
+  type RenderElementProps,
+  type RenderLeafProps,
+  Slate,
   withReact,
-  RenderElementProps,
-  RenderLeafProps,
-  ReactEditor,
 } from 'slate-react'
-import { withHistory, HistoryEditor } from 'slate-history'
+import { type HistoryEditor, withHistory } from 'slate-history'
 import { Toggle } from '../ui/toggle'
 import { Separator } from '../ui/separator'
 import {
   Bold,
-  Italic,
-  Underline,
-  Strikethrough,
   Code,
-  Undo,
-  Redo,
   Heading1,
   Heading2,
   Heading3,
-  Quote,
+  Italic,
   List,
   ListOrdered,
+  Quote,
+  Redo,
+  Strikethrough,
+  Underline,
+  Undo,
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 

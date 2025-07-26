@@ -1,4 +1,4 @@
-import { RouteDefinition } from './types'
+import type { RouteDefinition } from './types'
 
 export const ROUTES: Record<string, RouteDefinition> = {
   // Root/Home Routes

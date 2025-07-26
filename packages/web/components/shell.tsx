@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useSyncService } from '@notable/sync'
-import { Note } from '../types/note'
+import { type Note } from '../types/note'
 import { useRouting } from '../hooks/use-routing'
 
 export function Shell() {

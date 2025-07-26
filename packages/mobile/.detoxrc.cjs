@@ -4,7 +4,7 @@ module.exports = {
   testRunner: {
     args: {
       $0: 'jest',
-      config: 'e2e/jest.config.js',
+      config: 'e2e/jest.config.cjs',
     },
     jest: {
       setupTimeout: 240000,

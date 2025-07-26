@@ -1,6 +1,6 @@
 // Search Filters for Date, Tags, Folders, and Content
 
-import { SearchFilterSet, SearchableNote } from './types'
+import { type SearchableNote, type SearchFilterSet } from './types'
 
 export interface FilterOptions {
   availableTags: string[]

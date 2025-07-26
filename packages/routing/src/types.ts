@@ -117,7 +117,7 @@ export interface NavigationAction {
     | 'RESET'
     | 'SET_LOADING'
     | 'SET_ERROR'
-  payload?: any
+  payload?: unknown
 }
 
 export interface NavigationStore extends NavigationState {
@@ -152,9 +152,7 @@ export interface NavigationStore extends NavigationState {
   /** Get current URL/path */
   getCurrentPath: () => string
   /** Parse path to route and params */
-  parsePath: (
-    path: string,
-  ) => {
+  parsePath: (path: string) => {
     route: RouteDefinition | null
     params: Record<string, string>
     query: Record<string, string>
@@ -191,9 +189,7 @@ export interface PlatformAdapter {
     query?: Record<string, string>,
   ) => string
   /** Convert platform path to route */
-  pathToRoute: (
-    path: string,
-  ) => {
+  pathToRoute: (path: string) => {
     route: RouteDefinition | null
     params: Record<string, string>
     query: Record<string, string>

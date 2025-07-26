@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { SyncProvider, WebStorageAdapter, SyncConfig } from '@notable/sync'
+import { type SyncConfig, SyncProvider, WebStorageAdapter } from '@notable/sync'
 
 interface SyncProviderWrapperProps {
   children: React.ReactNode

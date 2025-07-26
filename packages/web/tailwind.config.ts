@@ -1,12 +1,6 @@
 import type { Config } from 'tailwindcss'
-import {
-  colors,
-  typography,
-  spacing,
-  radius,
-  motion,
-  effects,
-} from './design-system/tokens'
+import typographyPlugin from '@tailwindcss/typography'
+import { colors, effects, motion, typography } from './design-system/tokens'
 
 // Tailwind CSS v4.1 configuration
 const config = {
@@ -66,7 +60,7 @@ const config = {
       // Most configuration is enhanced via app/tailwind.css
     },
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [typographyPlugin],
 } satisfies Config
 
 export default config

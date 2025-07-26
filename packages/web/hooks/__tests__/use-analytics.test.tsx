@@ -3,12 +3,12 @@
  * Tests for React analytics integration hooks
  */
 
-import { renderHook, act } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import {
   useAnalytics,
   useComponentPerformance,
-  usePageTracking,
   useFeatureTracking,
+  usePageTracking,
 } from '../use-analytics'
 import { analytics } from '@/lib/analytics'
 
