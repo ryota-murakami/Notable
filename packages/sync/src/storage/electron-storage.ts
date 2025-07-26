@@ -1,6 +1,6 @@
 // SQLite storage adapter for Electron platform
 
-import type { ChangeSet, Note, StorageAdapter } from '../types'
+import type { ChangeOperation, ChangeSet, Note, StorageAdapter } from '../types'
 
 // Mock SQLite interface - actual implementation would use electron-sqlite or similar
 interface SqliteDatabase {
@@ -192,12 +192,12 @@ export class ElectronStorageAdapter implements StorageAdapter {
       title: row.title,
       content: row.content,
       is_folder: Boolean(row.is_folder),
-      parent_id: row.parent_id,
+      parent_id: row.parent_id || undefined,
       version: row.version,
       device_id: row.device_id,
       last_modified: row.last_modified,
       vector_clock: JSON.parse(row.vector_clock || '{}'),
-      synced_at: row.synced_at,
+      synced_at: row.synced_at || undefined,
       local_changes: Boolean(row.local_changes),
       deleted: Boolean(row.deleted),
       created_at: row.created_at,
@@ -214,12 +214,12 @@ export class ElectronStorageAdapter implements StorageAdapter {
       title: note.title,
       content: note.content,
       is_folder: note.is_folder ? 1 : 0,
-      parent_id: note.parent_id,
+      parent_id: note.parent_id || null,
       version: note.version,
       device_id: note.device_id,
       last_modified: note.last_modified,
       vector_clock: JSON.stringify(note.vector_clock),
-      synced_at: note.synced_at,
+      synced_at: note.synced_at || null,
       local_changes: note.local_changes ? 1 : 0,
       deleted: note.deleted ? 1 : 0,
       created_at: note.created_at,
@@ -234,7 +234,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     return {
       id: row.id,
       note_id: row.note_id,
-      operation: row.operation,
+      operation: row.operation as ChangeOperation,
       data: JSON.parse(row.data),
       timestamp: row.timestamp,
       device_id: row.device_id,
@@ -263,7 +263,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     await Promise.resolve() // Satisfy async requirement
     const db = this.ensureDb()
     const stmt = db.prepare('SELECT * FROM notes WHERE id = ?')
-    const row = stmt.get(id) as Record<string, unknown> | undefined
+    const row = stmt.get(id) as NoteRow | undefined
     stmt.finalize()
 
     return row ? this.rowToNote(row) : null
@@ -327,7 +327,7 @@ export class ElectronStorageAdapter implements StorageAdapter {
     const stmt = db.prepare(
       'SELECT * FROM changes WHERE applied = 0 ORDER BY timestamp ASC',
     )
-    const rows = stmt.all() as Record<string, unknown>[]
+    const rows = stmt.all() as ChangeRow[]
     stmt.finalize()
 
     return rows.map((row) => this.rowToChange(row))
