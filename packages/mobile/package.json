@@ -28,7 +28,20 @@
     "e2e:test:android": "detox test --configuration android.emu.debug",
     "e2e:clean": "detox clean-framework-cache && detox build-framework-cache",
     "clean": "rm -rf .expo dist node_modules pnpm-lock.yaml",
-    "dev": "expo start --dev-client"
+    "dev": "expo start --dev-client",
+    "mobile:dev": "node scripts/mobile-dev.js",
+    "mobile:ios": "node scripts/mobile-dev.js ios",
+    "mobile:android": "node scripts/mobile-dev.js android",
+    "mobile:reset": "node scripts/mobile-dev.js reset",
+    "mobile:clean": "node scripts/mobile-dev.js clean",
+    "mobile:debug": "node scripts/mobile-dev.js debug",
+    "mobile:setup": "node scripts/setup-dev.js",
+    "simulator:ios": "node scripts/ios-simulator.js setup",
+    "simulator:ios:reset": "node scripts/ios-simulator.js reset",
+    "simulator:ios:list": "node scripts/ios-simulator.js list",
+    "emulator:android": "node scripts/android-emulator.js setup",
+    "emulator:android:reset": "node scripts/android-emulator.js reset",
+    "emulator:android:list": "node scripts/android-emulator.js list"
   },
   "dependencies": {
     "@notable/routing": "workspace:*",
