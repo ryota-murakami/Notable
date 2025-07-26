@@ -17,7 +17,7 @@ import {
   RenderLeafProps,
   ReactEditor,
 } from 'slate-react'
-import { withHistory } from 'slate-history'
+import { withHistory, HistoryEditor } from 'slate-history'
 import { Toggle } from '../ui/toggle'
 import { Separator } from '../ui/separator'
 import {
@@ -207,7 +207,11 @@ const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 }
 
 // Toolbar component
-const Toolbar = ({ editor }: { editor: Editor }) => {
+const Toolbar = ({
+  editor,
+}: {
+  editor: BaseEditor & ReactEditor & HistoryEditor
+}) => {
   return (
     <div className='flex items-center gap-1 border-b bg-background p-1'>
       {/* History */}
