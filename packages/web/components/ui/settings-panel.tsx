@@ -270,8 +270,10 @@ export function KeyboardSettings({
                             variant='ghost'
                             size='sm'
                             onClick={() => {
-                              // Implement shortcut editing logic
+                              // TODO: Implement shortcut editing logic
+                              alert('Shortcut editing coming soon!')
                             }}
+                            title='Coming soon: Shortcut editing'
                           >
                             Edit
                           </Button>

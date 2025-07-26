@@ -622,10 +622,9 @@ export function SearchCommandPalette({
                       {result.note.title}
                     </div>
                     {result.snippet && (
-                      <div
-                        className='text-xs text-muted-foreground mt-1 line-clamp-2'
-                        dangerouslySetInnerHTML={{ __html: result.snippet }}
-                      />
+                      <div className='text-xs text-muted-foreground mt-1 line-clamp-2'>
+                        {result.snippet.replace(/<[^>]*>/g, '')}
+                      </div>
                     )}
                     <div className='flex items-center gap-2 mt-2'>
                       <div className='text-xs text-muted-foreground'>
@@ -636,8 +635,9 @@ export function SearchCommandPalette({
                           <TagIcon className='h-3 w-3 text-muted-foreground' />
                           <div className='text-xs text-muted-foreground'>
                             {result.note.tags.slice(0, 2).join(', ')}
-                            {result.note.tags.length > 2 &&
-                              `+${result.note.tags.length - 2}`}
+                            {result.note.tags.length > 2 && (
+                              <span> +{result.note.tags.length - 2}</span>
+                            )}
                           </div>
                         </div>
                       )}
