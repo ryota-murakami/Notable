@@ -17,17 +17,19 @@ export default function EditorTestPage() {
     id: 'test-note',
     title: 'Test Note',
     content: JSON.stringify(value),
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    is_folder: false,
+    parent_id: undefined,
+    version: 1,
+    device_id: 'test-device',
+    last_modified: new Date().toISOString(),
+    vector_clock: { 'test-device': 1 },
+    synced_at: undefined,
+    local_changes: false,
+    deleted: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     userId: 'test-user',
-    isPublic: false,
-    isPinned: false,
-    isFavorite: false,
     tags: ['test', 'demo'],
-    summary:
-      'This is a test note demonstrating the rich text editor and export functionality.',
-    color: 'blue',
-    icon: '📝',
   }
 
   return (
