@@ -101,6 +101,96 @@ jest.mock('react-native-reanimated', () => {
   return Reanimated
 })
 
+// Mock React Native Animated API
+const mockAnimatedValue = jest.fn(() => ({
+  setValue: jest.fn(),
+  setOffset: jest.fn(),
+  flattenOffset: jest.fn(),
+  extractOffset: jest.fn(),
+  addListener: jest.fn(() => '1'),
+  removeListener: jest.fn(),
+  removeAllListeners: jest.fn(),
+  stopAnimation: jest.fn(),
+  resetAnimation: jest.fn(),
+  interpolate: jest.fn((config) => {
+    return {
+      ...config,
+      _parent: this,
+    }
+  }),
+  animate: jest.fn(),
+  track: jest.fn(),
+  _value: 0,
+}))
+
+global.Animated = {
+  Value: mockAnimatedValue,
+  ValueXY: jest.fn(() => ({
+    x: mockAnimatedValue(),
+    y: mockAnimatedValue(),
+    setValue: jest.fn(),
+    setOffset: jest.fn(),
+    flattenOffset: jest.fn(),
+    extractOffset: jest.fn(),
+    resetAnimation: jest.fn(),
+    stopAnimation: jest.fn(),
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    removeAllListeners: jest.fn(),
+    getLayout: jest.fn(() => ({
+      left: mockAnimatedValue(),
+      top: mockAnimatedValue(),
+    })),
+    getTranslateTransform: jest.fn(() => [
+      { translateX: mockAnimatedValue() },
+      { translateY: mockAnimatedValue() },
+    ]),
+  })),
+  timing: jest.fn(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    reset: jest.fn(),
+  })),
+  spring: jest.fn(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    reset: jest.fn(),
+  })),
+  decay: jest.fn(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    reset: jest.fn(),
+  })),
+  parallel: jest.fn(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    reset: jest.fn(),
+  })),
+  sequence: jest.fn(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    reset: jest.fn(),
+  })),
+  stagger: jest.fn(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    reset: jest.fn(),
+  })),
+  loop: jest.fn(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    reset: jest.fn(),
+  })),
+  event: jest.fn(),
+  createAnimatedComponent: jest.fn((Component) => Component),
+  View: require('react-native').View,
+  Text: require('react-native').Text,
+  Image: require('react-native').Image,
+  ScrollView: require('react-native').ScrollView,
+  FlatList: require('react-native').FlatList,
+  SectionList: require('react-native').SectionList,
+}
+
 // Mock Supabase client
 jest.mock('@supabase/supabase-js', () => {
   const mockSupabase = {

@@ -1,20 +1,6 @@
 import { EmptyState } from '../../components/EmptyState'
 import { render } from '../utils/test-utils'
 
-// Mock Expo vector icons
-jest.mock('@expo/vector-icons', () => ({
-  Ionicons: ({ name, _size, _color, ...props }: any) => {
-    const MockIcon = require('react-native').View
-    return (
-      <MockIcon
-        testID={`icon-${name}`}
-        accessibilityLabel={`${name} icon`}
-        {...props}
-      />
-    )
-  },
-}))
-
 describe('EmptyState', () => {
   const defaultProps = {
     title: 'No Notes Found',
