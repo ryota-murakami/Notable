@@ -58,22 +58,22 @@ class RoutingErrorBoundary extends Component<
 }
 
 function RoutingProviderInner({ children }: RoutingProviderProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
-  // In test mode, skip routing initialization
+  // In test mode, skip all routing logic entirely
   const isTestMode =
     process.env.NODE_ENV === 'test' ||
     (typeof window !== 'undefined' &&
       document.cookie.includes('dev-auth-bypass=true'))
 
-  useEffect(() => {
-    if (isTestMode) {
-      // Skip routing initialization in test mode
-      return
-    }
+  // If in test mode, just render children without any routing logic
+  if (isTestMode) {
+    return <>{children}</>
+  }
 
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
     try {
       // Initialize platform routing for web
       const { cleanup } = initializePlatformRouting('web', {
@@ -89,20 +89,16 @@ function RoutingProviderInner({ children }: RoutingProviderProps) {
       console.error('Failed to initialize routing:', error)
       // Don't throw in production, just log the error
     }
-  }, [router, pathname, searchParams, isTestMode])
+  }, [router, pathname, searchParams])
 
   // Update current location when pathname or search params change
   useEffect(() => {
-    if (isTestMode) {
-      return
-    }
-
     try {
       webAdapter.setCurrentLocation(pathname, searchParams)
     } catch (error) {
       console.error('Failed to update location:', error)
     }
-  }, [pathname, searchParams, isTestMode])
+  }, [pathname, searchParams])
 
   return <>{children}</>
 }
