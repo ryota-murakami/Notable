@@ -225,9 +225,11 @@ export class SearchFilters {
     const folderSet = new Set<string>()
     notes.forEach((note) => {
       // Extract folder path from note path
-      const pathParts = note.path.split('/')
-      for (let i = 1; i < pathParts.length; i++) {
-        const folderPath = pathParts.slice(0, i + 1).join('/')
+      // Split on '/' and remove empty segments to handle any leading slash
+      const segments = note.path.split('/').filter(Boolean)
+      // Only iterate to the last folder segment (exclude file name)
+      for (let i = 0; i < segments.length - 1; i++) {
+        const folderPath = segments.slice(0, i + 1).join('/')
         folderSet.add(folderPath)
       }
     })
