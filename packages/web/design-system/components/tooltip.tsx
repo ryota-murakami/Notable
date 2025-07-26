@@ -74,8 +74,8 @@ export function Tooltip({
 
   const triggerRef = React.useRef<HTMLElement>(null)
   const tooltipRef = React.useRef<HTMLDivElement>(null)
-  const showTimeoutRef = React.useRef<NodeJS.Timeout>()
-  const hideTimeoutRef = React.useRef<NodeJS.Timeout>()
+  const showTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
+  const hideTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
 
   const isControlled = controlledOpen !== undefined
   const isOpen = isControlled ? controlledOpen : internalOpen
@@ -363,20 +363,23 @@ export function Tooltip({
     </AnimatePresence>
   )
 
-  const triggerElement = React.cloneElement(children as React.ReactElement, {
-    ref: (node: HTMLElement) => {
-      triggerRef.current = node
+  const triggerElement = React.cloneElement(
+    children as React.ReactElement,
+    {
+      ...handleTriggerEvents,
+      ref: (node: HTMLElement) => {
+        triggerRef.current = node
 
-      // Preserve existing ref
-      const originalRef = (children as any)?.ref
-      if (typeof originalRef === 'function') {
-        originalRef(node)
-      } else if (originalRef?.current !== undefined) {
-        originalRef.current = node
-      }
-    },
-    ...handleTriggerEvents,
-  })
+        // Preserve existing ref
+        const originalRef = (children as any)?.ref
+        if (typeof originalRef === 'function') {
+          originalRef(node)
+        } else if (originalRef?.current !== undefined) {
+          originalRef.current = node
+        }
+      },
+    } as any
+  )
 
   React.useEffect(() => {
     return () => {
