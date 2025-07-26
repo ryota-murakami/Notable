@@ -198,12 +198,12 @@ jobs:
 
       - name: Create Android AVD
         run: |
-          # Use ARM64 architecture to avoid KVM requirement in GitHub CI
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;arm64-v8a"
+          # Use x86_64 with software emulation for GitHub CI compatibility
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
           # Delete existing AVD if it exists
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name test_avd || true
-          # Create AVD with ARM64 architecture - no KVM needed
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/arm64-v8a --package "system-images;android-30;google_apis;arm64-v8a" --device "pixel_xl"
+          # Create AVD with x86_64 architecture and software emulation
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
           # List AVDs to verify creation
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
           # Verify AVD files exist
@@ -226,7 +226,7 @@ jobs:
           # List available AVDs to confirm
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
 
-          # Start emulator with optimized settings for CI
+          # Start emulator with software acceleration for GitHub CI
           $ANDROID_HOME/emulator/emulator -avd test_avd \
             -no-audio \
             -no-window \
@@ -234,9 +234,11 @@ jobs:
             -no-snapshot \
             -camera-back none \
             -camera-front none \
-            -memory 4096 \
-            -partition-size 4096 \
-            -cores 2 &
+            -memory 2048 \
+            -partition-size 2048 \
+            -cores 2 \
+            -accel off \
+            -engine classic &
 
           # Wait for device with timeout and better error handling
           echo "Waiting for Android emulator to start..."
