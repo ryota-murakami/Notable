@@ -102,7 +102,9 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}) {
       if (query.length < minQueryLength) return
 
       const newEntry: SearchHistoryEntry = {
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id:
+          crypto.randomUUID?.() ||
+          `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         query: query.trim(),
         filters,
         timestamp: new Date(),
@@ -356,6 +358,7 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}) {
             timestamp: new Date(entry.timestamp),
             id:
               entry.id ||
+              crypto.randomUUID?.() ||
               `imported-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           })
         )
@@ -473,7 +476,9 @@ export const SearchHistoryUtils = {
 
   // Parse a shareable entry back to SearchHistoryEntry
   parseShareableEntry: (shareableEntry: any): SearchHistoryEntry => ({
-    id: `shared-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id:
+      crypto.randomUUID?.() ||
+      `shared-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     query: shareableEntry.query,
     filters: shareableEntry.filters || {},
     timestamp: new Date(shareableEntry.timestamp),

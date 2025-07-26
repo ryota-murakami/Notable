@@ -323,7 +323,7 @@ export const SearchFilterUtils = {
             filters.hasContent = true
           }
           break
-        case 'date':
+        case 'date': {
           // Handle special date values
           const datePresets = new SearchFilters().getDateRangePresets()
           const preset = datePresets.find((p) => p.id === value.toLowerCase())
@@ -331,6 +331,7 @@ export const SearchFilterUtils = {
             filters.dateRange = preset.range
           }
           break
+        }
       }
     }
 
