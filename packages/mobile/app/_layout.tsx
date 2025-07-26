@@ -7,6 +7,7 @@ import { Provider as PaperProvider } from 'react-native-paper'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import { SupabaseProvider } from '@/components/SupabaseProvider'
+import { RoutingProvider } from '@/components/RoutingProvider'
 import { theme } from '@/constants/theme'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -20,14 +21,16 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={theme}>
-        <SupabaseProvider>
-          <Stack>
-            <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-            <Stack.Screen name='+not-found' />
-          </Stack>
-          <StatusBar style='auto' />
-        </SupabaseProvider>
+        <RoutingProvider>
+          <SupabaseProvider>
+            <Stack>
+              <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+              <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+              <Stack.Screen name='+not-found' />
+            </Stack>
+            <StatusBar style='auto' />
+          </SupabaseProvider>
+        </RoutingProvider>
       </PaperProvider>
     </GestureHandlerRootView>
   )

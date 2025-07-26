@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { useSyncService } from '@notable/sync'
 import { Note } from '../types/note'
+import { useRouting } from '../hooks/use-routing'
 
 export function Shell() {
   const [notes, setNotes] = useState<Note[]>([])
   const { syncService, isInitialized } = useSyncService()
+  const { current, title, navigate } = useRouting()
 
   if (!isInitialized) {
     return (
