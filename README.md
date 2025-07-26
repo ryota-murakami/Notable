@@ -7,6 +7,8 @@
 
 A top-tier freemium note-taking and knowledge management application built with modern technologies, offering a superior writing experience with Plate.js, real-time synchronization, and cross-platform support.
 
+<!-- Deployment trigger commit -->
+
 ## 🚀 Tech Stack
 
 - **Frontend**: Next.js 15, React 19, TypeScript
