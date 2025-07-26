@@ -45,9 +45,9 @@
     "emulator:android:list": "node scripts/android-emulator.js list"
   },
   "dependencies": {
-    "@notable/routing": "workspace:*",
     "@babel/runtime": "^7.27.6",
     "@expo/vector-icons": "^14.1.0",
+    "@notable/routing": "workspace:*",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/netinfo": "^11.4.1",
     "@react-navigation/native": "^7.0.14",
@@ -76,17 +76,17 @@
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.16.5",
+    "@types/node": "^24.1.0",
     "@types/react": "^19",
     "babel-preset-expo": "^13.2.3",
     "detox": "^20.40.2",
     "eas-cli": "^14.2.0",
-    "eslint": "^9.31.0",
+    "eslint": "^9.32.0",
     "jest": "^29.7.0",
     "jest-expo": "^53.0.9",
     "jest-junit": "^16.0.0",
     "react-test-renderer": "^19.1.0",
     "sharp": "^0.34.3",
-    "typescript": "^5"
+    "typescript": "^5.8.3"
   }
 }
