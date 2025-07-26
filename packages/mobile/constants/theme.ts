@@ -1,64 +1,4 @@
-import {
-  configureFonts,
-  MD3LightTheme as DefaultTheme,
-} from 'react-native-paper'
-
-const fontConfig = {
-  web: {
-    regular: {
-      fontFamily: 'System',
-      fontWeight: '400' as const,
-    },
-    medium: {
-      fontFamily: 'System',
-      fontWeight: '500' as const,
-    },
-    light: {
-      fontFamily: 'System',
-      fontWeight: '300' as const,
-    },
-    thin: {
-      fontFamily: 'System',
-      fontWeight: '100' as const,
-    },
-  },
-  ios: {
-    regular: {
-      fontFamily: 'System',
-      fontWeight: '400' as const,
-    },
-    medium: {
-      fontFamily: 'System',
-      fontWeight: '500' as const,
-    },
-    light: {
-      fontFamily: 'System',
-      fontWeight: '300' as const,
-    },
-    thin: {
-      fontFamily: 'System',
-      fontWeight: '100' as const,
-    },
-  },
-  android: {
-    regular: {
-      fontFamily: 'System',
-      fontWeight: '400' as const,
-    },
-    medium: {
-      fontFamily: 'System',
-      fontWeight: '500' as const,
-    },
-    light: {
-      fontFamily: 'System',
-      fontWeight: '300' as const,
-    },
-    thin: {
-      fontFamily: 'System',
-      fontWeight: '100' as const,
-    },
-  },
-}
+import { MD3LightTheme as DefaultTheme } from 'react-native-paper'
 
 export const theme = {
   ...DefaultTheme,
@@ -103,7 +43,7 @@ export const theme = {
       level5: '#9CA3AF',
     },
   },
-  fonts: configureFonts({ config: fontConfig }),
+  fonts: DefaultTheme.fonts,
   roundness: 16, // Modern rounded corners
   animation: {
     scale: 1.0,
