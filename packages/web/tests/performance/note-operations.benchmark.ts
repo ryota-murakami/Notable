@@ -47,25 +47,28 @@ async function benchmarkNoteCreation(): Promise<BenchmarkResult> {
   const operations = 100
   let errors = 0
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (let i = 0; i < operations; i++) {
-        try {
-          // Simulate note creation
-          await simulateNoteCreation({
-            title: `Benchmark Note ${i}`,
-            content: generateLargeContent(1000), // 1000 words
-            tags: ['benchmark', 'test'],
-          })
-        } catch (error) {
-          errors++
-        }
+    for (let i = 0; i < operations; i++) {
+      try {
+        // Simulate note creation
+        await simulateNoteCreation({
+          title: `Benchmark Note ${i}`,
+          content: generateLargeContent(1000), // 1000 words
+          tags: ['benchmark', 'test'],
+        })
+      } catch (_error) {
+        errors++
       }
+    }
 
-      return endTimer()
-    })
+    return endTimer()
+  })
 
   return {
     name,
@@ -85,21 +88,24 @@ async function benchmarkNoteRetrieval(): Promise<BenchmarkResult> {
   const operations = 500
   let errors = 0
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (let i = 0; i < operations; i++) {
-        try {
-          // Simulate note retrieval
-          await simulateNoteRetrieval(`note-${i % 100}`)
-        } catch (error) {
-          errors++
-        }
+    for (let i = 0; i < operations; i++) {
+      try {
+        // Simulate note retrieval
+        await simulateNoteRetrieval(`note-${i % 100}`)
+      } catch (_error) {
+        errors++
       }
+    }
 
-      return endTimer()
-    })
+    return endTimer()
+  })
 
   return {
     name,
@@ -121,21 +127,24 @@ async function benchmarkNoteSearch(): Promise<BenchmarkResult> {
 
   const searchTerms = ['test', 'benchmark', 'performance', 'note', 'content']
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (let i = 0; i < operations; i++) {
-        try {
-          // Simulate note search
-          await simulateNoteSearch(searchTerms[i % searchTerms.length])
-        } catch (error) {
-          errors++
-        }
+    for (let i = 0; i < operations; i++) {
+      try {
+        // Simulate note search
+        await simulateNoteSearch(searchTerms[i % searchTerms.length])
+      } catch (_error) {
+        errors++
       }
+    }
 
-      return endTimer()
-    })
+    return endTimer()
+  })
 
   return {
     name,
@@ -155,21 +164,24 @@ async function benchmarkBulkOperations(): Promise<BenchmarkResult> {
   const operations = 10 // 10 bulk operations of 100 notes each
   let errors = 0
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (let i = 0; i < operations; i++) {
-        try {
-          // Simulate bulk update
-          await simulateBulkUpdate(100)
-        } catch (error) {
-          errors++
-        }
+    for (let i = 0; i < operations; i++) {
+      try {
+        // Simulate bulk update
+        await simulateBulkUpdate(100)
+      } catch (_error) {
+        errors++
       }
+    }
 
-      return endTimer()
-    })
+    return endTimer()
+  })
 
   return {
     name,
@@ -191,39 +203,42 @@ async function benchmarkConcurrentOperations(): Promise<BenchmarkResult> {
   const totalOperations = concurrency * operationsPerThread
   let errors = 0
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      const promises = []
-      for (let i = 0; i < concurrency; i++) {
-        promises.push(
-          (async () => {
-            for (let j = 0; j < operationsPerThread; j++) {
-              try {
-                // Mix of operations
-                if (j % 3 === 0) {
-                  await simulateNoteCreation({
-                    title: `Concurrent Note ${i}-${j}`,
-                    content: generateLargeContent(500),
-                    tags: ['concurrent'],
-                  })
-                } else if (j % 3 === 1) {
-                  await simulateNoteRetrieval(`note-${j}`)
-                } else {
-                  await simulateNoteSearch('concurrent')
-                }
-              } catch (error) {
-                errors++
+    const promises = []
+    for (let i = 0; i < concurrency; i++) {
+      promises.push(
+        (async () => {
+          for (let j = 0; j < operationsPerThread; j++) {
+            try {
+              // Mix of operations
+              if (j % 3 === 0) {
+                await simulateNoteCreation({
+                  title: `Concurrent Note ${i}-${j}`,
+                  content: generateLargeContent(500),
+                  tags: ['concurrent'],
+                })
+              } else if (j % 3 === 1) {
+                await simulateNoteRetrieval(`note-${j}`)
+              } else {
+                await simulateNoteSearch('concurrent')
               }
+            } catch (_error) {
+              errors++
             }
-          })()
-        )
-      }
+          }
+        })()
+      )
+    }
 
-      await Promise.all(promises)
-      return endTimer()
-    })
+    await Promise.all(promises)
+    return endTimer()
+  })
 
   return {
     name,
@@ -237,7 +252,7 @@ async function benchmarkConcurrentOperations(): Promise<BenchmarkResult> {
 
 // Simulation functions (replace with actual database operations in real implementation)
 
-async function simulateNoteCreation(note: any): Promise<void> {
+async function simulateNoteCreation(_note: any): Promise<void> {
   // Simulate network latency
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 20 + 10))
 
