@@ -1,12 +1,16 @@
 import {
   app,
   BrowserWindow,
+  clipboard,
+  crashReporter,
   dialog,
   globalShortcut,
   ipcMain,
   Menu,
   nativeTheme,
+  session,
   shell,
+  TouchBar,
   Tray,
 } from 'electron'
 import * as path from 'path'
@@ -14,6 +18,7 @@ import * as fs from 'fs'
 import * as localShortcut from 'electron-localshortcut'
 import { autoUpdater } from 'electron-updater'
 import * as notifier from 'node-notifier'
+import Store from 'electron-store'
 import { setupRoutingInMainProcess } from './routing'
 
 // __dirname is automatically available in CommonJS
@@ -28,20 +33,430 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 const isMac = process.platform === 'darwin'
 const isWindows = process.platform === 'win32'
 
+// Initialize persistent store
+interface StoreSchema {
+  windowState: {
+    width: number
+    height: number
+    x?: number
+    y?: number
+    isMaximized: boolean
+  }
+  preferences: {
+    theme: string
+    autoSave: boolean
+    spellCheck: boolean
+  }
+}
+
+const store = new Store<StoreSchema>({
+  defaults: {
+    windowState: {
+      width: 1200,
+      height: 800,
+      x: undefined,
+      y: undefined,
+      isMaximized: false,
+    },
+    preferences: {
+      theme: 'system',
+      autoSave: true,
+      spellCheck: true,
+    },
+  },
+})
+
+// Security configuration
+function setupSecurity() {
+  // Configure Content Security Policy
+  const cspPolicy = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Note: unsafe-eval needed for React dev mode
+    "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for styled components
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' https: wss: ws:",
+    "media-src 'self' blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+  ].join('; ')
+
+  // Set up session security
+  const ses = session.defaultSession
+
+  // Set CSP header for all responses
+  ses.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [cspPolicy],
+        'X-Content-Type-Options': ['nosniff'],
+        'X-Frame-Options': ['DENY'],
+        'X-XSS-Protection': ['1; mode=block'],
+        'Referrer-Policy': ['strict-origin-when-cross-origin'],
+        'Permissions-Policy': [
+          'camera=(), microphone=(), geolocation=(), notifications=()',
+        ],
+      },
+    })
+  })
+
+  // Block insecure content and set additional security policies
+  ses.setPermissionRequestHandler((_webContents, permission, callback) => {
+    // Allow only essential permissions
+    const allowedPermissions = ['notifications']
+    callback(allowedPermissions.includes(permission))
+  })
+
+  // Block potentially dangerous URLs
+  ses.webRequest.onBeforeRequest((details, callback) => {
+    const url = new URL(details.url)
+
+    // Block file:// protocol except for app files
+    if (url.protocol === 'file:' && !details.url.includes(app.getAppPath())) {
+      callback({ cancel: true })
+      return
+    }
+
+    // Block dangerous protocols
+    const blockedProtocols = ['ftp:', 'file:', 'about:']
+    if (
+      blockedProtocols.some((protocol) => url.protocol === protocol) &&
+      !details.url.includes(app.getAppPath())
+    ) {
+      callback({ cancel: true })
+      return
+    }
+
+    callback({ cancel: false })
+  })
+
+  // Enhanced certificate verification
+  ses.setCertificateVerifyProc((request, callback) => {
+    // Allow localhost for development
+    if (isDevelopment && request.hostname === 'localhost') {
+      callback(0) // Accept
+      return
+    }
+
+    // Use default verification for all other cases
+    callback(-3) // Use default verification
+  })
+}
+
+// Platform-specific features
+function setupPlatformFeatures() {
+  if (isMac) {
+    setupMacOSTouchBar()
+  }
+
+  if (isWindows) {
+    setupWindowsJumpList()
+  }
+}
+
+// macOS Touch Bar support
+function setupMacOSTouchBar() {
+  if (!TouchBar) return
+
+  const { TouchBarButton, TouchBarSpacer } = TouchBar
+
+  const newNoteButton = new TouchBarButton({
+    label: '✏️ New Note',
+    backgroundColor: '#007ACC',
+    click: () => {
+      if (mainWindow) {
+        mainWindow.webContents.send('menu-new-note')
+      }
+    },
+  })
+
+  const saveButton = new TouchBarButton({
+    label: '💾 Save',
+    backgroundColor: '#28A745',
+    click: () => {
+      if (mainWindow) {
+        mainWindow.webContents.send('menu-save')
+      }
+    },
+  })
+
+  const findButton = new TouchBarButton({
+    label: '🔍 Find',
+    backgroundColor: '#6F42C1',
+    click: () => {
+      if (mainWindow) {
+        mainWindow.webContents.send('menu-find')
+      }
+    },
+  })
+
+  const focusModeButton = new TouchBarButton({
+    label: '🎯 Focus',
+    backgroundColor: '#FD7E14',
+    click: () => {
+      if (mainWindow) {
+        mainWindow.webContents.send('menu-focus-mode')
+      }
+    },
+  })
+
+  const exportButton = new TouchBarButton({
+    label: '📤 Export',
+    backgroundColor: '#20C997',
+    click: () => {
+      if (mainWindow) {
+        // Trigger export dialog
+        mainWindow.webContents.send('export-request', 'markdown')
+      }
+    },
+  })
+
+  const touchBar = new TouchBar({
+    items: [
+      newNoteButton,
+      new TouchBarSpacer({ size: 'small' }),
+      saveButton,
+      new TouchBarSpacer({ size: 'small' }),
+      findButton,
+      new TouchBarSpacer({ size: 'small' }),
+      focusModeButton,
+      new TouchBarSpacer({ size: 'small' }),
+      exportButton,
+    ],
+  })
+
+  // Apply touch bar to main window when it's created
+  if (mainWindow) {
+    mainWindow.setTouchBar(touchBar)
+  }
+
+  // Store reference for later use
+  (global as any).touchBar = touchBar
+}
+
+// Windows Jump List support
+function setupWindowsJumpList() {
+  if (!isWindows) return
+
+  const jumpList = [
+    {
+      type: 'custom' as const,
+      name: 'Quick Actions',
+      items: [
+        {
+          type: 'task' as const,
+          title: 'New Note',
+          description: 'Create a new note',
+          program: process.execPath,
+          args: '--new-note',
+          iconPath: process.execPath,
+          iconIndex: 0,
+        },
+        {
+          type: 'task' as const,
+          title: 'Quick Note',
+          description: 'Open quick note window',
+          program: process.execPath,
+          args: '--quick-note',
+          iconPath: process.execPath,
+          iconIndex: 0,
+        },
+        {
+          type: 'task' as const,
+          title: 'Search Notes',
+          description: 'Search through your notes',
+          program: process.execPath,
+          args: '--search',
+          iconPath: process.execPath,
+          iconIndex: 0,
+        },
+      ],
+    },
+    {
+      type: 'recent' as const,
+      // Recent files will be automatically populated by the OS
+    },
+  ]
+
+  app.setJumpList(jumpList)
+}
+
+// Handle jump list task arguments
+function handleJumpListArgs() {
+  const args = process.argv
+
+  if (args.includes('--new-note')) {
+    // Create main window if not exists and trigger new note
+    if (!mainWindow) {
+      createWindow()
+    }
+    setTimeout(() => {
+      if (mainWindow) {
+        mainWindow.webContents.send('menu-new-note')
+      }
+    }, 1000)
+  }
+
+  if (args.includes('--quick-note')) {
+    // Create quick note window
+    setTimeout(() => {
+      createQuickNoteWindow()
+    }, 1000)
+  }
+
+  if (args.includes('--search')) {
+    // Create main window if not exists and open search
+    if (!mainWindow) {
+      createWindow()
+    }
+    setTimeout(() => {
+      if (mainWindow) {
+        mainWindow.webContents.send('shortcut-command-palette')
+      }
+    }, 1000)
+  }
+}
+
+// Update recent documents for Jump Lists
+function updateRecentDocument(filePath: string) {
+  if (isWindows) {
+    app.addRecentDocument(filePath)
+  }
+}
+
+// Window state management
+class WindowStateManager {
+  private window: BrowserWindow
+  private key: string
+
+  constructor(window: BrowserWindow, key = 'windowState') {
+    this.window = window
+    this.key = key
+    this.restoreState()
+    this.attachEventListeners()
+  }
+
+  private restoreState() {
+    const state = (store as any).get(this.key)
+    if (state) {
+      if (state.x !== undefined && state.y !== undefined) {
+        this.window.setPosition(state.x, state.y)
+      }
+      if (state.width && state.height) {
+        this.window.setSize(state.width, state.height)
+      }
+      if (state.isMaximized) {
+        this.window.maximize()
+      }
+    }
+  }
+
+  private attachEventListeners() {
+    const saveState = () => {
+      if (this.window.isDestroyed()) return
+
+      const bounds = this.window.getBounds()
+      const isMaximized = this.window.isMaximized()
+
+      ;(store as any).set(this.key, {
+        ...bounds,
+        isMaximized,
+      })
+    }
+
+    // Save state on various events
+    this.window.on('resize', saveState)
+    this.window.on('move', saveState)
+    this.window.on('maximize', saveState)
+    this.window.on('unmaximize', saveState)
+    this.window.on('close', saveState)
+  }
+}
+
 // Set app name from package.json productName
 app.setName('Notable')
 
-const createWindow = () => {
-  // Window state management
-  const windowState = {
-    width: 1200,
-    height: 800,
+// Initialize crash reporter
+if (!isDevelopment) {
+  crashReporter.start({
+    productName: 'Notable',
+    companyName: 'Notable',
+    submitURL: '', // In production, this should be your crash reporting endpoint
+    uploadToServer: false, // Set to true in production with proper endpoint
+    ignoreSystemCrashHandler: false,
+    rateLimit: true,
+    compress: true,
+    globalExtra: {
+      version: app.getVersion(),
+      platform: process.platform,
+      arch: process.arch,
+    },
+  })
+}
+
+// Handle process crashes
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error)
+
+  // Log to file for debugging
+  const crashLogPath = path.join(app.getPath('userData'), 'crash.log')
+  const crashData = {
+    timestamp: new Date().toISOString(),
+    type: 'uncaughtException',
+    error: error.message,
+    stack: error.stack,
+    platform: process.platform,
+    version: app.getVersion(),
   }
 
+  try {
+    fs.appendFileSync(crashLogPath, `${JSON.stringify(crashData)  }\n`)
+  } catch (logError) {
+    console.error('Failed to write crash log:', logError)
+  }
+
+  // Show error dialog to user
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    dialog.showErrorBox(
+      'Unexpected Error',
+      'An unexpected error occurred. The application will continue running, but you may want to save your work and restart.'
+    )
+  }
+})
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason)
+
+  // Log to file for debugging
+  const crashLogPath = path.join(app.getPath('userData'), 'crash.log')
+  const crashData = {
+    timestamp: new Date().toISOString(),
+    type: 'unhandledRejection',
+    reason: String(reason),
+    platform: process.platform,
+    version: app.getVersion(),
+  }
+
+  try {
+    fs.appendFileSync(crashLogPath, `${JSON.stringify(crashData)  }\n`)
+  } catch (logError) {
+    console.error('Failed to write crash log:', logError)
+  }
+})
+
+const createWindow = () => {
+  // Get default window state from store
+  const defaultState = (store as any).get('windowState')
   const iconPath = getIconPath()
+
   const windowOptions: Electron.BrowserWindowConstructorOptions = {
-    width: windowState.width,
-    height: windowState.height,
+    width: defaultState.width || 1200,
+    height: defaultState.height || 800,
+    x: defaultState.x,
+    y: defaultState.y,
     minWidth: 800,
     minHeight: 600,
     show: false, // Don't show until ready
@@ -51,6 +466,12 @@ const createWindow = () => {
       contextIsolation: true,
       nodeIntegration: false,
       webSecurity: true,
+      // Enhanced security with sandboxing enabled
+      sandbox: true, // Enable sandboxing for better security
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
+      enableBlinkFeatures: '', // Disable experimental features
+      disableBlinkFeatures: 'Auxclick', // Disable potentially dangerous features
     },
   }
 
@@ -59,6 +480,9 @@ const createWindow = () => {
   }
 
   mainWindow = new BrowserWindow(windowOptions)
+
+  // Initialize window state management
+  new WindowStateManager(mainWindow)
 
   windows.add(mainWindow)
 
@@ -173,9 +597,82 @@ const createWindow = () => {
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show()
 
+    // Restore maximized state if needed
+    const windowState = (store as any).get('windowState')
+    if (windowState?.isMaximized) {
+      mainWindow?.maximize()
+    }
+
     if (isDevelopment) {
       mainWindow?.webContents.openDevTools()
     }
+  })
+
+  // Enable drag and drop
+  mainWindow.webContents.on('dom-ready', () => {
+    // Prevent navigation on drag and drop
+    mainWindow?.webContents.on('will-navigate', (event, navigationUrl) => {
+      const parsedUrl = new URL(navigationUrl)
+      const currentUrl = mainWindow?.webContents.getURL()
+
+      // Allow navigation within the app but prevent external navigation
+      if (parsedUrl.origin !== new URL(currentUrl || '').origin) {
+        event.preventDefault()
+      }
+    })
+  })
+
+  // Handle file drops - native Electron approach
+  mainWindow.webContents.on('dom-ready', () => {
+    // Enable file drops
+    mainWindow?.webContents.executeJavaScript(`
+      // Prevent default drag behaviors and add visual feedback
+      document.addEventListener('dragover', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        e.dataTransfer.dropEffect = 'copy'
+      })
+      
+      document.addEventListener('dragenter', (e) => {
+        e.preventDefault()
+        document.body.classList.add('drag-over')
+        document.body.style.outline = '2px dashed #007ACC'
+        document.body.style.outlineOffset = '-10px'
+        document.body.style.backgroundColor = 'rgba(0, 122, 204, 0.05)'
+      })
+      
+      document.addEventListener('dragleave', (e) => {
+        e.preventDefault()
+        // Only remove outline when leaving the document entirely
+        if (!e.relatedTarget || e.relatedTarget.nodeName === 'HTML') {
+          document.body.classList.remove('drag-over')
+          document.body.style.outline = ''
+          document.body.style.outlineOffset = ''
+          document.body.style.backgroundColor = ''
+        }
+      })
+      
+      document.addEventListener('drop', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        
+        // Remove visual feedback
+        document.body.classList.remove('drag-over')
+        document.body.style.outline = ''
+        document.body.style.outlineOffset = ''
+        document.body.style.backgroundColor = ''
+        
+        // Get file paths and send to main process
+        const files = Array.from(e.dataTransfer.files)
+        if (files.length > 0) {
+          const filePaths = files.map(file => file.path).filter(path => path)
+          if (filePaths.length > 0) {
+            // Send via IPC to main process, which will relay to renderer
+            window.electronAPI?.handleFileDrop?.(filePaths)
+          }
+        }
+      })
+    `)
   })
 
   // Window state management
@@ -195,9 +692,23 @@ const createWindow = () => {
 
   // Register local shortcuts for this window
   registerLocalShortcuts(mainWindow)
+
+  // Set up Touch Bar for macOS
+  if (isMac && (global as any).touchBar) {
+    mainWindow.setTouchBar((global as any).touchBar)
+  }
 }
 
 app.whenReady().then(() => {
+  // Setup security policies first
+  setupSecurity()
+
+  // Setup platform-specific features
+  setupPlatformFeatures()
+
+  // Handle jump list arguments from Windows taskbar
+  handleJumpListArgs()
+
   // Create native menu
   createMenu()
 
@@ -376,6 +887,178 @@ ipcMain.handle('reload-window', () => {
   }
 })
 
+// Enhanced file system operations
+ipcMain.handle('read-file', async (_, filePath: string) => {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8')
+    return { success: true, content }
+  } catch (error) {
+    console.error('Failed to read file:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+})
+
+ipcMain.handle('write-file', async (_, filePath: string, content: string) => {
+  try {
+    fs.writeFileSync(filePath, content, 'utf8')
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to write file:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+})
+
+ipcMain.handle('select-directory', async () => {
+  if (!mainWindow) return { canceled: true, filePaths: [] }
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  })
+  return result
+})
+
+// System integration
+ipcMain.handle('open-external', async (_, url: string) => {
+  await shell.openExternal(url)
+})
+
+ipcMain.handle('show-item-in-folder', async (_, fullPath: string) => {
+  shell.showItemInFolder(fullPath)
+})
+
+ipcMain.handle('set-always-on-top', async (_, alwaysOnTop: boolean) => {
+  const focusedWindow = BrowserWindow.getFocusedWindow()
+  if (focusedWindow) {
+    focusedWindow.setAlwaysOnTop(alwaysOnTop)
+  }
+  return { success: true }
+})
+
+// Handle file drops
+ipcMain.handle('handle-file-drop', async (event, filePaths: string[]) => {
+  // Relay the file drop event to the renderer process
+  event.sender.send('file-drop', filePaths)
+  return { success: true }
+})
+
+// Clipboard integration
+ipcMain.handle('clipboard-read-text', () => {
+  return clipboard.readText()
+})
+
+ipcMain.handle('clipboard-write-text', (_, text: string) => {
+  clipboard.writeText(text)
+  return { success: true }
+})
+
+ipcMain.handle('clipboard-read-html', () => {
+  return clipboard.readHTML()
+})
+
+ipcMain.handle('clipboard-write-html', (_, html: string, text?: string) => {
+  clipboard.writeHTML(html)
+  if (text) {
+    clipboard.writeText(text)
+  }
+  return { success: true }
+})
+
+ipcMain.handle('clipboard-read-image', () => {
+  const image = clipboard.readImage()
+  if (image.isEmpty()) {
+    return null
+  }
+  return {
+    buffer: image.toPNG(),
+    size: image.getSize(),
+  }
+})
+
+ipcMain.handle('clipboard-has-format', (_, format: string) => {
+  const formats = clipboard.availableFormats()
+  return formats.includes(format)
+})
+
+ipcMain.handle('clipboard-available-formats', () => {
+  return clipboard.availableFormats()
+})
+
+// Crash reporting
+ipcMain.handle('crash-report', async (_, crashInfo: any) => {
+  console.error('Renderer crash report:', crashInfo)
+
+  const crashLogPath = path.join(app.getPath('userData'), 'crash.log')
+  const crashData = {
+    timestamp: new Date().toISOString(),
+    type: 'rendererCrash',
+    ...crashInfo,
+    platform: process.platform,
+    version: app.getVersion(),
+  }
+
+  try {
+    fs.appendFileSync(crashLogPath, `${JSON.stringify(crashData)  }\n`)
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to write crash log:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+})
+
+ipcMain.handle('get-crash-logs', async () => {
+  const crashLogPath = path.join(app.getPath('userData'), 'crash.log')
+
+  try {
+    if (fs.existsSync(crashLogPath)) {
+      const logs = fs.readFileSync(crashLogPath, 'utf8')
+      const lines = logs
+        .trim()
+        .split('\n')
+        .filter((line) => line.trim())
+      const crashReports = lines.map((line) => {
+        try {
+          return JSON.parse(line)
+        } catch {
+          return { raw: line }
+        }
+      })
+      return { success: true, logs: crashReports }
+    }
+    return { success: true, logs: [] }
+  } catch (error) {
+    console.error('Failed to read crash logs:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+})
+
+ipcMain.handle('clear-crash-logs', async () => {
+  const crashLogPath = path.join(app.getPath('userData'), 'crash.log')
+
+  try {
+    if (fs.existsSync(crashLogPath)) {
+      fs.unlinkSync(crashLogPath)
+    }
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to clear crash logs:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+})
+
 // Export functionality handlers
 ipcMain.handle('export-note', async (_, noteData, format, _options = {}) => {
   if (!mainWindow) return { success: false, error: 'No window available' }
@@ -435,6 +1118,20 @@ ipcMain.handle('export-note', async (_, noteData, format, _options = {}) => {
     }
   } catch (error) {
     console.error('Export failed:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+})
+
+// Platform-specific IPC handlers
+ipcMain.handle('update-recent-document', async (_, filePath: string) => {
+  try {
+    updateRecentDocument(filePath)
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to update recent document:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : String(error),
@@ -863,6 +1560,13 @@ function createQuickNoteWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      webSecurity: true,
+      // Enhanced security with sandboxing enabled
+      sandbox: true, // Enable sandboxing for better security
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
+      enableBlinkFeatures: '', // Disable experimental features
+      disableBlinkFeatures: 'Auxclick', // Disable potentially dangerous features
     },
   })
 
