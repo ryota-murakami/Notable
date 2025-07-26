@@ -1,7 +1,7 @@
-import { configs } from '@notable/eslint-config'
+import baseConfig from '../configs/eslint-config/index.js'
 
 export default [
-  ...configs.node,
+  ...baseConfig,
   {
     files: ['src/**/*.ts'],
     rules: {
