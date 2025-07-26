@@ -203,7 +203,7 @@ jobs:
           # Delete existing AVD if it exists
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name test_avd || true
           # Create AVD with simpler configuration that works reliably in CI
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi default/x86 --package "system-images;android-29;default;x86" --device "Nexus_5X"
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi default/x86 --package "system-images;android-29;default;x86"
           # List AVDs to verify creation
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
           # Verify AVD files exist
