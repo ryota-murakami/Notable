@@ -74,7 +74,6 @@ export default [
         },
       ],
       'no-unused-vars': 'off',
-      'react-hooks/rules-of-hooks': 'warn',
       'jsx-a11y/click-events-have-key-events': 'warn',
       'jsx-a11y/no-redundant-roles': 'warn',
       'jsx-a11y/label-has-associated-control': 'warn',
