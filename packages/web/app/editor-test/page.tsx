@@ -1,6 +1,7 @@
 'use client'
 
 import { BasicEditor } from '@/components/editor/basic-editor'
+import { ExportButton } from '@/components/export/export-button'
 import { useState } from 'react'
 import { Descendant } from 'slate'
 
@@ -12,9 +13,22 @@ export default function EditorTestPage() {
     },
   ])
 
+  const metadata = {
+    title: 'Test Note',
+    author: 'Notable User',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    tags: ['test', 'demo'],
+    description:
+      'This is a test note demonstrating the rich text editor and export functionality.',
+  }
+
   return (
     <div className='container mx-auto py-10'>
-      <h1 className='text-3xl font-bold mb-6'>Rich Text Editor Test</h1>
+      <div className='flex justify-between items-center mb-6'>
+        <h1 className='text-3xl font-bold'>Rich Text Editor Test</h1>
+        <ExportButton content={value} metadata={metadata} />
+      </div>
 
       <BasicEditor
         initialValue={value}
