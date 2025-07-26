@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { subscribeWithSelector } from 'zustand/middleware'
-import { NavigationStore, PlatformAdapter } from './types'
+import type { NavigationStore, PlatformAdapter } from './types'
 import { getRouteById } from './routes'
 
 interface NavigationStoreState extends NavigationStore {
@@ -297,17 +297,18 @@ export const initializeNavigation = (adapter: PlatformAdapter) => {
 
   // Initialize with current route
   const currentRouteInfo = adapter.getCurrentRoute()
-  if (currentRouteInfo.route) {
+  const currentRoute = currentRouteInfo.route
+  if (currentRoute !== null) {
     useNavigationStore.setState((state) => {
       const historyEntry = {
-        route: currentRouteInfo.route!,
+        route: currentRoute,
         params: { ...currentRouteInfo.params },
         query: { ...currentRouteInfo.query },
       }
 
       state.history = [historyEntry]
       state.historyIndex = 0
-      state.currentRoute = currentRouteInfo.route
+      state.currentRoute = currentRoute
       state.currentParams = { ...currentRouteInfo.params }
       state.currentQuery = { ...currentRouteInfo.query }
     })

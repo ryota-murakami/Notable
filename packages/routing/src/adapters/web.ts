@@ -1,5 +1,19 @@
-import { PlatformAdapter, RouteDefinition, RouteChangeCallback } from '../types'
+import type {
+  PlatformAdapter,
+  RouteChangeCallback,
+  RouteDefinition,
+} from '../types'
 import { ROUTES } from '../routes'
+
+// Type definition for Next.js router
+interface NextJSRouter {
+  push: (url: string) => void
+  replace: (url: string) => void
+  back: () => void
+  forward: () => void
+  refresh: () => void
+  prefetch: (href: string) => void
+}
 
 /**
  * Web Platform Adapter for Next.js App Router
@@ -8,7 +22,7 @@ import { ROUTES } from '../routes'
 export class WebAdapter implements PlatformAdapter {
   platform = 'web' as const
   private routeChangeCallbacks: Set<RouteChangeCallback> = new Set()
-  private router: any = null
+  private router: NextJSRouter | null = null
   private pathname: string = '/'
   private searchParams: URLSearchParams = new URLSearchParams()
 
@@ -25,7 +39,7 @@ export class WebAdapter implements PlatformAdapter {
    * Set the Next.js router instance
    * This should be called from a Next.js component with useRouter()
    */
-  setRouter(router: any) {
+  setRouter(router: NextJSRouter) {
     this.router = router
   }
 
@@ -68,7 +82,7 @@ export class WebAdapter implements PlatformAdapter {
 
   getCurrentRoute() {
     const result = this.pathToRoute(
-      this.pathname + '?' + this.searchParams.toString(),
+      `${this.pathname}?${this.searchParams.toString()}`,
     )
     return result || { route: null, params: {}, query: {} }
   }
@@ -95,7 +109,7 @@ export class WebAdapter implements PlatformAdapter {
     })
     const queryString = queryParams.toString()
     if (queryString) {
-      path += '?' + queryString
+      path = `${path}?${queryString}`
     }
 
     return path
@@ -146,9 +160,14 @@ export class WebAdapter implements PlatformAdapter {
 
   private notifyRouteChange() {
     const currentRoute = this.getCurrentRoute()
-    if (currentRoute.route) {
+    const currentRouteDefinition = currentRoute.route
+    if (currentRouteDefinition !== null) {
       this.routeChangeCallbacks.forEach((callback) => {
-        callback(currentRoute.route!, currentRoute.params, currentRoute.query)
+        callback(
+          currentRouteDefinition,
+          currentRoute.params,
+          currentRoute.query,
+        )
       })
     }
   }

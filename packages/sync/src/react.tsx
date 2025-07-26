@@ -360,19 +360,25 @@ export const useSyncOperations = () => {
       setIsSyncing(false)
     }
 
-    const handleSyncError = (data: any) => {
+    const handleSyncError = (data: { error?: { message?: string } }) => {
       setIsSyncing(false)
       setLastError(data?.error?.message || 'Sync error occurred')
     }
 
-    syncService.on('sync-start', handleSyncStart)
-    syncService.on('sync-complete', handleSyncComplete)
-    syncService.on('sync-error', handleSyncError)
+    syncService.on('sync-start', handleSyncStart as (data?: unknown) => void)
+    syncService.on(
+      'sync-complete',
+      handleSyncComplete as (data?: unknown) => void,
+    )
+    syncService.on('sync-error', handleSyncError as (data?: unknown) => void)
 
     return () => {
-      syncService.off('sync-start', handleSyncStart)
-      syncService.off('sync-complete', handleSyncComplete)
-      syncService.off('sync-error', handleSyncError)
+      syncService.off('sync-start', handleSyncStart as (data?: unknown) => void)
+      syncService.off(
+        'sync-complete',
+        handleSyncComplete as (data?: unknown) => void,
+      )
+      syncService.off('sync-error', handleSyncError as (data?: unknown) => void)
     }
   }, [syncService])
 
@@ -388,7 +394,7 @@ export const useSyncOperations = () => {
 /**
  * Hook for listening to real-time changes
  */
-export const useRealtimeChanges = (callback: (changes: any[]) => void) => {
+export const useRealtimeChanges = (callback: (changes: unknown[]) => void) => {
   const { syncService, isInitialized } = useSyncService()
 
   useEffect(() => {

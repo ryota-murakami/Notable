@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
-import { themes, getThemeCSSVariables, type ThemeName } from './theme-config'
+import { getThemeCSSVariables, type ThemeName, themes } from './theme-config'
 
 interface ThemeProviderProps {
   children: React.ReactNode

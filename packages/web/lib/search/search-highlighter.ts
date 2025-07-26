@@ -1,6 +1,6 @@
 // Search Result Highlighting System
 
-import { SearchMatch } from './types'
+import { type SearchMatch } from './types'
 
 export interface HighlightOptions {
   className?: string
@@ -233,10 +233,10 @@ export class SearchHighlighter {
     const lastSpace = truncated.lastIndexOf(' ')
 
     if (lastSpace > maxLength * 0.7) {
-      return truncated.substring(0, lastSpace) + '...'
+      return `${truncated.substring(0, lastSpace)}...`
     }
 
-    return truncated + '...'
+    return `${truncated}...`
   }
 
   private escapeHTML(text: string): string {
@@ -350,7 +350,7 @@ export const HighlightUtils = {
   ): string => {
     if (!searchTerm.trim()) {
       return text.length > maxLength
-        ? text.substring(0, maxLength) + '...'
+        ? `${text.substring(0, maxLength)}...`
         : text
     }
 
@@ -360,7 +360,7 @@ export const HighlightUtils = {
 
     if (matchIndex === -1) {
       return text.length > maxLength
-        ? text.substring(0, maxLength) + '...'
+        ? `${text.substring(0, maxLength)}...`
         : text
     }
 

@@ -1,15 +1,15 @@
 // React Hook for Advanced Search Functionality
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SearchEngine } from './search-engine'
 import { SearchFilters } from './search-filters'
 import {
-  SearchQuery,
-  SearchResult,
-  SearchableNote,
-  SearchOptions,
-  SearchFilterSet,
-  SearchStats,
+  type SearchableNote,
+  type SearchFilterSet,
+  type SearchOptions,
+  type SearchQuery,
+  type SearchResult,
+  type SearchStats,
 } from './types'
 
 export interface UseSearchOptions {
@@ -46,7 +46,7 @@ export function useSearch(
   const {
     debounceMs = 300,
     maxResults = 100,
-    enableHistory = true,
+    enableHistory: _enableHistory = true,
     enableAnalytics = true,
     persistFilters = true,
   } = options

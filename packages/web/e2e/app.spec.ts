@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Notable Web App E2E Infrastructure', () => {
   test('Playwright can connect to Next.js dev server', async ({ page }) => {

@@ -18,7 +18,7 @@ function getRecentDeployments(environment: string): any[] {
     const deployments = JSON.parse(output)
 
     return deployments.filter((d: any) => d.target === environment).slice(0, 10) // Last 10 deployments
-  } catch (error) {
+  } catch (_error) {
     console.error(chalk.red('Failed to fetch deployments'))
     return []
   }
@@ -26,7 +26,7 @@ function getRecentDeployments(environment: string): any[] {
 
 // Execute rollback
 async function executeRollback(config: RollbackConfig): Promise<void> {
-  console.log(chalk.cyan('\n⏮️  Initiating rollback...\n'))
+  console.info(chalk.cyan('\n⏮️  Initiating rollback...\n'))
 
   try {
     if (config.deploymentId) {
@@ -58,7 +58,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
       )
     }
 
-    console.log(chalk.green('\n✅ Rollback completed successfully!\n'))
+    console.info(chalk.green('\n✅ Rollback completed successfully!\n'))
   } catch (error) {
     console.error(chalk.red('\n❌ Rollback failed!\n'))
     throw error
@@ -67,7 +67,7 @@ async function executeRollback(config: RollbackConfig): Promise<void> {
 
 // Health check after rollback
 async function runHealthCheck(environment: string): Promise<boolean> {
-  console.log(chalk.cyan('\n🏥 Running health check...\n'))
+  console.info(chalk.cyan('\n🏥 Running health check...\n'))
 
   const healthCheckUrl =
     environment === 'production'
@@ -76,10 +76,10 @@ async function runHealthCheck(environment: string): Promise<boolean> {
 
   try {
     execSync(`curl -f ${healthCheckUrl}/api/health`, { stdio: 'inherit' })
-    console.log(chalk.green('✅ Health check passed!'))
+    console.info(chalk.green('✅ Health check passed!'))
     return true
   } catch {
-    console.log(chalk.red('❌ Health check failed!'))
+    console.info(chalk.red('❌ Health check failed!'))
     return false
   }
 }
@@ -95,8 +95,8 @@ ${config.version ? `Version: ${config.version}` : ''}
 Time: ${new Date().toISOString()}
   `
 
-  console.log(chalk.cyan('\n📢 Rollback notification:\n'))
-  console.log(message)
+  console.info(chalk.cyan('\n📢 Rollback notification:\n'))
+  console.info(message)
 
   // In production, send to Slack/email
   if (config.environment === 'production') {
@@ -106,7 +106,7 @@ Time: ${new Date().toISOString()}
 
 // Main rollback flow
 async function rollback(): Promise<void> {
-  console.log(chalk.bold.cyan('\n⏮️  Notable Rollback Tool\n'))
+  console.info(chalk.bold.cyan('\n⏮️  Notable Rollback Tool\n'))
 
   // Get environment
   const { environment } = await prompts({
@@ -123,7 +123,7 @@ async function rollback(): Promise<void> {
   const deployments = getRecentDeployments(environment)
 
   if (deployments.length === 0) {
-    console.log(chalk.red('No recent deployments found'))
+    console.info(chalk.red('No recent deployments found'))
     return
   }
 
@@ -139,13 +139,13 @@ async function rollback(): Promise<void> {
     ],
   })
 
-  let config: RollbackConfig = {
+  const config: RollbackConfig = {
     environment,
     skipHealthCheck: false,
   }
 
   switch (method) {
-    case 'recent':
+    case 'recent': {
       const { deployment } = await prompts({
         type: 'select',
         name: 'deployment',
@@ -157,8 +157,9 @@ async function rollback(): Promise<void> {
       })
       config.deploymentId = deployment
       break
+    }
 
-    case 'id':
+    case 'id': {
       const { deploymentId } = await prompts({
         type: 'text',
         name: 'deploymentId',
@@ -166,8 +167,9 @@ async function rollback(): Promise<void> {
       })
       config.deploymentId = deploymentId
       break
+    }
 
-    case 'version':
+    case 'version': {
       const { version } = await prompts({
         type: 'text',
         name: 'version',
@@ -175,6 +177,7 @@ async function rollback(): Promise<void> {
       })
       config.version = version
       break
+    }
   }
 
   // Confirm rollback
@@ -186,7 +189,7 @@ async function rollback(): Promise<void> {
   })
 
   if (!confirm) {
-    console.log(chalk.yellow('\n⚠️  Rollback cancelled\n'))
+    console.info(chalk.yellow('\n⚠️  Rollback cancelled\n'))
     return
   }
 
@@ -213,7 +216,7 @@ async function rollback(): Promise<void> {
     notifyRollback(config, healthCheckPassed)
 
     if (!healthCheckPassed && !config.skipHealthCheck) {
-      console.log(
+      console.info(
         chalk.yellow(
           '\n⚠️  Rollback completed but health check failed. Please investigate.\n'
         )

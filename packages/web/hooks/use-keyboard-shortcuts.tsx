@@ -1,8 +1,8 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
-  KeyboardShortcut,
-  shortcutManager,
   defaultShortcuts,
+  type KeyboardShortcut,
+  shortcutManager,
 } from '@/lib/keyboard-shortcuts'
 
 interface UseKeyboardShortcutsOptions {

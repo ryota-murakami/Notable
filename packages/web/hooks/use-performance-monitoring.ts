@@ -7,7 +7,7 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { queryKeys, queryConfigs } from '@/lib/react-query'
+import { queryConfigs, queryKeys } from '@/lib/react-query'
 
 // Web Vitals tracking
 interface WebVitalsMetrics {

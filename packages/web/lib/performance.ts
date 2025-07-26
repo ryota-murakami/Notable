@@ -3,7 +3,7 @@
  * Tracks application performance metrics and provides optimization insights
  */
 
-import { analytics, Analytics } from './analytics'
+import { analytics, type Analytics } from './analytics'
 
 export interface PerformanceMetric {
   name: string

@@ -20,7 +20,7 @@ function generateSecret(length: number = 32): string {
   return crypto.randomBytes(length).toString('base64url')
 }
 
-function generateApiKey(): string {
+function _generateApiKey(): string {
   const prefix = 'sk_prod'
   const secret = crypto.randomBytes(24).toString('base64url')
   return `${prefix}_${secret}`

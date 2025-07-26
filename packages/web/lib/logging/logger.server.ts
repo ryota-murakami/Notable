@@ -23,13 +23,13 @@ const createSimpleServerLogger = (): Logger => {
     // Use appropriate console method
     switch (level) {
       case 'error':
-        console.error(logEntry) // eslint-disable-line no-console
+        console.error(logEntry)
         break
       case 'warn':
-        console.warn(logEntry) // eslint-disable-line no-console
+        console.warn(logEntry)
         break
       default:
-        console.log(logEntry) // eslint-disable-line no-console
+        console.log(logEntry)
     }
   }
 

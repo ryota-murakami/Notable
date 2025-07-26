@@ -6,11 +6,11 @@ import { Button } from '../../design-system/components/button'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  FolderIcon,
   FileTextIcon,
+  FolderIcon,
+  PlusIcon,
   SearchIcon,
   SettingsIcon,
-  PlusIcon,
 } from 'lucide-react'
 
 interface SidebarProps {

@@ -127,7 +127,7 @@ export function useNavigation() {
             router.push(path)
           }
         }
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: 'Invalid link',
           description: 'The link you tried to open is invalid.',

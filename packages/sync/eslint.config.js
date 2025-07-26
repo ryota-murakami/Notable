@@ -37,4 +37,14 @@ export default [
       'no-control-regex': 'warn',
     },
   },
+  // Relaxed rules for mock/storage files
+  {
+    files: ['src/storage/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      'require-await': 'off',
+      'no-return-await': 'off',
+    },
+  },
 ]

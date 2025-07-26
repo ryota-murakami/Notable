@@ -1,8 +1,8 @@
 import { createClient } from '@/utils/supabase/client'
 import type {
   NoteVersion,
-  VersionHistoryResponse,
   VersionComparisonResult,
+  VersionHistoryResponse,
   VersionRestoreOptions,
 } from '@/types/version'
 import { toast } from '@/hooks/use-toast'
@@ -127,11 +127,14 @@ export class VersionHistory {
         throw new Error('User not authenticated')
       }
 
-      const { data, error } = await this.supabase.rpc('restore_note_version', {
-        p_note_id: options.noteId,
-        p_version_number: options.versionNumber,
-        p_user_id: userData.user.id,
-      })
+      const { data: _data, error } = await this.supabase.rpc(
+        'restore_note_version',
+        {
+          p_note_id: options.noteId,
+          p_version_number: options.versionNumber,
+          p_user_id: userData.user.id,
+        }
+      )
 
       if (error) {
         console.error('Failed to restore version:', error)

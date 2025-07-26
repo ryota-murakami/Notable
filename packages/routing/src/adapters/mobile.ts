@@ -1,5 +1,17 @@
-import { PlatformAdapter, RouteDefinition, RouteChangeCallback } from '../types'
+import type {
+  PlatformAdapter,
+  RouteChangeCallback,
+  RouteDefinition,
+} from '../types'
 import { ROUTES } from '../routes'
+
+// Type definition for Expo Router
+interface ExpoRouter {
+  push: (path: string) => void
+  replace: (path: string) => void
+  back: () => void
+  setParams: (params: Record<string, string>) => void
+}
 
 /**
  * Mobile Platform Adapter for Expo Router
@@ -8,7 +20,7 @@ import { ROUTES } from '../routes'
 export class MobileAdapter implements PlatformAdapter {
   platform = 'mobile' as const
   private routeChangeCallbacks: Set<RouteChangeCallback> = new Set()
-  private router: any = null
+  private router: ExpoRouter | null = null
   private pathname: string = '/'
   private params: Record<string, string> = {}
 
@@ -20,7 +32,7 @@ export class MobileAdapter implements PlatformAdapter {
    * Set the Expo Router instance
    * This should be called from a React Native component with useRouter()
    */
-  setRouter(router: any) {
+  setRouter(router: ExpoRouter) {
     this.router = router
   }
 
@@ -87,7 +99,7 @@ export class MobileAdapter implements PlatformAdapter {
       })
       const queryString = queryParams.toString()
       if (queryString) {
-        path += '?' + queryString
+        path = `${path}?${queryString}`
       }
     }
 
@@ -129,7 +141,7 @@ export class MobileAdapter implements PlatformAdapter {
    */
   private convertWebPathToMobilePath(webPath: string): string {
     // Convert dynamic segments
-    let mobilePath = webPath.replace(/:([^/]+)/g, '[$1]')
+    const mobilePath = webPath.replace(/:([^/]+)/g, '[$1]')
 
     // Handle special mobile route patterns
     if (mobilePath === '/auth') {
@@ -156,7 +168,7 @@ export class MobileAdapter implements PlatformAdapter {
    */
   private convertMobilePathToWebPath(mobilePath: string): string {
     // Convert dynamic segments back
-    let webPath = mobilePath.replace(/\[([^\]]+)\]/g, ':$1')
+    const webPath = mobilePath.replace(/\[([^\]]+)\]/g, ':$1')
 
     // Handle special mobile route patterns
     if (webPath === '/(auth)') {
@@ -207,9 +219,14 @@ export class MobileAdapter implements PlatformAdapter {
 
   private notifyRouteChange() {
     const currentRoute = this.getCurrentRoute()
-    if (currentRoute.route) {
+    const currentRouteDefinition = currentRoute.route
+    if (currentRouteDefinition !== null) {
       this.routeChangeCallbacks.forEach((callback) => {
-        callback(currentRoute.route!, currentRoute.params, currentRoute.query)
+        callback(
+          currentRouteDefinition,
+          currentRoute.params,
+          currentRoute.query,
+        )
       })
     }
   }
@@ -238,7 +255,7 @@ export class MobileAdapter implements PlatformAdapter {
 
     const webPath = this.convertMobilePathToWebPath(this.pathname)
     const query = new URLSearchParams(currentRoute.query).toString()
-    const fullPath = webPath + (query ? '?' + query : '')
+    const fullPath = `${webPath}${query ? `?${query}` : ''}`
 
     return new URL(fullPath, baseUrl).toString()
   }

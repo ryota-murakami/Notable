@@ -1,7 +1,7 @@
 // React Hook for Search History Management
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { SearchHistoryEntry, SearchFilterSet } from './types'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { type SearchFilterSet, type SearchHistoryEntry } from './types'
 
 export interface UseSearchHistoryOptions {
   maxEntries?: number
@@ -225,7 +225,7 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}) {
 
       // Convert to suggestions and sort by relevance
       const suggestions: SearchSuggestion[] = Array.from(queryStats.entries())
-        .map(([queryText, stats]) => ({
+        .map(([_queryText, stats]) => ({
           query: stats.entries[0].query, // Use original casing from most recent entry
           count: stats.count,
           lastUsed: stats.lastUsed,

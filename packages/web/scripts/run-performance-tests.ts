@@ -8,6 +8,7 @@ import { dbOptimizer } from '../lib/db-optimization'
 import { cdnManager } from '../lib/cdn-config'
 import * as fs from 'fs/promises'
 import * as path from 'path'
+import * as os from 'os'
 
 interface PerformanceReport {
   timestamp: string
@@ -33,17 +34,17 @@ interface PerformanceReport {
 }
 
 async function generatePerformanceReport(): Promise<PerformanceReport> {
-  console.log('🚀 Starting Notable Performance Analysis...\n')
+  console.info('🚀 Starting Notable Performance Analysis...\n')
 
   const report: PerformanceReport = {
     timestamp: new Date().toISOString(),
     environment: {
       nodeVersion: process.version,
       platform: process.platform,
-      cpus: require('os').cpus().length,
+      cpus: os.cpus().length,
       memory: {
-        total: require('os').totalmem() / 1024 / 1024 / 1024, // GB
-        free: require('os').freemem() / 1024 / 1024 / 1024, // GB
+        total: os.totalmem() / 1024 / 1024 / 1024, // GB
+        free: os.freemem() / 1024 / 1024 / 1024, // GB
       },
     },
     benchmarks: {},
@@ -59,34 +60,34 @@ async function generatePerformanceReport(): Promise<PerformanceReport> {
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     ) {
-      console.log('📊 Running database operation benchmarks...\n')
+      console.info('📊 Running database operation benchmarks...\n')
       report.benchmarks.noteOperations = await runNoteBenchmarks()
     } else {
-      console.log(
+      console.info(
         '⚠️  Skipping database benchmarks (Supabase credentials not found)\n'
       )
     }
 
     // 2. Run component rendering benchmarks
-    console.log('🎨 Running component rendering benchmarks...\n')
+    console.info('🎨 Running component rendering benchmarks...\n')
     report.benchmarks.componentRendering = await runComponentBenchmarks()
 
     // 3. Collect memory profile
-    console.log('💾 Analyzing memory usage...\n')
+    console.info('💾 Analyzing memory usage...\n')
     const memoryReport = memoryMonitor.getMemoryReport()
     report.benchmarks.memoryProfile = memoryReport
 
     // 4. Collect database analytics
-    console.log('🗄️  Analyzing database performance...\n')
+    console.info('🗄️  Analyzing database performance...\n')
     report.benchmarks.databaseAnalytics = dbOptimizer.getQueryAnalytics()
 
     // 5. Collect performance monitor metrics
-    console.log('📈 Collecting performance metrics...\n')
+    console.info('📈 Collecting performance metrics...\n')
     report.benchmarks.performanceMetrics = performanceMonitor.generateReport()
 
     // 6. Test CDN performance (if configured)
     if (process.env.NEXT_PUBLIC_CDN_ENDPOINT) {
-      console.log('🌐 Testing CDN performance...\n')
+      console.info('🌐 Testing CDN performance...\n')
       try {
         const cdnTest =
           await cdnManager.measureCDNPerformance('/test-asset.png')
@@ -96,7 +97,7 @@ async function generatePerformanceReport(): Promise<PerformanceReport> {
           config: cdnManager.getConfig(),
         }
       } catch (error) {
-        console.log(
+        console.info(
           '⚠️  CDN performance test failed:',
           error instanceof Error ? error.message : String(error)
         )
@@ -288,9 +289,9 @@ async function saveReport(report: PerformanceReport) {
   const htmlPath = path.join(reportsDir, `performance-report-${timestamp}.html`)
   await fs.writeFile(htmlPath, htmlReport)
 
-  console.log(`\n📄 Reports saved:`)
-  console.log(`   - JSON: ${jsonPath}`)
-  console.log(`   - HTML: ${htmlPath}`)
+  console.info(`\n📄 Reports saved:`)
+  console.info(`   - JSON: ${jsonPath}`)
+  console.info(`   - HTML: ${htmlPath}`)
 }
 
 function generateHTMLReport(report: PerformanceReport): string {
@@ -531,12 +532,12 @@ async function main() {
   try {
     const report = await generatePerformanceReport()
 
-    console.log('\n\n🎉 Performance Analysis Complete!\n')
-    console.log('📊 Summary:')
-    console.log('─'.repeat(50))
+    console.info('\n\n🎉 Performance Analysis Complete!\n')
+    console.info('📊 Summary:')
+    console.info('─'.repeat(50))
 
     report.recommendations.forEach((rec) => {
-      console.log(`  ${rec}`)
+      console.info(`  ${rec}`)
     })
 
     await saveReport(report)
@@ -549,7 +550,7 @@ async function main() {
 }
 
 // Run if executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
 }
 

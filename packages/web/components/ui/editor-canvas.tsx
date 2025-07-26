@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 import { cn } from '../../lib/utils'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
+  BookOpenIcon,
+  EditIcon,
+  EyeIcon,
   MaximizeIcon,
   MinimizeIcon,
-  EyeIcon,
-  EditIcon,
-  BookOpenIcon,
   TypeIcon,
 } from 'lucide-react'
 import { Button } from '../../design-system/components/button'
@@ -282,7 +282,6 @@ export function EditorCanvas({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className='fixed inset-0 bg-background/95 backdrop-blur-sm z-10 pointer-events-none'
-            style={{ marginTop: 0, marginLeft: 0 }}
           />
         )}
       </AnimatePresence>

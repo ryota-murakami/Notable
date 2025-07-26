@@ -1,20 +1,57 @@
-import { PlatformAdapter, RouteDefinition, RouteChangeCallback } from '../types'
+import type {
+  PlatformAdapter,
+  RouteChangeCallback,
+  RouteDefinition,
+} from '../types'
 import { ROUTES } from '../routes'
+
+// Type definitions for Electron API
+interface ElectronAPI {
+  onMenuNavigation?: (
+    callback: (data: {
+      routeId: string
+      params?: Record<string, string>
+    }) => void,
+  ) => void
+  onRouteChange?: (callback: (data: { path: string }) => void) => void
+  onDeepLink?: (callback: (url: string) => void) => void
+  setAlwaysOnTop?: (alwaysOnTop: boolean) => void
+  createWindow?: (config: unknown) => Promise<void>
+  sendRouteChange?: (data: {
+    route: string
+    params: Record<string, string>
+    query: Record<string, string>
+    path: string
+  }) => void
+}
+
+// Type definition for web adapter
+interface WebAdapter {
+  navigate?: (
+    route: RouteDefinition,
+    params?: Record<string, string>,
+    query?: Record<string, string>,
+  ) => void
+  getCurrentRoute?: () => {
+    route: RouteDefinition | null
+    params: Record<string, string>
+    query: Record<string, string>
+  }
+  pathToRoute?: (path: string) => {
+    route: RouteDefinition | null
+    params: Record<string, string>
+    query: Record<string, string>
+  } | null
+  onRouteChange?: (callback: RouteChangeCallback) => () => void
+  router?: {
+    push: (path: string) => void
+  }
+}
 
 // Extend window interface for Electron API
 declare global {
   interface Window {
-    electronAPI?: {
-      onMenuNavigation?: (
-        callback: (data: {
-          routeId: string
-          params?: Record<string, string>
-        }) => void,
-      ) => void
-      onRouteChange?: (callback: (data: { path: string }) => void) => void
-      onDeepLink?: (callback: (url: string) => void) => void
-      setAlwaysOnTop?: (alwaysOnTop: boolean) => void
-    }
+    electronAPI?: ElectronAPI
   }
 }
 
@@ -25,10 +62,10 @@ declare global {
 export class DesktopAdapter implements PlatformAdapter {
   platform = 'desktop' as const
   private routeChangeCallbacks: Set<RouteChangeCallback> = new Set()
-  private electronAPI: any = null
+  private electronAPI: ElectronAPI | null = null
   private pathname: string = '/'
   private searchParams: URLSearchParams = new URLSearchParams()
-  private webAdapter: any = null
+  private webAdapter: WebAdapter | null = null
 
   constructor() {
     // Initialize with current browser state (Electron uses web content)
@@ -44,7 +81,7 @@ export class DesktopAdapter implements PlatformAdapter {
    * Set the Electron API instance
    * This should be available via window.electronAPI in the renderer process
    */
-  setElectronAPI(electronAPI: any) {
+  setElectronAPI(electronAPI: ElectronAPI) {
     this.electronAPI = electronAPI
   }
 
@@ -52,11 +89,11 @@ export class DesktopAdapter implements PlatformAdapter {
    * Set the web adapter for delegation
    * Desktop routing often delegates to web routing for the main content
    */
-  setWebAdapter(webAdapter: any) {
+  setWebAdapter(webAdapter: WebAdapter) {
     this.webAdapter = webAdapter
 
     // Listen to web adapter route changes
-    if (webAdapter && webAdapter.onRouteChange) {
+    if (webAdapter?.onRouteChange) {
       webAdapter.onRouteChange(
         (
           route: RouteDefinition,
@@ -97,7 +134,7 @@ export class DesktopAdapter implements PlatformAdapter {
       this.createNewWindow(route, params, query)
     } else {
       // Use web navigation for main window content
-      if (this.webAdapter) {
+      if (this.webAdapter?.navigate) {
         this.webAdapter.navigate(route, params, query)
       } else {
         // Fallback to direct navigation
@@ -112,13 +149,13 @@ export class DesktopAdapter implements PlatformAdapter {
 
   getCurrentRoute() {
     // Delegate to web adapter if available
-    if (this.webAdapter) {
+    if (this.webAdapter?.getCurrentRoute) {
       return this.webAdapter.getCurrentRoute()
     }
 
     // Fallback to direct path parsing
     const result = this.pathToRoute(
-      this.pathname + '?' + this.searchParams.toString(),
+      `${this.pathname}?${this.searchParams.toString()}`,
     )
     return result || { route: null, params: {}, query: {} }
   }
@@ -141,7 +178,7 @@ export class DesktopAdapter implements PlatformAdapter {
     // Add query parameters
     const queryString = new URLSearchParams(query).toString()
     if (queryString) {
-      path += '?' + queryString
+      path = `${path}?${queryString}`
     }
 
     return path
@@ -149,7 +186,7 @@ export class DesktopAdapter implements PlatformAdapter {
 
   pathToRoute(path: string) {
     // Delegate to web adapter if available
-    if (this.webAdapter && this.webAdapter.pathToRoute) {
+    if (this.webAdapter?.pathToRoute) {
       return this.webAdapter.pathToRoute(path)
     }
 
@@ -195,7 +232,7 @@ export class DesktopAdapter implements PlatformAdapter {
 
     try {
       // Send IPC message to main process to create new window
-      await this.electronAPI.createWindow({
+      await this.electronAPI?.createWindow?.({
         url: this.routeToPath(route, params, query),
         ...windowConfig,
       })
@@ -220,7 +257,7 @@ export class DesktopAdapter implements PlatformAdapter {
     }
 
     // Send route change to main process for menu updates
-    if (this.electronAPI && this.electronAPI.sendRouteChange) {
+    if (this.electronAPI?.sendRouteChange) {
       this.electronAPI.sendRouteChange({
         route: route.id,
         params,
@@ -230,7 +267,7 @@ export class DesktopAdapter implements PlatformAdapter {
     }
 
     // Handle window-specific configurations
-    if (desktopConfig?.window && this.electronAPI) {
+    if (desktopConfig?.window && this.electronAPI?.setAlwaysOnTop) {
       // Update window properties if needed
       if (desktopConfig.window.properties?.alwaysOnTop !== undefined) {
         this.electronAPI.setAlwaysOnTop(
@@ -360,9 +397,14 @@ export class DesktopAdapter implements PlatformAdapter {
     } else {
       // Get current route info
       const currentRoute = this.getCurrentRoute()
-      if (currentRoute.route) {
+      const currentRouteDefinition = currentRoute.route
+      if (currentRouteDefinition !== null) {
         this.routeChangeCallbacks.forEach((callback) => {
-          callback(currentRoute.route!, currentRoute.params, currentRoute.query)
+          callback(
+            currentRouteDefinition,
+            currentRoute.params,
+            currentRoute.query,
+          )
         })
       }
     }
@@ -386,18 +428,35 @@ export class DesktopAdapter implements PlatformAdapter {
    * Get menu structure for main process
    */
   getMenuStructure() {
-    const menuItems: any[] = []
+    const menuItems: Array<{
+      id: string
+      label: string
+      path: string
+      accelerator?: string
+      enabled: boolean
+    }> = []
 
     Object.values(ROUTES).forEach((route) => {
       const desktopConfig = route.meta?.platforms?.desktop
       if (desktopConfig?.menu?.path) {
-        menuItems.push({
+        const menuItem: {
+          id: string
+          label: string
+          path: string
+          accelerator?: string
+          enabled: boolean
+        } = {
           id: route.id,
           label: route.name,
           path: desktopConfig.menu.path,
-          accelerator: desktopConfig.menu.accelerator,
           enabled: true,
-        })
+        }
+
+        if (desktopConfig.menu.accelerator) {
+          menuItem.accelerator = desktopConfig.menu.accelerator
+        }
+
+        menuItems.push(menuItem)
       }
     })
 
