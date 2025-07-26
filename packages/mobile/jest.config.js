@@ -1,6 +1,6 @@
 module.exports = {
   // Don't use any preset to avoid React Native setup issues
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   setupFiles: ['<rootDir>/jest.setup.base.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: [
