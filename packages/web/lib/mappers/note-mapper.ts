@@ -16,11 +16,19 @@ export function mapDatabaseNoteToNote(dbNote: DatabaseNote): Note {
         ? dbNote.content
         : JSON.stringify(dbNote.content),
     userId: dbNote.user_id,
-    createdAt: dbNote.created_at,
-    updatedAt: dbNote.updated_at,
-    parentId: dbNote.folder_id,
+    created_at: dbNote.created_at,
+    updated_at: dbNote.updated_at,
+    parent_id: dbNote.folder_id || undefined,
     tags: [], // Tags are fetched separately via joins in useSupabaseNotes hook
-    isFolder: false, // Notes are not folders
+    is_folder: false, // Notes are not folders
+    // CRDT metadata
+    version: 1,
+    device_id: 'web-device',
+    last_modified: dbNote.updated_at,
+    vector_clock: {},
+    synced_at: undefined,
+    local_changes: false,
+    deleted: false,
   }
 }
 
@@ -48,12 +56,20 @@ export function mapDatabaseNoteWithTagsToNote(
         ? dbNote.content
         : JSON.stringify(dbNote.content),
     userId: dbNote.user_id,
-    createdAt: dbNote.created_at,
-    updatedAt: dbNote.updated_at,
-    parentId: dbNote.folder_id,
+    created_at: dbNote.created_at,
+    updated_at: dbNote.updated_at,
+    parent_id: dbNote.folder_id || undefined,
     tags: dbNote.note_tags?.map((nt) => nt.tags.name).filter(Boolean) || [],
-    isFolder: false, // Notes are not folders
+    is_folder: false, // Notes are not folders
     isHidden: dbNote.is_hidden || false,
+    // CRDT metadata
+    version: 1,
+    device_id: 'web-device',
+    last_modified: dbNote.updated_at,
+    vector_clock: {},
+    synced_at: undefined,
+    local_changes: false,
+    deleted: false,
   }
 }
 
@@ -68,7 +84,7 @@ export function mapNoteToDatabase(
     title: note.title || '',
     content: note.content || '',
     user_id: userId,
-    folder_id: note.parentId || null,
+    folder_id: note.parent_id || null,
   }
 
   if (note.id) {
@@ -91,7 +107,7 @@ export function mapNoteToDbUpdate(
   if (note.id !== undefined) updateData.id = note.id
   if (note.title !== undefined) updateData.title = note.title
   if (note.content !== undefined) updateData.content = note.content
-  if (note.parentId !== undefined) updateData.folder_id = note.parentId
+  if (note.parent_id !== undefined) updateData.folder_id = note.parent_id
 
   return updateData
 }

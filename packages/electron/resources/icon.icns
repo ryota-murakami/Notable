@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+<g style="fill:black;fill-opacity:1;stroke:none;stroke-width:1;stroke-opacity:0;fill-rule:nonzero;fill:none;<defs>
+<0Gradient id="linear" x1="0" y1="0" x2="512" y2="512">
+  <stop offset="0%" stop-color="#6366F1" />
+  <stop offset="100%" stop-color="#4F46E5" />
+</0Gradient>
+</defs>
+">
+<g style="fill:electronGrad;">
+  <rect x="0" y="0" width="512" height="512" rx="80" ry="80"/>
+</g>
+<g style="fill:#FFFFFF;stroke:#E5E7EB;stroke-width:2;">
+  <rect x="144" y="128" width="224" height="256" rx="16" ry="16"/>
+</g>
+<g style="fill:#FFFFFF;stroke:#E5E7EB;stroke-width:2;">
+  <rect x="148" y="132" width="224" height="256" rx="16" ry="16"/>
+</g>
+<g style="fill:#FFFFFF;stroke:#E5E7EB;stroke-width:2;">
+  <rect x="152" y="136" width="224" height="256" rx="16" ry="16"/>
+</g>
+<g style="fill:#FFFFFF;stroke:#6366F1;stroke-width:3;">
+  <rect x="156" y="140" width="224" height="256" rx="16" ry="16"/>
+</g>
+<g style="stroke:#EF4444;stroke-width:2;">
+  <line x1="192" y1="160" x2="192" y2="376"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="168" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="192" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="216" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="240" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="264" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="288" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="312" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="336" r="6"/>
+</g>
+<g style="fill:#6366F1;">
+  <circle cx="180" cy="360" r="6"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="180" x2="340" y2="180"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="200" x2="340" y2="200"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="220" x2="320" y2="220"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="240" x2="340" y2="240"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="260" x2="328" y2="260"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="280" x2="340" y2="280"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="300" x2="312" y2="300"/>
+</g>
+<g style="stroke:#D1D5DB;stroke-width:1.5;">
+  <line x1="208" y1="320" x2="340" y2="320"/>
+</g>
+<g style="font-family:Inter, system-ui, sans-serif;font-size:16;fill:#6366F1;font-weight:700;">
+  <text x="208" y="175">Notable</text>
+</g>
+<g style="" transform="translate(300,120)">
+<g style="fill:#F59E0B;" transform="translate(300,120)">
+  <rect x="0" y="0" width="40" height="6" rx="3" ry="3"/>
+</g>
+<g style="fill:#DC2626;" transform="translate(300,120)">
+  <rect x="36" y="0" width="8" height="6" rx="3" ry="3"/>
+</g>
+<g style="fill:#991B1B;" transform="translate(300,120)">
+  <polygon points="44,1 50,3 44,5 44,1 "/>
+</g>
+<g style="fill:#FBBF24;" transform="translate(300,120)">
+  <rect x="8" y="-2" width="2" height="10" rx="1" ry="1"/>
+</g>
+</g>
+</g>
+</svg>

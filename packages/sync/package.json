@@ -2,7 +2,6 @@
   "name": "@notable/sync",
   "version": "1.0.0",
   "description": "Cross-device sync service for Notable using Supabase CRDT/Realtime",
-  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

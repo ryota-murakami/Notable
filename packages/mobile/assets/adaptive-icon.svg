@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <!-- This is the foreground layer for Android adaptive icon -->
+  <!-- Should work well with different background shapes -->
+  
+  <defs>
+    <linearGradient id="adaptiveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4F46E5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Central notebook - positioned to work with any mask shape -->
+  <g transform="translate(512, 512)">
+    <!-- Notebook background -->
+    <rect x="-160" y="-192" width="320" height="384" rx="24" fill="#FFFFFF" stroke="url(#adaptiveGrad)" stroke-width="6"/>
+    
+    <!-- Red margin line -->
+    <line x1="-112" y1="-168" x2="-112" y2="168" stroke="#EF4444" stroke-width="4"/>
+    
+    <!-- Spiral binding -->
+    <circle cx="-128" cy="-144" r="8" fill="url(#adaptiveGrad)"/>
+    <circle cx="-128" cy="-96" r="8" fill="url(#adaptiveGrad)"/>
+    <circle cx="-128" cy="-48" r="8" fill="url(#adaptiveGrad)"/>
+    <circle cx="-128" cy="0" r="8" fill="url(#adaptiveGrad)"/>
+    <circle cx="-128" cy="48" r="8" fill="url(#adaptiveGrad)"/>
+    <circle cx="-128" cy="96" r="8" fill="url(#adaptiveGrad)"/>
+    <circle cx="-128" cy="144" r="8" fill="url(#adaptiveGrad)"/>
+    
+    <!-- Note lines -->
+    <line x1="-80" y1="-120" x2="120" y2="-120" stroke="#D1D5DB" stroke-width="3"/>
+    <line x1="-80" y1="-80" x2="120" y2="-80" stroke="#D1D5DB" stroke-width="3"/>
+    <line x1="-80" y1="-40" x2="96" y2="-40" stroke="#D1D5DB" stroke-width="3"/>
+    <line x1="-80" y1="0" x2="120" y2="0" stroke="#D1D5DB" stroke-width="3"/>
+    <line x1="-80" y1="40" x2="104" y2="40" stroke="#D1D5DB" stroke-width="3"/>
+    <line x1="-80" y1="80" x2="120" y2="80" stroke="#D1D5DB" stroke-width="3"/>
+    
+    <!-- Large N letter as branding -->
+    <text x="-80" y="-85" font-family="Inter, system-ui, sans-serif" font-size="48" fill="url(#adaptiveGrad)" font-weight="800">N</text>
+    
+    <!-- Pen accent -->
+    <g transform="translate(80, -160)">
+      <rect x="0" y="0" width="60" height="8" rx="4" fill="#F59E0B"/>
+      <rect x="52" y="0" width="12" height="8" rx="4" fill="#DC2626"/>
+      <polygon points="64,1 72,4 64,7" fill="#991B1B"/>
+    </g>
+  </g>
+</svg>

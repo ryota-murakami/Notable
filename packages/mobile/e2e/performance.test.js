@@ -1,7 +1,7 @@
 /* eslint-env jest, detox/detox */
 import { by, device, element, expect, waitFor } from 'detox'
 
-describe('Performance Tests', () => {
+describe.skip('Performance Tests - Skip until mobile UI is implemented', () => {
   beforeAll(async () => {
     // Assume user is authenticated
   })

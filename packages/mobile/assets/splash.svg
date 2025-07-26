@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1284" height="2778" viewBox="0 0 1284 2778" fill="none">
+  <!-- Background matches app.json backgroundColor -->
+  <rect width="1284" height="2778" fill="#25292e"/>
+  
+  <defs>
+    <linearGradient id="splashGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4F46E5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Central content -->
+  <g transform="translate(642, 1389)">
+    <!-- Main logo circle -->
+    <circle cx="0" cy="-100" r="120" fill="url(#splashGrad)"/>
+    
+    <!-- Notebook inside -->
+    <rect x="-80" y="-180" width="160" height="160" rx="16" fill="#FFFFFF"/>
+    
+    <!-- Spiral binding -->
+    <circle cx="-48" cy="-160" r="6" fill="url(#splashGrad)"/>
+    <circle cx="-48" cy="-140" r="6" fill="url(#splashGrad)"/>
+    <circle cx="-48" cy="-120" r="6" fill="url(#splashGrad)"/>
+    <circle cx="-48" cy="-100" r="6" fill="url(#splashGrad)"/>
+    <circle cx="-48" cy="-80" r="6" fill="url(#splashGrad)"/>
+    <circle cx="-48" cy="-60" r="6" fill="url(#splashGrad)"/>
+    <circle cx="-48" cy="-40" r="6" fill="url(#splashGrad)"/>
+    
+    <!-- Note lines -->
+    <line x1="-16" y1="-150" x2="64" y2="-150" stroke="#E5E7EB" stroke-width="2"/>
+    <line x1="-16" y1="-130" x2="64" y2="-130" stroke="#E5E7EB" stroke-width="2"/>
+    <line x1="-16" y1="-110" x2="48" y2="-110" stroke="#E5E7EB" stroke-width="2"/>
+    <line x1="-16" y1="-90" x2="64" y2="-90" stroke="#E5E7EB" stroke-width="2"/>
+    <line x1="-16" y1="-70" x2="56" y2="-70" stroke="#E5E7EB" stroke-width="2"/>
+    <line x1="-16" y1="-50" x2="64" y2="-50" stroke="#E5E7EB" stroke-width="2"/>
+    
+    <!-- App name -->
+    <text x="0" y="80" font-family="Inter, system-ui, sans-serif" font-size="48" fill="#FFFFFF" font-weight="700" text-anchor="middle">Notable</text>
+    <text x="0" y="120" font-family="Inter, system-ui, sans-serif" font-size="20" fill="#9CA3AF" font-weight="400" text-anchor="middle">Your notes, perfectly organized</text>
+  </g>
+</svg>
