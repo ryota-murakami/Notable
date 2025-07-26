@@ -1,15 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && pnpm build",
+  "buildCommand": "cd ../.. && pnpm --filter @notable/sync... build && pnpm --filter @notable/web... build",
   "installCommand": "cd ../.. && pnpm install",
   "framework": "nextjs",
-  "outputDirectory": ".next",
   "regions": ["iad1"],
   "trailingSlash": false,
   "cleanUrls": true,
-  "env": {
-    "NODE_ENV": "production"
-  },
 
   "headers": [
     {
