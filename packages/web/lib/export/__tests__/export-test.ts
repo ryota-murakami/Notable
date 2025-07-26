@@ -4,24 +4,26 @@ import { exportService } from '../export-service'
 
 // Test data
 interface CustomText {
-  text: string;
-  bold?: boolean;
-  italic?: boolean;
+  text: string
+  bold?: boolean
+  italic?: boolean
+  type: string
+  language?: string
 }
 
 const sampleContent: Descendant[] = [
   {
     type: 'paragraph',
-    children: [{ text: 'Test Document' } as CustomText],
+    children: [{ text: 'Test Document', type: 'paragraph' } as CustomText],
   },
   {
     type: 'paragraph',
     children: [
-      { text: 'This is a ' } as CustomText,
-      { text: 'bold', bold: true } as CustomText,
-      { text: ' and ' } as CustomText,
-      { text: 'italic', italic: true } as CustomText,
-      { text: ' text sample.' } as CustomText,
+      { text: 'This is a ', type: 'paragraph' } as CustomText,
+      { text: 'bold', bold: true, type: 'paragraph' } as CustomText,
+      { text: ' and ', type: 'paragraph' } as CustomText,
+      { text: 'italic', italic: true, type: 'paragraph' } as CustomText,
+      { text: ' text sample.', type: 'paragraph' } as CustomText,
     ],
   },
   {
@@ -29,22 +31,34 @@ const sampleContent: Descendant[] = [
     children: [
       {
         type: 'list-item',
-        children: [{ text: 'First item' } as CustomText],
-      },
+        children: [
+          { text: 'First item', type: 'list-item' } as CustomText,
+        ] as any,
+      } as any,
       {
         type: 'list-item',
-        children: [{ text: 'Second item' } as CustomText],
+        children: [{ text: 'Second item', type: 'list-item' } as CustomText],
       },
     ],
   },
   {
     type: 'list-item',
-    children: [{ text: 'This is a blockquote example.' } as CustomText],
+    children: [
+      {
+        text: 'This is a blockquote example.',
+        type: 'list-item',
+      } as CustomText,
+    ],
   },
   {
     type: 'list-item',
-    language: 'javascript',
-    children: [{ text: 'const hello = "world";\nconsole.log(hello);' } as CustomText],
+    children: [
+      {
+        text: 'const hello = "world";\nconsole.log(hello);',
+        type: 'list-item',
+        language: 'javascript',
+      } as CustomText,
+    ],
   },
 ]
 
@@ -152,10 +166,20 @@ export async function testBulkExport(): Promise<void> {
         {
           id: 'note-1',
           content: [
-            { type: 'h1', children: [{ text: 'First Note' }] },
+            {
+              type: 'list-item',
+              children: [
+                { text: 'First Note', type: 'list-item' } as CustomText,
+              ],
+            },
             {
               type: 'paragraph',
-              children: [{ text: 'Content of first note.' }],
+              children: [
+                {
+                  text: 'Content of first note.',
+                  type: 'list-item',
+                } as CustomText,
+              ],
             },
           ],
           metadata: {
@@ -167,14 +191,30 @@ export async function testBulkExport(): Promise<void> {
         {
           id: 'note-2',
           content: [
-            { type: 'h1', children: [{ text: 'Second Note' }] },
             {
-              type: 'paragraph',
-              children: [{ text: 'Content of second note with ' }],
+              type: 'list-item',
+              children: [
+                { text: 'Second Note', type: 'list-item' } as CustomText,
+              ],
             },
             {
               type: 'paragraph',
-              children: [{ text: 'bold text', bold: true }],
+              children: [
+                {
+                  text: 'Content of second note with ',
+                  type: 'list-item',
+                } as CustomText,
+              ],
+            },
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  text: 'bold text',
+                  bold: true,
+                  type: 'list-item',
+                } as CustomText,
+              ],
             },
           ],
           metadata: {
@@ -197,7 +237,9 @@ export async function testBulkExport(): Promise<void> {
 
     console.log('✅ Bulk export successful')
     console.log(`📁 Archive: ${bulkResult.fileName}`)
-    console.log(`📊 Size: ${bulkResult.data?.size || 0} bytes`)
+    console.log(
+      `📊 Size: ${bulkResult.data && typeof bulkResult.data !== 'string' ? bulkResult.data.size : 0} bytes`
+    )
   } catch (error) {
     console.error('❌ Bulk export test failed:', error)
     throw error
@@ -213,7 +255,7 @@ export async function testExportValidation(): Promise<void> {
   try {
     // Test invalid format
     const validation1 = exportService.validateOptions({
-      format: 'invalid' as 'markdown',
+      format: 'invalid' as any,
     })
     if (validation1.valid) {
       throw new Error('Should have failed validation for invalid format')
@@ -232,7 +274,7 @@ export async function testExportValidation(): Promise<void> {
     const expectedFormats = ['markdown', 'html', 'pdf', 'react']
 
     for (const format of expectedFormats) {
-      if (!formats.includes(format)) {
+      if (!formats.includes(format as any)) {
         throw new Error(`Missing supported format: ${format}`)
       }
     }
@@ -269,10 +311,10 @@ export async function runAllExportTests(): Promise<void> {
 // Run tests if this file is executed directly
 describe('Export System', () => {
   it('should run all export tests', async () => {
-    await runAllExportTests();
-  });
-});
+    await runAllExportTests()
+  })
+})
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runAllExportTests();
+  runAllExportTests()
 }

@@ -4,24 +4,26 @@ import { exportService } from '../export-service'
 
 // Test data
 interface CustomText {
-  text: string;
-  bold?: boolean;
-  italic?: boolean;
+  text: string
+  bold?: boolean
+  italic?: boolean
+  type: string
+  language?: string
 }
 
 const sampleContent: Descendant[] = [
   {
     type: 'paragraph',
-    children: [{ text: 'Test Document' } as CustomText],
+    children: [{ text: 'Test Document', type: 'paragraph' } as CustomText],
   },
   {
     type: 'paragraph',
     children: [
-      { text: 'This is a ' } as CustomText,
-      { text: 'bold', bold: true } as CustomText,
-      { text: ' and ' } as CustomText,
-      { text: 'italic', italic: true } as CustomText,
-      { text: ' text sample.' } as CustomText,
+      { text: 'This is a ', type: 'paragraph' } as CustomText,
+      { text: 'bold', bold: true, type: 'paragraph' } as CustomText,
+      { text: ' and ', type: 'paragraph' } as CustomText,
+      { text: 'italic', italic: true, type: 'paragraph' } as CustomText,
+      { text: ' text sample.', type: 'paragraph' } as CustomText,
     ],
   },
   {
@@ -29,11 +31,13 @@ const sampleContent: Descendant[] = [
     children: [
       {
         type: 'list-item',
-        children: [{ text: 'First item' } as CustomText],
-      },
+        children: [
+          { text: 'First item', type: 'list-item' } as CustomText,
+        ] as any,
+      } as any,
       {
         type: 'list-item',
-        children: [{ text: 'Second item' } as CustomText],
+        children: [{ text: 'Second item', type: 'list-item' } as CustomText],
       },
     ],
   },
@@ -71,11 +75,11 @@ export async function testNodeCompatibleFormats(): Promise<void> {
       throw new Error(`Markdown export failed: ${markdownResult.error}`)
     }
     // eslint-disable-next-line no-console
-    void(0)
+    void 0
 
     // Test React export (should work in Node.js)
     // eslint-disable-next-line no-console
-    void(0)
+    void 0
     const reactResult = await exportService.export(
       sampleContent,
       {
@@ -90,7 +94,7 @@ export async function testNodeCompatibleFormats(): Promise<void> {
       throw new Error(`React export failed: ${reactResult.error}`)
     }
     // eslint-disable-next-line no-console
-    void(0)
+    void 0
   } catch (error) {
     console.error('❌ Export test failed:', error)
     throw error
@@ -109,10 +113,20 @@ export async function testBulkExport(): Promise<void> {
         {
           id: 'note-1',
           content: [
-            { type: 'h1', children: [{ text: 'First Note' }] },
+            {
+              type: 'list-item',
+              children: [
+                { text: 'First Note', type: 'list-item' } as CustomText,
+              ],
+            },
             {
               type: 'paragraph',
-              children: [{ text: 'Content of first note.' }],
+              children: [
+                {
+                  text: 'Content of first note.',
+                  type: 'list-item',
+                } as CustomText,
+              ],
             },
           ],
           metadata: {
@@ -124,14 +138,30 @@ export async function testBulkExport(): Promise<void> {
         {
           id: 'note-2',
           content: [
-            { type: 'h1', children: [{ text: 'Second Note' }] },
             {
-              type: 'paragraph',
-              children: [{ text: 'Content of second note with ' }],
+              type: 'list-item',
+              children: [
+                { text: 'Second Note', type: 'list-item' } as CustomText,
+              ],
             },
             {
               type: 'paragraph',
-              children: [{ text: 'bold text', bold: true }],
+              children: [
+                {
+                  text: 'Content of second note with ',
+                  type: 'list-item',
+                } as CustomText,
+              ],
+            },
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  text: 'bold text',
+                  bold: true,
+                  type: 'list-item',
+                } as CustomText,
+              ],
             },
           ],
           metadata: {
@@ -154,7 +184,9 @@ export async function testBulkExport(): Promise<void> {
 
     console.log('✅ Bulk export successful')
     console.log(`📁 Archive: ${bulkResult.fileName}`)
-    console.log(`📊 Size: ${bulkResult.data?.size || 0} bytes`)
+    console.log(
+      `📊 Size: ${bulkResult.data && typeof bulkResult.data !== 'string' ? bulkResult.data.size : 0} bytes`
+    )
   } catch (error) {
     console.error('❌ Bulk export test failed:', error)
     throw error
@@ -175,7 +207,7 @@ export async function testExportUtilities(): Promise<void> {
     console.log(`📋 Supported formats: ${formats.join(', ')}`)
 
     for (const format of expectedFormats) {
-      if (!formats.includes(format)) {
+      if (!formats.includes(format as any)) {
         throw new Error(`Missing supported format: ${format}`)
       }
     }
@@ -193,13 +225,17 @@ export async function testExportUtilities(): Promise<void> {
     console.log('✅ Format details are valid')
 
     // Test validation
-    const validation1 = exportService.validateOptions({ format: 'markdown' as 'markdown' })
+    const validation1 = exportService.validateOptions({
+      format: 'markdown' as 'markdown',
+    })
     if (!validation1.valid) {
       throw new Error('Should have passed validation for markdown format')
     }
     console.log('✅ Validation works correctly')
 
-    const invalidValidation = exportService.validateOptions({ format: 'invalid' as 'markdown' })
+    const invalidValidation = exportService.validateOptions({
+      format: 'invalid' as 'markdown',
+    })
     if (invalidValidation.valid) {
       throw new Error('Should have failed validation for invalid format')
     }
@@ -237,10 +273,10 @@ export async function runCompatibleExportTests(): Promise<void> {
 // Run tests if this file is executed directly
 describe('Compatible Export System', () => {
   it('should run compatible export tests', async () => {
-    await runCompatibleExportTests();
-  });
-});
+    await runCompatibleExportTests()
+  })
+})
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runCompatibleExportTests();
+  runCompatibleExportTests()
 }
