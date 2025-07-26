@@ -146,27 +146,30 @@ async function benchmarkSimpleComponent(): Promise<ComponentBenchmarkResult> {
   const renders = 1000
   let errors = 0
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (let i = 0; i < renders; i++) {
-        try {
-          const { unmount } = render(
-            <SimpleComponent
-              title={`Title ${i}`}
-              content={`Content for component ${i}`}
-            />
-          )
-          unmount()
-        } catch (error) {
-          errors++
-        }
+    for (let i = 0; i < renders; i++) {
+      try {
+        const { unmount } = render(
+          <SimpleComponent
+            title={`Title ${i}`}
+            content={`Content for component ${i}`}
+          />
+        )
+        unmount()
+      } catch (error) {
+        errors++
       }
+    }
 
-      cleanup()
-      return endTimer()
-    })
+    cleanup()
+    return endTimer()
+  })
 
   return {
     name,
@@ -200,22 +203,25 @@ async function benchmarkComplexComponent(): Promise<ComponentBenchmarkResult> {
     footer: 'Footer content',
   }
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (let i = 0; i < renders; i++) {
-        try {
-          const { unmount } = render(<ComplexComponent data={complexData} />)
-          unmount()
-        } catch (error) {
-          errors++
-        }
+    for (let i = 0; i < renders; i++) {
+      try {
+        const { unmount } = render(<ComplexComponent data={complexData} />)
+        unmount()
+      } catch (error) {
+        errors++
       }
+    }
 
-      cleanup()
-      return endTimer()
-    })
+    cleanup()
+    return endTimer()
+  })
 
   return {
     name,
@@ -237,27 +243,30 @@ async function benchmarkListRendering(): Promise<ComponentBenchmarkResult> {
   let totalRenders = 0
   let errors = 0
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (const itemCount of itemCounts) {
-        const items = Array.from({ length: itemCount }, (_, i) => `Item ${i}`)
+    for (const itemCount of itemCounts) {
+      const items = Array.from({ length: itemCount }, (_, i) => `Item ${i}`)
 
-        for (let i = 0; i < renders; i++) {
-          try {
-            const { unmount } = render(<ListComponent items={items} />)
-            unmount()
-            totalRenders++
-          } catch (error) {
-            errors++
-          }
+      for (let i = 0; i < renders; i++) {
+        try {
+          const { unmount } = render(<ListComponent items={items} />)
+          unmount()
+          totalRenders++
+        } catch (error) {
+          errors++
         }
       }
+    }
 
-      cleanup()
-      return endTimer()
-    })
+    cleanup()
+    return endTimer()
+  })
 
   return {
     name,
@@ -302,24 +311,25 @@ async function benchmarkLargeDocument(): Promise<ComponentBenchmarkResult> {
     }
   })
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      for (let i = 0; i < renders; i++) {
-        try {
-          const { unmount } = render(
-            <DocumentComponent blocks={largeDocument} />
-          )
-          unmount()
-        } catch (error) {
-          errors++
-        }
+    for (let i = 0; i < renders; i++) {
+      try {
+        const { unmount } = render(<DocumentComponent blocks={largeDocument} />)
+        unmount()
+      } catch (error) {
+        errors++
       }
+    }
 
-      cleanup()
-      return endTimer()
-    })
+    cleanup()
+    return endTimer()
+  })
 
   return {
     name,
@@ -339,32 +349,35 @@ async function benchmarkFrequentRerenders(): Promise<ComponentBenchmarkResult> {
   const renders = 500
   let errors = 0
 
-  const { result, memoryDelta, duration } =
-    await memoryMonitor.measureOperation(name, async () => {
-      const endTimer = performanceMonitor.startTimer(name)
+  const {
+    result: _result,
+    memoryDelta,
+    duration,
+  } = await memoryMonitor.measureOperation(name, async () => {
+    const endTimer = performanceMonitor.startTimer(name)
 
-      try {
-        const { rerender, unmount } = render(
-          <SimpleComponent title='Initial' content='Initial content' />
+    try {
+      const { rerender, unmount } = render(
+        <SimpleComponent title='Initial' content='Initial content' />
+      )
+
+      for (let i = 0; i < renders; i++) {
+        rerender(
+          <SimpleComponent
+            title={`Updated ${i}`}
+            content={`Updated content ${i}`}
+          />
         )
-
-        for (let i = 0; i < renders; i++) {
-          rerender(
-            <SimpleComponent
-              title={`Updated ${i}`}
-              content={`Updated content ${i}`}
-            />
-          )
-        }
-
-        unmount()
-      } catch (error) {
-        errors++
       }
 
-      cleanup()
-      return endTimer()
-    })
+      unmount()
+    } catch (error) {
+      errors++
+    }
+
+    cleanup()
+    return endTimer()
+  })
 
   return {
     name,

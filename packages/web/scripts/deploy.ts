@@ -2,7 +2,7 @@
 
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { join as _join } from 'path'
 import prompts from 'prompts'
 import chalk from 'chalk'
 
