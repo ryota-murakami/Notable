@@ -116,11 +116,16 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}) {
 
         // Remove duplicate if deduplication is enabled
         if (deduplicate) {
-          updatedEntries = updatedEntries.filter(
-            (entry) =>
-              entry.query !== newEntry.query ||
-              JSON.stringify(entry.filters) !== JSON.stringify(newEntry.filters)
-          )
+          updatedEntries = updatedEntries.filter((entry) => {
+            if (entry.query !== newEntry.query) return true
+            // Use stable serialization for filter comparison
+            const stableStringify = (obj: any) =>
+              JSON.stringify(obj, Object.keys(obj).sort())
+            return (
+              stableStringify(entry.filters) !==
+              stableStringify(newEntry.filters)
+            )
+          })
         }
 
         // Add new entry at the beginning
@@ -232,13 +237,17 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}) {
           avgResultCount: Math.round(stats.totalResultCount / stats.count),
         }))
         .sort((a, b) => {
-          // Sort by frequency and recency
-          const aScore =
-            a.count * 0.7 +
-            ((Date.now() - a.lastUsed.getTime()) / (1000 * 60 * 60 * 24)) * -0.3
-          const bScore =
-            b.count * 0.7 +
-            ((Date.now() - b.lastUsed.getTime()) / (1000 * 60 * 60 * 24)) * -0.3
+          // Sort by frequency and recency with better time granularity
+          const now = Date.now()
+          const hoursSinceA = (now - a.lastUsed.getTime()) / (1000 * 60 * 60)
+          const hoursSinceB = (now - b.lastUsed.getTime()) / (1000 * 60 * 60)
+
+          // Use logarithmic scale for recency to handle both recent and old searches well
+          const aRecencyScore = Math.max(0, 1 - Math.log10(hoursSinceA + 1) / 4)
+          const bRecencyScore = Math.max(0, 1 - Math.log10(hoursSinceB + 1) / 4)
+
+          const aScore = a.count * 0.7 + aRecencyScore * 0.3
+          const bScore = b.count * 0.7 + bRecencyScore * 0.3
           return bScore - aScore
         })
 

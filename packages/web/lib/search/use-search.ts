@@ -130,11 +130,7 @@ export function useSearch(
 
   // Persist filters when they change
   useEffect(() => {
-    if (
-      persistFilters &&
-      Object.keys(filtersState.active).length > 0 &&
-      typeof window !== 'undefined'
-    ) {
+    if (persistFilters && typeof window !== 'undefined') {
       localStorage.setItem(
         'notable-search-filters',
         JSON.stringify(filtersState.active)

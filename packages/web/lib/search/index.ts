@@ -11,4 +11,14 @@ export { SearchHighlighter } from './search-highlighter'
 // Import directly from './search-indexer' if needed on client-side only
 export { useSearch } from './use-search'
 export { useSearchHistory } from './use-search-history'
-export * from './types'
+export {
+  type SearchQuery,
+  type SearchFilterSet,
+  type SearchOptions,
+  type SearchResult,
+  type SearchableNote,
+  type SearchMatch,
+  type SearchIndex,
+  type SearchHistoryEntry,
+  type SearchStats,
+} from './types'

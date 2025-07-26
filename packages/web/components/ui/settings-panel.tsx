@@ -66,7 +66,7 @@ export function SettingsPanel({
       </ModalHeader>
 
       <ModalBody className={cn('p-0', className)}>
-        <div className='flex h-96'>
+        <div className='flex h-[60vh] min-h-[400px] max-h-[800px]'>
           {/* Sidebar */}
           <div className='w-48 border-r border-border p-4 space-y-1'>
             {sections.map((section) => (

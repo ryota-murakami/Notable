@@ -71,6 +71,7 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
         thumb: 'w-3 h-3',
         icon: 'w-2 h-2',
         translate: 'translate-x-4',
+        translatePx: 16,
         text: 'text-sm',
       },
       md: {
@@ -78,6 +79,7 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
         thumb: 'w-5 h-5',
         icon: 'w-3 h-3',
         translate: 'translate-x-5',
+        translatePx: 20,
         text: 'text-base',
       },
       lg: {
@@ -85,6 +87,7 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
         thumb: 'w-7 h-7',
         icon: 'w-4 h-4',
         translate: 'translate-x-6',
+        translatePx: 24,
         text: 'text-lg',
       },
     }
@@ -171,9 +174,7 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
             )}
             initial={false}
             animate={{
-              x: checked
-                ? currentSize.translate.replace('translate-x-', '')
-                : '0',
+              x: checked ? currentSize.translatePx : 0,
             }}
             transition={{
               type: 'spring',

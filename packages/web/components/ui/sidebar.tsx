@@ -177,6 +177,24 @@ export function SidebarToggle({ className }: { className?: string }) {
 }
 
 // Pre-built Notable Sidebar with common structure
+interface Note {
+  id: string
+  title: string
+  isFolder?: boolean
+  children?: Note[]
+}
+
+interface NotableSidebarProps {
+  collapsed?: boolean
+  onToggle?: () => void
+  notes?: Note[]
+  onNewNote?: () => void
+  onNoteSelect?: (noteId: string) => void
+  selectedNoteId?: string
+  onSearch?: () => void
+  onSettings?: () => void
+}
+
 export function NotableSidebar({
   collapsed = false,
   onToggle,
@@ -186,21 +204,7 @@ export function NotableSidebar({
   selectedNoteId,
   onSearch,
   onSettings,
-}: {
-  collapsed?: boolean
-  onToggle?: () => void
-  notes?: Array<{
-    id: string
-    title: string
-    isFolder?: boolean
-    children?: any[]
-  }>
-  onNewNote?: () => void
-  onNoteSelect?: (noteId: string) => void
-  selectedNoteId?: string
-  onSearch?: () => void
-  onSettings?: () => void
-}) {
+}: NotableSidebarProps) {
   return (
     <Sidebar collapsed={collapsed} onToggle={onToggle}>
       <SidebarHeader>
