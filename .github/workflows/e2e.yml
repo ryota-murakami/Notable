@@ -89,6 +89,9 @@ jobs:
           npx playwright --version
           ls -la ${{ env.PLAYWRIGHT_BROWSERS_PATH }} || echo "Browser directory not found"
 
+      - name: Build workspace dependencies
+        run: pnpm build --filter=@notable/sync
+
       - name: Run E2E Tests
         run: |
           cd packages/web
