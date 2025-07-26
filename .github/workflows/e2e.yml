@@ -90,7 +90,7 @@ jobs:
           ls -la ${{ env.PLAYWRIGHT_BROWSERS_PATH }} || echo "Browser directory not found"
 
       - name: Build workspace dependencies
-        run: pnpm build --filter=@notable/sync
+        run: pnpm build --filter=@notable/sync --filter=@notable/routing
 
       - name: Run E2E Tests
         run: |
