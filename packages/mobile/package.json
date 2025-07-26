@@ -2,6 +2,7 @@
   "name": "@notable/mobile",
   "version": "1.0.0",
   "description": "Notable mobile application built with React Native/Expo",
+  "//": "Trigger mobile e2e workflows for PR #182",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
