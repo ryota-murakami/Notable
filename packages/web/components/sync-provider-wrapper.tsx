@@ -45,7 +45,7 @@ export function SyncProviderWrapper({ children }: SyncProviderWrapperProps) {
   }
 
   return (
-    <SyncProvider config={syncConfig} storage={storage}>
+    <SyncProvider config={syncConfig} storage={storage} autoInit={!isTestMode}>
       {children}
     </SyncProvider>
   )

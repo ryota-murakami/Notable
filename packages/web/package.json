@@ -30,6 +30,7 @@
     "clean": "rm -rf .next dist node_modules pnpm-lock.yaml"
   },
   "dependencies": {
+    "@notable/routing": "workspace:*",
     "@platejs/mention": "^49.0.0",
     "@platejs/resizable": "^49.0.0",
     "@platejs/selection": "^49.0.15",

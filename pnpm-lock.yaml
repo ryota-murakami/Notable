@@ -112,6 +112,9 @@ importers:
 
   packages/electron:
     dependencies:
+      '@notable/routing':
+        specifier: workspace:*
+        version: link:../routing
       electron-localshortcut:
         specifier: ^3.2.1
         version: 3.2.1
@@ -158,6 +161,9 @@ importers:
       '@expo/vector-icons':
         specifier: ^14.1.0
         version: 14.1.0(expo-font@13.3.2(expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@expo/metro-runtime@5.0.4(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0)))(encoding@0.1.13)(graphql@16.8.1)(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0))(react@19.1.0))(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))(react@19.1.0)
+      '@notable/routing':
+        specifier: workspace:*
+        version: link:../routing
       '@react-native-async-storage/async-storage':
         specifier: ^2.2.0
         version: 2.2.0(react-native@0.76.6(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@19.1.8)(encoding@0.1.13)(react@19.1.0))
@@ -274,6 +280,22 @@ importers:
         specifier: ^5
         version: 5.8.3
 
+  packages/routing:
+    dependencies:
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
+      zustand:
+        specifier: ^5.0.2
+        version: 5.0.6(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+    devDependencies:
+      '@types/node':
+        specifier: ^22.16.5
+        version: 22.16.5
+      typescript:
+        specifier: ^5
+        version: 5.8.3
+
   packages/sync:
     dependencies:
       '@supabase/supabase-js':
@@ -301,6 +323,9 @@ importers:
 
   packages/web:
     dependencies:
+      '@notable/routing':
+        specifier: workspace:*
+        version: link:../routing
       '@notable/sync':
         specifier: workspace:*
         version: link:../sync
