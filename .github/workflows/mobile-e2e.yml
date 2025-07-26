@@ -198,12 +198,12 @@ jobs:
 
       - name: Create Android AVD
         run: |
-          # Use x86_64 with software emulation for GitHub CI compatibility
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
+          # Use API 29 x86 with default configuration for better CI compatibility
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-29;default;x86"
           # Delete existing AVD if it exists
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name test_avd || true
-          # Create AVD with x86_64 architecture and software emulation
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
+          # Create AVD with simpler configuration that works reliably in CI
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi default/x86 --package "system-images;android-29;default;x86" --device "Nexus_5X"
           # List AVDs to verify creation
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
           # Verify AVD files exist
@@ -226,19 +226,15 @@ jobs:
           # List available AVDs to confirm
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
 
-          # Start emulator with software acceleration for GitHub CI
+          # Start emulator with minimal configuration for CI reliability
           $ANDROID_HOME/emulator/emulator -avd test_avd \
             -no-audio \
             -no-window \
             -gpu swiftshader_indirect \
             -no-snapshot \
-            -camera-back none \
-            -camera-front none \
+            -no-boot-anim \
             -memory 2048 \
-            -partition-size 2048 \
-            -cores 2 \
-            -accel off \
-            -engine classic &
+            -partition-size 2048 &
 
           # Wait for device with timeout and better error handling
           echo "Waiting for Android emulator to start..."
