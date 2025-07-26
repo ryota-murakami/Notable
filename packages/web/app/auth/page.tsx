@@ -10,6 +10,9 @@ export default function AuthPage() {
     // For testing purposes, let's simulate a login by setting some demo session
     // In a real app, this would integrate with Supabase Auth
 
+    // Set dev-auth-bypass cookie for middleware
+    document.cookie = 'dev-auth-bypass=true; path=/; max-age=86400' // 24 hours
+
     // Simulate loading
     setTimeout(() => {
       // For now, just redirect to the home page to test the sync functionality
