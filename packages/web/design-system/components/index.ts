@@ -13,6 +13,9 @@ export {
   CardContent,
   FeatureCard,
   MetricCard,
+  ProgressCard,
+  NotificationCard,
+  ActionCard,
   type CardProps,
 } from './card'
 
