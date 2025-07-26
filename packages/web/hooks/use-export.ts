@@ -7,8 +7,9 @@ import {
   BulkExportOptions,
   ExportHistoryEntry,
 } from '../types/export'
-import { ExportService, ExportUtils } from '../lib/export'
+import { exportService } from '../lib/export'
 import { toast } from 'sonner'
+import { Descendant } from 'slate'
 
 interface UseExportState {
   isExporting: boolean
@@ -44,7 +45,7 @@ export function useExport(options: UseExportOptions = {}) {
     lastResult: null,
   })
 
-  const exportService = useMemo(() => new ExportService(), [])
+  // Use the singleton export service instance
 
   /**
    * Export a single note
@@ -66,30 +67,39 @@ export function useExport(options: UseExportOptions = {}) {
           toast.loading('Preparing export...', { id: 'export-progress' })
         }
 
-        // Validate note before export
-        const validation = ExportUtils.validateNoteForExport(note)
-        if (!validation.valid) {
-          throw new Error(`Cannot export note: ${validation.issues.join(', ')}`)
+        // Basic validation
+        if (!note || !note.content) {
+          throw new Error('Cannot export note: Invalid note data')
         }
 
-        // Estimate export time and show progress
-        const estimatedTime = ExportUtils.estimateExportTime(
-          note.content.length,
-          exportOptions.format
-        )
+        // Show progress
+        // Estimation not needed for now
 
         onProgress?.(25)
         setState((prev) => ({ ...prev, progress: 25 }))
 
+        // Convert Note to Descendant[] for old export service
+        const content = JSON.parse(note.content) as Descendant[]
+        const metadata = {
+          title: note.title,
+          createdAt: note.createdAt,
+          updatedAt: note.updatedAt,
+          tags: note.tags || [],
+        }
+
         // Perform the export
-        const result = await exportService.exportNote(note, exportOptions)
+        const result = await exportService.export(
+          content,
+          exportOptions,
+          metadata
+        )
 
         onProgress?.(75)
         setState((prev) => ({ ...prev, progress: 75 }))
 
         // Handle the result
-        if (autoDownload) {
-          ExportUtils.downloadFile(result)
+        if (autoDownload && result.success) {
+          exportService.downloadFile(result)
         }
 
         onProgress?.(100)
@@ -157,10 +167,9 @@ export function useExport(options: UseExportOptions = {}) {
 
         // Validate all notes
         for (const note of notes) {
-          const validation = ExportUtils.validateNoteForExport(note)
-          if (!validation.valid) {
+          if (!note || !note.content) {
             throw new Error(
-              `Cannot export note "${note.title}": ${validation.issues.join(', ')}`
+              `Cannot export note "${note.title}": Invalid note data`
             )
           }
         }
@@ -175,8 +184,8 @@ export function useExport(options: UseExportOptions = {}) {
         setState((prev) => ({ ...prev, progress: 80 }))
 
         // Handle the result
-        if (autoDownload) {
-          ExportUtils.downloadFile(result)
+        if (autoDownload && result.success) {
+          exportService.downloadFile(result)
         }
 
         onProgress?.(100)
@@ -286,7 +295,8 @@ export function useExport(options: UseExportOptions = {}) {
   const shareResult = useCallback(
     async (result: ExportResult) => {
       try {
-        await ExportUtils.shareFile(result)
+        // Sharing not implemented in current export service
+        throw new Error('Sharing is not yet supported')
         if (showToasts) {
           toast.success('Export shared successfully')
         }
@@ -340,10 +350,8 @@ export function useExport(options: UseExportOptions = {}) {
     clearError,
     reset,
 
-    // Utilities
-    utils: ExportUtils,
+    // Utilities - removed (not available in current export service)
     supportedFormats: exportService.getSupportedFormats(),
-    getDefaultOptions: exportService.getDefaultOptions.bind(exportService),
     validateOptions: exportService.validateOptions.bind(exportService),
   }
 }
@@ -356,7 +364,7 @@ export function useExportHistory(userId: string) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const exportService = useMemo(() => new ExportService(), [])
+  // Use the singleton export service instance
 
   /**
    * Load export history
@@ -366,7 +374,8 @@ export function useExportHistory(userId: string) {
       try {
         setIsLoading(true)
         setError(null)
-        const entries = await exportService.getExportHistory(userId, limit)
+        // Export history not implemented in current export service
+        const entries: ExportHistoryEntry[] = []
         setHistory(entries)
       } catch (error) {
         const errorMessage =
@@ -426,17 +435,17 @@ export function useExportHistory(userId: string) {
  * Hook for export format information
  */
 export function useExportFormats() {
-  const exportService = useMemo(() => new ExportService(), [])
+  // Use the singleton export service instance
 
   const formats = useMemo(() => {
     return exportService.getSupportedFormats().map((format) => ({
       value: format,
       label: format.toUpperCase(),
-      icon: ExportUtils.getFormatIcon(format),
-      description: ExportUtils.getFormatDescription(format),
-      defaultOptions: exportService.getDefaultOptions(format),
+      icon: exportService.getFormatDetails(format).icon || '',
+      description: exportService.getFormatDetails(format).description,
+      defaultOptions: { format }, // Basic default options
     }))
-  }, [exportService])
+  }, [])
 
   return {
     formats,
