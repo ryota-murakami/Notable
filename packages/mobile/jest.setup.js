@@ -41,6 +41,40 @@ jest.mock('expo-font', () => ({
   isLoading: jest.fn(() => false),
 }))
 
+// Mock Expo Linear Gradient
+jest.mock('expo-linear-gradient', () => {
+  const React = require('react')
+  const { View } = require('react-native')
+  return {
+    LinearGradient: ({ children, ...props }) =>
+      React.createElement(View, props, children),
+  }
+})
+
+// Mock Expo Vector Icons
+jest.mock('@expo/vector-icons', () => {
+  const React = require('react')
+  const { Text } = require('react-native')
+  const mockIcon = ({ name, ...props }) =>
+    React.createElement(Text, props, name)
+
+  return {
+    Ionicons: mockIcon,
+    MaterialIcons: mockIcon,
+    MaterialCommunityIcons: mockIcon,
+    FontAwesome: mockIcon,
+    Feather: mockIcon,
+    AntDesign: mockIcon,
+    Entypo: mockIcon,
+    EvilIcons: mockIcon,
+    FontAwesome5: mockIcon,
+    Foundation: mockIcon,
+    Octicons: mockIcon,
+    SimpleLineIcons: mockIcon,
+    Zocial: mockIcon,
+  }
+})
+
 // Mock Expo Router
 jest.mock('expo-router', () => ({
   useRouter: () => ({
@@ -142,6 +176,30 @@ jest.mock('react-native-paper', () => {
   const PaperProvider = ({ children, theme: _theme }) =>
     React.createElement(RN.View, { testID: 'paper-provider' }, children)
 
+  const mockTheme = {
+    colors: {
+      primary: '#6366F1',
+      primaryContainer: '#818CF8',
+      secondary: '#EC4899',
+      secondaryContainer: '#F472B6',
+      tertiary: '#10B981',
+      tertiaryContainer: '#34D399',
+      background: '#FAFBFF',
+      surface: '#FFFFFF',
+      surfaceVariant: '#F3F4F6',
+      onBackground: '#1A1C1E',
+      onSurface: '#1A1C1E',
+      onSurfaceVariant: '#6B7280',
+      onPrimary: '#FFFFFF',
+      error: '#EF4444',
+      errorContainer: '#FCA5A5',
+      outline: '#E5E7EB',
+      shadow: '#000000',
+    },
+    fonts: {},
+    roundness: 16,
+  }
+
   return {
     PaperProvider,
     Portal: ({ children }) => children,
@@ -173,7 +231,10 @@ jest.mock('react-native-paper', () => {
       }
     ),
     Chip: RN.TouchableOpacity,
-    FAB: RN.TouchableOpacity,
+    FAB: Object.assign(RN.TouchableOpacity, {
+      Group: ({ children, ...props }) =>
+        React.createElement(RN.View, props, children),
+    }),
     IconButton: ({ icon, onPress, ...props }) =>
       React.createElement(RN.TouchableOpacity, {
         onPress,
@@ -194,6 +255,8 @@ jest.mock('react-native-paper', () => {
     Snackbar: RN.View,
     TextInput: RN.TextInput,
     Text: RN.Text,
+    ActivityIndicator: RN.ActivityIndicator,
+    useTheme: () => mockTheme,
   }
 })
 
