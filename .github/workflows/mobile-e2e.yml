@@ -103,10 +103,25 @@ jobs:
             echo "Waiting for simulator to fully initialize..."
             sleep 10
 
-            # Abort if still not booted
-            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
-              echo "Simulator failed to boot after 3 attempts" >&2
-              exit 1
+            # Verify simulator is actually booted with better checking
+            BOOT_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+            echo "Simulator status: $BOOT_STATUS"
+            
+            if echo "$BOOT_STATUS" | grep -q "(Booted)"; then
+              echo "✅ Simulator successfully booted and verified"
+            else
+              echo "❌ Simulator verification failed after boot"
+              echo "Attempting final verification..."
+              sleep 5
+              FINAL_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+              echo "Final status: $FINAL_STATUS"
+              
+              if ! echo "$FINAL_STATUS" | grep -q "(Booted)"; then
+                echo "Simulator failed to boot after verification attempts" >&2
+                exit 1
+              else
+                echo "✅ Simulator verified as booted on retry"
+              fi
             fi
           fi
 
@@ -345,10 +360,25 @@ jobs:
             echo "Waiting for simulator to fully initialize..."
             sleep 10
 
-            # Abort if still not booted
-            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
-              echo "Simulator failed to boot after 3 attempts" >&2
-              exit 1
+            # Verify simulator is actually booted with better checking
+            BOOT_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+            echo "Simulator status: $BOOT_STATUS"
+            
+            if echo "$BOOT_STATUS" | grep -q "(Booted)"; then
+              echo "✅ Simulator successfully booted and verified"
+            else
+              echo "❌ Simulator verification failed after boot"
+              echo "Attempting final verification..."
+              sleep 5
+              FINAL_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+              echo "Final status: $FINAL_STATUS"
+              
+              if ! echo "$FINAL_STATUS" | grep -q "(Booted)"; then
+                echo "Simulator failed to boot after verification attempts" >&2
+                exit 1
+              else
+                echo "✅ Simulator verified as booted on retry"
+              fi
             fi
           fi
 
