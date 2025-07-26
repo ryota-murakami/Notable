@@ -16,7 +16,7 @@ module.exports = {
       name: 'Notable',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/Notable.app',
       build:
-        'npx expo prebuild --platform ios --clean && npx expo run:ios --configuration Debug --device simulator --no-install --no-bundler',
+        'npx expo prebuild --platform ios --clean && npx expo run:ios --configuration Debug --no-install --no-bundler',
     },
     'android.debug': {
       type: 'android.apk',
@@ -30,6 +30,7 @@ module.exports = {
       type: 'ios.simulator',
       device: {
         type: 'iPhone 14',
+        name: 'E2E-iPhone',
       },
     },
     emulator: {
