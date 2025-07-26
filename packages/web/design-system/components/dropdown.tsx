@@ -119,6 +119,20 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
     const searchInputRef = React.useRef<HTMLInputElement>(null)
     const optionRefs = React.useRef<(HTMLDivElement | null)[]>([])
 
+    // Clean up option refs when options change
+    React.useEffect(() => {
+      if (optionRefs.current.length !== filteredOptions.length) {
+        optionRefs.current = new Array(filteredOptions.length).fill(null)
+      }
+    }, [filteredOptions.length])
+
+    // Clean up option refs on unmount
+    React.useEffect(() => {
+      return () => {
+        optionRefs.current = []
+      }
+    }, [])
+
     const isControlled = controlledValue !== undefined
     const selectedValue = isControlled ? controlledValue : internalValue
 
@@ -184,7 +198,13 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
     // Focus search input when dropdown opens
     React.useEffect(() => {
       if (isOpen && searchable && searchInputRef.current) {
-        setTimeout(() => searchInputRef.current?.focus(), 100)
+        // Use requestAnimationFrame for better timing than arbitrary setTimeout
+        const focusInput = () => {
+          if (searchInputRef.current) {
+            searchInputRef.current.focus()
+          }
+        }
+        requestAnimationFrame(focusInput)
       }
     }, [isOpen, searchable])
 

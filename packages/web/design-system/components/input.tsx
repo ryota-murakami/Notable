@@ -102,19 +102,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 return rule.message
               }
               break
-            case 'email':
+            case 'email': {
               const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
               if (inputValue && !emailRegex.test(inputValue)) {
                 return rule.message
               }
               break
+            }
             case 'url':
-              try {
-                if (inputValue && !new URL(inputValue)) {
+              if (inputValue) {
+                try {
+                  new URL(inputValue)
+                } catch {
                   return rule.message
                 }
-              } catch {
-                if (inputValue) return rule.message
               }
               break
             case 'number':

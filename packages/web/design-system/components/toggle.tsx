@@ -146,8 +146,8 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
             loading && 'cursor-wait',
             className
           )}
-          onClick={handleToggle}
           {...props}
+          onClick={handleToggle}
         >
           {/* Track background with gradient animation */}
           <motion.div
