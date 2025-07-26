@@ -1,7 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && pnpm -F @notable/sync build && pnpm -F @notable/web build",
-  "devCommand": "pnpm run dev",
+  "buildCommand": "cd ../.. && pnpm build",
   "installCommand": "cd ../.. && pnpm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
@@ -9,7 +8,6 @@
   "trailingSlash": false,
   "cleanUrls": true,
   "env": {
-    "ENABLE_EXPERIMENTAL_COREPACK": "1",
     "NODE_ENV": "production"
   },
 
