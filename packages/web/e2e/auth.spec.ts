@@ -10,11 +10,13 @@ test.describe('Authentication Flow', () => {
     // Should be redirected to auth page (with trailing slash)
     await expect(page).toHaveURL('/auth/')
 
-    // Auth page should be visible
-    await expect(page.getByText('Welcome to Notable')).toBeVisible()
+    // Auth page should be visible - wait for content to load
+    await expect(page.getByText('Welcome to Notable')).toBeVisible({
+      timeout: 10000,
+    })
     await expect(
       page.getByText('Sign in to access your synced notes')
-    ).toBeVisible()
+    ).toBeVisible({ timeout: 10000 })
   })
 
   test('should display Supabase auth UI', async ({ page }) => {
@@ -75,11 +77,13 @@ test.describe('Authentication Flow', () => {
     // Should load successfully
     expect(response?.status()).toBe(200)
 
-    // Should show auth page
-    await expect(page.getByText('Welcome to Notable')).toBeVisible()
+    // Should show auth page - wait for content to load
+    await expect(page.getByText('Welcome to Notable')).toBeVisible({
+      timeout: 10000,
+    })
     await expect(
       page.getByText('Sign in to access your synced notes')
-    ).toBeVisible()
+    ).toBeVisible({ timeout: 10000 })
   })
 
   test('should allow authenticated users to access home', async ({ page }) => {
@@ -98,6 +102,11 @@ test.describe('Authentication Flow', () => {
 
     // Should stay on home page
     await expect(page).toHaveURL('/')
-    await expect(page.getByText('Welcome to Notable')).toBeVisible()
+
+    // Wait for the app shell to load and find the Welcome text
+    await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
+    await expect(page.getByText('Welcome to Notable')).toBeVisible({
+      timeout: 10000,
+    })
   })
 })
