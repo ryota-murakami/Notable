@@ -67,6 +67,11 @@ To create the world's most elegant and performant note-taking application that c
   - Markdown shortcuts
   - Drag-and-drop block reordering
   - Image upload and embedding
+  - Video upload and embedding
+  - Youtube embedding
+  - X embedding
+  - Bluesky embedding
+  - Note page link
   - Math equations (LaTeX)
   - Mentions (@)
 - **UI/UX**
@@ -146,6 +151,12 @@ To create the world's most elegant and performant note-taking application that c
   - Use for personal reminders or sensitive information
   - Access via direct link or toggle [show hidden] option
 
+### 9. Publish as a webpage
+
+### 10. Custom theme
+
+- over 100+ theme
+
 ## Technical Architecture
 
 ### Frontend Stack
@@ -154,18 +165,15 @@ To create the world's most elegant and performant note-taking application that c
 - **Editor**: Plate.js
 - **Styling**: Tailwind CSS v4.1
 - **UI Components**: shadcn/ui + Radix UI
-- **State Management**: Zustand
 - **Real-time**: Socket.io-client + Y.js for CRDT
-- **Authentication**: NextAuth.js
+- **Authentication**: Supabase Client
+- **Payment**: Stripe
 
 ### Backend Stack
 
-- **Runtime**: Node.js with Express
-- **Database**: PostgreSQL with Prisma ORM
-- **Cache**: Redis for session management
-- **Real-time**: Socket.io server
-- **File Storage**: AWS S3 or compatible
-- **Authentication**: JWT + OAuth providers
+- **Database**: PostgreSQL with Supabase
+- **File Storage**: Upload Things
+- **Authentication**: Supabase
 
 ### Platform-Specific
 
@@ -175,8 +183,7 @@ To create the world's most elegant and performant note-taking application that c
 
 ### Infrastructure
 
-- **Hosting**: Vercel (web) + AWS (backend services)
-- **CDN**: CloudFront for static assets
+- **Hosting**: Vercel (web) + Supabase
 - **Monitoring**: Sentry + Analytics
 - **CI/CD**: GitHub Actions
 
@@ -218,7 +225,6 @@ To create the world's most elegant and performant note-taking application that c
 
 - End-to-end encryption for sensitive content
 - At-rest encryption for all data
-- Secure authentication with 2FA option
 - Regular security audits
 
 ### Compliance
@@ -242,6 +248,7 @@ To create the world's most elegant and performant note-taking application that c
   - Advanced export options
   - Priority support
   - Custom themes
+  - Publish as a webpage
 
 ## Success Metrics
 

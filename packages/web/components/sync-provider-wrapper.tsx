@@ -28,8 +28,9 @@ export function SyncProviderWrapper({ children }: SyncProviderWrapperProps) {
       document.cookie.includes('dev-auth-bypass=true'))
 
   const syncConfig: SyncConfig = {
-    supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
-    supabaseKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    supabaseUrl:
+      env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    supabaseKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key',
     userId: 'user-placeholder', // TODO: Get from auth context
     deviceId: 'web-device', // TODO: Generate unique device ID
     deviceInfo: {
