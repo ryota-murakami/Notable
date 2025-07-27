@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSyncService } from '@notable/sync'
+import { v4 as uuidv4 } from 'uuid'
 import { type Note } from '../types/note'
 import { useRouting } from '../hooks/use-routing'
 
@@ -18,6 +19,70 @@ export function Shell() {
       document.cookie.includes('dev-auth-bypass=true'))
 
   const shouldShowLoading = !isInitialized && !isTestMode
+
+  // Create a new note handler
+  const handleCreateNote = useCallback(async () => {
+    if (!syncService) {
+      console.error('Sync service not initialized')
+      return
+    }
+
+    // Generate new note data
+    const now = new Date().toISOString()
+    const deviceId =
+      (await (syncService as any).storage.getDeviceId()) || 'web-device'
+
+    const newNote: Note = {
+      id: uuidv4(),
+      title: 'Untitled',
+      content: '',
+      is_folder: false,
+      parent_id: undefined,
+      userId: 'demo-user', // TODO: Get from auth context
+      tags: [],
+      isHidden: false,
+      version: 1,
+      device_id: deviceId,
+      last_modified: now,
+      vector_clock: { [deviceId]: 1 },
+      synced_at: undefined,
+      local_changes: true,
+      deleted: false,
+      created_at: now,
+      updated_at: now,
+    }
+
+    // Save to storage
+    try {
+      await (syncService as any).storage.saveNote(newNote)
+
+      // Update local state
+      setNotes((prev) => [...prev, newNote])
+
+      // TODO: Navigate to the new note
+      console.log('Created new note:', newNote.id)
+    } catch (error) {
+      console.error('Failed to create note:', error)
+    }
+  }, [syncService])
+
+  // Load existing notes when sync service is initialized
+  useEffect(() => {
+    const loadNotes = async () => {
+      if (!syncService || !isInitialized) {
+        return
+      }
+
+      try {
+        const existingNotes = await (syncService as any).storage.getAllNotes()
+        setNotes(existingNotes.filter((note: Note) => !note.deleted))
+      } catch (error) {
+        console.error('Failed to load notes:', error)
+      }
+    }
+
+    loadNotes()
+  }, [syncService, isInitialized])
 
   if (shouldShowLoading) {
     return (
@@ -54,6 +119,7 @@ export function Shell() {
             className='w-full text-left px-3 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90'
             role='button'
             aria-label='New Note'
+            onClick={handleCreateNote}
           >
             New Note
           </button>

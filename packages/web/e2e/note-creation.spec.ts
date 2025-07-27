@@ -2,6 +2,16 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Note Creation', () => {
   test.beforeEach(async ({ page }) => {
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
     // Navigate to the app
     await page.goto('/')
 
@@ -10,48 +20,70 @@ test.describe('Note Creation', () => {
   })
 
   test('should create a new note without errors', async ({ page }) => {
-    // Look for a "New Note" button or similar element
-    // This test will need to be updated based on the actual UI
-    const newNoteButton = page
-      .locator('[data-testid="new-note-button"]')
-      .or(page.locator('button:has-text("New Note")'))
+    // Wait for app shell to be visible
+    await page.waitForSelector('[data-testid="app-shell"]')
 
-    // Check if the button exists (it might not be visible until authenticated)
-    const buttonExists = (await newNoteButton.count()) > 0
+    // Find the "New Note" button
+    const newNoteButton = page.locator('button:has-text("New Note")')
 
-    if (buttonExists) {
-      // Click the new note button
-      await newNoteButton.click()
+    // Button should be visible and enabled
+    await expect(newNoteButton).toBeVisible()
+    await expect(newNoteButton).toBeEnabled()
 
-      // Wait a bit for any async operations
-      await page.waitForTimeout(1000)
+    // Check if there are any notes initially
+    const noNotesMessage = page.locator('text="No notes yet"')
+    const hasNoNotes = await noNotesMessage.isVisible()
 
-      // Check that we don't see the error page
-      const errorText = page.locator('text="Oops! Something went wrong"')
-      await expect(errorText).not.toBeVisible()
+    // Get initial note count (actual note items, not the no notes message)
+    const noteItems = page.locator(
+      'div:has-text("Recent") + div > div:has(div:has-text("Untitled"))'
+    )
+    const initialNoteCount = await noteItems.count()
 
-      // Check for positive indicators that note creation worked
-      const untitledNote = page.locator('text="Untitled Note"')
-      const noteEditor = page
-        .locator('[data-testid="note-editor"]')
-        .or(page.locator('.editor'))
+    // Click the new note button
+    await newNoteButton.click()
 
-      // At least one of these should be present if note creation succeeded
-      const hasPositiveIndicator =
-        (await untitledNote.count()) > 0 || (await noteEditor.count()) > 0
+    // Wait a bit for async operations
+    await page.waitForTimeout(1000)
 
-      if (!hasPositiveIndicator) {
-        // If neither positive indicator is found, at least ensure no error occurred
-        const body = await page.textContent('body')
-        expect(body).not.toContain('Oops! Something went wrong')
-      }
-    } else {
-      // If no new note button is found, just ensure the app loaded without errors
-      const errorText = page.locator('text="Oops! Something went wrong"')
-      await expect(errorText).not.toBeVisible()
+    // Check that we don't see any error messages
+    const errorText = page.locator('text="Oops! Something went wrong"')
+    await expect(errorText).not.toBeVisible()
 
-      console.log('New note button not found - app may require authentication')
+    // If there were no notes initially, the "No notes yet" message should be gone
+    if (hasNoNotes) {
+      await expect(noNotesMessage).not.toBeVisible()
     }
+
+    // Check that a new "Untitled" note appears
+    const untitledNotes = page.locator('text="Untitled"')
+    const untitledCount = await untitledNotes.count()
+    expect(untitledCount).toBeGreaterThan(initialNoteCount)
+
+    // Verify console doesn't have errors
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        expect(msg.text()).not.toContain('Failed to create note')
+      }
+    })
+  })
+
+  test('should create multiple notes successfully', async ({ page }) => {
+    // Wait for app shell to be visible
+    await page.waitForSelector('[data-testid="app-shell"]')
+
+    const newNoteButton = page.locator('button:has-text("New Note")')
+
+    // Create 3 notes
+    for (let i = 0; i < 3; i++) {
+      await newNoteButton.click()
+      await page.waitForTimeout(200) // Small delay between creations
+    }
+
+    // Should see at least 3 notes with "Untitled" text
+    const untitledNotes = page.locator('text="Untitled"')
+    const count = await untitledNotes.count()
+    expect(count).toBeGreaterThanOrEqual(3)
   })
 
   test('should handle authentication errors gracefully', async ({ page }) => {
