@@ -1,4 +1,3 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { Spinner } from '../ui/spinner'
@@ -28,5 +27,6 @@ describe('Spinner', () => {
     spinner = screen.getByLabelText('Loading')
     expect(spinner).toBeInTheDocument()
     expect(spinner).toHaveAttribute('data-size', '3')
+    expect(spinner).not.toHaveAttribute('data-size', '1')
   })
 })

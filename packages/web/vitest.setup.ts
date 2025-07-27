@@ -1,4 +1,5 @@
 import React from 'react'
+import { vi } from 'vitest'
 import '@testing-library/jest-dom'
 
 // Make React available globally
@@ -39,10 +40,11 @@ vi.mock('./utils/supabase/client', () => ({
 
 // Mock Radix UI Themes
 vi.mock('@radix-ui/themes', () => ({
-  Theme: ({ children }: { children: React.ReactNode }) => React.createElement('div', { 'data-theme': 'light' }, children),
+  Theme: ({ children }: { children: React.ReactNode }) => 
+    React.createElement('div', { 'data-theme': 'light' }, children),
   Spinner: ({ className, size }: { className?: string; size?: string }) => 
     React.createElement('div', { 
-      className: `animate-spin ${className || ''}`,
+      className: `animate-spin ${className ?? ''}`,
       'data-size': size,
       role: 'status',
       'aria-label': 'Loading'
