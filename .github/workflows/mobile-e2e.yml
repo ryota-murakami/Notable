@@ -15,7 +15,8 @@ on:
 jobs:
   ios-e2e:
     runs-on: macos-latest
-    timeout-minutes: 15
+    # Allow first attempt + retry + a safety margin
+    timeout-minutes: 25
     # Temporarily disabled: GitHub Actions macOS runners have persistent iOS build timeouts
     # Known infrastructure issue with xcodebuild hanging at the "Build iOS app" step
     # TODO: Re-enable when GitHub resolves macOS runner iOS build infrastructure issues
@@ -133,7 +134,8 @@ jobs:
 
       - name: Build iOS app for testing
         working-directory: packages/mobile
-        timeout-minutes: 10
+        # Allow first attempt + retry + small buffer
+        timeout-minutes: 20
         run: |
           set -euo pipefail
           echo "Starting iOS app build with timeout..."
