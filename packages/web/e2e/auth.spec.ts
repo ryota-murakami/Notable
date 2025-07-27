@@ -20,12 +20,11 @@ test.describe('Authentication Flow', () => {
   test('should display Supabase auth UI', async ({ page }) => {
     await page.goto('/auth')
 
-    // Check Supabase Auth UI is loaded
-    await expect(page.locator('[data-supabase-auth-ui]')).toBeVisible()
+    // Wait for auth form to load and check for sign in form elements
+    await expect(page.getByPlaceholder('Your email address')).toBeVisible()
+    await expect(page.getByPlaceholder('Your password')).toBeVisible()
 
-    // Check for sign in form elements
-    await expect(page.getByLabel('Email')).toBeVisible()
-    await expect(page.getByLabel('Password')).toBeVisible()
+    // Check for auth buttons - Supabase Auth UI renders these
     await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Sign up' })).toBeVisible()
 
