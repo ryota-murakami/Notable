@@ -1,6 +1,7 @@
 import { ThemeProvider } from '../components/theme-provider'
 import { SyncProviderWrapper } from '../components/sync-provider-wrapper'
 import { RoutingProvider } from '../components/routing-provider'
+import { Toaster } from 'sonner'
 import './globals.css'
 import type { Metadata } from 'next'
 
@@ -46,6 +47,7 @@ export default function RootLayout({
           <RoutingProvider>
             <SyncProviderWrapper>{children}</SyncProviderWrapper>
           </RoutingProvider>
+          <Toaster position='top-center' richColors />
         </ThemeProvider>
       </body>
     </html>
