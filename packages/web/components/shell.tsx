@@ -8,6 +8,7 @@ import { useRouting } from '../hooks/use-routing'
 import { toast } from '../hooks/use-toast'
 import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
+import { isTest } from '../lib/utils/environment'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 export function Shell() {
@@ -19,10 +20,7 @@ export function Shell() {
   const supabase = createClient()
 
   // In test mode, treat as initialized to show the main UI
-  const isTestMode =
-    process.env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+  const isTestMode = isTest()
 
   const shouldShowLoading = !isInitialized && !isTestMode
 

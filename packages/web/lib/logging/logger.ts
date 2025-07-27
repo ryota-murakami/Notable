@@ -1,14 +1,14 @@
 import { type Logger, LogLevel, type LogMetadata } from './index'
+import { isDevelopment } from '../utils/environment'
 
 // Console-based logger that works everywhere
 const createUniversalLogger = (): Logger => {
-  const isDevelopment =
-    typeof process !== 'undefined' && process.env?.NODE_ENV === 'development'
+  const isDev = isDevelopment()
 
   const log = (level: LogLevel, message: string, metadata?: LogMetadata) => {
     const timestamp = new Date().toISOString()
 
-    if (isDevelopment || level === LogLevel.ERROR || level === LogLevel.WARN) {
+    if (isDev || level === LogLevel.ERROR || level === LogLevel.WARN) {
       const logMethod =
         level === LogLevel.ERROR
           ? 'error'

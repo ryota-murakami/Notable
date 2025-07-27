@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
+import { isProduction, isDevelopment } from './lib/utils/environment'
 
 const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN
 
@@ -7,7 +8,7 @@ if (sentryDsn) {
     dsn: sentryDsn,
 
     // Adjust this value in production, or use tracesSampler for greater control
-    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    tracesSampleRate: isProduction() ? 0.1 : 1.0,
 
     // Setting this option to true will print useful information to the console while you're setting up Sentry.
     debug: false,
@@ -28,7 +29,7 @@ if (sentryDsn) {
 
     // Filter local errors in development
     beforeSend(event, hint) {
-      if (process.env.NODE_ENV === 'development') {
+      if (isDevelopment()) {
         // Log to console in development instead of sending to Sentry
         console.error('Sentry Event:', event)
         console.error('Error:', hint.originalException)

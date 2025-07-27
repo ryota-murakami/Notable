@@ -4,6 +4,7 @@
  */
 
 import { type PerformanceMetric } from './performance'
+import { isDevelopment } from './utils/environment'
 
 // Analytics event types
 export interface AnalyticsEvent {
@@ -365,7 +366,7 @@ class Analytics {
     }
 
     // Log for development
-    if (process.env.NODE_ENV === 'development') {
+    if (isDevelopment()) {
       console.log('Analytics event:', event)
     }
   }

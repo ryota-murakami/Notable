@@ -10,6 +10,7 @@ import {
   useRouteBreadcrumb,
   useRouteTitle,
 } from '@notable/routing'
+import { isTest } from '../lib/utils/environment'
 
 /**
  * Hook for web-specific routing functionality
@@ -17,10 +18,7 @@ import {
  */
 export function useRouting() {
   // In test mode, return mock values to avoid routing initialization issues
-  const isTestMode =
-    process.env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+  const isTestMode = isTest()
 
   if (isTestMode) {
     return {
@@ -78,10 +76,7 @@ export function useRouting() {
  * Hook to get just the current route information
  */
 export function useCurrentRouteInfo() {
-  const isTestMode =
-    process.env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+  const isTestMode = isTest()
 
   if (isTestMode) {
     return null
@@ -94,10 +89,7 @@ export function useCurrentRouteInfo() {
  * Hook to get navigation history
  */
 export function useNavigationHistoryWeb() {
-  const isTestMode =
-    process.env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+  const isTestMode = isTest()
 
   if (isTestMode) {
     return []
@@ -110,10 +102,7 @@ export function useNavigationHistoryWeb() {
  * Hook to get navigation state (loading, error, etc.)
  */
 export function useNavigationStateWeb() {
-  const isTestMode =
-    process.env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+  const isTestMode = isTest()
 
   if (isTestMode) {
     return 'idle'
@@ -126,10 +115,7 @@ export function useNavigationStateWeb() {
  * Convenience hook for navigation actions only
  */
 export function useNavigationActions() {
-  const isTestMode =
-    process.env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+  const isTestMode = isTest()
 
   if (isTestMode) {
     return {
