@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+// Trigger fresh E2E workflow run after fixing "Welcome to Notable" issue
+
 test.describe('Authentication Flow', () => {
   test('should redirect to auth page when not authenticated', async ({
     page,
