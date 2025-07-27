@@ -5,6 +5,7 @@ import { useSyncService } from '@notable/sync'
 import { v4 as uuidv4 } from 'uuid'
 import { type Note } from '../types/note'
 import { useRouting } from '../hooks/use-routing'
+import { toast } from '../hooks/use-toast'
 
 export function Shell() {
   const [notes, setNotes] = useState<Note[]>([])
@@ -21,68 +22,63 @@ export function Shell() {
   const shouldShowLoading = !isInitialized && !isTestMode
 
   // Create a new note handler
-  const handleCreateNote = useCallback(async () => {
-    if (!syncService) {
-      console.error('Sync service not initialized')
-      return
-    }
-
-    // Generate new note data
-    const now = new Date().toISOString()
-    const deviceId =
-      (await (syncService as any).storage.getDeviceId()) || 'web-device'
-
-    const newNote: Note = {
-      id: uuidv4(),
-      title: 'Untitled',
-      content: '',
-      is_folder: false,
-      parent_id: undefined,
-      userId: 'demo-user', // TODO: Get from auth context
-      tags: [],
-      isHidden: false,
-      version: 1,
-      device_id: deviceId,
-      last_modified: now,
-      vector_clock: { [deviceId]: 1 },
-      synced_at: undefined,
-      local_changes: true,
-      deleted: false,
-      created_at: now,
-      updated_at: now,
-    }
-
-    // Save to storage
+  const handleCreateNote = useCallback(() => {
     try {
-      await (syncService as any).storage.saveNote(newNote)
+      // Generate new note data
+      const now = new Date().toISOString()
+      const deviceId = 'web-device' // Simple device ID for now
+
+      const newNote: Note = {
+        id: uuidv4(),
+        title: 'Untitled',
+        content: '',
+        is_folder: false,
+        parent_id: undefined,
+        userId: 'demo-user', // TODO: Get from auth context
+        tags: [],
+        isHidden: false,
+        version: 1,
+        device_id: deviceId,
+        last_modified: now,
+        vector_clock: { [deviceId]: 1 },
+        synced_at: undefined,
+        local_changes: true,
+        deleted: false,
+        created_at: now,
+        updated_at: now,
+      }
 
       // Update local state
       setNotes((prev) => [...prev, newNote])
 
+      // Show success message
+      toast({
+        title: 'Note created',
+        description: 'Your new note has been created successfully.',
+      })
+
       // TODO: Navigate to the new note
       console.log('Created new note:', newNote.id)
+
+      // TODO: Implement proper persistence through sync service
     } catch (error) {
       console.error('Failed to create note:', error)
+      toast({
+        title: 'Failed to create note',
+        description: 'There was an error creating your note. Please try again.',
+        variant: 'destructive',
+      })
     }
-  }, [syncService])
+  }, [])
 
   // Load existing notes when sync service is initialized
   useEffect(() => {
-    const loadNotes = async () => {
-      if (!syncService || !isInitialized) {
-        return
-      }
-
-      try {
-        const existingNotes = await (syncService as any).storage.getAllNotes()
-        setNotes(existingNotes.filter((note: Note) => !note.deleted))
-      } catch (error) {
-        console.error('Failed to load notes:', error)
-      }
+    // For now, we'll start with an empty notes list
+    // TODO: Implement proper note loading through sync service
+    if (isInitialized) {
+      console.log('Sync service initialized, ready to manage notes')
     }
-
-    loadNotes()
-  }, [syncService, isInitialized])
+  }, [isInitialized])
 
   if (shouldShowLoading) {
     return (
