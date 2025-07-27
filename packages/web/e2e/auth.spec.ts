@@ -89,18 +89,20 @@ test.describe('Authentication Flow', () => {
   })
 
   test('should allow authenticated users to access home', async ({ page }) => {
-    // Set dev auth bypass cookie for testing
+    // Navigate to home page first to establish domain
+    await page.goto('/')
+
+    // Set dev auth bypass cookie for testing (without domain to use current domain)
     await page.context().addCookies([
       {
         name: 'dev-auth-bypass',
         value: 'true',
-        domain: 'localhost',
         path: '/',
       },
     ])
 
-    // Navigate to home page
-    await page.goto('/')
+    // Reload page to apply cookie
+    await page.reload()
 
     // Should stay on home page
     await expect(page).toHaveURL('/')
