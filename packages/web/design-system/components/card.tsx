@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { cn } from '../utils/theme'
 import { motion, type MotionProps } from 'framer-motion'
+import { Spinner } from '@/components/ui/spinner'
 
 export interface CardProps extends Omit<MotionProps, 'children'> {
   children?: React.ReactNode
@@ -247,6 +248,7 @@ const CardTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
+  // eslint-disable-next-line jsx-a11y/heading-has-content
   <h3
     ref={ref}
     className={cn(
@@ -569,7 +571,14 @@ export function ActionCard({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {primaryAction.loading ? 'Loading...' : primaryAction.label}
+              {primaryAction.loading ? (
+                <span className='flex items-center gap-2'>
+                  <Spinner size='1' />
+                  <span>Loading...</span>
+                </span>
+              ) : (
+                primaryAction.label
+              )}
             </motion.button>
           )}
           {secondaryAction && (

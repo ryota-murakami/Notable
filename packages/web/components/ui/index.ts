@@ -49,3 +49,6 @@ export {
   NotableSettingsPanel,
   type SettingsSection,
 } from './settings-panel'
+
+// Loading components
+export { Spinner } from './spinner'
