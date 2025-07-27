@@ -2,7 +2,9 @@ import { ThemeProvider } from '../components/theme-provider'
 import { SyncProviderWrapper } from '../components/sync-provider-wrapper'
 import { RoutingProvider } from '../components/routing-provider'
 import { Toaster } from 'sonner'
+import { Theme } from '@radix-ui/themes'
 import './globals.css'
+import '@radix-ui/themes/styles.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -44,10 +46,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <RoutingProvider>
-            <SyncProviderWrapper>{children}</SyncProviderWrapper>
-          </RoutingProvider>
-          <Toaster position='top-center' richColors />
+          <Theme>
+            <RoutingProvider>
+              <SyncProviderWrapper>{children}</SyncProviderWrapper>
+            </RoutingProvider>
+            <Toaster position='top-center' richColors />
+          </Theme>
         </ThemeProvider>
       </body>
     </html>

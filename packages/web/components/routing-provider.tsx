@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { initializePlatformRouting, webAdapter } from '@notable/routing'
+import { Spinner } from '@/components/ui/spinner'
 
 interface RoutingProviderProps {
   children: ReactNode
@@ -116,7 +117,14 @@ function RoutingProviderInner({ children }: RoutingProviderProps) {
 export function RoutingProvider({ children }: RoutingProviderProps) {
   return (
     <RoutingErrorBoundary>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className='flex items-center justify-center p-4'>
+            <Spinner size='2' />
+            <span className='ml-2 text-muted-foreground'>Loading...</span>
+          </div>
+        }
+      >
         <RoutingProviderInner>{children}</RoutingProviderInner>
       </Suspense>
     </RoutingErrorBoundary>

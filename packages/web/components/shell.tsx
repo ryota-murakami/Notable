@@ -10,13 +10,14 @@ import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
 import { isTest } from '../lib/utils/environment'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { Spinner } from '@/components/ui/spinner'
 
 export function Shell() {
   const [notes, setNotes] = useState<Note[]>([])
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const { syncService, isInitialized } = useSyncService()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
-  const { current, title, navigate } = useRouting()
+  const { current: _current, title: _title, navigate: _navigate } = useRouting()
   const supabase = createClient()
 
   // In test mode, treat as initialized to show the main UI
@@ -82,7 +83,7 @@ export function Shell() {
       })
 
       // TODO: Navigate to the new note
-      console.log('Created new note:', newNote.id)
+      console.info('Created new note:', newNote.id)
 
       // TODO: Implement proper persistence through sync service
     } catch (error) {
@@ -100,7 +101,7 @@ export function Shell() {
     // For now, we'll start with an empty notes list
     // TODO: Implement proper note loading through sync service
     if (isInitialized) {
-      console.log('Sync service initialized, ready to manage notes')
+      console.info('Sync service initialized, ready to manage notes')
     }
   }, [isInitialized])
 
@@ -120,8 +121,8 @@ export function Shell() {
         </div>
         <div className='flex-1 flex items-center justify-center'>
           <div className='text-center'>
-            <div className='flex items-center justify-center h-8 w-8 mx-auto mb-4'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
+            <div className='flex items-center justify-center mx-auto mb-4'>
+              <Spinner size='3' />
             </div>
             <p className='text-muted-foreground'>Loading...</p>
           </div>
@@ -137,7 +138,6 @@ export function Shell() {
           <h2 className='text-lg font-semibold'>Notable</h2>
           <button
             className='w-full text-left px-3 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90'
-            role='button'
             aria-label='New Note'
             onClick={handleCreateNote}
           >
