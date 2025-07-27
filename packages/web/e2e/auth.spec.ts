@@ -103,10 +103,7 @@ test.describe('Authentication Flow', () => {
     // Should stay on home page
     await expect(page).toHaveURL('/')
 
-    // Wait for the app shell to load and find the Welcome text
+    // Wait for the app shell to load (authenticated users see the app, not welcome message)
     await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
-    await expect(page.getByText('Welcome to Notable')).toBeVisible({
-      timeout: 5000,
-    })
   })
 })
