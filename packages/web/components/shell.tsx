@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { type Note } from '../types/note'
 import { useRouting } from '../hooks/use-routing'
 import { toast } from '../hooks/use-toast'
+import { UserMenu } from './user-menu'
 
 export function Shell() {
   const [notes, setNotes] = useState<Note[]>([])
@@ -144,15 +145,25 @@ export function Shell() {
           </div>
         </div>
       </div>
-      <div className='flex-1 flex items-center justify-center'>
-        <div className='text-center'>
-          <h3 className='text-xl font-semibold'>Welcome to Notable</h3>
-          <p className='text-muted-foreground mt-2'>
-            Your notes are now synced across all devices using CRDT technology.
-          </p>
-          <p className='text-sm text-muted-foreground mt-4'>
-            Sync Status: {syncService ? 'Connected' : 'Disconnected'}
-          </p>
+      <div className='flex-1 flex flex-col'>
+        {/* Header with user menu */}
+        <header className='flex items-center justify-between border-b px-6 py-3'>
+          <div className='flex-1' />
+          <UserMenu />
+        </header>
+
+        {/* Main content area */}
+        <div className='flex-1 flex items-center justify-center'>
+          <div className='text-center'>
+            <h3 className='text-xl font-semibold'>Welcome to Notable</h3>
+            <p className='text-muted-foreground mt-2'>
+              Your notes are now synced across all devices using CRDT
+              technology.
+            </p>
+            <p className='text-sm text-muted-foreground mt-4'>
+              Sync Status: {syncService ? 'Connected' : 'Disconnected'}
+            </p>
+          </div>
         </div>
       </div>
     </div>
