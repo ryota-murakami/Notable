@@ -70,9 +70,8 @@ function RoutingProviderInner({ children }: RoutingProviderProps) {
 
   // In test mode, skip all routing logic entirely
   const isTestMode =
-    process.env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+    typeof window !== 'undefined' &&
+    document.cookie.includes('dev-auth-bypass=true')
 
   useEffect(() => {
     // If in test mode, skip routing initialization
