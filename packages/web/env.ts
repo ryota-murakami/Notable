@@ -94,9 +94,12 @@ export const env = createEnv({
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
-   * useful for Docker builds.
+   * useful for Docker builds. We check if we're in a browser to avoid client-side errors.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation:
+    typeof window !== 'undefined'
+      ? false // Always validate on client-side
+      : !!process.env.SKIP_ENV_VALIDATION, // Only check on server-side
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
    * `SOME_VAR=''` will throw an error.
