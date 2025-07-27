@@ -6,6 +6,8 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useRouter } from 'next/navigation'
 import { cn } from '../lib/utils'
 import { toast } from 'sonner'
+import { createClient } from '@/utils/supabase/client'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 interface UserMenuProps {
   className?: string
@@ -14,18 +16,67 @@ interface UserMenuProps {
 export function UserMenu({ className }: UserMenuProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
+  const [user, setUser] = React.useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = React.useState(true)
+  const supabase = createClient()
 
-  // TODO: Get user data from auth context
-  const user = {
-    name: 'Demo User',
-    email: 'demo@notable.app',
-    initials: 'DU',
+  React.useEffect(() => {
+    // Get initial user
+    const getUser = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        setUser(user)
+      } catch (error) {
+        console.error('Error fetching user:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    getUser()
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase])
+
+  // Generate initials from user data
+  const getInitials = (user: SupabaseUser | null) => {
+    if (!user) return '??'
+
+    // Try to get name from user metadata
+    const fullName = user.user_metadata?.full_name || user.user_metadata?.name
+    if (fullName) {
+      const names = fullName.split(' ')
+      return names
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    }
+
+    // Fallback to email
+    if (user.email) {
+      return user.email.slice(0, 2).toUpperCase()
+    }
+
+    return '??'
   }
 
   const handleLogout = async () => {
     try {
-      // TODO: Implement actual logout functionality
-      // For now, just clear cookies and redirect
+      const { error } = await supabase.auth.signOut()
+
+      if (error) throw error
+
+      // Clear dev auth bypass cookie if it exists
       document.cookie =
         'dev-auth-bypass=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
 
@@ -48,6 +99,11 @@ export function UserMenu({ className }: UserMenuProps) {
     toast.info('Settings page coming soon!')
   }
 
+  // Don't render if loading or no user
+  if (loading || !user) {
+    return null
+  }
+
   return (
     <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenu.Trigger asChild>
@@ -59,7 +115,7 @@ export function UserMenu({ className }: UserMenuProps) {
           aria-label='User menu'
           data-testid='user-menu-trigger'
         >
-          <span className='text-sm font-semibold'>{user.initials}</span>
+          <span className='text-sm font-semibold'>{getInitials(user)}</span>
         </button>
       </DropdownMenu.Trigger>
 
@@ -70,8 +126,15 @@ export function UserMenu({ className }: UserMenuProps) {
           align='end'
         >
           <div className='px-2 py-1.5'>
-            <p className='text-sm font-semibold'>{user.name}</p>
-            <p className='text-xs text-muted-foreground'>{user.email}</p>
+            <p className='text-sm font-semibold'>
+              {user?.user_metadata?.full_name ||
+                user?.user_metadata?.name ||
+                user?.email ||
+                'User'}
+            </p>
+            <p className='text-xs text-muted-foreground'>
+              {user?.email || 'No email'}
+            </p>
           </div>
 
           <DropdownMenu.Separator className='my-1 h-px bg-border' />
