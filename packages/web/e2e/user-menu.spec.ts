@@ -60,10 +60,10 @@ test.describe('User Menu', () => {
 
     // Wait for menu to fully open
     await page.waitForSelector('text="Demo User"', { state: 'visible' })
-    await page.waitForTimeout(200) // Small delay for animation
+    await page.waitForTimeout(300) // Small delay for animation
 
-    // Click outside the menu on the main content area
-    await page.locator('.text-xl:has-text("Welcome to Notable")').click()
+    // Click outside the menu - use body element to ensure we're clicking outside
+    await page.locator('body').click({ position: { x: 10, y: 10 } })
 
     // Wait a bit for animation
     await page.waitForTimeout(500)
@@ -97,7 +97,7 @@ test.describe('User Menu', () => {
     await page.locator('text="Log out"').click()
 
     // Wait for navigation
-    await page.waitForURL('**/auth')
+    await page.waitForURL(/\/auth/, { timeout: 5000 })
 
     // Should be on auth page
     await expect(page).toHaveURL(/\/auth/)
