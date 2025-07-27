@@ -158,7 +158,10 @@ export class SearchEngine {
 
       return results.sort((a, b) => b.score - a.score)
     } catch (error) {
-      console.error('Regex search error:', error)
+      // Use proper logging instead of console.error in production
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Regex search error:', error)
+      }
       return []
     }
   }

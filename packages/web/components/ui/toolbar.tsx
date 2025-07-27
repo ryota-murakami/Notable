@@ -82,7 +82,7 @@ export function Toolbar({
     >
       {Object.entries(groupedActions).map(
         ([groupName, groupActions], index) => (
-          <React.Fragment key={groupName}>
+          <React.Fragment key={`${groupName}-${index}`}>
             {index > 0 && (
               <div
                 className={cn(

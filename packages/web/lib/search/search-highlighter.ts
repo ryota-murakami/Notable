@@ -181,10 +181,13 @@ export class SearchHighlighter {
   private removeOverlaps(matches: SearchMatch[]): SearchMatch[] {
     if (matches.length <= 1) return matches
 
+    // Limit matches early to avoid unnecessary processing
+    const limitedMatches = matches.slice(0, this.options.maxHighlights)
+
     const result: SearchMatch[] = []
     let lastEnd = 0
 
-    for (const match of matches) {
+    for (const match of limitedMatches) {
       if (match.start >= lastEnd) {
         result.push(match)
         lastEnd = match.end
@@ -199,7 +202,7 @@ export class SearchHighlighter {
       }
     }
 
-    return result.slice(0, this.options.maxHighlights)
+    return result
   }
 
   private findWordBoundary(

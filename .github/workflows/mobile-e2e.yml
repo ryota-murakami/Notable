@@ -16,8 +16,8 @@ jobs:
   ios-e2e:
     runs-on: macos-latest
     timeout-minutes: 45
-    # Skip iOS E2E tests until mobile UI is implemented
-    if: false
+    # Enable iOS E2E tests now that mobile UI is implemented
+    if: true
 
     steps:
       - name: Checkout code
@@ -103,10 +103,25 @@ jobs:
             echo "Waiting for simulator to fully initialize..."
             sleep 10
 
-            # Abort if still not booted
-            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
-              echo "Simulator failed to boot after 3 attempts" >&2
-              exit 1
+            # Verify simulator is actually booted with better checking
+            BOOT_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+            echo "Simulator status: $BOOT_STATUS"
+            
+            if echo "$BOOT_STATUS" | grep -q "(Booted)"; then
+              echo "✅ Simulator successfully booted and verified"
+            else
+              echo "❌ Simulator verification failed after boot"
+              echo "Attempting final verification..."
+              sleep 5
+              FINAL_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+              echo "Final status: $FINAL_STATUS"
+              
+              if ! echo "$FINAL_STATUS" | grep -q "(Booted)"; then
+                echo "Simulator failed to boot after verification attempts" >&2
+                exit 1
+              else
+                echo "✅ Simulator verified as booted on retry"
+              fi
             fi
           fi
 
@@ -136,7 +151,9 @@ jobs:
   android-e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Skip Android E2E tests until mobile UI is implemented
+    # Temporarily disabled: Android emulators require hardware acceleration not available in GitHub Actions
+    # Both x86 (requires KVM) and ARM64 (unsupported on x86_64 hosts) fail
+    # TODO: Consider self-hosted runners or alternative Android testing solutions
     if: false
 
     steps:
@@ -183,12 +200,12 @@ jobs:
 
       - name: Create Android AVD
         run: |
-          # Use a smaller, faster API 30 for better performance
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
+          # Use API 30 ARM64 to avoid KVM hardware acceleration requirements in GitHub runners
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;arm64-v8a"
           # Delete existing AVD if it exists
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager delete avd --name test_avd || true
-          # Create AVD with simpler name and verify creation
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/x86_64 --package "system-images;android-30;google_apis;x86_64" --device "pixel_xl"
+          # Create AVD with ARM64 architecture that works without hardware acceleration
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name test_avd --abi google_apis/arm64-v8a --package "system-images;android-30;google_apis;arm64-v8a"
           # List AVDs to verify creation
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
           # Verify AVD files exist
@@ -211,17 +228,17 @@ jobs:
           # List available AVDs to confirm
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
 
-          # Start emulator with optimized settings for CI
+          # Start ARM64 emulator with configuration optimized for CI without hardware acceleration
           $ANDROID_HOME/emulator/emulator -avd test_avd \
             -no-audio \
             -no-window \
             -gpu swiftshader_indirect \
             -no-snapshot \
-            -camera-back none \
-            -camera-front none \
-            -memory 4096 \
-            -partition-size 4096 \
-            -cores 2 &
+            -no-boot-anim \
+            -memory 2048 \
+            -partition-size 2048 \
+            -no-metrics \
+            -read-only &
 
           # Wait for device with timeout and better error handling
           echo "Waiting for Android emulator to start..."
@@ -258,8 +275,8 @@ jobs:
   performance-test:
     runs-on: macos-latest
     timeout-minutes: 30
-    # Skip performance tests until mobile UI is implemented
-    if: false
+    # Enable performance tests now that mobile UI is implemented
+    if: true
 
     steps:
       - name: Checkout code
@@ -345,10 +362,25 @@ jobs:
             echo "Waiting for simulator to fully initialize..."
             sleep 10
 
-            # Abort if still not booted
-            if ! xcrun simctl list devices | grep -q "$SIMULATOR_UDID (Booted)"; then
-              echo "Simulator failed to boot after 3 attempts" >&2
-              exit 1
+            # Verify simulator is actually booted with better checking
+            BOOT_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+            echo "Simulator status: $BOOT_STATUS"
+            
+            if echo "$BOOT_STATUS" | grep -q "(Booted)"; then
+              echo "✅ Simulator successfully booted and verified"
+            else
+              echo "❌ Simulator verification failed after boot"
+              echo "Attempting final verification..."
+              sleep 5
+              FINAL_STATUS=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" || true)
+              echo "Final status: $FINAL_STATUS"
+              
+              if ! echo "$FINAL_STATUS" | grep -q "(Booted)"; then
+                echo "Simulator failed to boot after verification attempts" >&2
+                exit 1
+              else
+                echo "✅ Simulator verified as booted on retry"
+              fi
             fi
           fi
 
