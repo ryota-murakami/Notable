@@ -28,8 +28,10 @@ test.describe('Authentication Flow', () => {
     await expect(
       page.getByRole('button', { name: 'Sign in', exact: true })
     ).toBeVisible()
+
+    // Check for sign up link (Supabase Auth UI shows this as a link, not a button)
     await expect(
-      page.getByRole('button', { name: 'Sign up', exact: true })
+      page.getByRole('link', { name: /Don't have an account\? Sign up/i })
     ).toBeVisible()
 
     // Check Google OAuth button is visible
