@@ -41,6 +41,7 @@ test.describe('Auth Route Middleware', () => {
       {
         name: 'dev-auth-bypass',
         value: 'true',
+        domain: 'localhost',
         path: '/',
       },
     ])

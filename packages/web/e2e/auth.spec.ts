@@ -97,6 +97,7 @@ test.describe('Authentication Flow', () => {
       {
         name: 'dev-auth-bypass',
         value: 'true',
+        domain: 'localhost',
         path: '/',
       },
     ])

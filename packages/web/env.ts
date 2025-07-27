@@ -10,6 +10,7 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
+    CI: z.string().optional(),
     DATABASE_URL: z.string().url().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
     SUPABASE_JWT_SECRET: z.string().optional(),
@@ -61,6 +62,7 @@ export const env = createEnv({
   runtimeEnv: {
     // Server
     NODE_ENV: process.env.NODE_ENV,
+    CI: process.env.CI,
     DATABASE_URL: process.env.DATABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     SUPABASE_JWT_SECRET: process.env.SUPABASE_JWT_SECRET,
