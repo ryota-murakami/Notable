@@ -153,6 +153,8 @@ To create the world's most elegant and performant note-taking application that c
 
 ### 9. Publish as a webpage
 
+### 10. Explicit version history like git
+
 ### 10. Custom theme
 
 - over 100+ theme
