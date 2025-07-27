@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '../utils/theme'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {

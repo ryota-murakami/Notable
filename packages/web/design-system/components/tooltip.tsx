@@ -50,6 +50,21 @@ interface Position {
   arrowY?: number
 }
 
+// Tooltip context and hook must be defined before use
+const TooltipContext = React.createContext<{
+  delay: number
+  hideDelay: number
+  portal: boolean
+}>({
+  delay: 200,
+  hideDelay: 0,
+  portal: true,
+})
+
+export function useTooltipContext() {
+  return React.useContext(TooltipContext)
+}
+
 export function Tooltip({
   content,
   children,
@@ -433,16 +448,6 @@ export interface TooltipProviderProps {
   portal?: boolean
 }
 
-const TooltipContext = React.createContext<{
-  delay: number
-  hideDelay: number
-  portal: boolean
-}>({
-  delay: 200,
-  hideDelay: 0,
-  portal: true,
-})
-
 export function TooltipProvider({
   children,
   delay = 200,
@@ -454,8 +459,4 @@ export function TooltipProvider({
       {children}
     </TooltipContext.Provider>
   )
-}
-
-export function useTooltipContext() {
-  return React.useContext(TooltipContext)
 }
