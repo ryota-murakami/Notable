@@ -6,7 +6,7 @@ test.describe('Authentication Flow', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
   test.skip(
     process.env.CI === 'true' &&
-      process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder'),
+      process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder') === true,
     'Skipping auth tests in CI due to placeholder Supabase credentials'
   )
   test('should redirect to auth page when not authenticated', async ({
