@@ -25,8 +25,12 @@ test.describe('Authentication Flow', () => {
     await expect(page.getByPlaceholder('Your password')).toBeVisible()
 
     // Check for auth buttons - Supabase Auth UI renders these
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Sign up' })).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Sign in', exact: true })
+    ).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Sign up', exact: true })
+    ).toBeVisible()
 
     // Check Google OAuth button is visible
     await expect(
