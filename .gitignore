@@ -100,3 +100,4 @@ expo-env.d.ts.turbo/
 
 # Turborepo
 .turbo
+.env*.local
