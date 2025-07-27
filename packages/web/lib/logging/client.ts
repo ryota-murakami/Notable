@@ -1,4 +1,5 @@
 import { LogLevel, type LogMetadata } from './index'
+import { isDevelopment, isProduction } from '../utils/environment'
 
 interface LogBuffer {
   entries: Array<{
@@ -11,7 +12,7 @@ interface LogBuffer {
 }
 
 export function createClientLogger() {
-  const isDevelopment = process.env.NODE_ENV === 'development'
+  const isDev = isDevelopment()
 
   // Buffer for batching logs
   const buffer: LogBuffer = {
@@ -70,7 +71,7 @@ export function createClientLogger() {
     }
 
     // Always log to console in development
-    if (isDevelopment) {
+    if (isDev) {
       const style = {
         [LogLevel.ERROR]: 'color: red; font-weight: bold',
         [LogLevel.WARN]: 'color: orange; font-weight: bold',
@@ -91,7 +92,7 @@ export function createClientLogger() {
 
     // Add to buffer for server logging (skip in development)
     if (
-      !isDevelopment &&
+      !isDev &&
       (level === LogLevel.ERROR ||
         level === LogLevel.WARN ||
         level === LogLevel.INFO)
@@ -156,7 +157,7 @@ export function createClientLogger() {
 }
 
 // Console override for catching unhandled errors
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+if (typeof window !== 'undefined' && isProduction()) {
   const originalConsoleError = console.error
   console.error = (...args: unknown[]) => {
     originalConsoleError.apply(console, args)
