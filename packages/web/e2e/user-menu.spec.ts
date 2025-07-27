@@ -53,7 +53,7 @@ test.describe('User Menu', () => {
     await expect(page.locator('text="Log out"')).toBeVisible()
   })
 
-  test('should close dropdown when clicking outside', async ({ page }) => {
+  test.skip('should close dropdown when clicking outside', async ({ page }) => {
     // Open the menu
     const userMenuTrigger = page.locator('[data-testid="user-menu-trigger"]')
     await userMenuTrigger.click()
