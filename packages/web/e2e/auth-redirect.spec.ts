@@ -15,9 +15,8 @@ test.describe('Auth Route Middleware', () => {
     await expect(
       page.getByText('Sign in to access your synced notes')
     ).toBeVisible()
-    await expect(
-      page.getByRole('button', { name: 'Demo Login (Testing)' })
-    ).toBeVisible()
+    // Verify Supabase Auth UI is loaded by checking for form elements
+    await expect(page.getByPlaceholder('Your email address')).toBeVisible()
   })
 
   test('should redirect unauthenticated users from home to auth', async ({
