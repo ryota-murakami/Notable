@@ -33,22 +33,25 @@ test.describe('Auth Route Middleware', () => {
   })
 
   test('should allow authenticated users to access home', async ({ page }) => {
-    // Set dev auth bypass cookie for testing
+    // Navigate to home page first to establish domain
+    await page.goto('/')
+
+    // Set dev auth bypass cookie for testing (without domain to use current domain)
     await page.context().addCookies([
       {
         name: 'dev-auth-bypass',
         value: 'true',
-        domain: 'localhost',
         path: '/',
       },
     ])
 
-    // Navigate to home page
-    await page.goto('/')
+    // Reload page to apply cookie
+    await page.reload()
 
     // Should stay on home page
     await expect(page).toHaveURL('/')
-    await expect(page.getByText('Welcome to Notable')).toBeVisible()
+    // Wait for the authenticated app to load - check for the "New Note" button which only appears when authenticated
+    await expect(page.getByRole('button', { name: 'New Note' })).toBeVisible()
   })
 
   test('should not apply middleware to static assets', async ({ page }) => {
