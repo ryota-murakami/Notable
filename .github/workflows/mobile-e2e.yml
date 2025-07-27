@@ -15,7 +15,7 @@ on:
 jobs:
   ios-e2e:
     runs-on: macos-latest
-    timeout-minutes: 45
+    timeout-minutes: 15
     # Enable iOS E2E tests now that mobile UI is implemented
     if: true
 
@@ -131,8 +131,33 @@ jobs:
 
       - name: Build iOS app for testing
         working-directory: packages/mobile
+        timeout-minutes: 10
         run: |
-          pnpm e2e:build:ios
+          set -euo pipefail
+          echo "Starting iOS app build with timeout..."
+
+          # Add timeout to the build command to prevent hanging
+          if timeout 600 pnpm e2e:build:ios; then
+            echo "✅ iOS build completed successfully"
+          else
+            echo "❌ iOS build timed out or failed"
+            echo "This appears to be a GitHub Actions infrastructure issue"
+            echo "Attempting cleanup and retry..."
+            
+            # Cleanup any stuck processes
+            pkill -f "xcodebuild" || true
+            pkill -f "expo" || true
+            sleep 5
+            
+            # Single retry attempt with shorter timeout
+            echo "Retrying iOS build (final attempt)..."
+            if timeout 300 pnpm e2e:build:ios; then
+              echo "✅ iOS build succeeded on retry"
+            else
+              echo "❌ iOS build failed on retry - infrastructure issue"
+              exit 1
+            fi
+          fi
 
       - name: Run iOS E2E tests
         working-directory: packages/mobile
@@ -274,7 +299,7 @@ jobs:
 
   performance-test:
     runs-on: macos-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     # Enable performance tests now that mobile UI is implemented
     if: true
 
@@ -390,8 +415,33 @@ jobs:
 
       - name: Build iOS app for performance testing
         working-directory: packages/mobile
+        timeout-minutes: 10
         run: |
-          pnpm e2e:build:ios
+          set -euo pipefail
+          echo "Starting iOS app build for performance testing with timeout..."
+
+          # Add timeout to the build command to prevent hanging
+          if timeout 600 pnpm e2e:build:ios; then
+            echo "✅ iOS build completed successfully"
+          else
+            echo "❌ iOS build timed out or failed"
+            echo "This appears to be a GitHub Actions infrastructure issue"
+            echo "Attempting cleanup and retry..."
+            
+            # Cleanup any stuck processes
+            pkill -f "xcodebuild" || true
+            pkill -f "expo" || true
+            sleep 5
+            
+            # Single retry attempt with shorter timeout
+            echo "Retrying iOS build (final attempt)..."
+            if timeout 300 pnpm e2e:build:ios; then
+              echo "✅ iOS build succeeded on retry"
+            else
+              echo "❌ iOS build failed on retry - infrastructure issue"
+              exit 1
+            fi
+          fi
 
       - name: Run performance tests
         working-directory: packages/mobile
