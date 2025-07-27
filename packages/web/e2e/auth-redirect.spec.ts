@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Auth Route Middleware', () => {
   test('should allow access to /auth without redirect loop', async ({
