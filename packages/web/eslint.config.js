@@ -9,6 +9,10 @@ export default [
       'public/static/**/*',
       '**/*.bundle.js',
       'out/**/*',
+      '.next/**/*',
+      'node_modules/**/*',
+      'dist/**/*',
+      'coverage/**/*',
     ],
   },
   {
@@ -155,6 +159,48 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
       'require-await': 'off',
       'no-return-await': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_?error$',
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
+  // Vitest test files configuration
+  {
+    files: [
+      '**/*.{test,spec}.{ts,tsx,js,jsx}',
+      '__tests__/**/*.{ts,tsx,js,jsx}',
+    ],
+    languageOptions: {
+      globals: {
+        // Vitest globals
+        vi: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        test: 'readonly',
+        suite: 'readonly',
+        
+        // Browser/Node globals for tests
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        global: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'require-await': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
