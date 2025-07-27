@@ -9,6 +9,10 @@ export default [
       'public/static/**/*',
       '**/*.bundle.js',
       'out/**/*',
+      '.next/**/*',
+      'node_modules/**/*',
+      'dist/**/*',
+      'coverage/**/*',
     ],
   },
   {

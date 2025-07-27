@@ -25,6 +25,12 @@ export default defineConfig({
       'coverage',
       '**/*.d.ts',
       '**/*.e2e.*', // Exclude E2E tests
+      // Exclude Jest-syntax test files (let Jest handle them)
+      '__tests__/page.test.tsx',
+      '__tests__/lib/react-query.test.ts',
+      'hooks/__tests__/use-analytics.test.tsx',
+      'lib/__tests__/analytics.test.ts',
+      'utils/__tests__/version-history.test.ts',
     ],
     coverage: {
       reporter: ['text', 'json', 'html'],
