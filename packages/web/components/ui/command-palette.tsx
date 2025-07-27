@@ -1,16 +1,16 @@
 'use client'
 
 import * as React from 'react'
-import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from 'cmdk'
+import * as CommandPrimitive from 'cmdk'
+
+const Command = CommandPrimitive.Command
+const CommandDialog = CommandPrimitive.CommandDialog
+const CommandEmpty = CommandPrimitive.CommandEmpty
+const CommandGroup = CommandPrimitive.CommandGroup
+const CommandInput = CommandPrimitive.CommandInput
+const CommandItem = CommandPrimitive.CommandItem
+const CommandList = CommandPrimitive.CommandList
+const CommandSeparator = CommandPrimitive.CommandSeparator
 import { cn } from '../../lib/utils'
 import {
   CalendarIcon,
@@ -709,7 +709,7 @@ export function SearchCommandPalette({
                       <div className='font-medium'>{entry.query}</div>
                       <div className='text-xs text-muted-foreground'>
                         {entry.resultCount} results •{' '}
-                        {entry.timestamp.toLocaleDateString()}
+                        {entry.timestamp.toLocaleDateString('en-US')}
                       </div>
                     </div>
                   </CommandItem>

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '../utils/theme'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { createPortal } from 'react-dom'
 
 export interface TooltipProps {
@@ -50,13 +50,28 @@ interface Position {
   arrowY?: number
 }
 
+// Tooltip context and hook must be defined before use
+const TooltipContext = React.createContext<{
+  delay: number
+  hideDelay: number
+  portal: boolean
+}>({
+  delay: 200,
+  hideDelay: 0,
+  portal: true,
+})
+
+export function useTooltipContext() {
+  return React.useContext(TooltipContext)
+}
+
 export function Tooltip({
   content,
   children,
   placement = 'top',
   trigger = 'hover',
-  delay = 200,
-  hideDelay = 0,
+  delay: propDelay,
+  hideDelay: propHideDelay,
   disabled = false,
   arrow = true,
   size = 'md',
@@ -65,9 +80,15 @@ export function Tooltip({
   contentClassName,
   open: controlledOpen,
   onOpenChange,
-  portal = true,
+  portal: propPortal,
   maxWidth = 320,
 }: TooltipProps) {
+  const context = useTooltipContext()
+
+  // Use context values as defaults when props are not provided
+  const delay = propDelay ?? context.delay
+  const hideDelay = propHideDelay ?? context.hideDelay
+  const portal = propPortal ?? context.portal
   const [internalOpen, setInternalOpen] = React.useState(false)
   const [position, setPosition] = React.useState<Position>({ x: 0, y: 0 })
   const [mounted, setMounted] = React.useState(false)
@@ -427,16 +448,6 @@ export interface TooltipProviderProps {
   portal?: boolean
 }
 
-const TooltipContext = React.createContext<{
-  delay: number
-  hideDelay: number
-  portal: boolean
-}>({
-  delay: 200,
-  hideDelay: 0,
-  portal: true,
-})
-
 export function TooltipProvider({
   children,
   delay = 200,
@@ -448,8 +459,4 @@ export function TooltipProvider({
       {children}
     </TooltipContext.Provider>
   )
-}
-
-export function useTooltipContext() {
-  return React.useContext(TooltipContext)
 }

@@ -119,6 +119,13 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
     const searchInputRef = React.useRef<HTMLInputElement>(null)
     const optionRefs = React.useRef<(HTMLDivElement | null)[]>([])
 
+    // Clean up option refs on unmount
+    React.useEffect(() => {
+      return () => {
+        optionRefs.current = []
+      }
+    }, [])
+
     const isControlled = controlledValue !== undefined
     const selectedValue = isControlled ? controlledValue : internalValue
 
@@ -137,6 +144,13 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
           option.description?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     }, [options, searchQuery])
+
+    // Clean up option refs when options change
+    React.useEffect(() => {
+      if (optionRefs.current.length !== filteredOptions.length) {
+        optionRefs.current = new Array(filteredOptions.length).fill(null)
+      }
+    }, [filteredOptions.length])
 
     // Calculate dropdown position
     const calculatePosition = React.useCallback(() => {
@@ -184,7 +198,13 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
     // Focus search input when dropdown opens
     React.useEffect(() => {
       if (isOpen && searchable && searchInputRef.current) {
-        setTimeout(() => searchInputRef.current?.focus(), 100)
+        // Use requestAnimationFrame for better timing than arbitrary setTimeout
+        const focusInput = () => {
+          if (searchInputRef.current) {
+            searchInputRef.current.focus()
+          }
+        }
+        requestAnimationFrame(focusInput)
       }
     }, [isOpen, searchable])
 
@@ -350,7 +370,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
               left: dropdownPosition.x,
               top: dropdownPosition.y,
               width: dropdownPosition.width,
-              maxHeight,
+              maxHeight: maxHeight,
             }}
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

@@ -2,7 +2,7 @@
   "name": "@notable/mobile",
   "version": "1.0.0",
   "description": "Notable mobile application built with React Native/Expo",
-  "//": "Trigger mobile e2e workflows for PR #182",
+  "//": "Trigger mobile e2e workflows for PR #177 - restart after infrastructure timeout v2",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -54,7 +54,7 @@
     "@react-navigation/stack": "^7.0.10",
     "@supabase/supabase-js": "^2.48.0",
     "expo": "~52.0.0",
-    "expo-file-system": "^18.1.11",
+    "expo-file-system": "^18.0.12",
     "expo-font": "^13.3.2",
     "expo-linear-gradient": "~14.1.5",
     "expo-router": "^5.1.4",
