@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
+import { env } from '@/env'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -7,8 +8,8 @@ export async function updateSession(request: NextRequest) {
   })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -38,7 +39,7 @@ export async function updateSession(request: NextRequest) {
 
   // Check for dev auth bypass cookie for e2e testing (only in development or CI)
   const devAuthBypass =
-    (process.env.NODE_ENV !== 'production' || process.env.CI === 'true') &&
+    (env.NODE_ENV !== 'production' || env.CI === 'true') &&
     request.cookies.get('dev-auth-bypass')?.value === 'true'
 
   if (
