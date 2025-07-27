@@ -7,8 +7,8 @@ test.describe('Auth Route Middleware', () => {
     // Navigate to auth page
     await page.goto('/auth')
 
-    // Verify we're on the auth page and not redirected
-    await expect(page).toHaveURL('/auth')
+    // Verify we're on the auth page and not redirected (with or without trailing slash)
+    await expect(page.url()).toMatch(/\/auth\/?$/)
 
     // Verify auth page content is visible
     await expect(page.getByText('Welcome to Notable')).toBeVisible()
@@ -29,8 +29,8 @@ test.describe('Auth Route Middleware', () => {
     // Try to navigate to home page
     await page.goto('/')
 
-    // Should be redirected to auth
-    await expect(page).toHaveURL('/auth')
+    // Should be redirected to auth (with or without trailing slash)
+    await expect(page.url()).toMatch(/\/auth\/?$/)
   })
 
   test('should allow authenticated users to access home', async ({ page }) => {
