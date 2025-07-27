@@ -22,10 +22,10 @@ export function SyncProviderWrapper({ children }: SyncProviderWrapperProps) {
   }
 
   // In test mode, skip sync provider initialization
+  // We only check for dev-auth-bypass cookie on client-side since NODE_ENV is server-only
   const isTestMode =
-    env.NODE_ENV === 'test' ||
-    (typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true'))
+    typeof window !== 'undefined' &&
+    document.cookie.includes('dev-auth-bypass=true')
 
   const syncConfig: SyncConfig = {
     supabaseUrl:
