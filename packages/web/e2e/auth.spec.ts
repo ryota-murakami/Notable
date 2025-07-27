@@ -105,7 +105,7 @@ test.describe('Authentication Flow', () => {
     // Should stay on home page
     await expect(page).toHaveURL('/')
 
-    // Wait for the app shell to load (authenticated users see the app, not welcome message)
-    await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
+    // Wait for the authenticated app to load - check for the "New Note" button which only appears when authenticated
+    await expect(page.getByRole('button', { name: 'New Note' })).toBeVisible()
   })
 })
