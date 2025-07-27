@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // output: 'export', // Temporarily disabled for development - middleware is needed
-  trailingSlash: true,
+  trailingSlash: false,
   // Transpile workspace packages for proper module resolution
   transpilePackages: ['@notable/sync'],
   images: {
