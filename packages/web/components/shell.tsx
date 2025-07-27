@@ -7,12 +7,16 @@ import { type Note } from '../types/note'
 import { useRouting } from '../hooks/use-routing'
 import { toast } from '../hooks/use-toast'
 import { UserMenu } from './user-menu'
+import { createClient } from '@/utils/supabase/client'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 export function Shell() {
   const [notes, setNotes] = useState<Note[]>([])
+  const [user, setUser] = useState<SupabaseUser | null>(null)
   const { syncService, isInitialized } = useSyncService()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current, title, navigate } = useRouting()
+  const supabase = createClient()
 
   // In test mode, treat as initialized to show the main UI
   const isTestMode =
@@ -21,6 +25,27 @@ export function Shell() {
       document.cookie.includes('dev-auth-bypass=true'))
 
   const shouldShowLoading = !isInitialized && !isTestMode
+
+  // Get user on mount
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUser(user)
+    }
+
+    getUser()
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase])
 
   // Create a new note handler
   const handleCreateNote = useCallback(() => {
@@ -35,7 +60,7 @@ export function Shell() {
         content: '',
         is_folder: false,
         parent_id: undefined,
-        userId: 'demo-user', // TODO: Get from auth context
+        userId: user?.id || 'anonymous', // Use real user ID
         tags: [],
         isHidden: false,
         version: 1,
@@ -70,7 +95,7 @@ export function Shell() {
         variant: 'destructive',
       })
     }
-  }, [])
+  }, [user])
 
   // Load existing notes when sync service is initialized
   useEffect(() => {
