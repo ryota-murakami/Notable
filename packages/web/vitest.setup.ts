@@ -1,6 +1,6 @@
 import React from 'react'
 import { vi } from 'vitest'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 
 // Make React available globally
 global.React = React
@@ -22,12 +22,12 @@ vi.mock('next/navigation', () => ({
 }))
 
 // Mock environment utilities
-vi.mock('./lib/utils/environment', () => ({
+vi.mock('@/lib/utils/environment', () => ({
   isTest: () => true,
 }))
 
 // Mock Supabase client
-vi.mock('./utils/supabase/client', () => ({
+vi.mock('@/utils/supabase/client', () => ({
   createClient: () => ({
     auth: {
       getUser: vi.fn().mockResolvedValue({ data: { user: null } }),

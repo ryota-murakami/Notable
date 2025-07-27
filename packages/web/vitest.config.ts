@@ -24,7 +24,6 @@ export default defineConfig({
       'dist',
       'coverage',
       '**/*.d.ts',
-      '**/*.spec.ts', // Exclude Playwright specs
       '**/*.e2e.*', // Exclude E2E tests
     ],
     coverage: {
@@ -44,12 +43,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './'),
       '@/components': path.resolve(__dirname, './components'),
       '@/lib': path.resolve(__dirname, './lib'),
       '@/hooks': path.resolve(__dirname, './hooks'),
       '@/types': path.resolve(__dirname, './types'),
       '@/store': path.resolve(__dirname, './store'),
+      '@': path.resolve(__dirname, './'), // keep last
     },
   },
 })
