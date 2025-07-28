@@ -150,7 +150,7 @@ test.describe('Keyboard Shortcuts', () => {
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
     // Get initial sidebar state
-    const sidebar = page.locator('[data-sidebar]').first()
+    const sidebar = page.locator('[data-testid="sidebar"]').first()
     const initiallyVisible = await sidebar.isVisible()
 
     // Toggle sidebar

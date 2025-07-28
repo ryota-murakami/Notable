@@ -10,7 +10,6 @@ import React, {
   useState,
 } from 'react'
 import type {
-  DeviceInfo,
   StorageAdapter,
   SyncConfig,
   SyncService,

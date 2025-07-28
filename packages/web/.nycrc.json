@@ -1,0 +1,41 @@
+{
+  "all": true,
+  "include": [
+    "app/**/*.{js,jsx,ts,tsx}",
+    "components/**/*.{js,jsx,ts,tsx}",
+    "lib/**/*.{js,jsx,ts,tsx}",
+    "utils/**/*.{js,jsx,ts,tsx}",
+    "hooks/**/*.{js,jsx,ts,tsx}"
+  ],
+  "exclude": [
+    "**/*.test.{js,jsx,ts,tsx}",
+    "**/*.spec.{js,jsx,ts,tsx}",
+    "**/__tests__/**",
+    "**/node_modules/**",
+    ".next/**",
+    ".next_coverage/**",
+    "coverage/**",
+    "playwright-report/**",
+    "test-results/**",
+    "e2e/**",
+    "tests/**",
+    "**/*.d.ts",
+    "**/types/**"
+  ],
+  "extension": [
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx"
+  ],
+  "reporter": [
+    "text",
+    "html",
+    "lcov"
+  ],
+  "report-dir": "coverage/e2e",
+  "temp-dir": ".nyc_output",
+  "source-map": true,
+  "produce-source-map": true,
+  "cache": false
+}

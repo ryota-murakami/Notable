@@ -1,14 +1,19 @@
+import AppShell from '@/components/app-shell'
+
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-4xl mx-auto p-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Notable
-        </h1>
-        <p className="text-xl text-gray-600 mb-8">
-          The Notion Clone but Better Experience than Original
-        </p>
-        <div className="bg-white rounded-lg shadow-lg p-6">
+    <AppShell>
+      <div className="max-w-4xl mx-auto p-8">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Notable
+          </h1>
+          <p className="text-xl text-gray-600 mt-2">
+            The Notion Clone but Better Experience than Original
+          </p>
+        </div>
+        
+        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             Keyboard Shortcuts Available
           </h2>
@@ -32,6 +37,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-    </main>
+    </AppShell>
   )
 }

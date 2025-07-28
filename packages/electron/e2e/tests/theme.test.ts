@@ -390,7 +390,7 @@ test.describe('Theme System', () => {
       expect(mainTheme).toBe('dark')
     })
 
-    test('should handle theme during window lifecycle', async ({ electronPage, _electronMain }) => {
+    test('should handle theme during window lifecycle', async ({ electronPage }) => {
       // Set initial theme
       await sendIPCMessage(electronPage, 'setTheme', 'light')
       
@@ -452,7 +452,7 @@ test.describe('Theme System', () => {
       expect(['light', 'dark', 'system']).toContain(finalTheme)
     })
 
-    test('should handle theme switching during heavy operations', async ({ electronPage, electronMain: _electronMain }) => {
+    test('should handle theme switching during heavy operations', async ({ electronPage }) => {
       // Start some heavy operations
       const operationPromises = [
         sendIPCMessage(electronPage, 'create-window'),

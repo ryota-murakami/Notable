@@ -24,7 +24,7 @@ test.describe('IPC Communication', () => {
       expect(Array.isArray(result)).toBe(true)
     })
 
-    test('should handle save-notes IPC call', async ({ electronPage, _electronMain }) => {
+    test('should handle save-notes IPC call', async ({ electronPage }) => {
       const testNotes = [
         { id: '1', title: 'Test Note 1', content: 'Content 1' },
         { id: '2', title: 'Test Note 2', content: 'Content 2' }
@@ -39,7 +39,7 @@ test.describe('IPC Communication', () => {
       expect(loadedNotes).toEqual(testNotes)
     })
 
-    test('should handle save-notes error gracefully', async ({ electronPage, _electronMain }) => {
+    test('should handle save-notes error gracefully', async ({ electronPage }) => {
       // Try to save invalid data that would cause JSON.stringify to fail
       const circularRef: any = {}
       circularRef.self = circularRef

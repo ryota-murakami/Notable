@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test'
 import { _electron as electron, type ElectronApplication } from 'playwright'
 import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 let electronApp: ElectronApplication
 

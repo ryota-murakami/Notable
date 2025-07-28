@@ -11,12 +11,18 @@ import {
 } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
-import * as localShortcut from 'electron-localshortcut'
-import { autoUpdater } from 'electron-updater'
-import * as notifier from 'node-notifier'
-import { setupRoutingInMainProcess } from './routing'
+import { fileURLToPath } from 'url'
+import localShortcut from 'electron-localshortcut'
+import electronUpdater from 'electron-updater'
+import nodeNotifier from 'node-notifier'
 
-// __dirname is automatically available in CommonJS
+const { autoUpdater } = electronUpdater
+const notifier = nodeNotifier
+import { setupRoutingInMainProcess } from './routing.js'
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null

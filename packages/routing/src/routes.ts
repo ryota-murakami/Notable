@@ -15,25 +15,12 @@ export const ROUTES: Record<string, RouteDefinition> = {
       platforms: {
         web: {
           component: 'Shell',
-          seo: {
-            title: 'Notable - Your notes, perfectly organized',
-            description:
-              'A modern note-taking app that syncs seamlessly across all your devices',
-            keywords: ['notes', 'productivity', 'writing', 'sync'],
-          },
         },
         mobile: {
           animation: 'fade',
-          header: {
-            title: 'Notable',
-            hidden: false,
-          },
         },
         desktop: {
-          menu: {
-            path: 'File > Home',
-            accelerator: 'CmdOrCtrl+Home',
-          },
+          showInMenu: true,
         },
       },
     },
@@ -53,17 +40,9 @@ export const ROUTES: Record<string, RouteDefinition> = {
       platforms: {
         web: {
           component: 'AuthPage',
-          seo: {
-            title: 'Sign In - Notable',
-            description: 'Access your notes from anywhere',
-          },
         },
         mobile: {
           animation: 'slide',
-          header: {
-            title: 'Sign In',
-            backButton: false,
-          },
         },
       },
     },
@@ -86,10 +65,6 @@ export const ROUTES: Record<string, RouteDefinition> = {
         },
         mobile: {
           animation: 'slide',
-          header: {
-            title: 'Sign Up',
-            backButton: true,
-          },
         },
       },
     },
@@ -129,19 +104,10 @@ export const ROUTES: Record<string, RouteDefinition> = {
           component: 'NotesPage',
         },
         mobile: {
-          tabBar: {
-            label: 'Notes',
-            icon: 'document-text',
-          },
-          header: {
-            title: 'Notes',
-          },
+          showTabBar: true,
         },
         desktop: {
-          menu: {
-            path: 'View > All Notes',
-            accelerator: 'CmdOrCtrl+1',
-          },
+          showInMenu: true,
         },
       },
     },
@@ -160,18 +126,13 @@ export const ROUTES: Record<string, RouteDefinition> = {
       platforms: {
         web: {
           component: 'NoteViewPage',
-          dynamic: true,
         },
         mobile: {
           animation: 'slide',
-          header: {
-            title: 'Note',
-            backButton: true,
-          },
         },
         desktop: {
           window: {
-            newWindow: false,
+            resizable: true,
           },
         },
       },
@@ -191,14 +152,9 @@ export const ROUTES: Record<string, RouteDefinition> = {
       platforms: {
         web: {
           component: 'NoteEditPage',
-          dynamic: true,
         },
         mobile: {
           animation: 'slide',
-          header: {
-            title: 'Edit Note',
-            backButton: true,
-          },
         },
       },
     },
@@ -220,16 +176,9 @@ export const ROUTES: Record<string, RouteDefinition> = {
         },
         mobile: {
           animation: 'slide',
-          header: {
-            title: 'New Note',
-            backButton: true,
-          },
         },
         desktop: {
-          menu: {
-            path: 'File > New Note',
-            accelerator: 'CmdOrCtrl+N',
-          },
+          showInMenu: true,
         },
       },
     },
@@ -250,19 +199,10 @@ export const ROUTES: Record<string, RouteDefinition> = {
           component: 'SearchPage',
         },
         mobile: {
-          tabBar: {
-            label: 'Search',
-            icon: 'search',
-          },
-          header: {
-            title: 'Search',
-          },
+          showTabBar: true,
         },
         desktop: {
-          menu: {
-            path: 'Edit > Find',
-            accelerator: 'CmdOrCtrl+F',
-          },
+          showInMenu: true,
         },
       },
     },
@@ -283,19 +223,10 @@ export const ROUTES: Record<string, RouteDefinition> = {
           component: 'SettingsPage',
         },
         mobile: {
-          tabBar: {
-            label: 'Settings',
-            icon: 'settings',
-          },
-          header: {
-            title: 'Settings',
-          },
+          showTabBar: true,
         },
         desktop: {
-          menu: {
-            path: 'File > Preferences',
-            accelerator: 'CmdOrCtrl+,',
-          },
+          showInMenu: true,
         },
       },
     },
@@ -317,10 +248,6 @@ export const ROUTES: Record<string, RouteDefinition> = {
         },
         mobile: {
           animation: 'slide',
-          header: {
-            title: 'Account',
-            backButton: true,
-          },
         },
       },
     },
@@ -342,10 +269,6 @@ export const ROUTES: Record<string, RouteDefinition> = {
         },
         mobile: {
           animation: 'slide',
-          header: {
-            title: 'Appearance',
-            backButton: true,
-          },
         },
       },
     },
@@ -364,18 +287,11 @@ export const ROUTES: Record<string, RouteDefinition> = {
       platforms: {
         desktop: {
           window: {
-            newWindow: true,
-            size: { width: 400, height: 300 },
-            properties: {
-              alwaysOnTop: true,
-              frame: false,
-              resizable: false,
-            },
+            width: 400,
+            height: 300,
+            resizable: false,
           },
-          menu: {
-            path: 'File > Quick Note',
-            accelerator: 'CmdOrCtrl+Shift+N',
-          },
+          showInMenu: true,
         },
       },
     },
@@ -397,10 +313,7 @@ export const ROUTES: Record<string, RouteDefinition> = {
           component: 'NotFoundPage',
         },
         mobile: {
-          header: {
-            title: 'Page Not Found',
-            backButton: true,
-          },
+          animation: 'slide',
         },
       },
     },

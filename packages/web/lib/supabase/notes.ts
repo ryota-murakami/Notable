@@ -148,7 +148,7 @@ export class NotesService {
     return notes || []
   }
 
-  toAppNote(dbNote: DatabaseNote): AppNote {
+  static toAppNote(dbNote: DatabaseNote): AppNote {
     return {
       id: dbNote.id,
       title: dbNote.title,
@@ -160,7 +160,7 @@ export class NotesService {
     }
   }
 
-  toDatabaseNote(appNote: AppNote): DatabaseNote {
+  static toDatabaseNote(appNote: AppNote): DatabaseNote {
     return {
       id: appNote.id,
       title: appNote.title,
@@ -169,6 +169,67 @@ export class NotesService {
       updated_at: appNote.updatedAt,
       user_id: appNote.userId,
       deleted: appNote.isDeleted || false,
+    }
+  }
+
+  subscribeToNoteChanges(
+    userId: string,
+    callbacks: {
+      onInsert?: (note: Note) => void
+      onUpdate?: (note: Note) => void
+      onDelete?: (noteId: string) => void
+    }
+  ) {
+    const supabase = createClient()
+    
+    const channel = supabase
+      .channel('notes-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notes',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (callbacks.onInsert && payload.new) {
+            callbacks.onInsert(payload.new as Note)
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notes',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (callbacks.onUpdate && payload.new) {
+            callbacks.onUpdate(payload.new as Note)
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'notes',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (callbacks.onDelete && payload.old) {
+            callbacks.onDelete((payload.old as Note).id)
+          }
+        }
+      )
+      .subscribe()
+    
+    return () => {
+      channel.unsubscribe()
     }
   }
 }

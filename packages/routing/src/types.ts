@@ -1,3 +1,31 @@
+/** Platform-specific route configuration for web */
+export interface WebRouteConfig {
+  /** Whether to use push state navigation */
+  usePushState?: boolean
+  /** Custom component for this route on web */
+  component?: string
+}
+
+/** Platform-specific route configuration for mobile */
+export interface MobileRouteConfig {
+  /** Screen transition animation */
+  animation?: 'slide' | 'fade' | 'modal'
+  /** Whether to show tab bar on this screen */
+  showTabBar?: boolean
+}
+
+/** Platform-specific route configuration for desktop */
+export interface DesktopRouteConfig {
+  /** Window properties for this route */
+  window?: {
+    width?: number
+    height?: number
+    resizable?: boolean
+  }
+  /** Whether to show in app menu */
+  showInMenu?: boolean
+}
+
 export interface RouteDefinition {
   /** Route identifier */
   id: string

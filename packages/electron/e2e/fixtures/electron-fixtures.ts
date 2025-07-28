@@ -11,7 +11,8 @@ export interface ElectronFixtures {
  * Extended test with Electron fixtures
  */
 export const test = base.extend<ElectronFixtures>({
-  electronApp: async (_fixtures, use) => {
+  // eslint-disable-next-line no-empty-pattern
+  electronApp: async ({}, use) => {
     let context: ElectronTestContext | null = null
     
     try {

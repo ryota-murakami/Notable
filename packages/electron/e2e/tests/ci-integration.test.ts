@@ -58,7 +58,6 @@ test.describe('CI Integration Tests', () => {
 
   test('should handle CI-specific environment variables', async ({ electronMain }) => {
     // Verify CI environment variables are set correctly
-    const nodeEnv = await electronMain.evaluate(() => process.env.NODE_ENV)
     
     if (process.env.CI) {
       // In CI environment, verify security warnings are disabled
@@ -72,10 +71,7 @@ test.describe('CI Integration Tests', () => {
   test('should capture screenshots on failure (CI only)', async ({ electronPage }) => {
     // This test is designed to verify screenshot capture works in CI
     // It will only run in CI environments
-    
-    if (!process.env.CI) {
-      test.skip()
-    }
+    test.skip(!process.env.CI, 'This test only runs in CI environments')
     
     // Navigate to the app
     await electronPage.goto('http://localhost:4378')

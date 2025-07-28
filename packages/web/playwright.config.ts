@@ -78,7 +78,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env.CI ? 'npm run build && npm run start' : 'NODE_ENV=test npm run dev',
+    command: process.env.CI ? 'NODE_ENV=test npm run build && NODE_ENV=test npm run start' : 'NODE_ENV=test npm run dev',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
     timeout: 300000, // 5 minutes for CI (increased from 3 minutes)
@@ -86,6 +86,7 @@ export default defineConfig({
     stderr: 'pipe',
     env: {
       NODE_ENV: 'test',
+      PORT: '4378',
     },
   },
 })

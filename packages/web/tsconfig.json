@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "target": "ES2022",
     "skipLibCheck": true,
@@ -15,34 +19,58 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/store/*": ["./store/*"],
-      "@/types": ["./types/index.ts"],
-      "@/types/*": ["./types/*"],
-      "@/server/*": ["./server/*"],
-      "@/app/*": ["./app/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/store/*": [
+        "./store/*"
+      ],
+      "@/types": [
+        "./types/index.ts"
+      ],
+      "@/types/*": [
+        "./types/*"
+      ],
+      "@/server/*": [
+        "./server/*"
+      ],
+      "@/app/*": [
+        "./app/*"
+      ]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    "e2e/**/*.ts",
     "next-env.d.ts",
     "out/types/**/*.ts",
     "server/**/*.ts",
-    "types/**/*.ts",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "e2e/**/*.ts"
+    "types/**/*.ts",
+    ".next_coverage/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist", "out", ".next"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "out",
+    ".next"
+  ]
 }

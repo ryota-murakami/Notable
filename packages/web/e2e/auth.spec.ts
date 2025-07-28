@@ -107,7 +107,8 @@ test.describe('Authentication Flow', () => {
     // Should stay on home page
     await expect(page).toHaveURL('/')
 
-    // Wait for the authenticated app to load - check for the "New Note" button which only appears when authenticated
-    await expect(page.getByRole('button', { name: 'New Note' })).toBeVisible()
+    // Wait for the authenticated app to load - check for the app shell
+    await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
+    await expect(page.getByText('The Notion Clone but Better Experience than Original')).toBeVisible()
   })
 })
