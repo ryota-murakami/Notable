@@ -59,7 +59,7 @@ describe('NotesService', () => {
       const mockNote = {
         id: 'note-id',
         title: 'Test Note',
-        content: { text: 'Test content' },
+        content: 'Test content',
         user_id: 'test-user-id',
         folder_id: null,
         is_public: false,
@@ -71,7 +71,7 @@ describe('NotesService', () => {
 
       const result = await notesService.createNote({
         title: 'Test Note',
-        content: { text: 'Test content' },
+        content: 'Test content',
       })
 
       expect(result.data).toEqual(mockNote)
@@ -79,7 +79,7 @@ describe('NotesService', () => {
       expect(mockSupabase.from).toHaveBeenCalledWith('notes')
       expect(mockSupabase.insert).toHaveBeenCalledWith({
         title: 'Test Note',
-        content: { text: 'Test content' },
+        content: 'Test content',
         user_id: 'test-user-id',
         folder_id: null,
         is_public: false,
@@ -237,7 +237,7 @@ describe('NotesService', () => {
       const dbNote = {
         id: 'note-id',
         title: 'Test Note',
-        content: { text: 'Test content' },
+        content: 'Test content',
         user_id: 'test-user-id',
         folder_id: 'folder-id',
         is_public: false,
@@ -267,7 +267,7 @@ describe('NotesService', () => {
       const dbNote = {
         id: 'note-id',
         title: 'Deleted Note',
-        content: { text: 'Content' },
+        content: 'Content',
         user_id: 'test-user-id',
         folder_id: null,
         is_public: false,
@@ -278,7 +278,7 @@ describe('NotesService', () => {
 
       const appNote = NotesService.toAppNote(dbNote)
 
-      expect(appNote.deleted).toBe(true)
+      expect(appNote.isDeleted).toBe(true)
     })
   })
 

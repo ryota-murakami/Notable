@@ -313,7 +313,7 @@ describe('Analytics', () => {
 
     it('should respect error tracking preferences', () => {
       analyticsInstance.updateConfig({ errorTracking: false })
-      analyticsInstance.error('test error')
+      analyticsInstance.error(new Error('test error'))
 
       // Should not track when disabled
       expect(mockPosthog.capture).not.toHaveBeenCalled()

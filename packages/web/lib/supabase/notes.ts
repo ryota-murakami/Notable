@@ -41,6 +41,7 @@ export interface DatabaseNote {
   created_at: string
   updated_at: string
   user_id: string
+  deleted_at?: string | null
   deleted?: boolean
 }
 
@@ -223,7 +224,14 @@ export class NotesService {
     }
   }
 
-  subscribeToNoteChanges(callback: (note: Note) => void): () => void {
+  subscribeToNoteChanges(
+    userId: string, 
+    callbacks: {
+      onInsert?: (note: Note) => void
+      onUpdate?: (note: Note) => void
+      onDelete?: (note: Note) => void
+    }
+  ): () => void {
     const supabase = createClient()
     
     const channel = supabase
@@ -231,12 +239,37 @@ export class NotesService {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
-          table: 'notes'
+          table: 'notes',
+          filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          callback(payload.new as Note)
+          callbacks.onInsert?.(payload.new as Note)
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notes',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload) => {
+          callbacks.onUpdate?.(payload.new as Note)
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'notes',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload) => {
+          callbacks.onDelete?.(payload.old as Note)
         }
       )
       .subscribe()
@@ -255,7 +288,7 @@ export class NotesService {
       createdAt: dbNote.created_at,
       updatedAt: dbNote.updated_at,
       userId: dbNote.user_id,
-      isDeleted: dbNote.deleted || false,
+      isDeleted: Boolean(dbNote.deleted_at),
     }
   }
 

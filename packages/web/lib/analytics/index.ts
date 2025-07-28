@@ -33,7 +33,12 @@ class Analytics {
   private config: Record<string, any> = {}
   private consentGiven: boolean = false
 
-  constructor() {
+  constructor(config?: Record<string, any>) {
+    // Set config if provided
+    if (config) {
+      this.config = config
+    }
+    
     // Initialize providers based on environment variables
     if (process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ID) {
       this.providers.push(vercelAnalytics)
@@ -113,11 +118,12 @@ class Analytics {
   }
 
   // Track errors
-  error(error: Error, context?: Record<string, unknown>): void {
+  error(error: Error, context?: Record<string, unknown>, priority?: string): void {
     this.track('error', {
       message: error.message,
       stack: error.stack,
       context,
+      priority,
       ...context,
     })
   }
@@ -150,10 +156,10 @@ class Analytics {
   }
 
   // Track usage (expected by tests)
-  usage(feature: string, duration: number, properties?: Record<string, unknown>): void {
+  usage(feature: string, duration?: number, properties?: Record<string, unknown>): void {
     this.track('usage', {
       feature,
-      duration,
+      duration: duration ?? 0,
       ...properties,
     })
   }

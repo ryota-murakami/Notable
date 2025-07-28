@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { analytics } from '@/lib/analytics'
 
-export interface Analytics {
+export interface AnalyticsHook {
   track: (event: string, properties?: Record<string, any>) => void
   identify: (userId: string, traits?: Record<string, any>) => void
   trackPageView: (page: string, properties?: Record<string, any>) => void
@@ -10,13 +10,13 @@ export interface Analytics {
   setConsent: (consent: boolean) => void
   setUser: (userId: string, properties?: Record<string, any>) => void
   trackPerformance: (metric: string, value: number, unit: string, properties?: Record<string, any>) => void
-  trackError: (error: Error, context?: Record<string, any>) => void
+  trackError: (error: Error, context?: Record<string, any>, priority?: string) => void
   trackClick: (element: string, properties?: Record<string, any>) => void
   trackFormSubmit: (form: string, properties?: Record<string, any>) => void
-  startTimer: (name: string) => () => void
+  startTimer: (name: string) => () => number
 }
 
-export function useAnalytics(): Analytics {
+export function useAnalytics(): AnalyticsHook {
   const track = useCallback((event: string, properties?: Record<string, any>) => {
     // Stub implementation - in production this would call analytics service
     console.info('[Analytics] Track:', event, properties)
@@ -51,8 +51,8 @@ export function useAnalytics(): Analytics {
   }, [])
 
 
-  const trackError = useCallback((error: Error, context?: Record<string, any>) => {
-    analytics.error(error, context)
+  const trackError = useCallback((error: Error, context?: Record<string, any>, priority?: string) => {
+    analytics.error(error, { ...context, priority })
   }, [])
 
   const trackClick = useCallback((element: string, properties?: Record<string, any>) => {
@@ -64,7 +64,11 @@ export function useAnalytics(): Analytics {
   }, [])
 
   const startTimer = useCallback((name: string) => {
-    return analytics.startTimer(name)
+    const stopTimer = analytics.startTimer(name)
+    return () => {
+      stopTimer()
+      return Date.now() // Return a timestamp for compatibility
+    }
   }, [])
 
   return {
@@ -84,8 +88,21 @@ export function useAnalytics(): Analytics {
 }
 
 // Additional hooks expected by the tests
-export function useComponentPerformance() {
+export function useComponentPerformance(componentName?: string) {
   const analytics = useAnalytics()
+  
+  // Track component lifetime if component name is provided
+  useEffect(() => {
+    if (componentName) {
+      const startTime = performance.now()
+      return () => {
+        const endTime = performance.now()
+        const lifetime = endTime - startTime
+        analytics.trackPerformance(`component_${componentName}_lifetime`, lifetime, 'ms')
+      }
+    }
+  }, [componentName, analytics])
+  
   return {
     measureComponent: useCallback((componentName: string, renderTime: number) => {
       analytics.trackPerformance('component_render', renderTime, 'ms', { component: componentName })
@@ -93,26 +110,40 @@ export function useComponentPerformance() {
   }
 }
 
-export function useFeatureTracking() {
-  const analytics = useAnalytics()
+export function useFeatureTracking(featureName?: string) {
+  const analyticsHook = useAnalytics()
   return {
     trackFeature: useCallback((feature: string, properties?: Record<string, any>) => {
-      analytics.trackFeatureUsage(feature, 0, properties)
-    }, [analytics]),
-    startTracking: useCallback((feature: string, properties?: Record<string, any>) => {
-      console.info('[Analytics] Start tracking:', feature, properties)
-    }, []),
-    endTracking: useCallback((feature: string, properties?: Record<string, any>) => {
-      console.info('[Analytics] End tracking:', feature, properties)
-    }, []),
-    trackUsage: useCallback((feature: string) => {
-      analytics.trackFeatureUsage(feature, 0)
-    }, [analytics]),
+      analyticsHook.trackFeatureUsage(feature, 0, properties)
+    }, [analyticsHook]),
+    startTracking: useCallback((properties?: Record<string, any>) => {
+      if (featureName) {
+        analytics.usage(`${featureName}_start`, undefined, properties)
+      }
+    }, [featureName]),
+    endTracking: useCallback((properties?: Record<string, any>) => {
+      if (featureName) {
+        analytics.usage(`${featureName}_end`, undefined, properties)
+      }
+    }, [featureName]),
+    trackUsage: useCallback((properties?: Record<string, any>) => {
+      if (featureName) {
+        analytics.usage(featureName, undefined, properties)
+      }
+    }, [featureName]),
   }
 }
 
-export function usePageTracking() {
+export function usePageTracking(pageName?: string, properties?: Record<string, any>) {
   const analytics = useAnalytics()
+  
+  // Track page view when page name is provided
+  useEffect(() => {
+    if (pageName) {
+      analytics.trackPageView(pageName, properties)
+    }
+  }, [pageName, properties, analytics])
+  
   return {
     trackPage: useCallback((page: string, properties?: Record<string, any>) => {
       analytics.trackPageView(page, properties)
