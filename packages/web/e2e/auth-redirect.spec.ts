@@ -35,10 +35,7 @@ test.describe('Auth Route Middleware', () => {
   })
 
   test('should allow authenticated users to access home', async ({ page }) => {
-    // Navigate to home page first to establish domain
-    await page.goto('/')
-
-    // Set dev auth bypass cookie for testing (without domain to use current domain)
+    // Set dev auth bypass cookie for testing
     await page.context().addCookies([
       {
         name: 'dev-auth-bypass',
@@ -48,8 +45,8 @@ test.describe('Auth Route Middleware', () => {
       },
     ])
 
-    // Reload page to apply cookie
-    await page.reload()
+    // Navigate to home page with the cookie set
+    await page.goto('/')
 
     // Should stay on home page
     await expect(page).toHaveURL('/')

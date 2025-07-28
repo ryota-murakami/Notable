@@ -23,6 +23,24 @@ export function Shell() {
   // In test mode, treat as initialized to show the main UI
   const isTestMode = isTest()
 
+  // Create mock user for testing when dev-auth-bypass is enabled
+  const mockUser: SupabaseUser | null = isTestMode && !user ? {
+    id: 'test-user-id',
+    email: 'demo@notable.app',
+    user_metadata: {
+      full_name: 'Demo User',
+      name: 'Demo User'
+    },
+    app_metadata: {},
+    aud: 'authenticated',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    role: 'authenticated',
+    email_confirmed_at: new Date().toISOString()
+  } as SupabaseUser : null
+
+  const currentUser = user || mockUser
+
   const shouldShowLoading = !isInitialized && !isTestMode
 
   // Get user on mount
@@ -59,7 +77,7 @@ export function Shell() {
         content: '',
         is_folder: false,
         parent_id: undefined,
-        userId: user?.id || 'anonymous', // Use real user ID
+        userId: currentUser?.id || 'anonymous', // Use real user ID or test user ID
         tags: [],
         isHidden: false,
         version: 1,
@@ -94,7 +112,7 @@ export function Shell() {
         variant: 'destructive',
       })
     }
-  }, [user])
+  }, [currentUser])
 
   // Load existing notes when sync service is initialized
   useEffect(() => {
