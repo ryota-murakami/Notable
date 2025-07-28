@@ -42,7 +42,7 @@ export const isProduction = (): boolean => {
 export const isTest = (): boolean => {
   if (!isBrowser) {
     // Server-side: safe to use process.env
-    return process.env.NODE_ENV === 'test'
+    return process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_NODE_ENV === 'test'
   }
 
   // Client-side: check for test auth bypass cookie

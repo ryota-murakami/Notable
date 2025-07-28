@@ -132,7 +132,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(newNoteButton).toBeVisible()
   })
 
-  test.skip('view mode toggle with Cmd+E', async ({ page }) => {
+  test('view mode toggle with Cmd+E', async ({ page }) => {
     // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -145,7 +145,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByText(/edit mode/i)).toBeVisible({ timeout: 5000 })
   })
 
-  test.skip('sidebar toggle with Cmd+,', async ({ page }) => {
+  test('sidebar toggle with Cmd+,', async ({ page }) => {
     // Feature not yet implemented - sidebar toggle not available
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -178,7 +178,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByText(/normal mode/i)).toBeVisible({ timeout: 5000 })
   })
 
-  test.skip('quick switch with number keys', async ({ page }) => {
+  test('quick switch with number keys', async ({ page }) => {
     // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -229,7 +229,7 @@ test.describe('Keyboard Shortcuts', () => {
     await page.keyboard.press('Escape')
   })
 
-  test.skip('keyboard shortcuts are properly registered', async ({ page }) => {
+  test('keyboard shortcuts are properly registered', async ({ page }) => {
     // Feature not yet implemented - skipping test
     // Check that shortcuts don't trigger when typing in input fields
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'

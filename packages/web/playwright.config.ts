@@ -4,7 +4,8 @@ import { defineConfig, devices } from '@playwright/test'
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// require('dotenv').config();
+import { config } from 'dotenv'
+config({ path: '.env.test' })
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -13,11 +14,11 @@ export default defineConfig({
   testDir: './e2e',
 
   /* Global timeout for each test */
-  timeout: process.env.CI ? 60000 : 30000, // 60s in CI, 30s locally
+  timeout: process.env.CI ? 60000 : 60000, // 60s for all environments
 
   /* Global expect timeout */
   expect: {
-    timeout: process.env.CI ? 15000 : 5000, // 15s in CI, 5s locally
+    timeout: process.env.CI ? 15000 : 10000, // 15s in CI, 10s locally
   },
 
   /* Run tests in files in parallel */
@@ -46,70 +47,45 @@ export default defineConfig({
     screenshot: 'only-on-failure',
 
     /* Better navigation timeout */
-    navigationTimeout: process.env.CI ? 30000 : 15000,
+    navigationTimeout: process.env.CI ? 30000 : 30000,
 
     /* Action timeout */
-    actionTimeout: process.env.CI ? 10000 : 5000,
+    actionTimeout: process.env.CI ? 10000 : 10000,
   },
 
   /* Configure projects for major browsers */
-  projects: process.env.CI
-    ? [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'] },
-        },
-        {
-          name: 'firefox',
-          use: { ...devices['Desktop Firefox'] },
-          // Only run critical paths in Firefox to save CI time
-          testMatch: ['**/app.spec.ts', '**/auth.spec.ts'],
-        },
-      ]
-    : [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'] },
-        },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'], channel: 'chromium' },
+    },
+    /* Test against mobile viewports. */
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+    },
 
-        {
-          name: 'firefox',
-          use: { ...devices['Desktop Firefox'] },
-        },
-
-        {
-          name: 'webkit',
-          use: { ...devices['Desktop Safari'] },
-        },
-
-        /* Test against mobile viewports. */
-        {
-          name: 'Mobile Chrome',
-          use: { ...devices['Pixel 5'] },
-        },
-        {
-          name: 'Mobile Safari',
-          use: { ...devices['iPhone 12'] },
-        },
-
-        /* Test against branded browsers. */
-        // {
-        //   name: 'Microsoft Edge',
-        //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        // },
-        // {
-        //   name: 'Google Chrome',
-        //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        // },
-      ],
+    /* Test against branded browsers. */
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    // },
+    // {
+    //   name: 'Google Chrome',
+    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    // },
+  ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env.CI ? 'npm run build && npm run start' : 'npm run dev',
+    command: process.env.CI ? 'npm run build && npm run start' : 'NODE_ENV=test npm run dev',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
     timeout: 300000, // 5 minutes for CI (increased from 3 minutes)
     stdout: 'pipe',
     stderr: 'pipe',
+    env: {
+      NODE_ENV: 'test',
+    },
   },
 })

@@ -53,6 +53,11 @@ export function NoteEditor({
   const [tags, setTags] = useState<string[]>(note?.tags || [])
   const [newTag, setNewTag] = useState('')
 
+  // Update editing state when prop changes
+  useEffect(() => {
+    setIsEditing(initialEditing)
+  }, [initialEditing])
+
   // Update state when note prop changes
   useEffect(() => {
     if (note) {

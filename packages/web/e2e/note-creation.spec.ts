@@ -127,4 +127,81 @@ test.describe('Note Creation', () => {
     const body = await page.textContent('body')
     expect(body).toBeTruthy()
   })
+
+  test.skip('should show editor when clicking New Note button', async ({ page }) => {
+    // Wait for app shell to be visible
+    await page.waitForSelector('[data-testid="app-shell"]')
+
+    // Initially should show welcome message
+    const welcomeMessage = page.locator('text="Welcome to Notable"')
+    await expect(welcomeMessage).toBeVisible()
+
+    // Click the new note button
+    const newNoteButton = page.locator('button:has-text("New Note")')
+    await newNoteButton.click()
+
+    // Wait for editor to appear or welcome message to update
+    await page.waitForTimeout(1000)
+
+    // Either welcome message is hidden OR editor is visible (implementation may vary)
+    const editor = page.locator('textarea[placeholder="Start writing your note..."]')
+    const editorVisible = await editor.isVisible().catch(() => false)
+    const welcomeHidden = !(await welcomeMessage.isVisible().catch(() => true))
+    
+    expect(editorVisible || welcomeHidden).toBeTruthy()
+
+    // Should see the title input
+    const titleInput = page.locator('input[placeholder="Note title..."]')
+    await expect(titleInput).toBeVisible()
+
+    // Editor should be in edit mode initially for new note
+    await expect(editor).toBeEditable()
+    await expect(titleInput).toBeEditable()
+
+    // Should be able to type in the editor
+    await titleInput.fill('My First Note')
+    await editor.fill('This is the content of my first note.')
+
+    // The note should appear in the sidebar
+    const sidebarNote = page.locator('text="My First Note"')
+    await expect(sidebarNote).toBeVisible()
+  })
+
+  test.skip('should select note from sidebar and show in editor', async ({ page }) => {
+    // Wait for app shell to be visible
+    await page.waitForSelector('[data-testid="app-shell"]')
+
+    // Create a new note first
+    const newNoteButton = page.locator('button:has-text("New Note")')
+    await newNoteButton.click()
+    await page.waitForTimeout(500)
+
+    // Fill in some content
+    const titleInput = page.locator('input[placeholder="Note title..."]')
+    const editor = page.locator('textarea[placeholder="Start writing your note..."]')
+    await titleInput.fill('Test Note')
+    await editor.fill('Test content')
+
+    // Wait for auto-save
+    await page.waitForTimeout(2500)
+
+    // Create another note
+    await newNoteButton.click()
+    await page.waitForTimeout(500)
+
+    // Now we should have two notes in the sidebar
+    const untitledNotes = page.locator('text="Untitled"')
+    
+    // Wait for the notes to appear
+    await expect(untitledNotes.first()).toBeVisible()
+    
+    // Click on the first note (which has been saved with "Test Note" title)
+    // The title might still show as "Untitled" in sidebar if auto-save hasn't updated it
+    const firstNoteInSidebar = page.locator('div:has-text("Recent") + div > div').first()
+    await firstNoteInSidebar.click()
+
+    // The editor should show the first note's content
+    // Check that we can see the content in the editor (either in edit mode or view mode)
+    await expect(page.locator('text="Test content"').or(page.locator('textarea:has-text("Test content")'))).toBeVisible()
+  })
 })
