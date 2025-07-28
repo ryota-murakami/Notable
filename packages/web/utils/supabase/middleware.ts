@@ -47,10 +47,12 @@ export async function updateSession(request: NextRequest) {
   // Check for dev auth bypass cookie for e2e testing
   const devAuthBypassCookie = request.cookies.get('dev-auth-bypass')?.value === 'true'
   
-  // If dev auth bypass cookie is present and in dev/test environment, skip all auth checks
+  // If dev auth bypass cookie is present and in dev/test/CI environment, skip all auth checks
   if (
     devAuthBypassCookie &&
-    (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')
+    (process.env.NODE_ENV === 'development' || 
+     process.env.NODE_ENV === 'test' || 
+     process.env.CI === 'true')
   ) {
     return supabaseResponse
   }
