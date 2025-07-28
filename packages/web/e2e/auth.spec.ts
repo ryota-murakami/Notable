@@ -11,8 +11,8 @@ test.describe('Authentication Flow', () => {
     // Navigate to home page
     await page.goto('/')
 
-    // Should be redirected to auth page (with trailing slash)
-    await expect(page).toHaveURL('/auth/')
+    // Should be redirected to auth page
+    await expect(page).toHaveURL('/auth')
 
     // Auth page should be visible - wait for content to load
     await expect(page.getByText('Welcome to Notable')).toBeVisible({
@@ -70,8 +70,8 @@ test.describe('Authentication Flow', () => {
     // Should have only one redirect (from / to /auth)
     expect(redirects.length).toBeLessThanOrEqual(1)
 
-    // Should end up on auth page (with trailing slash)
-    await expect(page).toHaveURL('/auth/')
+    // Should end up on auth page
+    await expect(page).toHaveURL('/auth')
   })
 
   test('auth page should be accessible directly', async ({ page }) => {
