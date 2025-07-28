@@ -43,7 +43,7 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-        run: pnpm test --coverage
+        run: pnpm test -- --coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
