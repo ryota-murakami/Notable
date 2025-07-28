@@ -295,7 +295,7 @@ export class SyncServiceImpl implements SyncService {
   /**
    * Get list of online devices for the user
    */
-  getOnlineDevices(): DeviceInfo[] {
+  async getOnlineDevices(): Promise<DeviceInfo[]> {
     if (!this.realtimeChannel) {
       return []
     }
