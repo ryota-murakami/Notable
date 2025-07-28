@@ -60,6 +60,9 @@ test.describe('CI Integration Tests', () => {
     // Verify CI environment variables are set correctly
     const nodeEnv = await electronMain.evaluate(() => process.env.NODE_ENV)
     
+    // Verify NODE_ENV is set in test environment
+    expect(nodeEnv).toBeDefined()
+    
     if (process.env.CI) {
       // In CI environment, verify security warnings are disabled
       const securityWarnings = await electronMain.evaluate(() => 

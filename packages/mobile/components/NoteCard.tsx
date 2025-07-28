@@ -75,8 +75,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 icon='delete-outline'
                 size={20}
                 iconColor={theme.colors.error}
+                accessibilityLabel="delete"
                 onPress={(e) => {
-                  e.stopPropagation()
+                  e?.stopPropagation?.()
                   onDelete()
                 }}
                 style={styles.deleteButton}

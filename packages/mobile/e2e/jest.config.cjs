@@ -13,4 +13,13 @@ module.exports = {
   transform: {
     '^.+\\.js$': ['babel-jest', { presets: ['babel-preset-expo'] }],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(detox|@react-native|react-native|expo)/)',
+  ],
+  extensionsToTreatAsEsm: ['.js'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
 }

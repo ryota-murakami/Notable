@@ -1,5 +1,6 @@
 # CodeRabbit configuration file
 reviews:
+  auto_apply_labels: true
   request_changes_workflow: true
   sequence_diagrams: true
   poem: true

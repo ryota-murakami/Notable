@@ -21,8 +21,6 @@ const globalNavigationState: NavigationStore = {
   parsePath: () => null,
 }
 
-const isInitialized = false
-
 // Subscription management
 type Subscriber = () => void
 const subscribers = new Set<Subscriber>()

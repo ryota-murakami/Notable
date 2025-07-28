@@ -1,3 +1,54 @@
+// Platform-specific route configurations
+export interface WebRouteConfig {
+  /** Web-specific route configuration */
+  component?: string
+  layout?: string
+  seo?: {
+    title?: string
+    description?: string
+    keywords?: string[]
+  }
+  dynamic?: boolean
+}
+
+export interface MobileRouteConfig {
+  /** Mobile-specific route configuration */
+  screen?: string
+  transition?: string
+  animation?: string
+  tabBar?: {
+    label?: string
+    icon?: string
+    badge?: string | number
+  }
+  header?: {
+    title?: string
+    hidden?: boolean
+    backButton?: boolean
+  }
+}
+
+export interface DesktopRouteConfig {
+  /** Desktop-specific route configuration */
+  window?: string | {
+    newWindow?: boolean
+    size?: {
+      width: number
+      height: number
+    }
+    properties?: {
+      alwaysOnTop?: boolean
+      frame?: boolean
+      resizable?: boolean
+    }
+  }
+  menuItem?: boolean
+  menu?: {
+    path?: string
+    accelerator?: string
+  }
+}
+
 export interface RouteDefinition {
   /** Route identifier */
   id: string
