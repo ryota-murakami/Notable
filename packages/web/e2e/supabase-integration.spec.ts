@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Supabase Integration Tests', () => {
   // Test authentication flow
-  test.skip('should handle authentication correctly', async ({ page }) => {
+  test('should handle authentication correctly', async ({ page }) => {
     // Feature not yet implemented - real Supabase auth with email/password not available
     // Navigate to the app
     await page.goto('/')
@@ -12,22 +12,19 @@ test.describe('Supabase Integration Tests', () => {
 
     // Check auth page elements
     await expect(page.getByText('Welcome to Notable')).toBeVisible()
-    await expect(page.getByText('Sign In')).toBeVisible()
-    await expect(page.getByText('Sign Up')).toBeVisible()
+    await expect(page.getByText('Sign in to access your synced notes')).toBeVisible()
 
     // Test sign in form
-    await page.getByRole('tab', { name: 'Sign In' }).click()
-    await expect(page.getByLabel('Email')).toBeVisible()
-    await expect(page.getByLabel('Password')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+    await expect(page.getByPlaceholder('Your email address')).toBeVisible()
+    await expect(page.getByPlaceholder('Your password')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible()
 
-    // Test OAuth buttons
-    await expect(page.getByRole('button', { name: 'Google' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'GitHub' })).toBeVisible()
+    // Test OAuth button
+    await expect(page.getByRole('button', { name: 'Sign in with Google' })).toBeVisible()
   })
 
   // Test database operations (notes CRUD)
-  test.skip('should handle database operations correctly', async ({ page }) => {
+  test('should handle database operations correctly', async ({ page }) => {
     // This test would require authentication first
     // For now, we'll just verify the auth flow is working
     await page.goto('/')
@@ -47,7 +44,7 @@ test.describe('Supabase Integration Tests', () => {
   })
 
   // Test middleware session handling
-  test.skip('should handle middleware session correctly', async ({ page }) => {
+  test('should handle middleware session correctly', async ({ page }) => {
     // Test that protected routes redirect to auth
     await page.goto('/dashboard/billing')
     await page.waitForURL('/auth', { timeout: 10000 })
@@ -63,7 +60,7 @@ test.describe('Supabase Integration Tests', () => {
   })
 
   // Test SSR/hydration
-  test.skip('should handle SSR and hydration correctly', async ({ page }) => {
+  test('should handle SSR and hydration correctly', async ({ page }) => {
     await page.goto('/auth')
 
     // Check that window checks are working properly
@@ -74,7 +71,7 @@ test.describe('Supabase Integration Tests', () => {
     expect(hasHydrationErrors).toBe(false)
 
     // Verify OAuth redirect URLs are set correctly
-    await page.getByRole('button', { name: 'Google' }).click()
+    await page.getByRole('button', { name: 'Sign in with Google' }).click()
 
     // Should attempt to redirect to OAuth provider (will fail without real Supabase setup)
     // But we can verify no JavaScript errors occurred
@@ -91,15 +88,15 @@ test.describe('Supabase Integration Tests', () => {
   })
 
   // Test error handling
-  test.skip('should handle authentication errors gracefully', async ({
+  test('should handle authentication errors gracefully', async ({
     page,
   }) => {
     await page.goto('/auth')
 
     // Test sign in with invalid credentials
-    await page.getByLabel('Email').fill('test@example.com')
-    await page.getByLabel('Password').fill('wrongpassword')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByPlaceholder('Your email address').fill('test@example.com')
+    await page.getByPlaceholder('Your password').fill('wrongpassword')
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click()
 
     // Should show error toast (implementation dependent)
     // For now, just verify no page crash

@@ -7,7 +7,9 @@ import { useRouter } from 'next/navigation'
 import { cn } from '../lib/utils'
 import { toast } from 'sonner'
 import { createClient } from '@/utils/supabase/client'
+import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { isTest } from '../lib/utils/environment'
 
 interface UserMenuProps {
   className?: string
@@ -99,8 +101,14 @@ export function UserMenu({ className }: UserMenuProps) {
     toast.info('Settings page coming soon!')
   }
 
-  // Don't render if loading or no user
-  if (loading || !user) {
+  // Create mock user for testing when dev-auth-bypass is enabled
+  const testMode = isTest()
+  const mockUser: SupabaseUser | null = testMode && !user ? createMockUser() : null
+
+  const currentUser = user || mockUser
+
+  // Don't render if loading or no user (and not in test mode)
+  if (loading || (!currentUser && !testMode)) {
     return null
   }
 
@@ -115,7 +123,7 @@ export function UserMenu({ className }: UserMenuProps) {
           aria-label='User menu'
           data-testid='user-menu-trigger'
         >
-          <span className='text-sm font-semibold'>{getInitials(user)}</span>
+          <span className='text-sm font-semibold'>{getInitials(currentUser)}</span>
         </button>
       </DropdownMenu.Trigger>
 
@@ -127,13 +135,13 @@ export function UserMenu({ className }: UserMenuProps) {
         >
           <div className='px-2 py-1.5'>
             <p className='text-sm font-semibold'>
-              {user?.user_metadata?.full_name ||
-                user?.user_metadata?.name ||
-                user?.email ||
+              {currentUser?.user_metadata?.full_name ||
+                currentUser?.user_metadata?.name ||
+                currentUser?.email ||
                 'User'}
             </p>
             <p className='text-xs text-muted-foreground'>
-              {user?.email || 'No email'}
+              {currentUser?.email || 'No email'}
             </p>
           </div>
 

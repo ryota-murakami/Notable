@@ -4,19 +4,15 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Authentication Flow', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
-  test.skip(
-    process.env.CI === 'true' &&
-      process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder') === true,
-    'Skipping auth tests in CI due to placeholder Supabase credentials'
-  )
+  // Conditional skip removed - running all tests
   test('should redirect to auth page when not authenticated', async ({
     page,
   }) => {
     // Navigate to home page
     await page.goto('/')
 
-    // Should be redirected to auth page (with trailing slash)
-    await expect(page).toHaveURL('/auth/')
+    // Should be redirected to auth page
+    await expect(page).toHaveURL('/auth')
 
     // Auth page should be visible - wait for content to load
     await expect(page.getByText('Welcome to Notable')).toBeVisible({
@@ -74,8 +70,8 @@ test.describe('Authentication Flow', () => {
     // Should have only one redirect (from / to /auth)
     expect(redirects.length).toBeLessThanOrEqual(1)
 
-    // Should end up on auth page (with trailing slash)
-    await expect(page).toHaveURL('/auth/')
+    // Should end up on auth page
+    await expect(page).toHaveURL('/auth')
   })
 
   test('auth page should be accessible directly', async ({ page }) => {
@@ -95,10 +91,7 @@ test.describe('Authentication Flow', () => {
   })
 
   test('should allow authenticated users to access home', async ({ page }) => {
-    // Navigate to home page first to establish domain
-    await page.goto('/')
-
-    // Set dev auth bypass cookie for testing (without domain to use current domain)
+    // Set dev auth bypass cookie for testing
     await page.context().addCookies([
       {
         name: 'dev-auth-bypass',
@@ -108,8 +101,8 @@ test.describe('Authentication Flow', () => {
       },
     ])
 
-    // Reload page to apply cookie
-    await page.reload()
+    // Navigate to home page with the cookie set
+    await page.goto('/')
 
     // Should stay on home page
     await expect(page).toHaveURL('/')

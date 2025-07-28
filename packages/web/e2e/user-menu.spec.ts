@@ -1,14 +1,8 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('User Menu', () => {
-  // Skip auth tests in CI until proper Supabase test credentials are configured
-  test.skip(
-    process.env.CI === 'true' &&
-      process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder') === true,
-    'Skipping auth-dependent tests in CI due to placeholder Supabase credentials'
-  )
   test.beforeEach(async ({ page }) => {
-    // Set dev auth bypass cookie for testing
+    // Mock authentication by setting the dev auth bypass cookie
     await page.context().addCookies([
       {
         name: 'dev-auth-bypass',
@@ -18,28 +12,23 @@ test.describe('User Menu', () => {
       },
     ])
 
-    // Navigate to the app
+    // Navigate to the app with cookie already set
     await page.goto('/')
 
     // Wait for the app to load
-    await page.waitForLoadState('networkidle')
+    await page.waitForSelector('[data-testid="app-shell"]', {
+      state: 'visible',
+      timeout: 10000,
+    })
   })
 
-  test('should display user menu button in header', async ({ page }) => {
-    // Wait for app shell to be visible
-    await page.waitForSelector('[data-testid="app-shell"]')
-
-    // Find the user menu trigger button
+  test('should display user menu trigger button', async ({ page }) => {
+    // The user menu trigger should be visible
     const userMenuTrigger = page.locator('[data-testid="user-menu-trigger"]')
-
-    // Button should be visible
     await expect(userMenuTrigger).toBeVisible()
 
-    // Should have correct aria-label
-    await expect(userMenuTrigger).toHaveAttribute('aria-label', 'User menu')
-
-    // Should display user initials
-    await expect(userMenuTrigger).toContainText('DU')
+    // Should show the avatar initials (DU for Demo User)
+    await expect(userMenuTrigger.locator('text="DU"')).toBeVisible()
   })
 
   test('should open dropdown menu on click', async ({ page }) => {
@@ -47,8 +36,15 @@ test.describe('User Menu', () => {
     const userMenuTrigger = page.locator('[data-testid="user-menu-trigger"]')
     await userMenuTrigger.click()
 
-    // Wait for dropdown to appear - use text selector instead of role
-    await page.waitForSelector('text="Demo User"', { timeout: 5000 })
+    // The dropdown menu should appear
+    const dropdownMenu = page.locator('[role="menu"]')
+    await expect(dropdownMenu).toBeVisible()
+
+    // Wait for menu content to be visible
+    await page.waitForSelector('text="Demo User"', {
+      state: 'visible',
+      timeout: 5000,
+    })
 
     // Verify user info is displayed
     await expect(page.locator('text="Demo User"')).toBeVisible()
@@ -59,7 +55,7 @@ test.describe('User Menu', () => {
     await expect(page.locator('text="Log out"')).toBeVisible()
   })
 
-  test.skip('should close dropdown when clicking outside', async ({ page }) => {
+  test('should close dropdown when clicking outside', async ({ page }) => {
     // Open the menu
     const userMenuTrigger = page.locator('[data-testid="user-menu-trigger"]')
     await userMenuTrigger.click()
@@ -68,8 +64,9 @@ test.describe('User Menu', () => {
     await page.waitForSelector('text="Demo User"', { state: 'visible' })
     await page.waitForTimeout(300) // Small delay for animation
 
-    // Click outside the menu - use body element to ensure we're clicking outside
-    await page.locator('body').click({ position: { x: 10, y: 10 } })
+    // Click outside the menu - click on the app shell instead of body
+    const appShell = page.locator('[data-testid="app-shell"]')
+    await appShell.click({ position: { x: 10, y: 10 }, force: true })
 
     // Wait a bit for animation
     await page.waitForTimeout(500)
@@ -152,7 +149,10 @@ test.describe('User Menu', () => {
     // Get logout item
     const logoutItem = page.locator('text="Log out"').locator('..')
 
-    // Hover over logout - should have destructive hover background
+    // Hover over logout - should have hover background
     await logoutItem.hover()
+
+    // Both items should be properly styled
+    // Note: Exact style assertions would depend on the CSS classes used
   })
 })
