@@ -52,7 +52,7 @@ export function useAnalytics(): AnalyticsHook {
 
 
   const trackError = useCallback((error: Error, context?: Record<string, any>, priority?: string) => {
-    analytics.error(error, { ...context, priority })
+    analytics.error(error, context, priority)
   }, [])
 
   const trackClick = useCallback((element: string, properties?: Record<string, any>) => {
