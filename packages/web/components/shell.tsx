@@ -9,6 +9,7 @@ import { toast } from '../hooks/use-toast'
 import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
 import { isTest } from '../lib/utils/environment'
+import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 
@@ -24,20 +25,7 @@ export function Shell() {
   const isTestMode = isTest()
 
   // Create mock user for testing when dev-auth-bypass is enabled
-  const mockUser: SupabaseUser | null = isTestMode && !user ? {
-    id: 'test-user-id',
-    email: 'demo@notable.app',
-    user_metadata: {
-      full_name: 'Demo User',
-      name: 'Demo User'
-    },
-    app_metadata: {},
-    aud: 'authenticated',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    role: 'authenticated',
-    email_confirmed_at: new Date().toISOString()
-  } as SupabaseUser : null
+  const mockUser: SupabaseUser | null = isTestMode && !user ? createMockUser() : null
 
   const currentUser = user || mockUser
 
