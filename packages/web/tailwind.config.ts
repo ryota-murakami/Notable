@@ -1,8 +1,7 @@
 import type { Config } from 'tailwindcss'
 import typographyPlugin from '@tailwindcss/typography'
-import { colors, effects, motion, typography } from './design-system/tokens'
 
-// Tailwind CSS v4.1 configuration
+// Tailwind CSS configuration
 const config = {
   content: [
     './pages/**/*.{ts,tsx}',
@@ -10,54 +9,18 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
     './store/**/*.{ts,tsx}',
-    './design-system/**/*.{ts,tsx}',
     '*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
-      // Extended color palette from design tokens
+      // Basic color extensions
       colors: {
-        brand: colors.brand,
-        success: colors.success,
-        warning: colors.warning,
-        error: colors.error,
-        info: colors.info,
-        purple: colors.purple,
-        teal: colors.teal,
+        brand: {
+          50: '#eff6ff',
+          500: '#3b82f6',
+          900: '#1e3a8a',
+        },
       },
-      // Typography extensions
-      fontFamily: {
-        sans: typography.fontFamily.sans,
-        serif: typography.fontFamily.serif,
-        mono: typography.fontFamily.mono,
-      },
-      fontSize: Object.entries(typography.fontSize).reduce(
-        (acc, [key, value]) => ({
-          ...acc,
-          [key]: [
-            value.size,
-            {
-              lineHeight: value.lineHeight,
-              letterSpacing: value.letterSpacing,
-            },
-          ],
-        }),
-        {}
-      ),
-      // Motion & animations
-      transitionDuration: motion.duration,
-      transitionTimingFunction: motion.easing,
-      animation: motion.animation,
-      keyframes: motion.keyframes,
-      // Effects
-      boxShadow: {
-        ...effects.shadow,
-        ...effects.elevation,
-      },
-      backdropBlur: effects.blur,
-      blur: effects.blur,
-      // Additional theme extensions now integrated from design tokens
-      // Most configuration is enhanced via app/tailwind.css
     },
   },
   plugins: [typographyPlugin],

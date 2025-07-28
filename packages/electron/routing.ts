@@ -63,36 +63,3 @@ export function setupRoutingInMainProcess() {
   }
 }
 
-// Renderer process preload setup
-export const routingPreload = `
-// Expose routing API to renderer process
-const { contextBridge, ipcRenderer } = require('electron')
-
-contextBridge.exposeInMainWorld('electronAPI', {
-  // Navigation methods
-  navigate: (routeId, params, query) => ipcRenderer.invoke('routing:navigate', routeId, params, query),
-  getCurrentRoute: () => ipcRenderer.invoke('routing:get-current-route'),
-  
-  // Event listeners
-  onMenuNavigation: (callback) => {
-    ipcRenderer.on('routing:menu-navigation', (event, data) => callback(data))
-  },
-  
-  onRouteChange: (callback) => {
-    ipcRenderer.on('routing:route-change', (event, data) => callback(data))
-  },
-  
-  onDeepLink: (callback) => {
-    ipcRenderer.on('routing:deep-link', (event, data) => callback(data))
-  },
-  
-  // Utility methods
-  setAlwaysOnTop: (alwaysOnTop) => {
-    const { BrowserWindow } = require('electron').remote || require('@electron/remote')
-    const currentWindow = BrowserWindow.getFocusedWindow()
-    if (currentWindow) {
-      currentWindow.setAlwaysOnTop(alwaysOnTop)
-    }
-  }
-})
-`

@@ -186,13 +186,3 @@ class Analytics {
 // Export singleton instance
 export const analytics = new Analytics()
 
-// Common event helpers
-export const trackEvent = analytics.track.bind(analytics)
-export const trackPage = analytics.page.bind(analytics)
-export const trackError = analytics.error.bind(analytics)
-export const trackPerformance = analytics.performance.bind(analytics)
-export const trackFeature = analytics.feature.bind(analytics)
-export const trackRevenue = analytics.revenue.bind(analytics)
-export const trackUserAction = analytics.userAction.bind(analytics)
-export const identifyUser = analytics.identify.bind(analytics)
-export const resetAnalytics = analytics.reset.bind(analytics)

@@ -412,36 +412,3 @@ export function getRouteById(id: string): RouteDefinition | undefined {
   return ROUTES[id]
 }
 
-export function getRoutesByCategory(category: string): RouteDefinition[] {
-  return Object.values(ROUTES).filter(
-    (route) => route.meta?.category === category,
-  )
-}
-
-export function getPublicRoutes(): RouteDefinition[] {
-  return Object.values(ROUTES).filter((route) => route.meta?.public === true)
-}
-
-export function getAuthRequiredRoutes(): RouteDefinition[] {
-  return Object.values(ROUTES).filter(
-    (route) => route.meta?.requiresAuth === true,
-  )
-}
-
-export function getChildRoutes(parentId: string): RouteDefinition[] {
-  return Object.values(ROUTES).filter((route) => route.parent === parentId)
-}
-
-export function getBreadcrumb(routeId: string): RouteDefinition[] {
-  const breadcrumb: RouteDefinition[] = []
-  let currentRoute = getRouteById(routeId)
-
-  while (currentRoute) {
-    breadcrumb.unshift(currentRoute)
-    currentRoute = currentRoute.parent
-      ? getRouteById(currentRoute.parent)
-      : undefined
-  }
-
-  return breadcrumb
-}

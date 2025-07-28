@@ -9,7 +9,7 @@ test.describe('Spinner Component', () => {
     const url = page.url()
     if (url.includes('/auth')) {
       // This is expected behavior for unauthenticated users
-      console.log('✅ Redirected to auth page as expected')
+      console.info('✅ Redirected to auth page as expected')
       return
     }
 
@@ -21,12 +21,12 @@ test.describe('Spinner Component', () => {
     const spinnerCount = await spinner.count()
     if (spinnerCount > 0) {
       await expect(spinner).toBeVisible()
-      console.log('✅ Spinner visible in Shell loading state')
+      console.info('✅ Spinner visible in Shell loading state')
     } else {
       // If no spinner, app should be fully loaded
       const shell = page.locator('[data-testid="app-shell"]')
       await expect(shell).toBeVisible()
-      console.log('✅ App loaded without showing spinner (fast initialization)')
+      console.info('✅ App loaded without showing spinner (fast initialization)')
     }
   })
 
@@ -47,9 +47,9 @@ test.describe('Spinner Component', () => {
       const firstSpinner = radixSpinner.first()
       const className = await firstSpinner.getAttribute('class')
       expect(className).toContain('text-muted-foreground')
-      console.log('✅ Radix UI Spinner found with proper styling')
+      console.info('✅ Radix UI Spinner found with proper styling')
     } else {
-      console.log('ℹ️ No spinner visible (page loaded quickly)')
+      console.info('ℹ️ No spinner visible (page loaded quickly)')
     }
   })
 
@@ -65,7 +65,7 @@ test.describe('Spinner Component', () => {
     const response = page.context()
     expect(response).not.toBeNull()
 
-    console.log(
+    console.info(
       '✅ Page loads successfully (ActionCard spinner test requires specific setup)'
     )
   })
@@ -83,9 +83,9 @@ test.describe('Spinner Component', () => {
     if (!url.includes('/auth')) {
       const wrapperCount = await themeWrapper.count()
       expect(wrapperCount).toBeGreaterThan(0)
-      console.log('✅ Radix UI Theme wrapper detected')
+      console.info('✅ Radix UI Theme wrapper detected')
     } else {
-      console.log('ℹ️ On auth page - Theme wrapper check skipped')
+      console.info('ℹ️ On auth page - Theme wrapper check skipped')
     }
   })
 
@@ -108,6 +108,6 @@ test.describe('Spinner Component', () => {
 
     // Verify no Spinner-related errors
     expect(errors).toHaveLength(0)
-    console.log('✅ No Spinner-related console errors detected')
+    console.info('✅ No Spinner-related console errors detected')
   })
 })

@@ -21,7 +21,7 @@ const globalNavigationState: NavigationStore = {
   parsePath: () => null,
 }
 
-let isInitialized = false
+const isInitialized = false
 
 // Subscription management
 type Subscriber = () => void
@@ -47,30 +47,6 @@ function updateState(updater: (state: NavigationStore) => void) {
   notifySubscribers()
 }
 
-// Initialize navigation with adapter
-export function initializeSimpleNavigation(adapter: PlatformAdapter) {
-  if (isInitialized) {
-    console.warn('Navigation already initialized')
-    return () => {}
-  }
-
-  isInitialized = true
-
-  // Set up adapter listener
-  const unsubscribe = adapter.subscribe((location) => {
-    if (location.route) {
-      const route = location.route
-      updateState((state) => {
-        state.currentRoute = { route, params: {} }
-      })
-    }
-  })
-
-  return () => {
-    isInitialized = false
-    unsubscribe()
-  }
-}
 
 // Navigation actions
 const navigationActions = {

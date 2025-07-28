@@ -32,64 +32,8 @@ export interface RouteDefinition {
   }
 }
 
-export interface WebRouteConfig {
-  /** Next.js specific route configuration */
-  dynamic?: boolean
-  /** Layout component to use */
-  layout?: string
-  /** Page component */
-  component?: string
-  /** SEO metadata */
-  seo?: {
-    title?: string
-    description?: string
-    keywords?: string[]
-  }
-}
 
-export interface MobileRouteConfig {
-  /** Screen transition animation */
-  animation?: 'slide' | 'fade' | 'modal' | 'none'
-  /** Tab bar configuration if part of tabs */
-  tabBar?: {
-    label?: string
-    icon?: string
-    badge?: string
-  }
-  /** Header configuration */
-  header?: {
-    title?: string
-    hidden?: boolean
-    backButton?: boolean
-  }
-  /** Screen orientation */
-  orientation?: 'portrait' | 'landscape' | 'default'
-}
 
-export interface DesktopRouteConfig {
-  /** Window configuration for Electron */
-  window?: {
-    /** Create new window for this route */
-    newWindow?: boolean
-    /** Window size */
-    size?: { width: number; height: number }
-    /** Window position */
-    position?: { x: number; y: number }
-    /** Window properties */
-    properties?: {
-      resizable?: boolean
-      alwaysOnTop?: boolean
-      frame?: boolean
-    }
-  }
-  /** Menu integration */
-  menu?: {
-    /** Menu path (e.g., "File > New Note") */
-    path?: string
-    /** Keyboard shortcut */
-    accelerator?: string
-  }
-}
 
 export interface RouteLocation {
   /** Current pathname */
@@ -118,17 +62,6 @@ export interface NavigationState {
   error: string | null
 }
 
-export interface NavigationAction {
-  type:
-    | 'NAVIGATE'
-    | 'BACK'
-    | 'FORWARD'
-    | 'REPLACE'
-    | 'RESET'
-    | 'SET_LOADING'
-    | 'SET_ERROR'
-  payload?: unknown
-}
 
 export interface NavigationStore extends NavigationState {
   /** Navigate to a route */
@@ -166,10 +99,4 @@ export interface PlatformAdapter {
   dispose: () => void
 }
 
-export type Platform = 'web' | 'mobile' | 'desktop'
-export type RouteChangeCallback = (
-  route: RouteDefinition,
-  params: Record<string, string>,
-  query: Record<string, string>,
-) => void
 

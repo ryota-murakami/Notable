@@ -18,13 +18,11 @@
     "e2e": "turbo e2e",
     "dev": "turbo dev",
     "clean": "turbo clean && rm -rf node_modules pnpm-lock.yaml",
-    "prepare": "husky",
     "prettier": "prettier --ignore-unknown --write .",
     "sherif:fix": "pnpm sherif --fix -r unsync-similar-dependencies",
     "knip": "knip",
     "deps:dedupe": "pnpm dedupe",
     "deps:cleanup": "pnpm dedupe && pnpm install --force",
-    "deps:unused": "pnpm dlx depcheck",
     "security:audit": "pnpm audit",
     "security:fix": "pnpm audit --fix"
   },
@@ -40,36 +38,5 @@
     "turbo": "^2.5.5",
     "typescript": "^5.8.3"
   },
-  "packageManager": "pnpm@10.13.1",
-  "lint-staged": {
-    "packages/mobile/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
-      "pnpm --filter @notable/mobile lint:fix"
-    ],
-    "packages/electron/**/*.{js,ts,jsx,tsx,cjs,mjs}": [
-      "pnpm --filter @notable/electron lint:fix"
-    ],
-    "*": "prettier --ignore-unknown --write"
-  },
-  "pnpm": {
-    "overrides": {
-      "napi-postinstall": "0.3.2",
-      "react": "^19",
-      "react-dom": "^19",
-      "@types/react": "^19",
-      "@types/react-dom": "^19",
-      "next": "15.2.4",
-      "undici": "^6.0.0",
-      "slate": "^0.117.2",
-      "slate-react": "^0.117.4",
-      "yjs": "^13.6.27",
-      "typescript": "^5"
-    }
-  },
-  "resolutions": {
-    "slate": "^0.117.2",
-    "slate-react": "^0.117.4",
-    "yjs": "^13.6.27",
-    "undici": "^6.0.0",
-    "typescript": "^5"
-  }
+  "packageManager": "pnpm@10.13.1"
 }

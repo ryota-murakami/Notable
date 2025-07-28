@@ -1,0 +1,242 @@
+name: Electron E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'packages/electron/**'
+      - 'packages/web/**'
+      - 'packages/routing/**'
+      - 'packages/sync/**'
+      - '.github/workflows/electron-e2e.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'packages/electron/**'
+      - 'packages/web/**'
+      - 'packages/routing/**'
+      - 'packages/sync/**'
+      - '.github/workflows/electron-e2e.yml'
+  workflow_dispatch:
+
+env:
+  # Electron E2E specific environment variables
+  ELECTRON_DISABLE_SECURITY_WARNINGS: "true"
+  PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
+
+jobs:
+  electron-e2e:
+    name: Electron E2E on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('packages/electron/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers for Electron
+        working-directory: packages/electron
+        run: |
+          npx playwright install
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+
+      - name: Build workspace dependencies
+        run: |
+          pnpm build --filter=@notable/sync --filter=@notable/routing
+
+      - name: Build Electron app
+        working-directory: packages/electron
+        run: |
+          pnpm build
+
+      - name: Setup virtual display (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          # Install xvfb for headless display
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          # Start virtual display
+          export DISPLAY=:99
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: Setup macOS permissions
+        if: runner.os == 'macOS'
+        run: |
+          # Grant screen recording permissions for Electron app testing
+          # This helps with screenshot/video capture during tests
+          sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db "INSERT OR IGNORE INTO access VALUES('kTCCServiceScreenCapture','$(whoami)',0,2,2,1,NULL,NULL,0,'UNUSED',NULL,0,1687364150);" || true
+
+      - name: Start Web Development Server
+        run: |
+          # Start the web server in background for Electron to connect to
+          cd packages/web
+          pnpm dev &
+          echo $! > web-server.pid
+          # Wait for server to be ready
+          echo "Waiting for web server to start..."
+          timeout 60 bash -c 'until curl -s http://localhost:4378 > /dev/null; do sleep 2; done' || echo "Warning: Web server may not be fully ready"
+        env:
+          NODE_ENV: test
+          NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key'
+          NEXT_PUBLIC_APP_URL: 'http://localhost:4378'
+
+      - name: Run Electron E2E tests
+        working-directory: packages/electron
+        run: |
+          pnpm e2e
+        env:
+          CI: true
+          DISPLAY: ${{ env.DISPLAY }}
+          ELECTRON_START_URL: 'http://localhost:4378'
+          PLAYWRIGHT_BROWSERS_PATH: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+          # Disable Electron security warnings in test environment
+          ELECTRON_DISABLE_SECURITY_WARNINGS: "true"
+
+      - name: Stop Web Server
+        if: always()
+        run: |
+          if [ -f packages/web/web-server.pid ]; then
+            kill $(cat packages/web/web-server.pid) || true
+            rm packages/web/web-server.pid
+          fi
+          # Kill any remaining Node processes
+          pkill -f "next dev" || true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: electron-e2e-results-${{ matrix.os }}
+          path: |
+            packages/electron/test-results/
+            packages/electron/playwright-report/
+          retention-days: 7
+
+      - name: Upload failure screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: electron-e2e-screenshots-${{ matrix.os }}
+          path: |
+            packages/electron/test-results/**/*.png
+            packages/electron/test-results/**/*.webm
+          retention-days: 7
+
+  electron-build-test:
+    name: Test Electron Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace dependencies
+        run: |
+          pnpm build --filter=@notable/sync --filter=@notable/routing
+
+      - name: Build and Package Electron app
+        working-directory: packages/electron
+        run: |
+          # Build the app
+          pnpm build
+          # Test packaging (creates distributable but doesn't sign)
+          pnpm pack
+        env:
+          # Skip code signing in CI
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Verify Build Artifacts
+        working-directory: packages/electron
+        shell: bash
+        run: |
+          echo "=== Build Directory Contents ==="
+          ls -la build/ || echo "No build directory"
+          
+          echo "=== Dist Directory Contents ==="
+          ls -la dist/ || echo "No dist directory"
+          
+          # Verify key files exist
+          if [ -f "build/main.js" ]; then
+            echo "✅ Main process built successfully"
+          else
+            echo "❌ Main process build failed"
+            exit 1
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: electron-build-${{ matrix.os }}
+          path: |
+            packages/electron/dist/
+            packages/electron/build/
+          retention-days: 3

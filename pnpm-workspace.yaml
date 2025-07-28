@@ -1,3 +1,18 @@
 packages:
-  - 'packages/*'
-  - 'packages/configs/*'
+  - packages/*
+  - packages/configs/*
+
+onlyBuiltDependencies:
+  - '@sentry/cli'
+  - '@tailwindcss/oxide'
+  - core-js
+  - detox
+  - dtrace-provider
+  - electron
+  - electron-winstaller
+  - esbuild
+  - msgpackr-extract
+  - oxc-resolver
+  - sharp
+  - supabase
+  - unrs-resolver

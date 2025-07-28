@@ -135,5 +135,3 @@ class CustomAnalyticsProvider implements AnalyticsProvider {
 
 export const customAnalytics = new CustomAnalyticsProvider()
 
-// Export types for API endpoint
-export type { AnalyticsBuffer }
