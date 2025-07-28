@@ -1,7 +1,7 @@
 'use client'
 
 import { type ReactNode, useEffect, useState } from 'react'
-import { webAdapter, initializeSimpleStore } from '@notable/routing'
+import { initializeSimpleStore, webAdapter } from '@notable/routing'
 import { isTest } from '../lib/utils/environment'
 
 interface RoutingProviderProps {

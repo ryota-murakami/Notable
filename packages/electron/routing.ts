@@ -31,16 +31,8 @@ export function setupRoutingInMainProcess() {
   )
 
   ipcMain.handle('routing:get-current-route', async () => {
-    try {
-      // For now, return a mock current route
-      return { success: true, data: { route: null, params: {}, query: {} } }
-    } catch (error) {
-      console.error('Get current route error:', error)
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      }
-    }
+    // For now, return a mock current route
+    return { success: true, data: { route: null, params: {}, query: {} } }
   })
 
   // Handle menu-triggered navigation

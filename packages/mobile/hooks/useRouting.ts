@@ -1,41 +1,33 @@
-import {
-  ROUTES,
-  useCurrentRoute,
-  useNavigationHistory,
-  useNavigationState,
-  usePlatformNavigation,
-  useRouteAuth,
-  useRouteBreadcrumb,
-  useRouteTitle,
-} from '@notable/routing'
+import { ROUTES } from '@notable/routing'
+import { useRouter } from 'expo-router'
 
 /**
  * Hook for mobile-specific routing functionality
  * Provides a clean API for navigation within the mobile app
+ * 
+ * NOTE: This is a stub implementation until mobile routing is properly integrated
+ * with the refactored SSR-safe routing package
  */
 export function useRouting() {
-  const navigation = usePlatformNavigation()
-  const auth = useRouteAuth()
-  const title = useRouteTitle()
-  const breadcrumb = useRouteBreadcrumb()
+  const router = useRouter()
 
   return {
-    // Navigation actions
-    navigate: navigation.navigate,
-    replace: navigation.replace,
-    goBack: navigation.goBack,
-    goForward: navigation.goForward,
-    reset: navigation.reset,
+    // Navigation actions (using Expo Router directly)
+    navigate: (route: string) => router.push(route),
+    replace: (route: string) => router.replace(route),
+    goBack: () => router.back(),
+    goForward: () => {}, // Not supported in Expo Router
+    reset: (route: string) => router.replace(route),
 
-    // Current state
-    current: navigation.current,
-    history: navigation.history,
-    state: navigation.state,
+    // Current state (stub values)
+    current: null,
+    history: [],
+    state: 'idle' as const,
 
-    // Route metadata
-    auth,
-    title,
-    breadcrumb,
+    // Route metadata (stub values)
+    auth: { isAuthenticated: false, isLoading: false },
+    title: 'Notable',
+    breadcrumb: [],
 
     // Route definitions for reference
     routes: ROUTES,
@@ -46,35 +38,34 @@ export function useRouting() {
  * Hook to get just the current route information
  */
 export function useCurrentRouteInfo() {
-  return useCurrentRoute()
+  return null
 }
 
 /**
  * Hook to get navigation history
  */
 export function useNavigationHistoryMobile() {
-  return useNavigationHistory()
+  return []
 }
 
 /**
  * Hook to get navigation state (loading, error, etc.)
  */
 export function useNavigationStateMobile() {
-  return useNavigationState()
+  return 'idle' as const
 }
 
 /**
  * Convenience hook for navigation actions only
  */
 export function useNavigationActions() {
-  const { navigate, replace, goBack, goForward, reset } =
-    usePlatformNavigation()
+  const router = useRouter()
 
   return {
-    navigate,
-    replace,
-    goBack,
-    goForward,
-    reset,
+    navigate: (route: string) => router.push(route),
+    replace: (route: string) => router.replace(route),
+    goBack: () => router.back(),
+    goForward: () => {}, // Not supported in Expo Router
+    reset: (route: string) => router.replace(route),
   }
 }
