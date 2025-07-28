@@ -4,16 +4,12 @@ import { analytics } from '@/lib/analytics'
 export interface Analytics {
   track: (event: string, properties?: Record<string, any>) => void
   identify: (userId: string, traits?: Record<string, any>) => void
-  page: (name?: string, properties?: Record<string, any>) => void
-  interaction: (type: string, element: string, properties?: Record<string, any>) => void
-  pageView: (page: string, properties?: Record<string, any>) => void
-  usage: (feature: string, duration: number, properties?: Record<string, any>) => void
+  trackPageView: (page: string, properties?: Record<string, any>) => void
+  trackInteraction: (type: string, element: string, properties?: Record<string, any>) => void
+  trackFeatureUsage: (feature: string, duration: number, properties?: Record<string, any>) => void
   setConsent: (consent: boolean) => void
   setUser: (userId: string, properties?: Record<string, any>) => void
   trackPerformance: (metric: string, value: number, unit: string, properties?: Record<string, any>) => void
-  trackInteraction: (type: string, element: string, properties?: Record<string, any>) => void
-  trackPageView: (page: string, properties?: Record<string, any>) => void
-  trackFeatureUsage: (feature: string, duration: number, properties?: Record<string, any>) => void
   trackError: (error: Error, context?: Record<string, any>) => void
   trackClick: (element: string, properties?: Record<string, any>) => void
   trackFormSubmit: (form: string, properties?: Record<string, any>) => void
@@ -30,19 +26,15 @@ export function useAnalytics(): Analytics {
     console.info('[Analytics] Identify:', userId, traits)
   }, [])
 
-  const page = useCallback((name?: string, properties?: Record<string, any>) => {
-    console.info('[Analytics] Page:', name, properties)
+  const trackPageView = useCallback((page: string, properties?: Record<string, any>) => {
+    analytics.pageView(page, properties)
   }, [])
 
-  const interaction = useCallback((type: string, element: string, properties?: Record<string, any>) => {
-    console.info('[Analytics] Interaction:', type, element, properties)
+  const trackInteraction = useCallback((type: string, element: string, properties?: Record<string, any>) => {
+    analytics.interaction(type, element, properties)
   }, [])
 
-  const pageView = useCallback((page: string, properties?: Record<string, any>) => {
-    console.info('[Analytics] PageView:', page, properties)
-  }, [])
-
-  const usage = useCallback((feature: string, duration: number, properties?: Record<string, any>) => {
+  const trackFeatureUsage = useCallback((feature: string, duration: number, properties?: Record<string, any>) => {
     analytics.usage(feature, duration, properties)
   }, [])
 
@@ -58,17 +50,6 @@ export function useAnalytics(): Analytics {
     analytics.performance(metric, value, unit, properties)
   }, [])
 
-  const trackInteraction = useCallback((type: string, element: string, properties?: Record<string, any>) => {
-    analytics.interaction(type, element, properties)
-  }, [])
-
-  const trackPageView = useCallback((page: string, properties?: Record<string, any>) => {
-    analytics.pageView(page, properties)
-  }, [])
-
-  const trackFeatureUsage = useCallback((feature: string, duration: number, properties?: Record<string, any>) => {
-    analytics.usage(feature, duration, properties)
-  }, [])
 
   const trackError = useCallback((error: Error, context?: Record<string, any>) => {
     analytics.error(error, context)
@@ -89,16 +70,12 @@ export function useAnalytics(): Analytics {
   return {
     track,
     identify,
-    page,
-    interaction,
-    pageView,
-    usage,
+    trackPageView,
+    trackInteraction,
+    trackFeatureUsage,
     setConsent,
     setUser,
     trackPerformance,
-    trackInteraction,
-    trackPageView,
-    trackFeatureUsage,
     trackError,
     trackClick,
     trackFormSubmit,
