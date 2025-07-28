@@ -29,8 +29,8 @@ export default defineConfig({
   /* More aggressive retries on CI */
   retries: process.env.CI ? 3 : 0,
 
-  /* Use 2 workers in CI for better parallelization */
-  workers: process.env.CI ? 2 : undefined,
+  /* Use limited workers to prevent server connection race conditions */
+  workers: process.env.CI ? 2 : 1,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',

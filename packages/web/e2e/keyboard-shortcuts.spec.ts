@@ -22,30 +22,28 @@ test.describe('Keyboard Shortcuts', () => {
     await page.waitForLoadState('networkidle')
   })
 
-  test.skip('command palette opens with Cmd+Shift+P', async ({ page }) => {
-    // Feature not yet implemented - skipping test
+  test('command palette opens with Cmd+Shift+P', async ({ page }) => {
     // Press Cmd+Shift+P (or Ctrl+Shift+P on Windows/Linux)
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
     await page.keyboard.press(`${modifier}+Shift+P`)
 
-    // Check if command palette is visible
+    // Check if command palette is visible by looking for the search input
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByText('Command Palette')).toBeVisible()
+    await expect(page.getByPlaceholder('Type a command or search...')).toBeVisible()
 
     // Close with Escape
     await page.keyboard.press('Escape')
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
-  test.skip('keyboard shortcuts help opens with Cmd+/', async ({ page }) => {
-    // Feature not yet implemented - skipping test
+  test('keyboard shortcuts help opens with Cmd+/', async ({ page }) => {
     // Press Cmd+/ (or Ctrl+/ on Windows/Linux)
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
     await page.keyboard.press(`${modifier}+/`)
 
     // Check if keyboard shortcuts dialog is visible
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByText('Keyboard Shortcuts')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Keyboard Shortcuts' })).toBeVisible()
 
     // Should show different categories
     await expect(page.getByRole('tab', { name: 'General' })).toBeVisible()
@@ -57,65 +55,54 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
-  test.skip('search opens with Cmd+K', async ({ page }) => {
-    // Feature not yet implemented - skipping test
+  test('search opens with Cmd+K', async ({ page }) => {
     // Press Cmd+K (or Ctrl+K on Windows/Linux)
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
     await page.keyboard.press(`${modifier}+K`)
 
     // Check if search dialog is visible
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByPlaceholder(/search/i)).toBeVisible()
+    await expect(page.getByPlaceholder('Search notes...')).toBeVisible()
 
     // Close with Escape
     await page.keyboard.press('Escape')
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
-  test.skip('navigation shortcuts work with arrow keys', async ({ page }) => {
-    // Feature not yet implemented - navigation selection not available
-    // Create some test notes first
-    await page.evaluate(() => {
-      // Mock some notes in localStorage for testing
-      const mockNotes = [
-        { id: '1', title: 'First Note', content: 'Content 1', isFolder: false },
-        {
-          id: '2',
-          title: 'Second Note',
-          content: 'Content 2',
-          isFolder: false,
-        },
-        { id: '3', title: 'Third Note', content: 'Content 3', isFolder: false },
-      ]
-      localStorage.setItem('test-notes', JSON.stringify(mockNotes))
-    })
+  test('navigation shortcuts work with arrow keys', async ({ page }) => {
+    // Create some test notes by clicking the New Note button
+    await page.getByRole('button', { name: 'New Note' }).click()
+    await page.getByRole('button', { name: 'New Note' }).click()
+    await page.getByRole('button', { name: 'New Note' }).click()
 
-    // Wait for notes to be visible in the UI
-    await expect(page.getByText('First Note')).toBeVisible()
+    // Wait for notes to be visible in the sidebar (they show as "Untitled")
+    const notes = page.locator('aside nav ul li a')
+    const noteCount = await notes.count()
+    expect(noteCount).toBeGreaterThan(3) // At least Welcome Note + 3 new notes
 
-    // Press down arrow
+    // Press down arrow to navigate from Welcome Note to first Untitled note
     await page.keyboard.press('ArrowDown')
-    // Assert that selection changed (add data-testid to selected items)
+    // Assert that selection changed to first Untitled note
     await expect(page.locator('[data-selected="true"]')).toContainText(
-      'Second Note'
+      'Untitled'
     )
 
-    // Press up arrow
+    // Press up arrow to go back to Welcome Note
     await page.keyboard.press('ArrowUp')
     await expect(page.locator('[data-selected="true"]')).toContainText(
-      'First Note'
+      'Welcome Note'
     )
 
-    // Press j for next
+    // Press j for next (vim-style)
     await page.keyboard.press('j')
     await expect(page.locator('[data-selected="true"]')).toContainText(
-      'Second Note'
+      'Untitled'
     )
 
-    // Press k for previous
+    // Press k for previous (vim-style)
     await page.keyboard.press('k')
     await expect(page.locator('[data-selected="true"]')).toContainText(
-      'First Note'
+      'Welcome Note'
     )
   })
 
@@ -133,16 +120,21 @@ test.describe('Keyboard Shortcuts', () => {
   })
 
   test('view mode toggle with Cmd+E', async ({ page }) => {
-    // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
-    // Toggle view mode
+    // First click New Note to show the editor
+    await page.getByRole('button', { name: 'New Note' }).click()
+    
+    // Should initially be in edit mode
+    await expect(page.getByRole('main').getByText('Edit mode')).toBeVisible()
+
+    // Toggle to view mode
     await page.keyboard.press(`${modifier}+E`)
-    await expect(page.getByText(/view mode/i)).toBeVisible({ timeout: 5000 })
+    await expect(page.getByRole('main').getByText('View mode')).toBeVisible({ timeout: 5000 })
 
     // Toggle back to edit mode
     await page.keyboard.press(`${modifier}+E`)
-    await expect(page.getByText(/edit mode/i)).toBeVisible({ timeout: 5000 })
+    await expect(page.getByRole('main').getByText('Edit mode')).toBeVisible({ timeout: 5000 })
   })
 
   test('sidebar toggle with Cmd+,', async ({ page }) => {
@@ -162,20 +154,19 @@ test.describe('Keyboard Shortcuts', () => {
     expect(afterToggle).not.toBe(initiallyVisible)
   })
 
-  test.skip('multi-select mode with Cmd+M', async ({ page }) => {
-    // Feature not yet implemented - skipping test
+  test('multi-select mode with Cmd+M', async ({ page }) => {
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
     // Toggle multi-select mode
     await page.keyboard.press(`${modifier}+M`)
-    await expect(page.getByText(/multi-select/i)).toBeVisible({ timeout: 5000 })
+    await expect(page.getByTestId('sidebar').getByText('Multi-select mode')).toBeVisible({ timeout: 5000 })
 
     // Select all with Cmd+A (only works in multi-select mode)
     await page.keyboard.press(`${modifier}+A`)
 
-    // Toggle back to normal mode
+    // Toggle back to normal mode (multi-select text should disappear)
     await page.keyboard.press(`${modifier}+M`)
-    await expect(page.getByText(/normal mode/i)).toBeVisible({ timeout: 5000 })
+    await expect(page.getByTestId('sidebar').getByText('Multi-select mode')).not.toBeVisible({ timeout: 5000 })
   })
 
   test('quick switch with number keys', async ({ page }) => {
@@ -203,7 +194,7 @@ test.describe('Keyboard Shortcuts', () => {
     }
   })
 
-  test.skip('command palette search functionality', async ({ page }) => {
+  test('command palette search functionality', async ({ page }) => {
     // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -216,7 +207,7 @@ test.describe('Keyboard Shortcuts', () => {
     await searchInput.fill('new')
 
     // Should show "Create New Note" command
-    await expect(page.getByText('Create New Note')).toBeVisible()
+    await expect(page.getByTestId('command-create-new-note')).toBeVisible()
 
     // Clear search
     await searchInput.clear()

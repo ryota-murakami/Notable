@@ -41,6 +41,8 @@
   },
   "dependencies": {
     "@notable/sync": "workspace:*",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/themes": "^3.2.1",
     "@sentry/nextjs": "^8.47.0",
     "@supabase/auth-ui-react": "^0.4.7",
