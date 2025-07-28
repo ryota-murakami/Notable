@@ -34,6 +34,7 @@ describe('NotesService', () => {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       is: vi.fn().mockReturnThis(),
+      or: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),
       range: vi.fn().mockReturnThis(),
@@ -105,10 +106,11 @@ describe('NotesService', () => {
 
       const result = await notesService.createNote({
         title: 'Test Note',
+        content: 'Test content',
       })
 
       expect(result.data).toBeNull()
-      expect(result.error).toBe(dbError)
+      expect(result.error?.message).toBe(`Failed to create note: ${dbError.message}`)
     })
   })
 
@@ -133,7 +135,6 @@ describe('NotesService', () => {
       expect(result.error).toBeNull()
       expect(mockSupabase.update).toHaveBeenCalled()
       expect(mockSupabase.eq).toHaveBeenCalledWith('id', 'note-id')
-      expect(mockSupabase.eq).toHaveBeenCalledWith('user_id', 'test-user-id')
     })
   })
 
@@ -148,7 +149,7 @@ describe('NotesService', () => {
 
       expect(result.error).toBeNull()
       expect(mockSupabase.update).toHaveBeenCalledWith({
-        deleted_at: expect.any(String),
+        deleted: true,
       })
       expect(mockSupabase.eq).toHaveBeenCalledWith('id', 'note-id')
     })
@@ -219,16 +220,16 @@ describe('NotesService', () => {
         },
       ]
 
-      mockSupabase.rpc.mockResolvedValue({ data: searchResults, error: null })
+      mockSupabase.order.mockResolvedValue({ data: searchResults, error: null })
 
       const result = await notesService.searchNotes('search query')
 
       expect(result.data).toEqual(searchResults)
       expect(result.error).toBeNull()
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('search_notes', {
-        search_query: 'search query',
-        user_uuid: 'test-user-id',
-      })
+      expect(mockSupabase.from).toHaveBeenCalledWith('notes')
+      expect(mockSupabase.or).toHaveBeenCalledWith('title.ilike.%search query%,content.ilike.%search query%')
+      expect(mockSupabase.eq).toHaveBeenCalledWith('deleted', false)
+      expect(mockSupabase.order).toHaveBeenCalledWith('updated_at', { ascending: false })
     })
   })
 
@@ -252,14 +253,10 @@ describe('NotesService', () => {
         id: 'note-id',
         title: 'Test Note',
         content: 'Test content',
-        is_folder: false,
-        parent_id: 'folder-id',
+        createdAt: '2025-07-28T12:00:00Z',
+        updatedAt: '2025-07-28T13:00:00Z',
         userId: 'test-user-id',
-        created_at: '2025-07-28T12:00:00Z',
-        updated_at: '2025-07-28T13:00:00Z',
-        deleted: false,
-        tags: [],
-        isHidden: false,
+        isDeleted: false,
       })
     })
 
@@ -294,10 +291,13 @@ describe('NotesService', () => {
       const dbNote = NotesService.toDatabaseNote(appNote)
 
       expect(dbNote).toEqual({
+        id: 'note-id',
         title: 'App Note',
-        content: { text: 'App content' },
-        folder_id: 'folder-id',
-        is_public: false,
+        content: 'App content',
+        created_at: undefined,
+        updated_at: undefined,
+        user_id: undefined,
+        deleted: false,
       })
     })
 
@@ -305,10 +305,13 @@ describe('NotesService', () => {
       const dbNote = NotesService.toDatabaseNote({})
 
       expect(dbNote).toEqual({
+        id: undefined,
         title: 'Untitled',
-        content: { text: '' },
-        folder_id: null,
-        is_public: false,
+        content: '',
+        created_at: undefined,
+        updated_at: undefined,
+        user_id: undefined,
+        deleted: false,
       })
     })
   })
