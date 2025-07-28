@@ -3,6 +3,8 @@
  * Handles browser-based navigation and route synchronization
  */
 
+/// <reference lib="dom" />
+
 import type { PlatformAdapter, RouteLocation } from '../types'
 import { getRouteById } from '../routes'
 
