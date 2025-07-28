@@ -1,37 +1,33 @@
-import { test as base, type Page } from '@playwright/test'
-
-type TestFixtures = {
-  isolatedPage: Page
-}
+import { test as base } from '@playwright/test'
 
 /**
- * Custom fixture for isolated testing
- * Provides a page with clean state for each test
+ * Extended test fixture that provides test isolation
+ * Ensures each test starts with a clean state
  */
-export const test = base.extend<TestFixtures>({
-  isolatedPage: async ({ page }, use) => {
-    // Clear cookies and localStorage before each test
-    await page.context().clearCookies()
+export const test = base.extend({
+  // Override the page fixture to add automatic state clearing
+  page: async ({ page }, use) => {
+    // Setup: Clear any existing state before each test
     await page.evaluate(() => {
+      // Clear localStorage
       localStorage.clear()
+      
+      // Clear sessionStorage  
       sessionStorage.clear()
+      
+      // Clear cookies
+      document.cookie.split(";").forEach((c) => {
+        const eqPos = c.indexOf("=")
+        const name = eqPos > -1 ? c.substr(0, eqPos) : c
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
+      })
     })
-
-    // Set up test isolation metadata
-    await page.evaluate(() => {
-      ;(window as any).__TEST_ISOLATION__ = {
-        testId: Math.random().toString(36).substring(2),
-        timestamp: Date.now(),
-      }
-    })
-
+    
+    // Use the page fixture
     await use(page)
-
-    // Clean up after test
-    await page.evaluate(() => {
-      localStorage.clear()
-      sessionStorage.clear()
-    })
+    
+    // Teardown: Clean up after test if needed
+    // (Additional cleanup can be added here)
   },
 })
 

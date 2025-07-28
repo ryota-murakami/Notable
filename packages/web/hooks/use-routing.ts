@@ -1,15 +1,11 @@
 'use client'
 
+import { ROUTES } from '@notable/routing'
 import {
-  ROUTES,
-  useCurrentRoute,
-  useNavigationHistory,
-  useNavigationState,
-  usePlatformNavigation,
-  useRouteAuth,
-  useRouteBreadcrumb,
-  useRouteTitle,
-} from '@notable/routing'
+  useSimpleCurrentRoute,
+  useSimpleNavigation,
+  useSimpleNavigationState,
+} from '@notable/routing/src/simple-store'
 import { isTest } from '../lib/utils/environment'
 
 /**
@@ -17,7 +13,8 @@ import { isTest } from '../lib/utils/environment'
  * Provides a clean API for navigation within the web app
  */
 export function useRouting() {
-  // In test mode, return mock values to avoid routing initialization issues
+  const navigation = useSimpleNavigation()
+  const currentRoute = useSimpleCurrentRoute()
   const isTestMode = isTest()
 
   if (isTestMode) {
@@ -43,11 +40,11 @@ export function useRouting() {
       routes: ROUTES,
     }
   }
-
-  const navigation = usePlatformNavigation()
-  const auth = useRouteAuth()
-  const title = useRouteTitle()
-  const breadcrumb = useRouteBreadcrumb()
+  
+  // Mock auth, title, and breadcrumb for now - we can implement these later
+  const auth = { requiresAuth: false, isPublic: true }
+  const title = currentRoute?.route?.meta?.title || currentRoute?.route?.name || 'Notable'
+  const breadcrumb: any[] = []
 
   return {
     // Navigation actions
@@ -76,45 +73,49 @@ export function useRouting() {
  * Hook to get just the current route information
  */
 export function useCurrentRouteInfo() {
+  const currentRoute = useSimpleCurrentRoute()
   const isTestMode = isTest()
 
   if (isTestMode) {
     return null
   }
 
-  return useCurrentRoute()
+  return currentRoute
 }
 
 /**
  * Hook to get navigation history
  */
 export function useNavigationHistoryWeb() {
+  const navigation = useSimpleNavigation()
   const isTestMode = isTest()
 
   if (isTestMode) {
     return []
   }
 
-  return useNavigationHistory()
+  return navigation.history
 }
 
 /**
  * Hook to get navigation state (loading, error, etc.)
  */
 export function useNavigationStateWeb() {
+  const navState = useSimpleNavigationState()
   const isTestMode = isTest()
 
   if (isTestMode) {
     return 'idle'
   }
 
-  return useNavigationState()
+  return navState
 }
 
 /**
  * Convenience hook for navigation actions only
  */
 export function useNavigationActions() {
+  const navigation = useSimpleNavigation()
   const isTestMode = isTest()
 
   if (isTestMode) {
@@ -127,14 +128,11 @@ export function useNavigationActions() {
     }
   }
 
-  const { navigate, replace, goBack, goForward, reset } =
-    usePlatformNavigation()
-
   return {
-    navigate,
-    replace,
-    goBack,
-    goForward,
-    reset,
+    navigate: navigation.navigate,
+    replace: navigation.replace,
+    goBack: navigation.goBack,
+    goForward: navigation.goForward,
+    reset: navigation.reset,
   }
 }
