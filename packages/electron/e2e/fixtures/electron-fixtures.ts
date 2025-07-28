@@ -11,7 +11,7 @@ export interface ElectronFixtures {
  * Extended test with Electron fixtures
  */
 export const test = base.extend<ElectronFixtures>({
-  electronApp: async (_fixtures, use) => {
+  electronApp: async ({}, use) => {
     let context: ElectronTestContext | null = null
     
     try {

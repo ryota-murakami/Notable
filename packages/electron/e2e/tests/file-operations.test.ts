@@ -272,7 +272,7 @@ test.describe('File Operations', () => {
       expect(loadedNotes[0].content).toBe(largeContent)
     })
 
-    test('should handle save errors gracefully', async ({ electronPage, _electronMain }) => {
+    test('should handle save errors gracefully', async ({ electronPage }) => {
       // Create invalid data that would cause JSON.stringify to fail
       const circularRef: any = { id: 'circular' }
       circularRef.self = circularRef

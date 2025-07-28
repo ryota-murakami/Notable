@@ -390,7 +390,7 @@ test.describe('Theme System', () => {
       expect(mainTheme).toBe('dark')
     })
 
-    test('should handle theme during window lifecycle', async ({ electronPage, _electronMain }) => {
+    test('should handle theme during window lifecycle', async ({ electronPage }) => {
       // Set initial theme
       await sendIPCMessage(electronPage, 'setTheme', 'light')
       
