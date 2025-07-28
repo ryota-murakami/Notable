@@ -1,17 +1,8 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import {
-  desktopAdapter,
-  initializePlatformRouting,
-  webAdapter,
-} from '@notable/routing'
 
 // Main process routing setup
 export function setupRoutingInMainProcess() {
-  // Initialize desktop routing
-  const { cleanup } = initializePlatformRouting('desktop', {
-    // The desktop adapter can delegate to web adapter for web content
-    webAdapter,
-  })
+  console.log('Desktop routing not yet implemented - using web adapter fallback')
 
   // Set up IPC handlers for routing
   ipcMain.handle(
@@ -23,7 +14,11 @@ export function setupRoutingInMainProcess() {
       query?: Record<string, string>
     ) => {
       try {
-        desktopAdapter.navigate({ id: routeId } as any, params, query)
+        // For now, just broadcast to renderer process
+        const focusedWindow = BrowserWindow.getFocusedWindow()
+        if (focusedWindow) {
+          focusedWindow.webContents.send('routing:navigate', { routeId, params, query })
+        }
         return { success: true }
       } catch (error) {
         console.error('Navigation error:', error)
@@ -37,8 +32,8 @@ export function setupRoutingInMainProcess() {
 
   ipcMain.handle('routing:get-current-route', async () => {
     try {
-      const currentRoute = desktopAdapter.getCurrentRoute()
-      return { success: true, data: currentRoute }
+      // For now, return a mock current route
+      return { success: true, data: { route: null, params: {}, query: {} } }
     } catch (error) {
       console.error('Get current route error:', error)
       return {
@@ -70,7 +65,10 @@ export function setupRoutingInMainProcess() {
     }
   })
 
-  return cleanup
+  return () => {
+    // Cleanup placeholder
+    console.log('Cleaning up electron routing handlers')
+  }
 }
 
 // Renderer process preload setup

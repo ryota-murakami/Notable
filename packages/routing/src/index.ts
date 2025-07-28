@@ -5,16 +5,16 @@
 
 // Core types and interfaces
 export type {
-  Route,
   RouteDefinition,
   RouteLocation,
   NavigationStore,
   PlatformAdapter,
   NavigationState,
+  RouteEntry,
 } from './types'
 
 // Route definitions
-export { ROUTES, getRouteById, getAllRoutes } from './routes'
+export { ROUTES, getRouteById } from './routes'
 
 // Platform adapters
 export { webAdapter } from './adapters/web'

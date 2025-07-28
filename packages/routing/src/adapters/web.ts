@@ -7,6 +7,7 @@ import type { PlatformAdapter, RouteLocation } from '../types'
 import { getRouteById } from '../routes'
 
 export class WebAdapter implements PlatformAdapter {
+  platform: 'web' = 'web'
   private listeners: Array<(location: RouteLocation) => void> = []
   private currentPathname: string = '/'
   private currentSearchParams: string = ''
@@ -36,13 +37,13 @@ export class WebAdapter implements PlatformAdapter {
       return {
         pathname: this.currentPathname,
         searchParams: new URLSearchParams(this.currentSearchParams),
-        route: getRouteById('home'), // Default fallback
+        route: getRouteById('home') || null, // Default fallback
       }
     }
 
     const pathname = window.location.pathname
     const searchParams = new URLSearchParams(window.location.search)
-    const route = getRouteById(pathname === '/' ? 'home' : pathname.slice(1)) || getRouteById('not-found')
+    const route = getRouteById(pathname === '/' ? 'home' : pathname.slice(1)) || getRouteById('not-found') || null
 
     return {
       pathname,
@@ -51,103 +52,87 @@ export class WebAdapter implements PlatformAdapter {
     }
   }
 
-  setCurrentLocation(pathname: string, searchParams?: URLSearchParams) {
-    const oldPathname = this.currentPathname
-    const oldSearchParams = this.currentSearchParams
-    const newSearchParams = searchParams?.toString() || ''
+  private setCurrentLocation(pathname: string, searchParams: URLSearchParams) {
+    this.currentPathname = pathname
+    this.currentSearchParams = searchParams.toString()
     
-    // Only update if location actually changed
-    if (oldPathname === pathname && oldSearchParams === newSearchParams) {
-      return // No change, avoid triggering callbacks
+    // Prevent multiple rapid notifications
+    if (this.isNotifying) {
+      return
     }
     
-    this.currentPathname = pathname
-    this.currentSearchParams = newSearchParams
-
-    // Batch location updates to prevent rapid notifications
+    // Debounce notifications to prevent rapid fire during navigation
     if (this.locationUpdateTimeout) {
-      window.clearTimeout(this.locationUpdateTimeout)
+      clearTimeout(this.locationUpdateTimeout)
     }
     
     this.locationUpdateTimeout = window.setTimeout(() => {
-      // Prevent recursive notifications
-      if (this.isNotifying) {
-        return
+      this.isNotifying = true
+      const route = getRouteById(pathname === '/' ? 'home' : pathname.slice(1))
+      
+      if (route) {
+        const location: RouteLocation = {
+          pathname,
+          searchParams,
+          route,
+        }
+        
+        this.listeners.forEach(callback => {
+          try {
+            callback(location)
+          } catch (error) {
+            console.error('Error in web adapter location listener:', error)
+          }
+        })
       }
       
-      this.isNotifying = true
-      this.notifyListeners()
       this.isNotifying = false
       this.locationUpdateTimeout = null
-    }, 10) as number
+    }, 10) as unknown as number // Type assertion for compatibility
   }
 
-  private notifyListeners() {
-    const location = this.getCurrentLocation()
-    this.listeners.forEach(listener => {
-      try {
-        listener(location)
-      } catch (error) {
-        console.error('Error in route listener:', error)
-      }
-    })
+  navigate(pathname: string, searchParams?: URLSearchParams) {
+    if (typeof window === 'undefined') {
+      console.warn('Cannot navigate in server environment')
+      return
+    }
+
+    const url = new URL(pathname, window.location.origin)
+    if (searchParams) {
+      url.search = searchParams.toString()
+    }
+
+    // Use history.pushState for client-side navigation
+    window.history.pushState({}, '', url.toString())
+    
+    // Manually trigger location update
+    this.setCurrentLocation(pathname, searchParams || new URLSearchParams())
   }
 
   subscribe(callback: (location: RouteLocation) => void): () => void {
     this.listeners.push(callback)
     
+    // Immediately call with current location
+    const currentLocation = this.getCurrentLocation()
+    if (currentLocation.route) {
+      callback(currentLocation)
+    }
+    
     return () => {
       const index = this.listeners.indexOf(callback)
-      if (index > -1) {
+      if (index !== -1) {
         this.listeners.splice(index, 1)
       }
     }
   }
 
-  navigate(pathname: string, searchParams?: URLSearchParams): void {
-    if (typeof window === 'undefined') return
-
-    const url = searchParams ? `${pathname}?${searchParams.toString()}` : pathname
-    window.history.pushState({}, '', url)
-    this.setCurrentLocation(pathname, searchParams)
-  }
-
-  replace(pathname: string, searchParams?: URLSearchParams): void {
-    if (typeof window === 'undefined') return
-
-    const url = searchParams ? `${pathname}?${searchParams.toString()}` : pathname
-    window.history.replaceState({}, '', url)
-    this.setCurrentLocation(pathname, searchParams)
-  }
-
-  goBack(): void {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      window.history.back()
-    }
-  }
-
-  goForward(): void {
-    if (typeof window !== 'undefined') {
-      window.history.forward()
-    }
-  }
-
-  canGoBack(): boolean {
-    return typeof window !== 'undefined' && window.history.length > 1
-  }
-
-  canGoForward(): boolean {
-    // Browser API doesn't provide a reliable way to check this
-    return false
-  }
-
-  dispose(): void {
+  dispose() {
     if (typeof window !== 'undefined') {
       window.removeEventListener('popstate', this.handlePopState)
     }
     
     if (this.locationUpdateTimeout) {
-      window.clearTimeout(this.locationUpdateTimeout)
+      clearTimeout(this.locationUpdateTimeout)
       this.locationUpdateTimeout = null
     }
     

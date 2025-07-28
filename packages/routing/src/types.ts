@@ -100,15 +100,16 @@ export interface RouteLocation {
   route: RouteDefinition | null
 }
 
+export interface RouteEntry {
+  route: RouteDefinition
+  params: Record<string, string>
+}
+
 export interface NavigationState {
   /** Current route */
-  currentRoute: RouteDefinition | null
+  currentRoute: RouteEntry | null
   /** Navigation history */
-  history: Array<{
-    route: RouteDefinition
-    params: Record<string, string>
-    query: Record<string, string>
-  }>
+  history: RouteEntry[]
   /** Navigation stack index */
   historyIndex: number
   /** Loading state */
@@ -131,27 +132,15 @@ export interface NavigationAction {
 
 export interface NavigationStore extends NavigationState {
   /** Navigate to a route */
-  navigate: (
-    routeId: string,
-    params?: Record<string, string>,
-    query?: Record<string, string>,
-  ) => void
+  navigate: (routeId: string, params?: Record<string, string>) => void
   /** Go back in history */
   goBack: () => void
   /** Go forward in history */
   goForward: () => void
   /** Replace current route */
-  replace: (
-    routeId: string,
-    params?: Record<string, string>,
-    query?: Record<string, string>,
-  ) => void
+  replace: (routeId: string, params?: Record<string, string>) => void
   /** Reset navigation stack */
-  reset: (
-    routeId: string,
-    params?: Record<string, string>,
-    query?: Record<string, string>,
-  ) => void
+  reset: () => void
   /** Check if can go back */
   canGoBack: () => boolean
   /** Check if can go forward */
@@ -161,48 +150,20 @@ export interface NavigationStore extends NavigationState {
   /** Get current URL/path */
   getCurrentPath: () => string
   /** Parse path to route and params */
-  parsePath: (path: string) => {
-    route: RouteDefinition | null
-    params: Record<string, string>
-    query: Record<string, string>
-  } | null
+  parsePath: (path: string) => RouteEntry | null
 }
 
 export interface PlatformAdapter {
   /** Platform identifier */
   platform: 'web' | 'mobile' | 'desktop'
   /** Navigate to route using platform-specific method */
-  navigate: (
-    route: RouteDefinition,
-    params?: Record<string, string>,
-    query?: Record<string, string>,
-  ) => void
-  /** Get current route information */
-  getCurrentRoute: () => {
-    route: RouteDefinition | null
-    params: Record<string, string>
-    query: Record<string, string>
-  }
-  /** Listen for route changes */
-  onRouteChange: (
-    callback: (
-      route: RouteDefinition,
-      params: Record<string, string>,
-      query: Record<string, string>,
-    ) => void,
-  ) => () => void
-  /** Convert route to platform-specific path */
-  routeToPath: (
-    route: RouteDefinition,
-    params?: Record<string, string>,
-    query?: Record<string, string>,
-  ) => string
-  /** Convert platform path to route */
-  pathToRoute: (path: string) => {
-    route: RouteDefinition | null
-    params: Record<string, string>
-    query: Record<string, string>
-  } | null
+  navigate: (pathname: string, searchParams?: URLSearchParams) => void
+  /** Get current location */
+  getCurrentLocation: () => RouteLocation
+  /** Subscribe to location changes */
+  subscribe: (callback: (location: RouteLocation) => void) => () => void
+  /** Dispose of the adapter */
+  dispose: () => void
 }
 
 export type Platform = 'web' | 'mobile' | 'desktop'

@@ -7,7 +7,7 @@ Sentry.init({
   dsn: sentryDsn,
   debug: isDevelopment(),
   enabled: isProduction(),
-  environment: process.env.NODE_ENV,
+  environment: isDevelopment() ? 'development' : 'production',
   tracesSampleRate: 0.1,
   integrations: [
     Sentry.replayIntegration({

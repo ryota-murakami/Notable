@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { NavigationStore, PlatformAdapter } from './types'
+import type { NavigationStore, PlatformAdapter, RouteEntry } from './types'
 import { getRouteById } from './routes'
 
 // Simple navigation state without Zustand to avoid SSR issues
@@ -22,21 +22,29 @@ const globalNavigationState: NavigationStore = {
 }
 
 let isInitialized = false
-const listeners: Set<() => void> = new Set()
 
-function notifyListeners() {
-  listeners.forEach(callback => {
+// Subscription management
+type Subscriber = () => void
+const subscribers = new Set<Subscriber>()
+
+function notifySubscribers() {
+  subscribers.forEach(callback => {
     try {
       callback()
     } catch (error) {
-      console.error('Error in navigation listener:', error)
+      console.error('Error in navigation subscriber:', error)
     }
   })
 }
 
+function subscribe(callback: Subscriber): () => void {
+  subscribers.add(callback)
+  return () => subscribers.delete(callback)
+}
+
 function updateState(updater: (state: NavigationStore) => void) {
   updater(globalNavigationState)
-  notifyListeners()
+  notifySubscribers()
 }
 
 // Initialize navigation with adapter
@@ -74,7 +82,7 @@ const navigationActions = {
     }
     
     updateState((state) => {
-      const routeEntry = { route, params: params || {} }
+      const routeEntry: RouteEntry = { route, params: params || {} }
       state.currentRoute = routeEntry
       state.history.push(routeEntry)
       state.historyIndex = state.history.length - 1
@@ -89,7 +97,7 @@ const navigationActions = {
     }
     
     updateState((state) => {
-      const routeEntry = { route, params: params || {} }
+      const routeEntry: RouteEntry = { route, params: params || {} }
       state.currentRoute = routeEntry
       if (state.history.length > 0) {
         state.history[state.historyIndex] = routeEntry
@@ -104,7 +112,7 @@ const navigationActions = {
     if (globalNavigationState.historyIndex > 0) {
       updateState((state) => {
         state.historyIndex--
-        state.currentRoute = state.history[state.historyIndex]
+        state.currentRoute = state.history[state.historyIndex] || null
       })
     }
   },
@@ -113,7 +121,7 @@ const navigationActions = {
     if (globalNavigationState.historyIndex < globalNavigationState.history.length - 1) {
       updateState((state) => {
         state.historyIndex++
-        state.currentRoute = state.history[state.historyIndex]
+        state.currentRoute = state.history[state.historyIndex] || null
       })
     }
   },
@@ -127,25 +135,6 @@ const navigationActions = {
       state.error = null
     })
   },
-}
-
-// Subscription management
-type Subscriber = () => void
-const subscribers = new Set<Subscriber>()
-
-function notifySubscribers() {
-  subscribers.forEach(callback => {
-    try {
-      callback()
-    } catch (error) {
-      console.error('Error in navigation subscriber:', error)
-    }
-  })
-}
-
-function subscribe(callback: Subscriber): () => void {
-  subscribers.add(callback)
-  return () => subscribers.delete(callback)
 }
 
 // Hooks
@@ -199,8 +188,9 @@ export function initializeSimpleStore(adapter: PlatformAdapter) {
   const location = adapter.getCurrentLocation()
   if (location.route) {
     const route = location.route
-    globalNavigationState.currentRoute = { route, params: {} }
-    globalNavigationState.history = [globalNavigationState.currentRoute]
+    const routeEntry: RouteEntry = { route, params: {} }
+    globalNavigationState.currentRoute = routeEntry
+    globalNavigationState.history = [routeEntry]
     globalNavigationState.historyIndex = 0
   }
   
@@ -208,7 +198,8 @@ export function initializeSimpleStore(adapter: PlatformAdapter) {
   return adapter.subscribe((location) => {
     if (location.route) {
       const route = location.route
-      globalNavigationState.currentRoute = { route, params: {} }
+      const routeEntry: RouteEntry = { route, params: {} }
+      globalNavigationState.currentRoute = routeEntry
       notifySubscribers()
     }
   })
