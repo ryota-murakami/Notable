@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
-import { isProduction, isDevelopment } from './lib/utils/environment'
+import { isDevelopment, isProduction } from './lib/utils/environment'
 
 const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN
 

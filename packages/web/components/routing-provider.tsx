@@ -1,132 +1,42 @@
 'use client'
 
-import {
-  Component,
-  type ErrorInfo,
-  type ReactNode,
-  Suspense,
-  useEffect,
-} from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { initializePlatformRouting, webAdapter } from '@notable/routing'
-import { Spinner } from '@/components/ui/spinner'
+import { type ReactNode, useEffect, useState } from 'react'
+import { webAdapter, initializeSimpleStore } from '@notable/routing'
+import { isTest } from '../lib/utils/environment'
 
 interface RoutingProviderProps {
   children: ReactNode
 }
 
-interface ErrorBoundaryState {
-  hasError: boolean
-  error?: Error
-}
-
-class RoutingErrorBoundary extends Component<
-  { children: ReactNode },
-  ErrorBoundaryState
-> {
-  constructor(props: { children: ReactNode }) {
-    super(props)
-    this.state = { hasError: false }
-  }
-
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Routing initialization failed:', error, errorInfo)
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className='flex items-center justify-center h-screen'>
-          <div className='text-center'>
-            <h2 className='text-lg font-semibold text-red-600 mb-2'>
-              Routing Error
-            </h2>
-            <p className='text-muted-foreground mb-4'>
-              Failed to initialize routing system
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90'
-            >
-              Reload Page
-            </button>
-          </div>
-        </div>
-      )
-    }
-
-    return this.props.children
-  }
-}
-
-function RoutingProviderInner({ children }: RoutingProviderProps) {
-  // Always call hooks first, before any conditional logic
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
-  // In test mode, skip all routing logic entirely
-  const isTestMode =
-    typeof window !== 'undefined' &&
-    document.cookie.includes('dev-auth-bypass=true')
-
-  useEffect(() => {
-    // If in test mode, skip routing initialization
-    if (isTestMode) {
-      return
-    }
-
-    try {
-      // Initialize platform routing for web
-      const { cleanup } = initializePlatformRouting('web', {
-        router,
-      })
-
-      // Update the web adapter with current location
-      webAdapter.setRouter(router)
-      webAdapter.setCurrentLocation(pathname, searchParams)
-
-      return cleanup
-    } catch (error) {
-      console.error('Failed to initialize routing:', error)
-      // Don't throw in production, just log the error
-    }
-  }, [router, pathname, searchParams, isTestMode])
-
-  // Update current location when pathname or search params change
-  useEffect(() => {
-    // If in test mode, skip location updates
-    if (isTestMode) {
-      return
-    }
-
-    try {
-      webAdapter.setCurrentLocation(pathname, searchParams)
-    } catch (error) {
-      console.error('Failed to update location:', error)
-    }
-  }, [pathname, searchParams, isTestMode])
-
-  return <>{children}</>
-}
-
+/**
+ * Routing provider that initializes the routing system for the web app
+ * Uses simple store to avoid SSR/hydration issues
+ */
 export function RoutingProvider({ children }: RoutingProviderProps) {
-  return (
-    <RoutingErrorBoundary>
-      <Suspense
-        fallback={
-          <div className='flex items-center justify-center p-4'>
-            <Spinner size='2' />
-            <span className='ml-2 text-muted-foreground'>Loading...</span>
-          </div>
-        }
-      >
-        <RoutingProviderInner>{children}</RoutingProviderInner>
-      </Suspense>
-    </RoutingErrorBoundary>
-  )
+  const [isClient, setIsClient] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
+  
+  useEffect(() => {
+    // Mark as client-side after hydration
+    setIsClient(true)
+  }, [])
+  
+  useEffect(() => {
+    // Wait for client-side hydration and avoid test mode
+    const isTestMode = isTest()
+    if (!isClient || isTestMode || isInitialized) {
+      return
+    }
+    
+    // Initialize the simple store with web adapter
+    const unsubscribe = initializeSimpleStore(webAdapter)
+    setIsInitialized(true)
+    
+    return () => {
+      unsubscribe()
+      webAdapter.dispose()
+    }
+  }, [isClient, isInitialized])
+  
+  return <>{children}</>
 }

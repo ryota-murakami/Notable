@@ -1,203 +1,159 @@
-import type {
-  PlatformAdapter,
-  RouteChangeCallback,
-  RouteDefinition,
-} from '../types'
-import { ROUTES } from '../routes'
-
-// Type definition for Next.js router
-interface NextJSRouter {
-  push: (url: string) => void
-  replace: (url: string) => void
-  back: () => void
-  forward: () => void
-  refresh: () => void
-  prefetch: (href: string) => void
-}
-
 /**
- * Web Platform Adapter for Next.js App Router
- * Handles routing integration with Next.js navigation
+ * Web adapter for Next.js routing integration
+ * Handles browser-based navigation and route synchronization
  */
+
+import type { PlatformAdapter, RouteLocation } from '../types'
+import { getRouteById } from '../routes'
+
 export class WebAdapter implements PlatformAdapter {
-  platform = 'web' as const
-  private routeChangeCallbacks: Set<RouteChangeCallback> = new Set()
-  private router: NextJSRouter | null = null
-  private pathname: string = '/'
-  private searchParams: URLSearchParams = new URLSearchParams()
+  private listeners: Array<(location: RouteLocation) => void> = []
+  private currentPathname: string = '/'
+  private currentSearchParams: string = ''
+  private locationUpdateTimeout: number | null = null
+  private isNotifying: boolean = false
 
   constructor() {
-    // Initialize with current browser state
+    // Only initialize if we're in a browser environment
     if (typeof window !== 'undefined') {
-      this.pathname = window.location.pathname
-      this.searchParams = new URLSearchParams(window.location.search)
-      this.setupBrowserListeners()
+      this.currentPathname = window.location.pathname
+      this.currentSearchParams = window.location.search
+      
+      // Listen for browser navigation events
+      window.addEventListener('popstate', this.handlePopState)
     }
   }
 
-  /**
-   * Set the Next.js router instance
-   * This should be called from a Next.js component with useRouter()
-   */
-  setRouter(router: NextJSRouter) {
-    this.router = router
-  }
-
-  /**
-   * Set current pathname and search params
-   * This should be called from Next.js components with usePathname() and useSearchParams()
-   */
-  setCurrentLocation(pathname: string, searchParams?: URLSearchParams) {
-    const oldPathname = this.pathname
-    const oldSearchParams = this.searchParams.toString()
-
-    this.pathname = pathname
-    this.searchParams = searchParams || new URLSearchParams()
-
-    // Trigger callbacks if location changed
-    if (
-      oldPathname !== pathname ||
-      oldSearchParams !== this.searchParams.toString()
-    ) {
-      this.notifyRouteChange()
+  private handlePopState = () => {
+    if (typeof window !== 'undefined') {
+      const newSearchParams = new URLSearchParams(window.location.search)
+      this.setCurrentLocation(window.location.pathname, newSearchParams)
     }
   }
 
-  navigate(route: RouteDefinition, params = {}, query = {}) {
-    const path = this.routeToPath(route, params, query)
-
-    if (this.router) {
-      // Use Next.js router if available
-      this.router.push(path)
-    } else if (typeof window !== 'undefined') {
-      // Fallback to browser navigation
-      window.history.pushState(null, '', path)
-      this.pathname = new URL(path, window.location.origin).pathname
-      this.searchParams = new URLSearchParams(
-        new URL(path, window.location.origin).search,
-      )
-      this.notifyRouteChange()
-    }
-  }
-
-  getCurrentRoute() {
-    const result = this.pathToRoute(
-      `${this.pathname}?${this.searchParams.toString()}`,
-    )
-    return result || { route: null, params: {}, query: {} }
-  }
-
-  onRouteChange(callback: RouteChangeCallback) {
-    this.routeChangeCallbacks.add(callback)
-    return () => {
-      this.routeChangeCallbacks.delete(callback)
-    }
-  }
-
-  routeToPath(route: RouteDefinition, params = {}, query = {}) {
-    let path = route.path
-
-    // Replace path parameters (e.g., /note/:id -> /note/123)
-    Object.entries(params).forEach(([key, value]) => {
-      path = path.replace(`:${key}`, encodeURIComponent(String(value)))
-    })
-
-    // Add query parameters
-    const queryParams = new URLSearchParams()
-    Object.entries(query).forEach(([key, value]) => {
-      queryParams.set(key, String(value))
-    })
-    const queryString = queryParams.toString()
-    if (queryString) {
-      path = `${path}?${queryString}`
-    }
-
-    return path
-  }
-
-  pathToRoute(path: string) {
-    const url = new URL(path, 'http://localhost')
-    const pathname = url.pathname
-    const searchParams = url.searchParams
-
-    // Find matching route
-    for (const route of Object.values(ROUTES)) {
-      const match = this.matchPath(pathname, route.path)
-      if (match) {
-        const query: Record<string, string> = {}
-        searchParams.forEach((value, key) => {
-          query[key] = value
-        })
-
-        return {
-          route,
-          params: match.params,
-          query,
-        }
+  getCurrentLocation(): RouteLocation {
+    if (typeof window === 'undefined') {
+      return {
+        pathname: this.currentPathname,
+        searchParams: new URLSearchParams(this.currentSearchParams),
+        route: getRouteById('home'), // Default fallback
       }
     }
 
-    return null
+    const pathname = window.location.pathname
+    const searchParams = new URLSearchParams(window.location.search)
+    const route = getRouteById(pathname === '/' ? 'home' : pathname.slice(1)) || getRouteById('not-found')
+
+    return {
+      pathname,
+      searchParams,
+      route,
+    }
   }
 
-  private setupBrowserListeners() {
+  setCurrentLocation(pathname: string, searchParams?: URLSearchParams) {
+    const oldPathname = this.currentPathname
+    const oldSearchParams = this.currentSearchParams
+    const newSearchParams = searchParams?.toString() || ''
+    
+    // Only update if location actually changed
+    if (oldPathname === pathname && oldSearchParams === newSearchParams) {
+      return // No change, avoid triggering callbacks
+    }
+    
+    this.currentPathname = pathname
+    this.currentSearchParams = newSearchParams
+
+    // Batch location updates to prevent rapid notifications
+    if (this.locationUpdateTimeout) {
+      window.clearTimeout(this.locationUpdateTimeout)
+    }
+    
+    this.locationUpdateTimeout = window.setTimeout(() => {
+      // Prevent recursive notifications
+      if (this.isNotifying) {
+        return
+      }
+      
+      this.isNotifying = true
+      this.notifyListeners()
+      this.isNotifying = false
+      this.locationUpdateTimeout = null
+    }, 10) as number
+  }
+
+  private notifyListeners() {
+    const location = this.getCurrentLocation()
+    this.listeners.forEach(listener => {
+      try {
+        listener(location)
+      } catch (error) {
+        console.error('Error in route listener:', error)
+      }
+    })
+  }
+
+  subscribe(callback: (location: RouteLocation) => void): () => void {
+    this.listeners.push(callback)
+    
+    return () => {
+      const index = this.listeners.indexOf(callback)
+      if (index > -1) {
+        this.listeners.splice(index, 1)
+      }
+    }
+  }
+
+  navigate(pathname: string, searchParams?: URLSearchParams): void {
     if (typeof window === 'undefined') return
 
-    // Listen for browser navigation events
-    const handlePopState = () => {
-      this.pathname = window.location.pathname
-      this.searchParams = new URLSearchParams(window.location.search)
-      this.notifyRouteChange()
-    }
+    const url = searchParams ? `${pathname}?${searchParams.toString()}` : pathname
+    window.history.pushState({}, '', url)
+    this.setCurrentLocation(pathname, searchParams)
+  }
 
-    window.addEventListener('popstate', handlePopState)
+  replace(pathname: string, searchParams?: URLSearchParams): void {
+    if (typeof window === 'undefined') return
 
-    // Return cleanup function
-    return () => {
-      window.removeEventListener('popstate', handlePopState)
+    const url = searchParams ? `${pathname}?${searchParams.toString()}` : pathname
+    window.history.replaceState({}, '', url)
+    this.setCurrentLocation(pathname, searchParams)
+  }
+
+  goBack(): void {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      window.history.back()
     }
   }
 
-  private notifyRouteChange() {
-    const currentRoute = this.getCurrentRoute()
-    const currentRouteDefinition = currentRoute.route
-    if (currentRouteDefinition !== null) {
-      this.routeChangeCallbacks.forEach((callback) => {
-        callback(
-          currentRouteDefinition,
-          currentRoute.params,
-          currentRoute.query,
-        )
-      })
+  goForward(): void {
+    if (typeof window !== 'undefined') {
+      window.history.forward()
     }
   }
 
-  private matchPath(pathname: string, routePath: string) {
-    // Convert route path to regex pattern
-    const paramNames: string[] = []
-    const regexPath = routePath
-      .replace(/:[^/]+/g, (match) => {
-        paramNames.push(match.slice(1)) // Remove the ':'
-        return '([^/]+)'
-      })
-      .replace(/\*/g, '(.*)')
+  canGoBack(): boolean {
+    return typeof window !== 'undefined' && window.history.length > 1
+  }
 
-    const regex = new RegExp(`^${regexPath}$`)
-    const match = pathname.match(regex)
+  canGoForward(): boolean {
+    // Browser API doesn't provide a reliable way to check this
+    return false
+  }
 
-    if (!match) return null
-
-    const params: Record<string, string> = {}
-    paramNames.forEach((name, index) => {
-      const paramValue = match[index + 1]
-      if (paramValue !== undefined) {
-        params[name] = decodeURIComponent(paramValue)
-      }
-    })
-
-    return { params }
+  dispose(): void {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('popstate', this.handlePopState)
+    }
+    
+    if (this.locationUpdateTimeout) {
+      window.clearTimeout(this.locationUpdateTimeout)
+      this.locationUpdateTimeout = null
+    }
+    
+    this.listeners = []
   }
 }
 
-// Singleton instance
+// Export singleton instance
 export const webAdapter = new WebAdapter()

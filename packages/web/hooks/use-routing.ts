@@ -1,15 +1,11 @@
 'use client'
 
+import { ROUTES } from '@notable/routing'
 import {
-  ROUTES,
-  useCurrentRoute,
-  useNavigationHistory,
-  useNavigationState,
-  usePlatformNavigation,
-  useRouteAuth,
-  useRouteBreadcrumb,
-  useRouteTitle,
-} from '@notable/routing'
+  useSimpleCurrentRoute,
+  useSimpleNavigation,
+  useSimpleNavigationState,
+} from '@notable/routing/src/simple-store'
 import { isTest } from '../lib/utils/environment'
 
 /**
@@ -44,10 +40,13 @@ export function useRouting() {
     }
   }
 
-  const navigation = usePlatformNavigation()
-  const auth = useRouteAuth()
-  const title = useRouteTitle()
-  const breadcrumb = useRouteBreadcrumb()
+  const navigation = useSimpleNavigation()
+  const currentRoute = useSimpleCurrentRoute()
+  
+  // Mock auth, title, and breadcrumb for now - we can implement these later
+  const auth = { requiresAuth: false, isPublic: true }
+  const title = currentRoute?.route?.meta?.title || currentRoute?.route?.name || 'Notable'
+  const breadcrumb: any[] = []
 
   return {
     // Navigation actions
@@ -82,7 +81,7 @@ export function useCurrentRouteInfo() {
     return null
   }
 
-  return useCurrentRoute()
+  return useSimpleCurrentRoute()
 }
 
 /**
@@ -95,7 +94,8 @@ export function useNavigationHistoryWeb() {
     return []
   }
 
-  return useNavigationHistory()
+  const navigation = useSimpleNavigation()
+  return navigation.history
 }
 
 /**
@@ -108,7 +108,7 @@ export function useNavigationStateWeb() {
     return 'idle'
   }
 
-  return useNavigationState()
+  return useSimpleNavigationState()
 }
 
 /**
@@ -127,14 +127,13 @@ export function useNavigationActions() {
     }
   }
 
-  const { navigate, replace, goBack, goForward, reset } =
-    usePlatformNavigation()
+  const navigation = useSimpleNavigation()
 
   return {
-    navigate,
-    replace,
-    goBack,
-    goForward,
-    reset,
+    navigate: navigation.navigate,
+    replace: navigation.replace,
+    goBack: navigation.goBack,
+    goForward: navigation.goForward,
+    reset: navigation.reset,
   }
 }
