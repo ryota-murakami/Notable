@@ -21,5 +21,15 @@ export function createNavigationStore(adapter: PlatformAdapter): NavigationStore
     historyIndex: -1,
     isNavigating: false,
     error: null,
+    navigate: () => {},
+    goBack: () => {},
+    goForward: () => {},
+    replace: () => {},
+    reset: () => {},
+    canGoBack: () => false,
+    canGoForward: () => false,
+    getRoute: () => undefined,
+    getCurrentPath: () => '/',
+    parsePath: () => null,
   }
 }

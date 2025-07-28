@@ -9,63 +9,128 @@ const globalNavigationState: NavigationStore = {
   historyIndex: -1,
   isNavigating: false,
   error: null,
+  navigate: () => {},
+  replace: () => {},
+  goBack: () => {},
+  goForward: () => {},
+  reset: () => {},
+  canGoBack: () => false,
+  canGoForward: () => false,
+  getRoute: () => undefined,
+  getCurrentPath: () => '/',
+  parsePath: () => null,
+}
+
+let globalAdapter: PlatformAdapter | null = null
+let globalParams: Record<string, string> = {}
+let globalQuery: Record<string, string> = {}
+let isInitialized = false
+const listeners: Set<() => void> = new Set()
+
+function notifyListeners() {
+  listeners.forEach(callback => {
+    try {
+      callback()
+    } catch (error) {
+      console.error('Error in navigation listener:', error)
+    }
+  })
+}
+
+function updateState(updater: (state: NavigationStore) => void) {
+  updater(globalNavigationState)
+  notifyListeners()
+}
+
+// Initialize navigation with adapter
+export function initializeSimpleNavigation(adapter: PlatformAdapter) {
+  if (isInitialized) {
+    console.warn('Navigation already initialized')
+    return () => {}
+  }
+
+  globalAdapter = adapter
+  isInitialized = true
+
+  // Set up adapter listener
+  const unsubscribe = adapter.subscribe((location) => {
+    if (location.route) {
+      const route = location.route
+      updateState((state) => {
+        state.currentRoute = { route, params: {} }
+      })
+    }
+  })
+
+  return () => {
+    globalAdapter = null
+    isInitialized = false
+    unsubscribe()
+  }
 }
 
 // Navigation actions
 const navigationActions = {
-  navigate: (routeId: string, params?: Record<string, any>) => {
+  navigate: (routeId: string, params?: Record<string, string>) => {
     const route = getRouteById(routeId)
     if (!route) {
       console.warn(`Route '${routeId}' not found`)
       return
     }
     
-    globalNavigationState.currentRoute = { route, params: params || {} }
-    globalNavigationState.history.push(globalNavigationState.currentRoute)
-    globalNavigationState.historyIndex = globalNavigationState.history.length - 1
-    notifySubscribers()
+    updateState((state) => {
+      const routeEntry = { route, params: params || {} }
+      state.currentRoute = routeEntry
+      state.history.push(routeEntry)
+      state.historyIndex = state.history.length - 1
+    })
   },
   
-  replace: (routeId: string, params?: Record<string, any>) => {
+  replace: (routeId: string, params?: Record<string, string>) => {
     const route = getRouteById(routeId)
     if (!route) {
       console.warn(`Route '${routeId}' not found`)
       return
     }
     
-    globalNavigationState.currentRoute = { route, params: params || {} }
-    if (globalNavigationState.history.length > 0) {
-      globalNavigationState.history[globalNavigationState.historyIndex] = globalNavigationState.currentRoute
-    } else {
-      globalNavigationState.history.push(globalNavigationState.currentRoute)
-      globalNavigationState.historyIndex = 0
-    }
-    notifySubscribers()
+    updateState((state) => {
+      const routeEntry = { route, params: params || {} }
+      state.currentRoute = routeEntry
+      if (state.history.length > 0) {
+        state.history[state.historyIndex] = routeEntry
+      } else {
+        state.history.push(routeEntry)
+        state.historyIndex = 0
+      }
+    })
   },
   
   goBack: () => {
     if (globalNavigationState.historyIndex > 0) {
-      globalNavigationState.historyIndex--
-      globalNavigationState.currentRoute = globalNavigationState.history[globalNavigationState.historyIndex]
-      notifySubscribers()
+      updateState((state) => {
+        state.historyIndex--
+        state.currentRoute = state.history[state.historyIndex]
+      })
     }
   },
   
   goForward: () => {
     if (globalNavigationState.historyIndex < globalNavigationState.history.length - 1) {
-      globalNavigationState.historyIndex++
-      globalNavigationState.currentRoute = globalNavigationState.history[globalNavigationState.historyIndex]
-      notifySubscribers()
+      updateState((state) => {
+        state.historyIndex++
+        state.currentRoute = state.history[state.historyIndex]
+      })
     }
   },
   
   reset: () => {
-    globalNavigationState.currentRoute = null
-    globalNavigationState.history = []
-    globalNavigationState.historyIndex = -1
-    globalNavigationState.isNavigating = false
-    globalNavigationState.error = null
-    notifySubscribers()
+    updateState((state) => {
+      state.currentRoute = null
+      state.history = []
+      state.historyIndex = -1
+      state.isNavigating = false
+      state.error = null
+    })
   },
 }
 

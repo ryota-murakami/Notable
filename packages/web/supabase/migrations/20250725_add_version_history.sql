@@ -55,7 +55,7 @@ BEGIN
             OLD.current_version,
             OLD.title,
             OLD.content,
-            NEW.user_id,
+            auth.uid(),
             jsonb_build_object(
                 'word_count', COALESCE(array_length(string_to_array(OLD.content->>'text', ' '), 1), 0),
                 'character_count', COALESCE(length(OLD.content->>'text'), 0),
