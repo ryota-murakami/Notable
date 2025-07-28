@@ -14,7 +14,7 @@ test.describe('Keyboard Shortcuts', () => {
     await page.goto('/')
 
     // Wait for the app to load by checking for a specific element
-    await page.waitForSelector('[data-testid="app-shell"]', {
+    await page.waitForSelector('main', {
       state: 'visible',
       timeout: 10000,
     })
