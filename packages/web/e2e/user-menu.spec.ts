@@ -2,11 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.describe('User Menu', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
-  test.skip(
-    process.env.CI === 'true' &&
-      process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder') === true,
-    'Skipping auth-dependent tests in CI due to placeholder Supabase credentials'
-  )
+  // Conditional skip removed - running all tests
   test.beforeEach(async ({ page }) => {
     // Set dev auth bypass cookie for testing
     await page.context().addCookies([
@@ -59,7 +55,7 @@ test.describe('User Menu', () => {
     await expect(page.locator('text="Log out"')).toBeVisible()
   })
 
-  test.skip('should close dropdown when clicking outside', async ({ page }) => {
+  test('should close dropdown when clicking outside', async ({ page }) => {
     // Open the menu
     const userMenuTrigger = page.locator('[data-testid="user-menu-trigger"]')
     await userMenuTrigger.click()

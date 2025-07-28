@@ -2,11 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Keyboard Shortcuts', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
-  test.skip(
-    process.env.CI === 'true' &&
-      process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder') === true,
-    'Skipping auth-dependent tests in CI due to placeholder Supabase credentials'
-  )
+  // Conditional skip removed - running all tests
   test.beforeEach(async ({ page }) => {
     // Set auth bypass cookie before navigation
     await page.goto('/')
@@ -26,7 +22,7 @@ test.describe('Keyboard Shortcuts', () => {
     await page.waitForLoadState('networkidle')
   })
 
-  test.skip('command palette opens with Cmd+Shift+P', async ({ page }) => {
+  test('command palette opens with Cmd+Shift+P', async ({ page }) => {
     // Feature not yet implemented - skipping test
     // Press Cmd+Shift+P (or Ctrl+Shift+P on Windows/Linux)
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
@@ -41,7 +37,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
-  test.skip('keyboard shortcuts help opens with Cmd+/', async ({ page }) => {
+  test('keyboard shortcuts help opens with Cmd+/', async ({ page }) => {
     // Feature not yet implemented - skipping test
     // Press Cmd+/ (or Ctrl+/ on Windows/Linux)
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
@@ -61,7 +57,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
-  test.skip('search opens with Cmd+K', async ({ page }) => {
+  test('search opens with Cmd+K', async ({ page }) => {
     // Feature not yet implemented - skipping test
     // Press Cmd+K (or Ctrl+K on Windows/Linux)
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
@@ -76,7 +72,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
-  test.skip('navigation shortcuts work with arrow keys', async ({ page }) => {
+  test('navigation shortcuts work with arrow keys', async ({ page }) => {
     // Feature not yet implemented - navigation selection not available
     // Create some test notes first
     await page.evaluate(() => {
@@ -136,7 +132,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(newNoteButton).toBeVisible()
   })
 
-  test.skip('view mode toggle with Cmd+E', async ({ page }) => {
+  test('view mode toggle with Cmd+E', async ({ page }) => {
     // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -149,7 +145,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByText(/edit mode/i)).toBeVisible({ timeout: 5000 })
   })
 
-  test.skip('sidebar toggle with Cmd+,', async ({ page }) => {
+  test('sidebar toggle with Cmd+,', async ({ page }) => {
     // Feature not yet implemented - sidebar toggle not available
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -166,7 +162,7 @@ test.describe('Keyboard Shortcuts', () => {
     expect(afterToggle).not.toBe(initiallyVisible)
   })
 
-  test.skip('multi-select mode with Cmd+M', async ({ page }) => {
+  test('multi-select mode with Cmd+M', async ({ page }) => {
     // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -182,7 +178,7 @@ test.describe('Keyboard Shortcuts', () => {
     await expect(page.getByText(/normal mode/i)).toBeVisible({ timeout: 5000 })
   })
 
-  test.skip('quick switch with number keys', async ({ page }) => {
+  test('quick switch with number keys', async ({ page }) => {
     // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -207,7 +203,7 @@ test.describe('Keyboard Shortcuts', () => {
     }
   })
 
-  test.skip('command palette search functionality', async ({ page }) => {
+  test('command palette search functionality', async ({ page }) => {
     // Feature not yet implemented - skipping test
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
 
@@ -233,7 +229,7 @@ test.describe('Keyboard Shortcuts', () => {
     await page.keyboard.press('Escape')
   })
 
-  test.skip('keyboard shortcuts are properly registered', async ({ page }) => {
+  test('keyboard shortcuts are properly registered', async ({ page }) => {
     // Feature not yet implemented - skipping test
     // Check that shortcuts don't trigger when typing in input fields
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
