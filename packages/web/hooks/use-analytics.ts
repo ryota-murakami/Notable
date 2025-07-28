@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { analytics } from '@/lib/analytics'
 
 export interface AnalyticsHook {
@@ -112,23 +112,33 @@ export function useComponentPerformance(componentName?: string) {
 
 export function useFeatureTracking(featureName?: string) {
   const analyticsHook = useAnalytics()
+  const timerRef = useRef<{ startTime: number; stopTimer?: () => void } | null>(null)
+  
   return {
     trackFeature: useCallback((feature: string, properties?: Record<string, any>) => {
+      // Use timer functionality for proper duration tracking
+      const stopTimer = analytics.startTimer(feature)
+      stopTimer() // Stop immediately to get the duration
       analyticsHook.trackFeatureUsage(feature, 0, properties)
     }, [analyticsHook]),
     startTracking: useCallback((properties?: Record<string, any>) => {
       if (featureName) {
-        analytics.usage(`${featureName}_start`, undefined, properties)
+        const startTime = Date.now()
+        timerRef.current = { startTime }
+        analytics.usage(`${featureName}_start`, 0, properties)
       }
     }, [featureName]),
     endTracking: useCallback((properties?: Record<string, any>) => {
-      if (featureName) {
-        analytics.usage(`${featureName}_end`, undefined, properties)
+      if (featureName && timerRef.current) {
+        const duration = Date.now() - timerRef.current.startTime
+        analytics.usage(`${featureName}_end`, duration, properties)
+        timerRef.current = null
       }
     }, [featureName]),
     trackUsage: useCallback((properties?: Record<string, any>) => {
       if (featureName) {
-        analytics.usage(featureName, undefined, properties)
+        // For general usage tracking without specific duration
+        analytics.usage(featureName, 0, properties)
       }
     }, [featureName]),
   }
