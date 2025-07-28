@@ -13,7 +13,8 @@ import { isTest } from '../lib/utils/environment'
  * Provides a clean API for navigation within the web app
  */
 export function useRouting() {
-  // In test mode, return mock values to avoid routing initialization issues
+  const navigation = useSimpleNavigation()
+  const currentRoute = useSimpleCurrentRoute()
   const isTestMode = isTest()
 
   if (isTestMode) {
@@ -39,9 +40,6 @@ export function useRouting() {
       routes: ROUTES,
     }
   }
-
-  const navigation = useSimpleNavigation()
-  const currentRoute = useSimpleCurrentRoute()
   
   // Mock auth, title, and breadcrumb for now - we can implement these later
   const auth = { requiresAuth: false, isPublic: true }
@@ -75,26 +73,27 @@ export function useRouting() {
  * Hook to get just the current route information
  */
 export function useCurrentRouteInfo() {
+  const currentRoute = useSimpleCurrentRoute()
   const isTestMode = isTest()
 
   if (isTestMode) {
     return null
   }
 
-  return useSimpleCurrentRoute()
+  return currentRoute
 }
 
 /**
  * Hook to get navigation history
  */
 export function useNavigationHistoryWeb() {
+  const navigation = useSimpleNavigation()
   const isTestMode = isTest()
 
   if (isTestMode) {
     return []
   }
 
-  const navigation = useSimpleNavigation()
   return navigation.history
 }
 
@@ -102,19 +101,21 @@ export function useNavigationHistoryWeb() {
  * Hook to get navigation state (loading, error, etc.)
  */
 export function useNavigationStateWeb() {
+  const navState = useSimpleNavigationState()
   const isTestMode = isTest()
 
   if (isTestMode) {
     return 'idle'
   }
 
-  return useSimpleNavigationState()
+  return navState
 }
 
 /**
  * Convenience hook for navigation actions only
  */
 export function useNavigationActions() {
+  const navigation = useSimpleNavigation()
   const isTestMode = isTest()
 
   if (isTestMode) {
@@ -126,8 +127,6 @@ export function useNavigationActions() {
       reset: () => {},
     }
   }
-
-  const navigation = useSimpleNavigation()
 
   return {
     navigate: navigation.navigate,

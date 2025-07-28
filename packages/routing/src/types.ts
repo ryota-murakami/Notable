@@ -91,6 +91,15 @@ export interface DesktopRouteConfig {
   }
 }
 
+export interface RouteLocation {
+  /** Current pathname */
+  pathname: string
+  /** URL search parameters */
+  searchParams: URLSearchParams
+  /** Matched route definition */
+  route: RouteDefinition | null
+}
+
 export interface NavigationState {
   /** Current route */
   currentRoute: RouteDefinition | null
