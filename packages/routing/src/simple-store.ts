@@ -21,9 +21,6 @@ const globalNavigationState: NavigationStore = {
   parsePath: () => null,
 }
 
-let globalAdapter: PlatformAdapter | null = null
-let globalParams: Record<string, string> = {}
-let globalQuery: Record<string, string> = {}
 let isInitialized = false
 const listeners: Set<() => void> = new Set()
 
@@ -49,7 +46,6 @@ export function initializeSimpleNavigation(adapter: PlatformAdapter) {
     return () => {}
   }
 
-  globalAdapter = adapter
   isInitialized = true
 
   // Set up adapter listener
@@ -63,7 +59,6 @@ export function initializeSimpleNavigation(adapter: PlatformAdapter) {
   })
 
   return () => {
-    globalAdapter = null
     isInitialized = false
     unsubscribe()
   }
