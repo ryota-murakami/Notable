@@ -20,7 +20,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:jest": "jest",
-    "e2e": "echo 'E2E tests skipped for commit validation - will run in CI' && exit 0",
+    "e2e": "playwright test --reporter=list",
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
     "e2e:coverage": "rm -rf .nyc_output coverage/e2e && NODE_OPTIONS='--loader ./scripts/instrument-loader.js' playwright test --config=playwright-coverage.config.ts",
