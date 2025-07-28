@@ -65,7 +65,7 @@ export class WebAdapter implements PlatformAdapter {
     
     // Debounce notifications to prevent rapid fire during navigation
     if (this.locationUpdateTimeout) {
-      clearTimeout(this.locationUpdateTimeout)
+      window.clearTimeout(this.locationUpdateTimeout)
     }
     
     this.locationUpdateTimeout = window.setTimeout(() => {
@@ -134,7 +134,7 @@ export class WebAdapter implements PlatformAdapter {
     }
     
     if (this.locationUpdateTimeout) {
-      clearTimeout(this.locationUpdateTimeout)
+      window.clearTimeout(this.locationUpdateTimeout)
       this.locationUpdateTimeout = null
     }
     
