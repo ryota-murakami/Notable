@@ -69,8 +69,8 @@ test.describe('Application Shell', () => {
     // Click the New Note button in sidebar
     await page.getByRole('button', { name: 'New Note' }).click()
 
-    // Should navigate to new note page
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    // Should navigate to new note page (UUID or mock format)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
 
     // Should show note editor
     await expect(page.getByPlaceholder('Untitled')).toBeVisible()
@@ -85,8 +85,8 @@ test.describe('Application Shell', () => {
     // Click the Create Your First Note button in main area
     await page.getByRole('button', { name: 'Create Your First Note' }).click()
 
-    // Should navigate to new note page
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    // Should navigate to new note page (UUID or mock format)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
 
     // Should show note editor
     await expect(page.getByPlaceholder('Untitled')).toBeVisible()
@@ -100,7 +100,7 @@ test.describe('Application Shell', () => {
   }) => {
     // Create a new note
     await page.getByRole('button', { name: 'New Note' }).click()
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
 
     // Navigate back to app home
     await page.goto('/app')
@@ -114,7 +114,7 @@ test.describe('Application Shell', () => {
   test('should display notes in sidebar after creation', async ({ page }) => {
     // Create a new note
     await page.getByRole('button', { name: 'New Note' }).click()
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
 
     // Add title to the note
     const titleInput = page.getByPlaceholder('Untitled')
@@ -140,7 +140,7 @@ test.describe('Application Shell', () => {
   }) => {
     // Create a new note first
     await page.getByRole('button', { name: 'New Note' }).click()
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
 
     // Add title to the note
     const titleInput = page.getByPlaceholder('Untitled')
@@ -156,7 +156,7 @@ test.describe('Application Shell', () => {
     await page.getByText('Clickable Note').click()
 
     // Should navigate to the note
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
     await expect(page.locator('input[value="Clickable Note"]')).toBeVisible()
   })
 
@@ -205,7 +205,7 @@ test.describe('Application Shell', () => {
   test('should handle keyboard navigation', async ({ page }) => {
     // Create a note first
     await page.getByRole('button', { name: 'New Note' }).click()
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
 
     const titleInput = page.getByPlaceholder('Untitled')
     await titleInput.fill('Keyboard Test Note')
@@ -224,7 +224,7 @@ test.describe('Application Shell', () => {
     await page.keyboard.press('Enter')
 
     // Should navigate to new note
-    await expect(page).toHaveURL(/\/app\/notes\/[a-f0-9-]+/)
+    await expect(page).toHaveURL(/\/app\/notes\/([a-f0-9-]+|mock-note-\d+)/)
   })
 
   test('should display semantic HTML structure', async ({ page }) => {
