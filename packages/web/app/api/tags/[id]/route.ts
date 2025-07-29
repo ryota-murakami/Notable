@@ -53,18 +53,18 @@ export async function GET(
       .select('*', { count: 'exact', head: true })
       .eq('tag_id', tag.id)
 
-    // Get child tags
-    const { data: childTags, error: childError } = await supabase
-      .from('tags')
-      .select('*')
-      .eq('parent_id', tag.id)
-      .eq('user_id', user.id)
-      .order('name')
+    // TODO: Get child tags when parent_id is implemented in database schema
+    // const { data: childTags, error: childError } = await supabase
+    //   .from('tags')
+    //   .select('*')
+    //   .eq('parent_id', tag.id)
+    //   .eq('user_id', user.id)
+    //   .order('name')
 
     const enhancedTag = {
       ...tag,
       usage_count: usageCount || 0,
-      children: childTags || [],
+      children: [], // childTags || [],
     }
 
     return NextResponse.json({
@@ -105,7 +105,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { name, parent_id, color, description } = body as TagUpdate
+    const { name, color } = body as TagUpdate
 
     // Verify tag exists and belongs to user
     const { data: existingTag, error: fetchError } = await supabase
@@ -174,48 +174,13 @@ export async function PUT(
       }
     }
 
-    // Validate parent_id if provided
-    if (parent_id !== undefined) {
-      if (parent_id === params.id) {
-        return NextResponse.json(
-          { error: 'Tag cannot be its own parent' },
-          { status: 400 }
-        )
-      }
-
-      if (parent_id) {
-        const { data: parentTag, error: parentError } = await supabase
-          .from('tags')
-          .select('id')
-          .eq('id', parent_id)
-          .eq('user_id', user.id)
-          .maybeSingle()
-
-        if (parentError) {
-          console.error('Error checking parent tag:', parentError)
-          return NextResponse.json(
-            { error: 'Failed to validate parent tag' },
-            { status: 500 }
-          )
-        }
-
-        if (!parentTag) {
-          return NextResponse.json(
-            { error: 'Parent tag not found or does not belong to you' },
-            { status: 400 }
-          )
-        }
-
-        // TODO: Add circular reference check
-      }
-    }
+    // Parent tag validation not implemented - database schema doesn't include parent_id yet
 
     // Prepare update data
     const updateData: TagUpdate = {}
     if (name !== undefined) updateData.name = name.trim()
-    if (parent_id !== undefined) updateData.parent_id = parent_id
     if (color !== undefined) updateData.color = color
-    if (description !== undefined) updateData.description = description
+    // parent_id and description are not yet implemented in the database schema
 
     // Update the tag
     const { data: updatedTag, error: updateError } = await supabase

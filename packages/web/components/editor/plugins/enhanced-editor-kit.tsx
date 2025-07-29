@@ -1,6 +1,6 @@
 'use client'
 
-import { ListPlugin } from '@platejs/list/react'
+import { ListPlugin } from '@platejs/list'
 
 import { BasicNodesKit } from './basic-nodes-kit'
 import { LinkKit } from './link-plugin'

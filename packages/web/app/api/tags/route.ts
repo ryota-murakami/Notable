@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, parent_id, color, description } = body as TagInsert
+    const { name, color } = body as TagInsert
 
     // Validate required fields
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -206,37 +206,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // If parent_id is provided, validate it exists and belongs to user
-    if (parent_id) {
-      const { data: parentTag, error: parentError } = await supabase
-        .from('tags')
-        .select('id')
-        .eq('id', parent_id)
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-      if (parentError) {
-        console.error('Error checking parent tag:', parentError)
-        return NextResponse.json(
-          { error: 'Failed to validate parent tag' },
-          { status: 500 }
-        )
-      }
-
-      if (!parentTag) {
-        return NextResponse.json(
-          { error: 'Parent tag not found or does not belong to you' },
-          { status: 400 }
-        )
-      }
-    }
+    // Parent tag validation not implemented - database schema doesn't include parent_id yet
 
     // Create the tag
     const tagData: TagInsert = {
       name: name.trim(),
-      parent_id: parent_id || null,
       color: color || '#3b82f6',
-      description: description || null,
       user_id: user.id,
     }
 

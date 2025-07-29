@@ -1,6 +1,6 @@
 'use client'
 
-import { LinkPlugin } from '@platejs/link/react'
+import { LinkPlugin } from '@platejs/link'
 import { createPlatePlugin } from 'platejs/react'
 
 import { WikiLinkElement } from '@/components/ui/wiki-link-node'

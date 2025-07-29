@@ -10,7 +10,7 @@ import {
   SubscriptPlugin,
   SuperscriptPlugin,
   UnderlinePlugin,
-} from '@platejs/basic-nodes/react'
+} from '@platejs/basic-nodes'
 
 import { CodeLeaf } from '@/components/ui/code-node'
 import { HighlightLeaf } from '@/components/ui/highlight-node'

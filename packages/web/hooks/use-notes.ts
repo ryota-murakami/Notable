@@ -73,6 +73,8 @@ export function useNotes(options: UseNotesOptions = {}) {
           title: data.title || 'Untitled',
           content: data.content || '',
           user_id: 'mock-user-id',
+          folder_id: null,
+          is_hidden: false,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         }
