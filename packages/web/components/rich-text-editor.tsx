@@ -1,28 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Plate, usePlateEditor } from 'platejs/react'
-import type { Value } from 'platejs'
-import { useAutoSave } from '@/hooks/use-auto-save'
-
-import { EnhancedEditorKit } from '@/components/editor/plugins/enhanced-editor-kit'
-import { Editor, EditorContainer } from '@/components/ui/editor'
-import { MarkToolbarButton } from '@/components/ui/mark-toolbar-button'
-import { Button } from '@/components/ui/button'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { BasicEditor } from '@/components/editor/basic-editor'
+import type { Descendant } from 'slate'
 
 interface RichTextEditorProps {
   noteId: string
   initialTitle?: string
-  initialContent?: Value
+  initialContent?: Descendant[]
   onTitleChange?: (title: string) => void
-  onContentChange?: (content: Value) => void
+  onContentChange?: (content: Descendant[]) => void
   className?: string
-  readOnly?: boolean
 }
 
-const initialValue: Value = [
+const defaultContent: Descendant[] = [
   {
-    type: 'p',
+    type: 'paragraph',
     children: [{ text: '' }],
   },
 ]
@@ -30,26 +24,15 @@ const initialValue: Value = [
 export function RichTextEditor({
   noteId,
   initialTitle = '',
-  initialContent = initialValue,
+  initialContent = defaultContent,
   onTitleChange,
   onContentChange,
   className,
-  readOnly = false,
 }: RichTextEditorProps) {
   const [title, setTitle] = useState(initialTitle)
-  const [content, setContent] = useState<Value>(initialContent)
+  const [content, setContent] = useState<Descendant[]>(initialContent)
 
-  const editor = usePlateEditor({
-    plugins: EnhancedEditorKit,
-    value: content,
-  })
-
-  // Auto-save functionality
-  useAutoSave(noteId, {
-    title,
-    content: JSON.stringify(content),
-  })
-
+  // Update local state when props change
   useEffect(() => {
     setTitle(initialTitle)
   }, [initialTitle])
@@ -58,138 +41,47 @@ export function RichTextEditor({
     setContent(initialContent)
   }, [initialContent])
 
-  const handleTitleChange = (newTitle: string) => {
-    setTitle(newTitle)
-  }
+  // Handle title changes
+  const handleTitleChange = useCallback(
+    (newTitle: string) => {
+      setTitle(newTitle)
+      onTitleChange?.(newTitle)
+    },
+    [onTitleChange]
+  )
 
-  const handleContentChange = (newContent: Value) => {
-    setContent(newContent)
-  }
+  // Handle content changes
+  const handleContentChange = useCallback(
+    (newContent: Descendant[]) => {
+      setContent(newContent)
+      onContentChange?.(newContent)
+    },
+    [onContentChange]
+  )
 
   return (
-    <div className={`flex-1 flex flex-col ${className}`}>
-      <div className='max-w-4xl mx-auto w-full flex-1'>
-        {/* Title Input */}
-        <input
+    <div className={`flex flex-col h-full ${className || ''}`}>
+      {/* Title Editor */}
+      <div className='border-b bg-background px-6 py-4'>
+        <Input
           value={title}
           onChange={(e) => handleTitleChange(e.target.value)}
-          placeholder='Untitled'
-          readOnly={readOnly}
-          className='w-full text-3xl font-bold border-none outline-none bg-transparent mb-6 placeholder:text-muted-foreground'
+          placeholder='Untitled Note'
+          className='text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-0 h-auto'
+          style={{ fontSize: '1.5rem', fontWeight: 'bold' }}
         />
+      </div>
 
-        {/* Rich Text Editor */}
-        <Plate
-          editor={editor}
-          onChange={({ value }) => handleContentChange(value)}
-        >
-          {!readOnly && (
-            <div className='flex justify-start gap-1 rounded-t-lg border-b p-2 bg-background'>
-              {/* TODO: Re-enable toolbar buttons when Plate.js plugins are fixed */}
-              {/* Text Formatting */}
-              {/* <MarkToolbarButton nodeType='bold' tooltip='Bold (⌘+B)'>
-                <strong>B</strong>
-              </MarkToolbarButton>
-              <MarkToolbarButton nodeType='italic' tooltip='Italic (⌘+I)'>
-                <em>I</em>
-              </MarkToolbarButton>
-              <MarkToolbarButton nodeType='underline' tooltip='Underline (⌘+U)'>
-                <u>U</u>
-              </MarkToolbarButton>
-              <MarkToolbarButton
-                nodeType='strikethrough'
-                tooltip='Strikethrough (⌘+Shift+X)'
-              >
-                <s>S</s>
-              </MarkToolbarButton>
-              <MarkToolbarButton nodeType='code' tooltip='Code (⌘+E)'>
-                {'</>'}
-              </MarkToolbarButton>
-
-              <div className='w-px h-6 bg-border mx-1' />
-
-              {/* Block Elements */}
-              {/* <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => editor.tf.h1.toggle()}
-                title='Heading 1 (⌘+Alt+1)'
-                className='h-8 px-2'
-              >
-                H1
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => editor.tf.h2.toggle()}
-                title='Heading 2 (⌘+Alt+2)'
-                className='h-8 px-2'
-              >
-                H2
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => editor.tf.h3.toggle()}
-                title='Heading 3 (⌘+Alt+3)'
-                className='h-8 px-2'
-              >
-                H3
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => editor.tf.blockquote.toggle()}
-                title='Quote (⌘+Shift+.)'
-                className='h-8 px-2'
-              >
-                Quote
-              </Button>
-
-              <div className='w-px h-6 bg-border mx-1' />
-
-              {/* Lists */}
-              {/* <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => editor.tf.bulletedList.toggle()}
-                title='Bullet List (⌘+Shift+8)'
-                className='h-8 px-2'
-              >
-                •List
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => editor.tf.numberedList.toggle()}
-                title='Numbered List (⌘+Shift+7)'
-                className='h-8 px-2'
-              >
-                1.List
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => editor.tf.todoList.toggle()}
-                title='Todo List (⌘+Shift+9)'
-                className='h-8 px-2'
-              >
-                ☐Todo
-              </Button> */}
-              <div className='text-sm text-muted-foreground px-2'>
-                Toolbar temporarily disabled - fixing plugin compatibility
-              </div>
-            </div>
-          )}
-
-          <EditorContainer>
-            <Editor
-              placeholder='Start writing your note...'
-              readOnly={readOnly}
-              className='min-h-96'
-            />
-          </EditorContainer>
-        </Plate>
+      {/* Content Editor */}
+      <div className='flex-1 overflow-auto'>
+        <BasicEditor
+          key={noteId} // Force re-render when note changes
+          initialValue={content}
+          onChange={handleContentChange}
+          placeholder='Start writing your note...'
+          autoFocus
+          className='border-0 h-full'
+        />
       </div>
     </div>
   )

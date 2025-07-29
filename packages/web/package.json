@@ -168,11 +168,17 @@
     "eslint-config-next": "^15.4.3",
     "jest": "^29.7.0",
     "jsdom": "^26.1.0",
+    "msw": "^2.10.4",
     "prompts": "^2.4.2",
     "supabase": "^1.206.1",
     "tailwindcss": "^4.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

@@ -27,22 +27,16 @@ export function useNotes(options: UseNotesOptions = {}) {
   const fetchNotes = useCallback(async () => {
     if (!enabled) return
 
+    // In test environment, preserve existing notes and don't fetch from server
+    if (isTest()) {
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     try {
-      // In test environment, return mock data immediately
-      if (isTest()) {
-        const mockResponse: NotesResponse = {
-          notes: [],
-          total: 0,
-        }
-        setNotes(mockResponse.notes)
-        setTotal(mockResponse.total)
-        setLoading(false)
-        return
-      }
-
       const response = await notesService.getNotes(queryParams)
       setNotes(response.notes)
       setTotal(response.total)
@@ -65,32 +59,31 @@ export function useNotes(options: UseNotesOptions = {}) {
   }, [fetchNotes])
 
   const createNote = useCallback(async (data: Omit<NoteInsert, 'user_id'>) => {
-    try {
-      // In test environment, create mock note
-      if (isTest()) {
-        const mockNote: Note = {
-          id: `mock-note-${Date.now()}`,
-          title: data.title || 'Untitled',
-          content: data.content || '',
-          user_id: 'mock-user-id',
-          folder_id: null,
-          is_hidden: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
-
-        // Add the new note to the current list
-        setNotes((prev) => [mockNote, ...prev])
-        setTotal((prev) => prev + 1)
-
-        toast({
-          title: 'Note created',
-          description: 'Your note has been created successfully.',
-        })
-
-        return mockNote
+    // In test environment, create mock note
+    if (isTest()) {
+      const mockNote: Note = {
+        id: `mock-note-${Date.now()}`,
+        title: data.title || 'Untitled',
+        content: data.content || '',
+        user_id: 'mock-user-id',
+        folder_id: null,
+        is_hidden: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       }
 
+      setNotes((prev) => [mockNote, ...prev])
+      setTotal((prev) => prev + 1)
+
+      toast({
+        title: 'Note created',
+        description: 'Your note has been created successfully.',
+      })
+
+      return mockNote
+    }
+
+    try {
       const response = await notesService.createNote(data)
 
       // Add the new note to the current list

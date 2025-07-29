@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { notesService } from '@/lib/services/notes'
-import { useAutoSave } from './use-auto-save'
 import { toast } from './use-toast'
 import type { Database } from '@/types/database'
 
@@ -67,21 +66,16 @@ export function useNote(noteId: string) {
     [note, noteId]
   )
 
-  // Set up auto-save for title and content changes
-  const { saveNow, isSaving } = useAutoSave(noteId, {
-    title: note?.title,
-    content: note?.content,
-  })
-
   const debouncedUpdateNote = useCallback(
     (updates: NoteUpdate) => {
       // Update local state immediately for responsiveness
       if (note) {
-        setNote((prev) => (prev ? { ...prev, ...updates } : null))
+        setNote((prev: any) => (prev ? { ...prev, ...updates } : null))
       }
-      // The auto-save will trigger automatically when note data changes
+      // Update the note
+      updateNote(updates)
     },
-    [note]
+    [note, updateNote]
   )
 
   return {
@@ -89,7 +83,5 @@ export function useNote(noteId: string) {
     loading,
     error,
     updateNote: debouncedUpdateNote,
-    saveNow,
-    isSaving,
   }
 }
