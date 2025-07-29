@@ -14,5 +14,5 @@ export default function NotePage({ params }: NotePageProps) {
     notFound()
   }
 
-  return <NoteEditor />
+  return <NoteEditor noteId={id} />
 }
