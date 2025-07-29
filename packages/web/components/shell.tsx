@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotes } from '@/hooks/use-notes'
 import { useRouting } from '@/hooks/use-routing'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { toast } from '@/hooks/use-toast'
 import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
@@ -14,15 +15,174 @@ import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
 import { FileText, Plus } from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
+import {
+  NotableCommandPalette,
+  useCommandPalette,
+} from '@/components/ui/command-palette'
+import { KeyboardShortcutsDialog } from '@/components/ui/keyboard-shortcuts-dialog'
+import type { SearchableNote } from '@/lib/search/types'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
-  const { notes, loading: notesLoading, createNote } = useNotes()
+  const { notes, loading: notesLoading, createNote, deleteNote } = useNotes()
   const router = useRouter()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current: _current, title: _title, navigate: _navigate } = useRouting()
   const supabase = createClient()
+
+  // Command palette and keyboard shortcuts state
+  const commandPalette = useCommandPalette()
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
+
+  // Get selected note data
+  const selectedNote = selectedNoteId
+    ? notes.find((note) => note.id === selectedNoteId)
+    : null
+
+  // Command handlers
+  const handleNewNote = useCallback(async () => {
+    try {
+      const newNote = await createNote({
+        title: 'Untitled',
+        content: '',
+      })
+      if (newNote) {
+        setSelectedNoteId(newNote.id)
+        router.push(`/notes/${newNote.id}`)
+      }
+    } catch (error) {
+      console.error('Failed to create note:', error)
+      toast({
+        title: 'Error creating note',
+        description: 'There was an error creating your note. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }, [createNote, router])
+
+  const handleDeleteCurrentNote = useCallback(async () => {
+    if (!selectedNoteId) return
+
+    try {
+      await deleteNote(selectedNoteId)
+      setSelectedNoteId(null)
+      router.push('/')
+      toast({
+        title: 'Note deleted',
+        description: 'The note has been deleted successfully.',
+      })
+    } catch (error) {
+      console.error('Failed to delete note:', error)
+      toast({
+        title: 'Error deleting note',
+        description: 'There was an error deleting your note. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }, [selectedNoteId, deleteNote, router])
+
+  const handleCopyNote = useCallback(async () => {
+    if (!selectedNote) return
+
+    try {
+      const content = selectedNote.content || ''
+      const textContent =
+        typeof content === 'string' ? content : JSON.stringify(content)
+      await navigator.clipboard.writeText(
+        `${selectedNote.title}\n\n${textContent}`
+      )
+      toast({
+        title: 'Note copied',
+        description: 'Note content has been copied to clipboard.',
+      })
+    } catch (error) {
+      console.error('Failed to copy note:', error)
+      toast({
+        title: 'Error copying note',
+        description: 'Failed to copy note to clipboard.',
+        variant: 'destructive',
+      })
+    }
+  }, [selectedNote])
+
+  const handleToggleTheme = useCallback(() => {
+    const nextTheme =
+      theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'
+    setTheme(nextTheme)
+    // TODO: Implement actual theme switching logic
+    toast({
+      title: 'Theme changed',
+      description: `Theme switched to ${nextTheme}`,
+    })
+  }, [theme])
+
+  const handleSearch = useCallback(() => {
+    // TODO: Implement search functionality
+    toast({
+      title: 'Search',
+      description: 'Search functionality will be implemented soon.',
+    })
+  }, [])
+
+  const handleSettings = useCallback(() => {
+    // TODO: Implement settings functionality
+    toast({
+      title: 'Settings',
+      description: 'Settings functionality will be implemented soon.',
+    })
+  }, [])
+
+  const handleExportNote = useCallback(() => {
+    // TODO: Implement export functionality
+    toast({
+      title: 'Export',
+      description: 'Export functionality will be implemented soon.',
+    })
+  }, [])
+
+  const handleEditNote = useCallback(() => {
+    // TODO: Implement edit mode toggle
+    toast({
+      title: 'Edit Mode',
+      description: 'Edit mode toggle will be implemented soon.',
+    })
+  }, [])
+
+  // Keyboard shortcuts registration
+  useKeyboardShortcuts([
+    {
+      id: 'create-note',
+      action: handleNewNote,
+    },
+    {
+      id: 'delete-note',
+      action: handleDeleteCurrentNote,
+    },
+    {
+      id: 'open-search',
+      action: commandPalette.toggle,
+    },
+    {
+      id: 'command-palette',
+      action: commandPalette.toggle,
+    },
+    {
+      id: 'shortcuts-help',
+      action: () => setShowKeyboardShortcuts(true),
+    },
+    {
+      id: 'close-dialog',
+      action: () => {
+        if (showKeyboardShortcuts) {
+          setShowKeyboardShortcuts(false)
+        } else if (commandPalette.open) {
+          commandPalette.close()
+        }
+      },
+    },
+  ])
 
   // In test mode, treat as initialized to show the main UI
   const isTestMode = isTest()
@@ -56,22 +216,8 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [supabase])
 
-  // Create a new note handler using the real API
-  const handleCreateNote = useCallback(async () => {
-    try {
-      const newNote = await createNote({
-        title: 'Untitled',
-        content: '',
-      })
-      if (newNote) {
-        setSelectedNoteId(newNote.id)
-        // Also navigate for URL updates
-        router.push(`/notes/${newNote.id}`)
-      }
-    } catch (error) {
-      console.error('Failed to create note:', error)
-    }
-  }, [createNote, router])
+  // Legacy function - using handleNewNote instead
+  const handleCreateNote = handleNewNote
 
   // Handle note selection
   const handleNoteSelect = useCallback(
@@ -81,11 +227,6 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     },
     [router]
   )
-
-  // Get selected note data
-  const selectedNote = selectedNoteId
-    ? notes.find((note) => note.id === selectedNoteId)
-    : null
 
   if (shouldShowLoading) {
     return (
@@ -215,6 +356,28 @@ export function Shell({ children }: { children?: React.ReactNode }) {
             ))}
         </main>
       </div>
+
+      {/* Command Palette */}
+      <NotableCommandPalette
+        open={commandPalette.open}
+        onOpenChange={commandPalette.setOpen}
+        onNewNote={handleNewNote}
+        onSearch={handleSearch}
+        onSettings={handleSettings}
+        onToggleTheme={handleToggleTheme}
+        onShowKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
+        onExportNote={selectedNote ? handleExportNote : undefined}
+        onCopyNote={selectedNote ? handleCopyNote : undefined}
+        onDeleteNote={selectedNote ? handleDeleteCurrentNote : undefined}
+        onEditNote={selectedNote ? handleEditNote : undefined}
+        currentTheme={theme}
+      />
+
+      {/* Keyboard Shortcuts Dialog */}
+      <KeyboardShortcutsDialog
+        open={showKeyboardShortcuts}
+        onOpenChange={setShowKeyboardShortcuts}
+      />
     </div>
   )
 }
