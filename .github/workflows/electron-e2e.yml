@@ -105,6 +105,7 @@ jobs:
           sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db "INSERT OR IGNORE INTO access VALUES('kTCCServiceScreenCapture','$(whoami)',0,2,2,1,NULL,NULL,0,'UNUSED',NULL,0,1687364150);" || true
 
       - name: Start Web Development Server
+        shell: bash
         run: |
           # Start the web server in background for Electron to connect to
           cd packages/web
@@ -112,7 +113,21 @@ jobs:
           echo $! > web-server.pid
           # Wait for server to be ready
           echo "Waiting for web server to start..."
-          timeout 60 bash -c 'until curl -s http://localhost:4378 > /dev/null; do sleep 2; done' || echo "Warning: Web server may not be fully ready"
+          # Use a cross-platform approach to wait for server
+          max_attempts=30
+          attempt=0
+          while [ $attempt -lt $max_attempts ]; do
+            if curl -s http://localhost:4378 > /dev/null 2>&1; then
+              echo "Web server is ready!"
+              break
+            fi
+            echo "Attempt $((attempt + 1))/$max_attempts: Waiting for server..."
+            sleep 2
+            attempt=$((attempt + 1))
+          done
+          if [ $attempt -eq $max_attempts ]; then
+            echo "Warning: Web server may not be fully ready after 60 seconds"
+          fi
         env:
           NODE_ENV: test
           NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co'
