@@ -25,6 +25,16 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   // In test mode, treat as initialized to show the main UI
   const isTestMode = isTest()
 
+  // Debug logging for test mode
+  if (typeof window !== 'undefined') {
+    console.log('Shell debug:', {
+      isTestMode,
+      notesLoading,
+      shouldShowLoading: notesLoading && !isTestMode,
+      cookieCheck: document.cookie.includes('dev-auth-bypass=true'),
+    })
+  }
+
   // Create mock user for testing when dev-auth-bypass is enabled
   const mockUser: SupabaseUser | null =
     isTestMode && !user ? createMockUser() : null

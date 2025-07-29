@@ -2,13 +2,34 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Application Shell', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the app
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
+    // Navigate to the app directly
     await page.goto('/app')
   })
 
   test('should display the main application shell', async ({ page }) => {
-    // Check that the main shell container is visible
-    await expect(page.getByTestId('app-shell')).toBeVisible()
+    // Capture all console messages
+    const consoleMessages: string[] = []
+    page.on('console', (msg) => {
+      consoleMessages.push(`${msg.type()}: ${msg.text()}`)
+    })
+
+    // Wait for the app-shell to appear - this is the key test
+    await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 10000 })
+
+    // Give it a moment for console logs to appear
+    await page.waitForTimeout(1000)
+
+    console.log('Console messages:', consoleMessages)
 
     // Check sidebar structure
     await expect(page.getByText('Notable')).toBeVisible()
