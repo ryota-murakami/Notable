@@ -85,8 +85,9 @@ export function RichTextEditor({
         >
           {!readOnly && (
             <div className='flex justify-start gap-1 rounded-t-lg border-b p-2 bg-background'>
+              {/* TODO: Re-enable toolbar buttons when Plate.js plugins are fixed */}
               {/* Text Formatting */}
-              <MarkToolbarButton nodeType='bold' tooltip='Bold (⌘+B)'>
+              {/* <MarkToolbarButton nodeType='bold' tooltip='Bold (⌘+B)'>
                 <strong>B</strong>
               </MarkToolbarButton>
               <MarkToolbarButton nodeType='italic' tooltip='Italic (⌘+I)'>
@@ -108,7 +109,7 @@ export function RichTextEditor({
               <div className='w-px h-6 bg-border mx-1' />
 
               {/* Block Elements */}
-              <Button
+              {/* <Button
                 variant='ghost'
                 size='sm'
                 onClick={() => editor.tf.h1.toggle()}
@@ -148,7 +149,7 @@ export function RichTextEditor({
               <div className='w-px h-6 bg-border mx-1' />
 
               {/* Lists */}
-              <Button
+              {/* <Button
                 variant='ghost'
                 size='sm'
                 onClick={() => editor.tf.bulletedList.toggle()}
@@ -174,7 +175,10 @@ export function RichTextEditor({
                 className='h-8 px-2'
               >
                 ☐Todo
-              </Button>
+              </Button> */}
+              <div className='text-sm text-muted-foreground px-2'>
+                Toolbar temporarily disabled - fixing plugin compatibility
+              </div>
             </div>
           )}
 

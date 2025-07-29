@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { getDevAuthBypassUser } from '@/utils/auth-helpers'
-import type { TagInsert, TagFilter, EnhancedTag } from '@/types/tags'
+import type { EnhancedTag, TagFilter, TagInsert } from '@/types/tags'
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()

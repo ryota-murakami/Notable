@@ -1,6 +1,7 @@
 'use client'
 
-import { LinkPlugin } from '@platejs/link'
+// TODO: Fix Plate.js imports
+// import { LinkPlugin } from '@platejs/link'
 import { createPlatePlugin } from 'platejs/react'
 
 import { WikiLinkElement } from '@/components/ui/wiki-link-node'
@@ -15,4 +16,5 @@ export const WikiLinkPlugin = createPlatePlugin({
   },
 })
 
-export const LinkKit = [LinkPlugin, WikiLinkPlugin]
+// TODO: Re-enable LinkPlugin when import is fixed
+export const LinkKit = [/*LinkPlugin,*/ WikiLinkPlugin]

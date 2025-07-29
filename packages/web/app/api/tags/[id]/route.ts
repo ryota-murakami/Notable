@@ -265,30 +265,30 @@ export async function DELETE(
       return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
     }
 
-    // Check if tag has children
-    const { data: childTags, error: childError } = await supabase
-      .from('tags')
-      .select('id')
-      .eq('parent_id', params.id)
-      .eq('user_id', user.id)
+    // TODO: Check if tag has children when parent_id is implemented in database schema
+    // const { data: childTags, error: childError } = await supabase
+    //   .from('tags')
+    //   .select('id')
+    //   .eq('parent_id', params.id)
+    //   .eq('user_id', user.id)
 
-    if (childError) {
-      console.error('Error checking child tags:', childError)
-      return NextResponse.json(
-        { error: 'Failed to check tag dependencies' },
-        { status: 500 }
-      )
-    }
+    // if (childError) {
+    //   console.error('Error checking child tags:', childError)
+    //   return NextResponse.json(
+    //     { error: 'Failed to check tag dependencies' },
+    //     { status: 500 }
+    //   )
+    // }
 
-    if (childTags && childTags.length > 0) {
-      return NextResponse.json(
-        {
-          error:
-            'Cannot delete tag with child tags. Please delete or move child tags first.',
-        },
-        { status: 400 }
-      )
-    }
+    // if (childTags && childTags.length > 0) {
+    //   return NextResponse.json(
+    //     {
+    //       error:
+    //         'Cannot delete tag with child tags. Please delete or move child tags first.',
+    //     },
+    //     { status: 400 }
+    //   )
+    // }
 
     // Delete the tag (note_tags will be cascade deleted)
     const { error: deleteError } = await supabase
