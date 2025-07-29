@@ -79,7 +79,6 @@ test.describe('Keyboard Shortcuts', () => {
       await expect(page.locator('main')).toBeVisible()
     } else {
       // If no button, just verify app is still functional
-      console.log('New Note button not found, but app is stable')
       await expect(page.locator('main')).toBeVisible()
     }
   })
