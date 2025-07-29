@@ -29,8 +29,9 @@ export function useNoteLinks(noteId: string) {
 
       // Separate outgoing and incoming links
       const outgoingLinks =
-        data?.filter((link) => link.from_note_id === noteId) || []
-      const backlinks = data?.filter((link) => link.to_note_id === noteId) || []
+        data?.filter((link: any) => link.from_note_id === noteId) || []
+      const backlinks =
+        data?.filter((link: any) => link.to_note_id === noteId) || []
 
       return { outgoingLinks, backlinks, allLinks: data || [] }
     },

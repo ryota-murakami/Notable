@@ -1,7 +1,7 @@
 'use client'
 
 import { PlateElement, type PlateElementProps } from 'platejs/react'
-import { Link } from 'next/link'
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 export interface WikiLinkElementProps extends PlateElementProps {
@@ -23,21 +23,18 @@ export function WikiLinkElement({
   const { noteId, noteTitle, url } = element
 
   return (
-    <PlateElement
-      asChild
-      className={cn(
-        'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300',
-        'underline decoration-blue-600/30 hover:decoration-blue-600/60',
-        'transition-colors duration-200',
-        className
-      )}
-      {...props}
-    >
+    <PlateElement element={element} {...props}>
       <Link
         href={noteId ? `/notes/${noteId}` : url}
         data-wiki-link='true'
         data-note-id={noteId}
         title={`Link to: ${noteTitle}`}
+        className={cn(
+          'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300',
+          'underline decoration-blue-600/30 hover:decoration-blue-600/60',
+          'transition-colors duration-200',
+          className
+        )}
       >
         {children}
       </Link>

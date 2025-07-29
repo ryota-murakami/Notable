@@ -1,6 +1,6 @@
 'use client'
 
-import { Link } from 'next/link'
+import Link from 'next/link'
 import { useNoteLinks } from '@/hooks/use-note-links'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -67,7 +67,7 @@ export function BacklinksPanel({ noteId, className }: BacklinksPanelProps) {
               Outgoing ({outgoingLinks.length})
             </h4>
             <div className='space-y-1'>
-              {outgoingLinks.map((link) => (
+              {outgoingLinks.map((link: any) => (
                 <Link
                   key={link.id}
                   href={`/notes/${link.to_note_id}`}
@@ -87,7 +87,7 @@ export function BacklinksPanel({ noteId, className }: BacklinksPanelProps) {
               Backlinks ({backlinks.length})
             </h4>
             <div className='space-y-1'>
-              {backlinks.map((link) => (
+              {backlinks.map((link: any) => (
                 <Link
                   key={link.id}
                   href={`/notes/${link.from_note_id}`}
