@@ -4,13 +4,17 @@ test.describe('Keyboard Shortcuts', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
   // Conditional skip removed - running all tests
   test.beforeEach(async ({ page }) => {
-    // Set auth bypass cookie before navigation
-    await page.goto('/')
-    await page.evaluate(() => {
-      document.cookie = 'dev-auth-bypass=true; path=/'
-    })
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
 
-    // Navigate to home page now that auth is bypassed
+    // Navigate to home page
     await page.goto('/')
 
     // Wait for the app to load by checking for a specific element
