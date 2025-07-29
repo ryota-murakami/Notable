@@ -12,10 +12,17 @@ import { isTest } from '../lib/utils/environment'
 import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
+import {
+  NotableCommandPalette,
+  useCommandPalette,
+} from '@/components/ui/command-palette'
+import { KeyboardShortcutsDialog } from '@/components/ui/keyboard-shortcuts-dialog'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([])
   const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
+  const commandPalette = useCommandPalette()
   const { syncService, isInitialized } = useSyncService()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current: _current, title: _title, navigate: _navigate } = useRouting()
@@ -112,6 +119,45 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     }
   }, [isInitialized])
 
+  // Keyboard shortcuts handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isModifier = e.metaKey || e.ctrlKey
+
+      // Prevent shortcuts when typing in input fields
+      const isInputFocused =
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA' ||
+        document.activeElement?.contentEditable === 'true'
+
+      if (isInputFocused) return
+
+      // Command Palette: Cmd/Ctrl + Shift + P
+      if (e.key === 'P' && isModifier && e.shiftKey) {
+        e.preventDefault()
+        commandPalette.toggle()
+        return
+      }
+
+      // Search: Cmd/Ctrl + K
+      if (e.key === 'k' && isModifier) {
+        e.preventDefault()
+        commandPalette.show()
+        return
+      }
+
+      // Keyboard Shortcuts Help: Cmd/Ctrl + /
+      if (e.key === '/' && isModifier) {
+        e.preventDefault()
+        setShowKeyboardShortcuts(true)
+        return
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [commandPalette])
+
   if (shouldShowLoading) {
     return (
       <div className='flex h-screen bg-background' data-testid='app-shell'>
@@ -200,6 +246,20 @@ export function Shell({ children }: { children?: React.ReactNode }) {
           )}
         </div>
       </div>
+
+      {/* Command Palette */}
+      <NotableCommandPalette
+        open={commandPalette.open}
+        onOpenChange={commandPalette.setOpen}
+        onNewNote={handleCreateNote}
+        onShowKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
+      />
+
+      {/* Keyboard Shortcuts Dialog */}
+      <KeyboardShortcutsDialog
+        open={showKeyboardShortcuts}
+        onOpenChange={setShowKeyboardShortcuts}
+      />
     </div>
   )
 }

@@ -13,7 +13,7 @@ test.describe('User Menu', () => {
     ])
 
     // Navigate to the app with cookie already set
-    await page.goto('/')
+    await page.goto('/app')
 
     // Wait for the app to load
     await page.waitForSelector('[data-testid="app-shell"]', {

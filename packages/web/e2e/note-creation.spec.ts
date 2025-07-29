@@ -15,7 +15,7 @@ test.describe('Note Creation', () => {
     ])
 
     // Navigate to the app
-    await page.goto('/')
+    await page.goto('/app')
 
     // Wait for the app to load
     await page.waitForLoadState('networkidle')

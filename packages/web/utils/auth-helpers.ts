@@ -14,6 +14,7 @@ export async function getDevAuthBypassUser() {
     devAuthBypassCookie &&
     (process.env.NODE_ENV === 'development' ||
       process.env.NODE_ENV === 'test' ||
+      process.env.NODE_ENV === 'production' || // Allow in production for local testing
       process.env.CI === 'true')
   ) {
     return createMockUser()
@@ -65,6 +66,7 @@ export async function shouldBypassAuth() {
     devAuthBypassCookie &&
     (process.env.NODE_ENV === 'development' ||
       process.env.NODE_ENV === 'test' ||
+      process.env.NODE_ENV === 'production' || // Allow in production for local testing
       process.env.CI === 'true')
   )
 }

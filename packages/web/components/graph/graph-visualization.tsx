@@ -6,7 +6,16 @@ import * as d3 from 'd3'
 import { Button } from '@/design-system/components/button'
 import { Card } from '@/design-system/components/card'
 import { Input } from '@/design-system/components/input'
-import { Filter, RotateCcw, Search, ZoomIn, ZoomOut } from 'lucide-react'
+import {
+  BarChart3,
+  Filter,
+  Info,
+  RotateCcw,
+  Search,
+  Settings,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react'
 
 interface GraphNode extends d3.SimulationNodeDatum {
   id: string
@@ -15,6 +24,9 @@ interface GraphNode extends d3.SimulationNodeDatum {
   created_at: string
   updated_at: string
   connections: number
+  tags?: string[]
+  centrality?: number
+  clusterId?: number
 }
 
 interface GraphEdge extends d3.SimulationLinkDatum<GraphNode> {
@@ -49,9 +61,92 @@ export function GraphVisualization({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedLayout, setSelectedLayout] = useState<
-    'force' | 'circular' | 'hierarchical'
+    'force' | 'circular' | 'hierarchical' | 'radial'
   >('force')
   const [zoom, setZoom] = useState(1)
+  const [selectedFilters, setSelectedFilters] = useState({
+    dateRange: 'all' as 'all' | '7days' | '30days' | '90days',
+    minConnections: 0,
+    showIsolated: true,
+    showHubs: true,
+  })
+  const [showAnalytics, setShowAnalytics] = useState(false)
+  const [nodeColorBy, setNodeColorBy] = useState<
+    'connections' | 'date' | 'cluster'
+  >('connections')
+
+  // Compute graph analytics
+  const computeAnalytics = (nodes: GraphNode[], edges: GraphEdge[]) => {
+    // Calculate centrality scores
+    const centralityScores = new Map<string, number>()
+    nodes.forEach((node) => {
+      centralityScores.set(node.id, node.connections)
+    })
+
+    // Identify hubs (top 10% by connections)
+    const sortedByConnections = [...nodes].sort(
+      (a, b) => b.connections - a.connections
+    )
+    const hubThreshold = Math.max(1, Math.ceil(nodes.length * 0.1))
+    const hubs = new Set(
+      sortedByConnections.slice(0, hubThreshold).map((n) => n.id)
+    )
+
+    // Identify isolated nodes (0 connections)
+    const isolated = new Set(
+      nodes.filter((n) => n.connections === 0).map((n) => n.id)
+    )
+
+    return { centralityScores, hubs, isolated }
+  }
+
+  // Apply filters to nodes and edges
+  const applyFilters = (nodes: GraphNode[], edges: GraphEdge[]) => {
+    let filteredNodes = nodes.filter((node) => {
+      // Search filter
+      if (
+        searchTerm &&
+        !node.label.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return false
+      }
+
+      // Date filter
+      if (selectedFilters.dateRange !== 'all') {
+        const nodeDate = new Date(node.created_at)
+        const now = new Date()
+        const daysAgo =
+          {
+            '7days': 7,
+            '30days': 30,
+            '90days': 90,
+          }[selectedFilters.dateRange] || 0
+
+        const cutoffDate = new Date(
+          now.getTime() - daysAgo * 24 * 60 * 60 * 1000
+        )
+        if (nodeDate < cutoffDate) return false
+      }
+
+      // Connection filter
+      if (node.connections < selectedFilters.minConnections) return false
+
+      return true
+    })
+
+    const { hubs, isolated } = computeAnalytics(nodes, edges)
+
+    // Apply hub/isolated filters
+    if (!selectedFilters.showHubs) {
+      filteredNodes = filteredNodes.filter((node) => !hubs.has(node.id))
+    }
+
+    if (!selectedFilters.showIsolated) {
+      filteredNodes = filteredNodes.filter((node) => !isolated.has(node.id))
+    }
+
+    return filteredNodes
+  }
 
   useEffect(() => {
     if (!svgRef.current || !data.nodes.length) return
@@ -80,11 +175,11 @@ export function GraphVisualization({
     // Create main group for zoomable content
     const g = svg.append('g')
 
-    // Filter nodes and edges based on search
-    const filteredNodes = data.nodes.filter(
-      (node) =>
-        searchTerm === '' ||
-        node.label.toLowerCase().includes(searchTerm.toLowerCase())
+    // Apply advanced filters
+    const filteredNodes = applyFilters(data.nodes, data.edges)
+    const { centralityScores, hubs, isolated } = computeAnalytics(
+      data.nodes,
+      data.edges
     )
 
     const filteredNodeIds = new Set(filteredNodes.map((node) => node.id))
@@ -121,7 +216,7 @@ export function GraphVisualization({
         })
         break
       case 'hierarchical':
-        // Simple hierarchical layout based on connection count
+        // Hierarchical layout based on connection count
         const levels = Math.ceil(Math.sqrt(filteredNodes.length))
         filteredNodes.sort((a, b) => b.connections - a.connections)
         filteredNodes.forEach((node, i) => {
@@ -131,6 +226,27 @@ export function GraphVisualization({
           node.fy =
             (height / (Math.ceil(filteredNodes.length / levels) + 1)) *
             (level + 1)
+        })
+        break
+      case 'radial':
+        // Radial layout with hubs in center
+        const centerNodes = [...filteredNodes].filter((n) => hubs.has(n.id))
+        const peripheryNodes = [...filteredNodes].filter((n) => !hubs.has(n.id))
+
+        // Place hubs in center
+        centerNodes.forEach((node, i) => {
+          const angle = (i / centerNodes.length) * 2 * Math.PI
+          const innerRadius = 50
+          node.fx = width / 2 + innerRadius * Math.cos(angle)
+          node.fy = height / 2 + innerRadius * Math.sin(angle)
+        })
+
+        // Place other nodes in concentric circles
+        peripheryNodes.forEach((node, i) => {
+          const angle = (i / peripheryNodes.length) * 2 * Math.PI
+          const outerRadius = Math.min(width, height) / 3
+          node.fx = width / 2 + outerRadius * Math.cos(angle)
+          node.fy = height / 2 + outerRadius * Math.sin(angle)
         })
         break
     }
@@ -165,16 +281,39 @@ export function GraphVisualization({
           .on('end', dragended)
       )
 
-    // Add circles for nodes
+    // Add circles for nodes with advanced coloring
     node
       .append('circle')
-      .attr('r', (d) => Math.max(8, Math.min(20, 5 + d.connections * 2)))
-      .attr('fill', (d) => {
-        const hue = Math.abs(d.id.charCodeAt(0) * 137.5) % 360
-        return `hsl(${hue}, 70%, 60%)`
+      .attr('r', (d) => {
+        const baseSize = hubs.has(d.id) ? 12 : isolated.has(d.id) ? 6 : 8
+        return Math.max(baseSize, Math.min(25, baseSize + d.connections * 1.5))
       })
-      .attr('stroke', '#fff')
-      .attr('stroke-width', 2)
+      .attr('fill', (d) => {
+        switch (nodeColorBy) {
+          case 'connections':
+            const connectionIntensity = Math.min(d.connections / 10, 1)
+            return `hsl(${240 - connectionIntensity * 120}, 70%, ${60 + connectionIntensity * 20}%)`
+
+          case 'date':
+            const nodeAge = Date.now() - new Date(d.created_at).getTime()
+            const maxAge = 365 * 24 * 60 * 60 * 1000 // 1 year
+            const ageRatio = Math.min(nodeAge / maxAge, 1)
+            return `hsl(${120 - ageRatio * 60}, 70%, 60%)`
+
+          case 'cluster':
+          default:
+            if (hubs.has(d.id)) return '#ef4444' // Red for hubs
+            if (isolated.has(d.id)) return '#94a3b8' // Gray for isolated
+            const hue = Math.abs(d.id.charCodeAt(0) * 137.5) % 360
+            return `hsl(${hue}, 70%, 60%)`
+        }
+      })
+      .attr('stroke', (d) => {
+        if (hubs.has(d.id)) return '#dc2626'
+        if (isolated.has(d.id)) return '#6b7280'
+        return '#fff'
+      })
+      .attr('stroke-width', (d) => (hubs.has(d.id) ? 3 : 2))
 
     // Add labels
     node
@@ -196,7 +335,7 @@ export function GraphVisualization({
           .select('circle')
           .transition()
           .duration(200)
-          .attr('r', Math.max(12, Math.min(24, 8 + d.connections * 2)))
+          .attr('r', Math.max(14, Math.min(28, 10 + d.connections * 1.8)))
           .attr('stroke-width', 3)
 
         // Show tooltip
@@ -216,7 +355,10 @@ export function GraphVisualization({
             `
             <strong>${d.title}</strong><br/>
             Connections: ${d.connections}<br/>
-            Created: ${new Date(d.created_at).toLocaleDateString()}
+            ${hubs.has(d.id) ? '<span style="color: #ef4444">🔥 Hub Node</span><br/>' : ''}
+            ${isolated.has(d.id) ? '<span style="color: #94a3b8">🏝️ Isolated</span><br/>' : ''}
+            Created: ${new Date(d.created_at).toLocaleDateString()}<br/>
+            Updated: ${new Date(d.updated_at).toLocaleDateString()}
           `
           )
           .style('left', `${event.pageX + 10}px`)
@@ -227,7 +369,13 @@ export function GraphVisualization({
           .select('circle')
           .transition()
           .duration(200)
-          .attr('r', Math.max(8, Math.min(20, 5 + d.connections * 2)))
+          .attr('r', (d) => {
+            const baseSize = hubs.has(d.id) ? 12 : isolated.has(d.id) ? 6 : 8
+            return Math.max(
+              baseSize,
+              Math.min(25, baseSize + d.connections * 1.5)
+            )
+          })
           .attr('stroke-width', 2)
 
         // Remove tooltip
@@ -278,7 +426,7 @@ export function GraphVisualization({
       simulation.stop()
       d3.selectAll('.graph-tooltip').remove()
     }
-  }, [data, searchTerm, selectedLayout])
+  }, [data, searchTerm, selectedLayout, selectedFilters, nodeColorBy])
 
   const handleZoomIn = () => {
     if (svgRef.current) {
@@ -310,9 +458,15 @@ export function GraphVisualization({
     }
   }
 
+  const analytics = computeAnalytics(data.nodes, data.edges)
+  const filteredAnalytics = computeAnalytics(
+    applyFilters(data.nodes, data.edges),
+    data.edges
+  )
+
   return (
     <div className={`flex flex-col h-full ${className}`}>
-      {/* Controls */}
+      {/* Main Controls */}
       <Card className='p-4 mb-4'>
         <div className='flex flex-wrap items-center gap-4'>
           {/* Search */}
@@ -335,7 +489,29 @@ export function GraphVisualization({
             <option value='force'>Force Layout</option>
             <option value='circular'>Circular Layout</option>
             <option value='hierarchical'>Hierarchical Layout</option>
+            <option value='radial'>Radial Layout</option>
           </select>
+
+          {/* Node Coloring */}
+          <select
+            value={nodeColorBy}
+            onChange={(e) => setNodeColorBy(e.target.value as any)}
+            className='px-3 py-2 border rounded-md bg-background text-sm'
+          >
+            <option value='connections'>Color by Connections</option>
+            <option value='date'>Color by Date</option>
+            <option value='cluster'>Color by Type</option>
+          </select>
+
+          {/* Analytics Toggle */}
+          <Button
+            variant={showAnalytics ? 'default' : 'secondary'}
+            size='sm'
+            onClick={() => setShowAnalytics(!showAnalytics)}
+          >
+            <BarChart3 className='w-4 h-4 mr-1' />
+            Analytics
+          </Button>
 
           {/* Zoom Controls */}
           <div className='flex items-center gap-2'>
@@ -349,14 +525,113 @@ export function GraphVisualization({
               <RotateCcw className='w-4 h-4' />
             </Button>
           </div>
+        </div>
 
-          {/* Stats */}
-          <div className='text-sm text-muted-foreground'>
-            {data.stats.totalNotes} notes • {data.stats.totalLinks} links •
-            Zoom: {Math.round(zoom * 100)}%
+        {/* Advanced Filters */}
+        <div className='flex flex-wrap items-center gap-4 pt-4 border-t text-sm'>
+          <div className='flex items-center gap-2'>
+            <span className='text-muted-foreground'>Date:</span>
+            <select
+              value={selectedFilters.dateRange}
+              onChange={(e) =>
+                setSelectedFilters((prev) => ({
+                  ...prev,
+                  dateRange: e.target.value as any,
+                }))
+              }
+              className='px-2 py-1 border rounded bg-background'
+            >
+              <option value='all'>All Time</option>
+              <option value='7days'>Last 7 Days</option>
+              <option value='30days'>Last 30 Days</option>
+              <option value='90days'>Last 90 Days</option>
+            </select>
+          </div>
+
+          <div className='flex items-center gap-2'>
+            <span className='text-muted-foreground'>Min Connections:</span>
+            <input
+              type='range'
+              min='0'
+              max='10'
+              value={selectedFilters.minConnections}
+              onChange={(e) =>
+                setSelectedFilters((prev) => ({
+                  ...prev,
+                  minConnections: Number(e.target.value),
+                }))
+              }
+              className='w-20'
+            />
+            <span className='w-6'>{selectedFilters.minConnections}</span>
+          </div>
+
+          <label className='flex items-center gap-1'>
+            <input
+              type='checkbox'
+              checked={selectedFilters.showHubs}
+              onChange={(e) =>
+                setSelectedFilters((prev) => ({
+                  ...prev,
+                  showHubs: e.target.checked,
+                }))
+              }
+            />
+            Show Hubs
+          </label>
+
+          <label className='flex items-center gap-1'>
+            <input
+              type='checkbox'
+              checked={selectedFilters.showIsolated}
+              onChange={(e) =>
+                setSelectedFilters((prev) => ({
+                  ...prev,
+                  showIsolated: e.target.checked,
+                }))
+              }
+            />
+            Show Isolated
+          </label>
+
+          <div className='text-muted-foreground ml-auto'>
+            {applyFilters(data.nodes, data.edges).length} of{' '}
+            {data.stats.totalNotes} notes • Zoom: {Math.round(zoom * 100)}%
           </div>
         </div>
       </Card>
+
+      {/* Analytics Panel */}
+      {showAnalytics && (
+        <Card className='p-4 mb-4'>
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 text-sm'>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-red-600'>
+                {analytics.hubs.size}
+              </div>
+              <div className='text-muted-foreground'>Hub Notes</div>
+            </div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-gray-600'>
+                {analytics.isolated.size}
+              </div>
+              <div className='text-muted-foreground'>Isolated Notes</div>
+            </div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-green-600'>
+                {data.stats.avgConnections.toFixed(1)}
+              </div>
+              <div className='text-muted-foreground'>Avg Connections</div>
+            </div>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-purple-600'>
+                {data.stats.totalLinks}
+              </div>
+              <div className='text-muted-foreground'>Total Links</div>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Graph Container */}
       <div
@@ -370,16 +645,19 @@ export function GraphVisualization({
           className='absolute inset-0'
         />
 
-        {data.nodes.length === 0 && (
+        {applyFilters(data.nodes, data.edges).length === 0 && (
           <div className='absolute inset-0 flex items-center justify-center text-muted-foreground'>
             <div className='text-center'>
               <Filter className='w-16 h-16 mx-auto mb-4 opacity-50' />
               <h3 className='text-lg font-medium mb-2'>
-                No notes to visualize
+                {data.nodes.length === 0
+                  ? 'No notes to visualize'
+                  : 'No notes match current filters'}
               </h3>
               <p className='text-sm'>
-                Create some notes and link them together to see the knowledge
-                graph.
+                {data.nodes.length === 0
+                  ? 'Create some notes and link them together to see the knowledge graph.'
+                  : 'Try adjusting the filters or search terms to see more notes.'}
               </p>
             </div>
           </div>

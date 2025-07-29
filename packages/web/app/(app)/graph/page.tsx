@@ -64,11 +64,11 @@ export default function GraphPage() {
   }, [])
 
   const handleNodeClick = (nodeId: string) => {
-    router.push(`/notes/${nodeId}`)
+    router.push(`/app/notes/${nodeId}`)
   }
 
   const handleBackToNotes = () => {
-    router.push('/notes')
+    router.push('/app')
   }
 
   if (loading) {
