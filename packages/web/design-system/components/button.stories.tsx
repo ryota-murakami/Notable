@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button } from './button'
-import { Search, ChevronRight, Download, Heart, Trash2 } from 'lucide-react'
+import { ChevronRight, Download, Heart, Search, Trash2 } from 'lucide-react'
 
 const meta = {
   title: 'Design System/Components/Button',

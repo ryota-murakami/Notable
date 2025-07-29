@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { cn } from '../utils/theme'
 import { motion, type MotionProps } from 'framer-motion'
-import { Spinner } from '@/components/ui/spinner'
+import { Spinner } from '../../components/ui/spinner'
 
 export interface CardProps extends Omit<MotionProps, 'children'> {
   children?: React.ReactNode

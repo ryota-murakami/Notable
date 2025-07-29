@@ -3,7 +3,7 @@
  * Provides graph nodes and edges data with analytics and filtering
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 
@@ -454,7 +454,7 @@ async function updateCanvasPosition(supabase: any, userId: string, body: any) {
         y: y || 0,
         z: z || 0,
         is_pinned: isPinned || false,
-        color: color,
+        color,
         scale: scale || 1.0,
         group_id: groupId,
         created_by: userId,

@@ -1,27 +1,29 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Layout,
-  Save,
-  Settings,
+  ArrowLeft,
+  BarChart3,
+  Download,
   Eye,
   EyeOff,
   Grid3X3,
   Layers,
-  ArrowLeft,
-  Share,
-  Download,
-  Upload,
-  RefreshCw,
-  Plus,
+  Layout,
+  Lock,
   Palette,
-  Zap,
+  Pin,
+  Plus,
+  RefreshCw,
+  Save,
+  Settings,
+  Share,
   Target,
+  Upload,
   Users,
-  BarChart3,
+  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -69,10 +71,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 import { CanvasView } from '@/components/graph/canvas-view'
 import {
+  type GraphNode as BaseGraphNode,
   useGraphData,
   useGraphMutations,
   useGraphState,
-  type GraphNode as BaseGraphNode,
 } from '@/hooks/use-graph-data'
 
 // Convert GraphNode to CanvasNode

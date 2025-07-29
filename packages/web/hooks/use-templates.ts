@@ -4,10 +4,10 @@ import { useCallback } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import type {
-  Template,
-  TemplateVariable,
-  TemplateCategory,
   CreateTemplateData,
+  Template,
+  TemplateCategory,
+  TemplateVariable,
   UpdateTemplateData,
 } from '@/types/templates'
 

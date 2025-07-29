@@ -1,8 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useRef, useCallback } from 'react'
-import { Copy, Check, Code, Settings } from 'lucide-react'
+import { useCallback, useRef, useState } from 'react'
+import { Check, Code, Copy, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface CodeBlockProps {

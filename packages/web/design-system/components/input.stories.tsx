@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
-import { Input, SearchInput, PasswordInput } from './input'
-import { Mail, User, Phone, CreditCard, Calendar } from 'lucide-react'
+import { Input, PasswordInput, SearchInput } from './input'
+import { Calendar, CreditCard, Mail, Phone, User } from 'lucide-react'
 
 const meta = {
   title: 'Design System/Components/Input',
