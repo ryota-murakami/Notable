@@ -2,10 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useSyncService } from '@notable/sync'
-import { v4 as uuidv4 } from 'uuid'
-import { type Note } from '../types/note'
 import { useRouting } from '../hooks/use-routing'
-import { toast } from '../hooks/use-toast'
+import { useNotes } from '../hooks/use-notes'
 import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
 import { isTest } from '../lib/utils/environment'
@@ -14,7 +12,6 @@ import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 
 export function Shell() {
-  const [notes, setNotes] = useState<Note[]>([])
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const { syncService, isInitialized } = useSyncService()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
@@ -25,11 +22,22 @@ export function Shell() {
   const isTestMode = isTest()
 
   // Create mock user for testing when dev-auth-bypass is enabled
-  const mockUser: SupabaseUser | null = isTestMode && !user ? createMockUser() : null
+  const mockUser: SupabaseUser | null =
+    isTestMode && !user ? createMockUser() : null
 
   const currentUser = user || mockUser
 
   const shouldShowLoading = !isInitialized && !isTestMode
+
+  // Use the notes hook to manage notes data
+  const {
+    notes,
+    loading: notesLoading,
+    createNote,
+  } = useNotes({
+    enabled: !!currentUser && (isInitialized || isTestMode),
+    limit: 20,
+  })
 
   // Get user on mount
   useEffect(() => {
@@ -53,59 +61,25 @@ export function Shell() {
   }, [supabase])
 
   // Create a new note handler
-  const handleCreateNote = useCallback(() => {
-    try {
-      // Generate new note data
-      const now = new Date().toISOString()
-      const deviceId = 'web-device' // Simple device ID for now
+  const handleCreateNote = useCallback(async () => {
+    if (!currentUser) return
 
-      const newNote: Note = {
-        id: uuidv4(),
+    try {
+      await createNote({
         title: 'Untitled',
         content: '',
-        is_folder: false,
-        parent_id: undefined,
-        userId: currentUser?.id || 'anonymous', // Use real user ID or test user ID
-        tags: [],
-        isHidden: false,
-        version: 1,
-        device_id: deviceId,
-        last_modified: now,
-        vector_clock: { [deviceId]: 1 },
-        synced_at: undefined,
-        local_changes: true,
-        deleted: false,
-        created_at: now,
-        updated_at: now,
-      }
-
-      // Update local state
-      setNotes((prev) => [...prev, newNote])
-
-      // Show success message
-      toast({
-        title: 'Note created',
-        description: 'Your new note has been created successfully.',
       })
 
       // TODO: Navigate to the new note
-      console.info('Created new note:', newNote.id)
-
-      // TODO: Implement proper persistence through sync service
+      console.info('Created new note successfully')
     } catch (error) {
       console.error('Failed to create note:', error)
-      toast({
-        title: 'Failed to create note',
-        description: 'There was an error creating your note. Please try again.',
-        variant: 'destructive',
-      })
+      // Error handling is done in the hook
     }
-  }, [currentUser])
+  }, [currentUser, createNote])
 
   // Load existing notes when sync service is initialized
   useEffect(() => {
-    // For now, we'll start with an empty notes list
-    // TODO: Implement proper note loading through sync service
     if (isInitialized) {
       console.info('Sync service initialized, ready to manage notes')
     }
@@ -153,7 +127,11 @@ export function Shell() {
         <div className='space-y-2'>
           <div className='text-sm text-muted-foreground'>Recent</div>
           <div className='space-y-1'>
-            {notes.length === 0 ? (
+            {notesLoading ? (
+              <div className='text-sm text-muted-foreground p-2'>
+                Loading notes...
+              </div>
+            ) : notes.length === 0 ? (
               <div className='text-sm text-muted-foreground p-2'>
                 No notes yet. Create your first note to get started.
               </div>
@@ -166,6 +144,9 @@ export function Shell() {
                   <div className='flex-1 truncate'>
                     <div className='text-sm font-medium'>
                       {note.title || 'Untitled'}
+                    </div>
+                    <div className='text-xs text-muted-foreground'>
+                      {new Date(note.updated_at).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
