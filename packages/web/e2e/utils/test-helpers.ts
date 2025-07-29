@@ -1,9 +1,24 @@
 import { type Page } from '@playwright/test'
 
 export async function loginAsTestUser(page: Page) {
-  // Mock authentication for tests
-  await page.goto('/auth/mock-login')
-  // Implementation will depend on your auth system
+  // Set dev auth bypass cookie for testing
+  await page.context().addCookies([
+    {
+      name: 'dev-auth-bypass',
+      value: 'true',
+      domain: 'localhost',
+      path: '/',
+    },
+  ])
+
+  // Navigate to the app
+  await page.goto('/app')
+
+  // Wait for app shell to be visible
+  await page.waitForSelector('[data-testid="app-shell"]', {
+    state: 'visible',
+    timeout: 10000,
+  })
 }
 
 export async function createTestNote(

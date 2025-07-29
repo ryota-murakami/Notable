@@ -2,6 +2,16 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Application Shell', () => {
   test.beforeEach(async ({ page }) => {
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
     // Navigate to the app
     await page.goto('/app')
   })
