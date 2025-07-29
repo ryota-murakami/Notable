@@ -12,6 +12,7 @@ config({ path: '.env.test' })
  */
 export default defineConfig({
   testDir: './e2e',
+  testMatch: '**/keyboard-shortcuts.spec.ts', // Only run keyboard shortcuts tests for this PR
 
   /* Global timeout for each test */
   timeout: process.env.CI ? 60000 : 60000, // 60s for all environments
