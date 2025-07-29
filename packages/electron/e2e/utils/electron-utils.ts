@@ -2,6 +2,7 @@ import { _electron as electron, type ElectronApplication, type Page } from '@pla
 import * as path from 'path'
 import * as os from 'os'
 import * as fs from 'fs'
+import { fileURLToPath } from 'url'
 
 export interface ElectronTestContext {
   app: ElectronApplication
@@ -13,6 +14,7 @@ export interface ElectronTestContext {
  */
 export async function launchElectronApp(): Promise<ElectronTestContext> {
   // Path to the main process file (compiled JavaScript)
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
   const mainPath = path.join(__dirname, '../../build/main.js')
   
   // Launch Electron app
