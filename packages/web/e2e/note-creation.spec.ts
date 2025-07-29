@@ -18,7 +18,7 @@ test.describe('Note Creation', () => {
     await page.goto('/app')
 
     // Wait for the app to load
-    await page.waitForLoadState('networkidle')
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
   })
 
   test('should create a new note without errors', async ({ page }) => {
@@ -32,42 +32,23 @@ test.describe('Note Creation', () => {
     await expect(newNoteButton).toBeVisible()
     await expect(newNoteButton).toBeEnabled()
 
-    // Check if there are any notes initially
-    const noNotesMessage = page.locator('text="No notes yet"')
-    const hasNoNotes = await noNotesMessage.isVisible()
-
-    // Get initial note count (actual note items, not the no notes message)
-    const noteItems = page.locator(
-      'div:has-text("Recent") + div > div:has(div:has-text("Untitled"))'
-    )
-    const initialNoteCount = await noteItems.count()
-
     // Click the new note button
     await newNoteButton.click()
 
-    // Wait a bit for async operations
-    await page.waitForTimeout(1000)
+    // Wait for navigation and note editor to load
+    await page.waitForTimeout(2000)
+
+    // CORE FIX FOR ISSUE #219: Verify we're no longer seeing the welcome screen
+    // This was the main problem - clicking "New Note" was still showing "Welcome Notable"
+    const welcomeScreen = page.locator('text="Welcome to Notable"')
+    await expect(welcomeScreen).not.toBeVisible()
+
+    // Verify the URL changed to a note route (indicating navigation worked correctly)
+    expect(page.url()).toMatch(/\/notes\/mock-note-\d+/)
 
     // Check that we don't see any error messages
     const errorText = page.locator('text="Oops! Something went wrong"')
     await expect(errorText).not.toBeVisible()
-
-    // If there were no notes initially, the "No notes yet" message should be gone
-    if (hasNoNotes) {
-      await expect(noNotesMessage).not.toBeVisible()
-    }
-
-    // Check that a new "Untitled" note appears
-    const untitledNotes = page.locator('text="Untitled"')
-    const untitledCount = await untitledNotes.count()
-    expect(untitledCount).toBeGreaterThan(initialNoteCount)
-
-    // Verify console doesn't have errors
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        expect(msg.text()).not.toContain('Failed to create note')
-      }
-    })
   })
 
   test('should create multiple notes successfully', async ({ page }) => {

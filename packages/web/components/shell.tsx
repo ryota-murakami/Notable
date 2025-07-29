@@ -66,7 +66,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       if (newNote) {
         setSelectedNoteId(newNote.id)
         // Also navigate for URL updates
-        router.push(`/app/notes/${newNote.id}`)
+        router.push(`/notes/${newNote.id}`)
       }
     } catch (error) {
       console.error('Failed to create note:', error)
@@ -77,7 +77,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   const handleNoteSelect = useCallback(
     (noteId: string) => {
       setSelectedNoteId(noteId)
-      router.push(`/app/notes/${noteId}`)
+      router.push(`/notes/${noteId}`)
     },
     [router]
   )
