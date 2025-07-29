@@ -133,6 +133,7 @@ jobs:
 
       - name: Stop Web Server
         if: always()
+        shell: bash
         run: |
           if [ -f packages/web/web-server.pid ]; then
             kill $(cat packages/web/web-server.pid) || true
@@ -208,7 +209,7 @@ jobs:
           # Build the app
           pnpm build
           # Test packaging (creates distributable but doesn't sign)
-          pnpm pack
+          pnpm build:electron
         env:
           # Skip code signing in CI
           CSC_IDENTITY_AUTO_DISCOVERY: false

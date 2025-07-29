@@ -6,7 +6,8 @@
   "type": "module",
   "main": "build/main.js",
   "scripts": {
-    "build": "rm -rf build && mkdir -p build && echo 'TypeScript compilation starting...' && tsc && echo 'TypeScript compilation done. Moving files...' && mv build/packages/electron/* build/ 2>/dev/null || true && rm -rf build/packages && echo 'Build directory contents:' && ls -la build/ && electron-builder",
+    "build": "rm -rf build && mkdir -p build && echo 'TypeScript compilation starting...' && tsc && echo 'TypeScript compilation done. Moving files...' && (mv build/packages/electron/* build/ 2>/dev/null || true) && (rm -rf build/packages 2>/dev/null || true) && echo 'Build directory contents:' && ls -la build/ && echo 'Checking for main.js:' && test -f build/main.js && echo 'main.js found!' || (echo 'main.js NOT found!' && exit 1)",
+    "build:electron": "rm -rf build && mkdir -p build && echo 'TypeScript compilation starting...' && tsc && echo 'TypeScript compilation done. Moving files...' && (mv build/packages/electron/* build/ 2>/dev/null || true) && (rm -rf build/packages 2>/dev/null || true) && echo 'Build directory contents:' && ls -la build/ && electron-builder",
     "dev": "node scripts/dev-with-server.cjs",
     "dev:electron-only": "ELECTRON_START_URL=http://localhost:4378 electron .",
     "start": "electron .",
