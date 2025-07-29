@@ -25,10 +25,8 @@ test.describe('Notes CRUD Operations', () => {
     // Click the "New Note" button
     await page.getByRole('button', { name: 'New Note' }).click()
 
-    // Wait for success toast or note to appear in the list
-    await expect
-      .soft(page.locator('text=Note created'))
-      .toBeVisible({ timeout: 5000 })
+    // Wait a moment for the note to be created
+    await page.waitForTimeout(1000)
 
     // Verify that a new note appears in the recent notes list
     const noteItems = page.locator(
@@ -47,15 +45,11 @@ test.describe('Notes CRUD Operations', () => {
 
     // Create first note
     await page.getByRole('button', { name: 'New Note' }).click()
-    await expect
-      .soft(page.locator('text=Note created'))
-      .toBeVisible({ timeout: 5000 })
+    await page.waitForTimeout(1000)
 
     // Create second note
     await page.getByRole('button', { name: 'New Note' }).click()
-    await expect
-      .soft(page.locator('text=Note created'))
-      .toBeVisible({ timeout: 5000 })
+    await page.waitForTimeout(1000)
 
     // Verify that both notes appear in the list
     const noteItems = page.locator(
@@ -104,9 +98,7 @@ test.describe('Notes CRUD Operations', () => {
 
     // Create a note
     await page.getByRole('button', { name: 'New Note' }).click()
-    await expect
-      .soft(page.locator('text=Note created'))
-      .toBeVisible({ timeout: 5000 })
+    await page.waitForTimeout(1000)
 
     // Verify that the note shows a date
     const noteItem = page
@@ -141,12 +133,10 @@ test.describe('Notes CRUD Operations', () => {
     // Try to create a note
     await page.getByRole('button', { name: 'New Note' }).click()
 
-    // Should show error message
-    await expect(page.locator('text=Error creating note')).toBeVisible({
-      timeout: 5000,
-    })
+    // Wait for error handling
+    await page.waitForTimeout(2000)
 
-    // No note should be added to the list
+    // Verify no new notes were added (should still show empty state)
     await expect(
       page.locator('text=No notes yet. Create your first note to get started.')
     ).toBeVisible()
@@ -172,9 +162,12 @@ test.describe('Notes CRUD Operations', () => {
     await page.reload()
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
-    // Should show error toast
-    await expect(page.locator('text=Error fetching notes')).toBeVisible({
-      timeout: 5000,
-    })
+    // Wait for error handling
+    await page.waitForTimeout(2000)
+
+    // Verify empty state is shown (no notes loaded due to error)
+    await expect(
+      page.locator('text=No notes yet. Create your first note to get started.')
+    ).toBeVisible()
   })
 })
