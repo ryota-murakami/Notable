@@ -55,7 +55,7 @@ export async function evaluateInMain<T>(
   app: ElectronApplication,
   func: (electronAPI: any) => T | Promise<T>
 ): Promise<T> {
-  return await app.evaluate(func)
+  return app.evaluate(func)
 }
 
 /**
@@ -80,7 +80,7 @@ export async function triggerMenuItem(
  * Get all windows
  */
 export async function getAllWindows(app: ElectronApplication): Promise<Page[]> {
-  return await app.windows()
+  return app.windows()
 }
 
 /**
@@ -104,28 +104,28 @@ export async function waitForNewWindow(
 export async function sendIPCMessage<T>(
   page: Page,
   channel: string,
-  ...args: any[]
+  ...args: unknown[]
 ): Promise<T> {
-  return await page.evaluate(async ({ channel, args }) => {
-    return await (window as any).electronAPI[channel](...args)
+  return page.evaluate(async ({ channel, args }) => {
+    return (window as any).electronAPI[channel](...args)
   }, { channel, args })
 }
 
 /**
  * Listen for IPC message from main process
  */
-export async function waitForIPCMessage(
+export function waitForIPCMessage(
   page: Page,
   channel: string,
   timeout = 5000
-): Promise<any> {
+): Promise<unknown> {
   // Create a unique handler name
   const handlerName = `__ipcHandler_${channel.replace(/-/g, '_')}_${Date.now()}`
   
   console.log(`[Test Utils] Setting up waitForIPCMessage for channel: ${channel}`)
   
   // Create a promise that will resolve when the message is received
-  const messagePromise = new Promise<any>((resolve, reject) => {
+  const messagePromise = new Promise<unknown>((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       console.error(`[Test Utils] Timeout waiting for IPC message: ${channel}`)
       reject(new Error(`Timeout waiting for IPC message: ${channel}`))
@@ -135,7 +135,7 @@ export async function waitForIPCMessage(
     ;(async () => {
       try {
         // Expose a function that can be called from the page
-        await page.exposeFunction(handlerName, (data: any) => {
+        await page.exposeFunction(handlerName, (data: unknown) => {
           console.log(`[Test Utils] Handler called for channel ${channel} with data:`, data)
           clearTimeout(timeoutId)
           resolve(data || true) // Resolve with data or true if no data
@@ -152,7 +152,7 @@ export async function waitForIPCMessage(
           throw new Error('(window as any).electronAPI.onMessage is not available')
         }
         
-        const cleanup = (window as any).electronAPI.onMessage(channel, (data: any) => {
+        const cleanup = (window as any).electronAPI.onMessage(channel, (data: unknown) => {
           console.log(`[Test] Received IPC message on channel ${channel}:`, data)
           ;(window as any)[handlerName](data)
           cleanup()
