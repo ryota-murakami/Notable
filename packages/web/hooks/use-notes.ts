@@ -77,6 +77,11 @@ export function useNotes(options: UseNotesOptions = {}) {
       setNotes((prev) => [mockNote, ...prev])
       setTotal((prev) => prev + 1)
 
+      toast({
+        title: 'Note created',
+        description: 'Your note has been created successfully.',
+      })
+
       return mockNote
     }
 
