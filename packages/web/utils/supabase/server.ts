@@ -50,21 +50,15 @@ export async function createClient() {
     },
   })
 
-  // Check for dev auth bypass in test/development environments
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.NODE_ENV === 'test' ||
-    process.env.CI === 'true'
-  ) {
-    const devBypassUser = await getDevAuthBypassUser()
-    if (devBypassUser) {
-      // Override the auth.getUser method to return mock user
-      const originalGetUser = client.auth.getUser.bind(client.auth)
-      client.auth.getUser = async () => ({
-        data: { user: devBypassUser },
-        error: null,
-      })
-    }
+  // Check for dev auth bypass in test/development/CI environments
+  const devBypassUser = await getDevAuthBypassUser()
+  if (devBypassUser) {
+    // Override the auth.getUser method to return mock user
+    const originalGetUser = client.auth.getUser.bind(client.auth)
+    client.auth.getUser = async () => ({
+      data: { user: devBypassUser },
+      error: null,
+    })
   }
 
   return client
