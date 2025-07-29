@@ -4,8 +4,9 @@ import { getDevAuthBypassUser } from '@/utils/auth-helpers'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const supabase = await createClient()
 
   try {
@@ -30,7 +31,7 @@ export async function GET(
     const { data: note, error: noteError } = await supabase
       .from('notes')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -64,7 +65,7 @@ export async function GET(
         )
       `
       )
-      .eq('note_id', params.id)
+      .eq('note_id', id)
 
     if (noteTagsError) {
       console.error('Error fetching note tags:', noteTagsError)
@@ -92,8 +93,9 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const supabase = await createClient()
 
   try {
@@ -128,7 +130,7 @@ export async function POST(
     const { data: note, error: noteError } = await supabase
       .from('notes')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -170,7 +172,7 @@ export async function POST(
     const { data: existingNoteTags, error: existingError } = await supabase
       .from('note_tags')
       .select('tag_id')
-      .eq('note_id', params.id)
+      .eq('note_id', id)
 
     if (existingError) {
       console.error('Error fetching existing note tags:', existingError)
@@ -192,7 +194,7 @@ export async function POST(
 
     // Create new note-tag relationships
     const noteTagsToInsert = newTagIds.map((tagId) => ({
-      note_id: params.id,
+      note_id: id,
       tag_id: tagId,
     }))
 

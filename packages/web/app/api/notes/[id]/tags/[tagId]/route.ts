@@ -4,8 +4,9 @@ import { getDevAuthBypassUser } from '@/utils/auth-helpers'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; tagId: string } }
+  { params }: { params: Promise<{ id: string; tagId: string }> }
 ) {
+  const { id, tagId } = await params
   const supabase = await createClient()
 
   try {
@@ -30,7 +31,7 @@ export async function DELETE(
     const { data: note, error: noteError } = await supabase
       .from('notes')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -50,7 +51,7 @@ export async function DELETE(
     const { data: tag, error: tagError } = await supabase
       .from('tags')
       .select('id, name')
-      .eq('id', params.tagId)
+      .eq('id', tagId)
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -70,8 +71,8 @@ export async function DELETE(
     const { data: noteTag, error: noteTagError } = await supabase
       .from('note_tags')
       .select('id')
-      .eq('note_id', params.id)
-      .eq('tag_id', params.tagId)
+      .eq('note_id', id)
+      .eq('tag_id', tagId)
       .maybeSingle()
 
     if (noteTagError) {
@@ -93,8 +94,8 @@ export async function DELETE(
     const { error: deleteError } = await supabase
       .from('note_tags')
       .delete()
-      .eq('note_id', params.id)
-      .eq('tag_id', params.tagId)
+      .eq('note_id', id)
+      .eq('tag_id', tagId)
 
     if (deleteError) {
       console.error('Error removing tag from note:', deleteError)

@@ -5,8 +5,9 @@ import type { TagUpdate } from '@/types/tags'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const supabase = await createClient()
 
   try {
@@ -31,7 +32,7 @@ export async function GET(
     const { data: tag, error: tagError } = await supabase
       .from('tags')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -82,8 +83,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const supabase = await createClient()
 
   try {
@@ -111,7 +113,7 @@ export async function PUT(
     const { data: existingTag, error: fetchError } = await supabase
       .from('tags')
       .select('id, name')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -154,7 +156,7 @@ export async function PUT(
           .select('id')
           .eq('name', name.trim())
           .eq('user_id', user.id)
-          .neq('id', params.id)
+          .neq('id', id)
           .maybeSingle()
 
         if (duplicateError) {
@@ -186,7 +188,7 @@ export async function PUT(
     const { data: updatedTag, error: updateError } = await supabase
       .from('tags')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single()
@@ -223,8 +225,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const supabase = await createClient()
 
   try {
@@ -249,7 +252,7 @@ export async function DELETE(
     const { data: tag, error: fetchError } = await supabase
       .from('tags')
       .select('id, name')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .maybeSingle()
 
@@ -294,7 +297,7 @@ export async function DELETE(
     const { error: deleteError } = await supabase
       .from('tags')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
 
     if (deleteError) {
