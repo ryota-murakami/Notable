@@ -27,10 +27,8 @@ export function useNotes(options: UseNotesOptions = {}) {
   const fetchNotes = useCallback(async () => {
     if (!enabled) return
 
-    // In test environment, return mock data immediately
+    // In test environment, preserve existing notes and don't fetch from server
     if (isTest()) {
-      setNotes([])
-      setTotal(0)
       setLoading(false)
       return
     }
