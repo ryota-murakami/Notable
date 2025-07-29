@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useNote } from '@/hooks/use-note'
 import { Spinner } from '@/components/ui/spinner'
+import { RichTextEditor } from '@/components/rich-text-editor'
+import type { Value } from 'platejs'
 
 interface NoteEditorProps {
   noteId: string
@@ -10,24 +12,30 @@ interface NoteEditorProps {
 
 export function NoteEditor({ noteId }: NoteEditorProps) {
   const { note, loading, updateNote } = useNote(noteId)
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-
-  useEffect(() => {
-    if (note) {
-      setTitle(note.title)
-      setContent(note.content)
-    }
-  }, [note])
 
   const handleTitleChange = (newTitle: string) => {
-    setTitle(newTitle)
     updateNote({ title: newTitle })
   }
 
-  const handleContentChange = (newContent: string) => {
-    setContent(newContent)
-    updateNote({ content: newContent })
+  const handleContentChange = (newContent: Value) => {
+    // Convert Plate.js Value to JSON string for storage
+    const contentString = JSON.stringify(newContent)
+    updateNote({ content: contentString })
+  }
+
+  // Parse content from JSON string to Plate.js Value
+  const parseContent = (content: string): Value => {
+    try {
+      return JSON.parse(content)
+    } catch {
+      // Fallback to plain text paragraph if parsing fails
+      return [
+        {
+          type: 'p',
+          children: [{ text: content }],
+        },
+      ]
+    }
   }
 
   if (loading) {
@@ -56,20 +64,13 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
 
   return (
     <div className='flex-1 flex flex-col p-6'>
-      <div className='max-w-4xl mx-auto w-full flex-1'>
-        <input
-          value={title}
-          onChange={(e) => handleTitleChange(e.target.value)}
-          placeholder='Untitled'
-          className='w-full text-3xl font-bold border-none outline-none bg-transparent mb-6 placeholder:text-muted-foreground'
-        />
-        <textarea
-          value={content}
-          onChange={(e) => handleContentChange(e.target.value)}
-          placeholder='Start writing...'
-          className='w-full min-h-96 border-none outline-none bg-transparent resize-none placeholder:text-muted-foreground text-base leading-relaxed'
-        />
-      </div>
+      <RichTextEditor
+        noteId={noteId}
+        initialTitle={note.title}
+        initialContent={parseContent(note.content)}
+        onTitleChange={handleTitleChange}
+        onContentChange={handleContentChange}
+      />
     </div>
   )
 }
