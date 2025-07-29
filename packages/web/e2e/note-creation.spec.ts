@@ -155,7 +155,7 @@ test.describe('Note Creation', () => {
 
     // Wait for editor to appear or welcome message to disappear
     await page.waitForFunction(() => {
-      const editor = document.querySelector('textarea[placeholder="Start writing your note..."]');
+      const editor = document.querySelector('textarea[placeholder="Start writing your note..."]') as HTMLTextAreaElement;
       const welcome = document.querySelector('text="Welcome to Notable"');
       return (editor && editor.offsetParent !== null) || !welcome;
     }, { timeout: 5000 })
