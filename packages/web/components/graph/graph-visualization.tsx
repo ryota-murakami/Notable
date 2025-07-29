@@ -369,7 +369,7 @@ export function GraphVisualization({
           .select('circle')
           .transition()
           .duration(200)
-          .attr('r', (d) => {
+          .attr('r', (d: any) => {
             const baseSize = hubs.has(d.id) ? 12 : isolated.has(d.id) ? 6 : 8
             return Math.max(
               baseSize,

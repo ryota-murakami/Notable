@@ -128,7 +128,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       const isInputFocused =
         document.activeElement?.tagName === 'INPUT' ||
         document.activeElement?.tagName === 'TEXTAREA' ||
-        document.activeElement?.contentEditable === 'true'
+        (document.activeElement as HTMLElement)?.contentEditable === 'true'
 
       if (isInputFocused) return
 
