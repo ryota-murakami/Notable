@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { env } from '@/env'
+import { getDevAuthBypassUser } from '@/utils/auth-helpers'
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -30,7 +31,7 @@ export async function createClient() {
     )
   }
 
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  const client = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -48,4 +49,23 @@ export async function createClient() {
       },
     },
   })
+
+  // Check for dev auth bypass in test/development environments
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.CI === 'true'
+  ) {
+    const devBypassUser = await getDevAuthBypassUser()
+    if (devBypassUser) {
+      // Override the auth.getUser method to return mock user
+      const originalGetUser = client.auth.getUser.bind(client.auth)
+      client.auth.getUser = async () => ({
+        data: { user: devBypassUser },
+        error: null,
+      })
+    }
+  }
+
+  return client
 }

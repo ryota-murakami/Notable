@@ -2,11 +2,21 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Notes CRUD Operations', () => {
   test.beforeEach(async ({ page }) => {
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
     // Navigate to the application
     await page.goto('/')
 
     // Wait for the shell to load
-    await expect(page.getByTestId('app-shell')).toBeVisible()
+    await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 10000 })
   })
 
   test('should create a new note', async ({ page }) => {
