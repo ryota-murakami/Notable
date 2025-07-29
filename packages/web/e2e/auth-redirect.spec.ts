@@ -45,13 +45,19 @@ test.describe('Auth Route Middleware', () => {
       },
     ])
 
-    // Navigate to home page with the cookie set
-    await page.goto('/')
+    // Navigate directly to the app page (the auth bypass cookie prevents redirects from /)
+    await page.goto('/app')
 
-    // Should stay on home page
-    await expect(page).toHaveURL('/')
-    // Wait for the authenticated app to load - check for the "New Note" button which only appears when authenticated
-    await expect(page.getByRole('button', { name: 'New Note' })).toBeVisible()
+    // Should be on the app page
+    await expect(page).toHaveURL('/app')
+    // Wait for the authenticated app to load - check for the app shell which only appears when authenticated
+    await expect(page.getByTestId('app-shell')).toBeVisible()
+
+    // Verify we're not redirected to auth page (which would happen if auth failed)
+    await expect(page).not.toHaveURL(/\/auth/)
+
+    // Verify page title indicates we're in the app
+    await expect(page).toHaveTitle(/Notable/)
   })
 
   test('should not apply middleware to static assets', async ({ page }) => {
