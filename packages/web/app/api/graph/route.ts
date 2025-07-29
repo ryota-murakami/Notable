@@ -83,6 +83,11 @@ export async function GET(_request: NextRequest) {
       user = authUser
     }
 
+    // Ensure user is not null at this point
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // Get all notes for the user
     console.log('Fetching notes for user:', user.id)
     const { data: notes, error: notesError } = await supabase
