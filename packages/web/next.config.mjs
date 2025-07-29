@@ -4,6 +4,9 @@ const nextConfig = {
   trailingSlash: false,
   // Transpile workspace packages for proper module resolution
   transpilePackages: ['@notable/sync'],
+  env: {
+    SKIP_ENV_VALIDATION: 'true',
+  },
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],

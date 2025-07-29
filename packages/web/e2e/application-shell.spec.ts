@@ -139,7 +139,7 @@ test.describe('Application Shell', () => {
 
     // Should navigate to the note
     await expect(page).toHaveURL(/\/notes\/[a-f0-9-]+/)
-    await expect(page.getByDisplayValue('Clickable Note')).toBeVisible()
+    await expect(page.locator('input[value="Clickable Note"]')).toBeVisible()
   })
 
   test('should show user menu in header', async ({ page }) => {
