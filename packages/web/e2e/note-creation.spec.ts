@@ -45,8 +45,8 @@ test.describe('Note Creation', () => {
     // Click the new note button
     await newNoteButton.click()
 
-    // Wait a bit for async operations
-    await page.waitForTimeout(1000)
+    // Wait for new note to be created - check for Untitled note to appear
+    await page.waitForSelector('text="Untitled"', { timeout: 5000 })
 
     // Check that we don't see any error messages
     const errorText = page.locator('text="Oops! Something went wrong"')
@@ -79,7 +79,8 @@ test.describe('Note Creation', () => {
     // Create 3 notes
     for (let i = 0; i < 3; i++) {
       await newNoteButton.click()
-      await page.waitForTimeout(200) // Small delay between creations
+      // Wait for the note to be created before creating the next one
+      await page.waitForSelector(`text="Untitled" >> nth=${i}`, { timeout: 5000 })
     }
 
     // Should see at least 3 notes with "Untitled" text
@@ -95,8 +96,11 @@ test.describe('Note Creation', () => {
     // Navigate to the app
     await page.goto('/')
 
-    // Wait for the app to load
-    await page.waitForTimeout(2000)
+    // Wait for the app to load - check for app shell or main content
+    await page.waitForSelector('[data-testid="app-shell"], main', { 
+      state: 'visible',
+      timeout: 10000 
+    })
 
     // Check that we don't see a crash error
     const errorText = page.locator('text="Oops! Something went wrong"')
@@ -117,7 +121,16 @@ test.describe('Note Creation', () => {
     })
 
     await page.goto('/')
-    await page.waitForTimeout(2000)
+    
+    // Wait for page to settle after connection errors
+    await page.waitForLoadState('domcontentloaded')
+    
+    // Give the app time to handle the connection error gracefully
+    await page.waitForFunction(() => {
+      const body = document.body.textContent || '';
+      // App has finished attempting to load when it either shows content or an error
+      return body.length > 100 || body.includes('Oops!');
+    }, { timeout: 5000 })
 
     // Should not crash with "Oops! Something went wrong"
     const crashError = page.locator('text="Oops! Something went wrong"')
@@ -140,8 +153,12 @@ test.describe('Note Creation', () => {
     const newNoteButton = page.locator('button:has-text("New Note")')
     await newNoteButton.click()
 
-    // Wait for editor to appear or welcome message to update
-    await page.waitForTimeout(1000)
+    // Wait for editor to appear or welcome message to disappear
+    await page.waitForFunction(() => {
+      const editor = document.querySelector('textarea[placeholder="Start writing your note..."]');
+      const welcome = document.querySelector('text="Welcome to Notable"');
+      return (editor && editor.offsetParent !== null) || !welcome;
+    }, { timeout: 5000 })
 
     // Either welcome message is hidden OR editor is visible (implementation may vary)
     const editor = page.locator('textarea[placeholder="Start writing your note..."]')
@@ -174,20 +191,28 @@ test.describe('Note Creation', () => {
     // Create a new note first
     const newNoteButton = page.locator('button:has-text("New Note")')
     await newNoteButton.click()
-    await page.waitForTimeout(500)
-
-    // Fill in some content
+    
+    // Wait for editor elements to be visible
     const titleInput = page.locator('input[placeholder="Note title..."]')
     const editor = page.locator('textarea[placeholder="Start writing your note..."]')
+    await expect(titleInput).toBeVisible({ timeout: 5000 })
+    await expect(editor).toBeVisible({ timeout: 5000 })
+
+    // Fill in some content
     await titleInput.fill('Test Note')
     await editor.fill('Test content')
 
-    // Wait for auto-save
-    await page.waitForTimeout(2500)
+    // Wait for auto-save by monitoring network activity
+    await page.waitForLoadState('networkidle', { timeout: 5000 })
 
     // Create another note
     await newNoteButton.click()
-    await page.waitForTimeout(500)
+    
+    // Wait for second note's editor to be ready
+    await page.waitForSelector('input[placeholder="Note title..."]', { 
+      state: 'visible',
+      timeout: 5000 
+    })
 
     // Now we should have two notes in the sidebar
     const untitledNotes = page.locator('text="Untitled"')
