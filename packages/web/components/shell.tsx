@@ -13,7 +13,7 @@ import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 
-export function Shell() {
+export function Shell({ children }: { children?: React.ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([])
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const { syncService, isInitialized } = useSyncService()
@@ -25,7 +25,8 @@ export function Shell() {
   const isTestMode = isTest()
 
   // Create mock user for testing when dev-auth-bypass is enabled
-  const mockUser: SupabaseUser | null = isTestMode && !user ? createMockUser() : null
+  const mockUser: SupabaseUser | null =
+    isTestMode && !user ? createMockUser() : null
 
   const currentUser = user || mockUser
 
@@ -182,17 +183,21 @@ export function Shell() {
         </header>
 
         {/* Main content area */}
-        <div className='flex-1 flex items-center justify-center'>
-          <div className='text-center'>
-            <h3 className='text-xl font-semibold'>Welcome to Notable</h3>
-            <p className='text-muted-foreground mt-2'>
-              Your notes are now synced across all devices using CRDT
-              technology.
-            </p>
-            <p className='text-sm text-muted-foreground mt-4'>
-              Sync Status: {syncService ? 'Connected' : 'Disconnected'}
-            </p>
-          </div>
+        <div className='flex-1'>
+          {children || (
+            <div className='flex items-center justify-center h-full'>
+              <div className='text-center'>
+                <h3 className='text-xl font-semibold'>Welcome to Notable</h3>
+                <p className='text-muted-foreground mt-2'>
+                  Your notes are now synced across all devices using CRDT
+                  technology.
+                </p>
+                <p className='text-sm text-muted-foreground mt-4'>
+                  Sync Status: {syncService ? 'Connected' : 'Disconnected'}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
