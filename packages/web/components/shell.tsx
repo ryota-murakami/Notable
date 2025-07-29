@@ -12,9 +12,12 @@ import { isTest } from '../lib/utils/environment'
 import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
+import { BasicEditor } from './editor/basic-editor'
+import type { Descendant } from 'slate'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([])
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const { syncService, isInitialized } = useSyncService()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
@@ -83,13 +86,15 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       // Update local state
       setNotes((prev) => [...prev, newNote])
 
+      // Select the new note to show the editor
+      setSelectedNoteId(newNote.id)
+
       // Show success message
       toast({
         title: 'Note created',
         description: 'Your new note has been created successfully.',
       })
 
-      // TODO: Navigate to the new note
       console.info('Created new note:', newNote.id)
 
       // TODO: Implement proper persistence through sync service
@@ -102,6 +107,45 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       })
     }
   }, [currentUser])
+
+  // Handle note selection
+  const handleSelectNote = useCallback((noteId: string) => {
+    setSelectedNoteId(noteId)
+  }, [])
+
+  // Handle note content change
+  const handleNoteContentChange = useCallback(
+    (noteId: string, content: Descendant[]) => {
+      setNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note.id === noteId
+            ? {
+                ...note,
+                content: JSON.stringify(content),
+                updated_at: new Date().toISOString(),
+              }
+            : note
+        )
+      )
+      // TODO: Implement proper persistence through sync service
+    },
+    []
+  )
+
+  // Get the selected note
+  const selectedNote = notes.find((note) => note.id === selectedNoteId)
+
+  // Parse note content for the editor
+  const getEditorValue = (note: Note | undefined): Descendant[] => {
+    if (!note || !note.content) {
+      return [{ type: 'paragraph', children: [{ text: '' }] }]
+    }
+    try {
+      return JSON.parse(note.content)
+    } catch {
+      return [{ type: 'paragraph', children: [{ text: note.content }] }]
+    }
+  }
 
   // Load existing notes when sync service is initialized
   useEffect(() => {
@@ -162,7 +206,18 @@ export function Shell({ children }: { children?: React.ReactNode }) {
               notes.map((note) => (
                 <div
                   key={note.id}
-                  className='flex items-center space-x-2 p-2 rounded-md hover:bg-muted cursor-pointer'
+                  className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted cursor-pointer ${
+                    selectedNoteId === note.id ? 'bg-muted' : ''
+                  }`}
+                  onClick={() => handleSelectNote(note.id)}
+                  role='button'
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleSelectNote(note.id)
+                    }
+                  }}
                 >
                   <div className='flex-1 truncate'>
                     <div className='text-sm font-medium'>
@@ -183,14 +238,25 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         </header>
 
         {/* Main content area */}
-        <div className='flex-1'>
-          {children || (
-            <div className='flex items-center justify-center h-full'>
+        <div className='flex-1 flex flex-col'>
+          {selectedNote ? (
+            <div className='flex-1 p-6'>
+              <BasicEditor
+                key={selectedNote.id}
+                initialValue={getEditorValue(selectedNote)}
+                onChange={(value) =>
+                  handleNoteContentChange(selectedNote.id, value)
+                }
+                placeholder='Start writing...'
+                autoFocus
+              />
+            </div>
+          ) : (
+            <div className='flex-1 flex items-center justify-center'>
               <div className='text-center'>
                 <h3 className='text-xl font-semibold'>Welcome to Notable</h3>
                 <p className='text-muted-foreground mt-2'>
-                  Your notes are now synced across all devices using CRDT
-                  technology.
+                  Create a new note or select an existing one to get started.
                 </p>
                 <p className='text-sm text-muted-foreground mt-4'>
                   Sync Status: {syncService ? 'Connected' : 'Disconnected'}
