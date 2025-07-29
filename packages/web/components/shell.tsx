@@ -1,25 +1,25 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { useSyncService } from '@notable/sync'
-import { v4 as uuidv4 } from 'uuid'
-import { type Note } from '../types/note'
-import { useRouting } from '../hooks/use-routing'
-import { toast } from '../hooks/use-toast'
+import { useRouter } from 'next/navigation'
+import { useNotes } from '@/hooks/use-notes'
+import { useRouting } from '@/hooks/use-routing'
+import { toast } from '@/hooks/use-toast'
 import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
-import { isTest } from '../lib/utils/environment'
+import { isTest } from '@/lib/utils/environment'
 import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
-import { BasicEditor } from './editor/basic-editor'
-import type { Descendant } from 'slate'
+import { Button } from '@/components/ui/button'
+import { FileText, Plus } from 'lucide-react'
+import { RichTextEditor } from '@/components/rich-text-editor'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
-  const [notes, setNotes] = useState<Note[]>([])
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [user, setUser] = useState<SupabaseUser | null>(null)
-  const { syncService, isInitialized } = useSyncService()
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
+  const { notes, loading: notesLoading, createNote } = useNotes()
+  const router = useRouter()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current: _current, title: _title, navigate: _navigate } = useRouting()
   const supabase = createClient()
@@ -33,7 +33,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
   const currentUser = user || mockUser
 
-  const shouldShowLoading = !isInitialized && !isTestMode
+  const shouldShowLoading = notesLoading && !isTestMode
 
   // Get user on mount
   useEffect(() => {
@@ -56,105 +56,36 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [supabase])
 
-  // Create a new note handler
-  const handleCreateNote = useCallback(() => {
+  // Create a new note handler using the real API
+  const handleCreateNote = useCallback(async () => {
     try {
-      // Generate new note data
-      const now = new Date().toISOString()
-      const deviceId = 'web-device' // Simple device ID for now
-
-      const newNote: Note = {
-        id: uuidv4(),
+      const newNote = await createNote({
         title: 'Untitled',
         content: '',
-        is_folder: false,
-        parent_id: undefined,
-        userId: currentUser?.id || 'anonymous', // Use real user ID or test user ID
-        tags: [],
-        isHidden: false,
-        version: 1,
-        device_id: deviceId,
-        last_modified: now,
-        vector_clock: { [deviceId]: 1 },
-        synced_at: undefined,
-        local_changes: true,
-        deleted: false,
-        created_at: now,
-        updated_at: now,
-      }
-
-      // Update local state
-      setNotes((prev) => [...prev, newNote])
-
-      // Select the new note to show the editor
-      setSelectedNoteId(newNote.id)
-
-      // Show success message
-      toast({
-        title: 'Note created',
-        description: 'Your new note has been created successfully.',
       })
-
-      console.info('Created new note:', newNote.id)
-
-      // TODO: Implement proper persistence through sync service
+      if (newNote) {
+        setSelectedNoteId(newNote.id)
+        // Also navigate for URL updates
+        router.push(`/app/notes/${newNote.id}`)
+      }
     } catch (error) {
       console.error('Failed to create note:', error)
-      toast({
-        title: 'Failed to create note',
-        description: 'There was an error creating your note. Please try again.',
-        variant: 'destructive',
-      })
     }
-  }, [currentUser])
+  }, [createNote, router])
 
   // Handle note selection
-  const handleSelectNote = useCallback((noteId: string) => {
-    setSelectedNoteId(noteId)
-  }, [])
-
-  // Handle note content change
-  const handleNoteContentChange = useCallback(
-    (noteId: string, content: Descendant[]) => {
-      setNotes((prevNotes) =>
-        prevNotes.map((note) =>
-          note.id === noteId
-            ? {
-                ...note,
-                content: JSON.stringify(content),
-                updated_at: new Date().toISOString(),
-              }
-            : note
-        )
-      )
-      // TODO: Implement proper persistence through sync service
+  const handleNoteSelect = useCallback(
+    (noteId: string) => {
+      setSelectedNoteId(noteId)
+      router.push(`/app/notes/${noteId}`)
     },
-    []
+    [router]
   )
 
-  // Get the selected note
-  const selectedNote = notes.find((note) => note.id === selectedNoteId)
-
-  // Parse note content for the editor
-  const getEditorValue = (note: Note | undefined): Descendant[] => {
-    if (!note || !note.content) {
-      return [{ type: 'paragraph', children: [{ text: '' }] }]
-    }
-    try {
-      return JSON.parse(note.content)
-    } catch {
-      return [{ type: 'paragraph', children: [{ text: note.content }] }]
-    }
-  }
-
-  // Load existing notes when sync service is initialized
-  useEffect(() => {
-    // For now, we'll start with an empty notes list
-    // TODO: Implement proper note loading through sync service
-    if (isInitialized) {
-      console.info('Sync service initialized, ready to manage notes')
-    }
-  }, [isInitialized])
+  // Get selected note data
+  const selectedNote = selectedNoteId
+    ? notes.find((note) => note.id === selectedNoteId)
+    : null
 
   if (shouldShowLoading) {
     return (
@@ -184,87 +115,107 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
   return (
     <div className='flex h-screen bg-background' data-testid='app-shell'>
-      <div className='space-y-4 p-4 w-64 border-r'>
-        <div className='space-y-2'>
-          <h2 className='text-lg font-semibold'>Notable</h2>
-          <button
-            className='w-full text-left px-3 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90'
-            aria-label='New Note'
-            onClick={handleCreateNote}
-          >
-            New Note
-          </button>
+      {/* Sidebar */}
+      <aside className='w-64 border-r bg-muted/10 flex flex-col'>
+        <div className='p-4 border-b'>
+          <h1 className='text-xl font-bold'>Notable</h1>
         </div>
-        <div className='space-y-2'>
-          <div className='text-sm text-muted-foreground'>Recent</div>
-          <div className='space-y-1'>
-            {notes.length === 0 ? (
-              <div className='text-sm text-muted-foreground p-2'>
-                No notes yet. Create your first note to get started.
-              </div>
-            ) : (
-              notes.map((note) => (
-                <div
-                  key={note.id}
-                  className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted cursor-pointer ${
-                    selectedNoteId === note.id ? 'bg-muted' : ''
-                  }`}
-                  onClick={() => handleSelectNote(note.id)}
-                  role='button'
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      handleSelectNote(note.id)
-                    }
-                  }}
-                >
-                  <div className='flex-1 truncate'>
-                    <div className='text-sm font-medium'>
-                      {note.title || 'Untitled'}
-                    </div>
-                  </div>
+
+        <div className='p-4 flex-1'>
+          <Button
+            onClick={handleCreateNote}
+            className='w-full justify-start mb-6'
+            size='sm'
+          >
+            <Plus className='mr-2 h-4 w-4' />
+            New Note
+          </Button>
+
+          <div className='space-y-2'>
+            <h3 className='text-sm font-medium text-muted-foreground'>
+              Recent Notes
+            </h3>
+            <div className='space-y-1'>
+              {notes.length === 0 ? (
+                <div className='text-sm text-muted-foreground py-4 text-center'>
+                  No notes yet. Create your first note to get started.
                 </div>
-              ))
-            )}
+              ) : (
+                notes.map((note) => (
+                  <button
+                    key={note.id}
+                    onClick={() => handleNoteSelect(note.id)}
+                    className='flex items-center space-x-2 p-2 rounded-md hover:bg-muted cursor-pointer group w-full text-left'
+                  >
+                    <FileText className='h-4 w-4 text-muted-foreground' />
+                    <div className='flex-1 truncate'>
+                      <div className='text-sm font-medium'>
+                        {note.title || 'Untitled'}
+                      </div>
+                      <div className='text-xs text-muted-foreground'>
+                        {new Date(note.updated_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </aside>
+
+      {/* Main content */}
       <div className='flex-1 flex flex-col'>
-        {/* Header with user menu */}
-        <header className='flex items-center justify-between border-b px-6 py-3'>
+        {/* Header */}
+        <header className='border-b px-6 py-3 flex items-center justify-between'>
           <div className='flex-1' />
           <UserMenu />
         </header>
 
-        {/* Main content area */}
-        <div className='flex-1 flex flex-col'>
-          {selectedNote ? (
-            <div className='flex-1 p-6'>
-              <BasicEditor
-                key={selectedNote.id}
-                initialValue={getEditorValue(selectedNote)}
-                onChange={(value) =>
-                  handleNoteContentChange(selectedNote.id, value)
-                }
-                placeholder='Start writing...'
-                autoFocus
-              />
-            </div>
-          ) : (
-            <div className='flex-1 flex items-center justify-center'>
-              <div className='text-center'>
-                <h3 className='text-xl font-semibold'>Welcome to Notable</h3>
-                <p className='text-muted-foreground mt-2'>
-                  Create a new note or select an existing one to get started.
-                </p>
-                <p className='text-sm text-muted-foreground mt-4'>
-                  Sync Status: {syncService ? 'Connected' : 'Disconnected'}
-                </p>
+        {/* Content area */}
+        <main className='flex-1 overflow-auto'>
+          {children ||
+            (selectedNote ? (
+              <div className='h-full'>
+                <RichTextEditor
+                  noteId={selectedNote.id}
+                  initialTitle={selectedNote.title}
+                  initialContent={
+                    selectedNote.content
+                      ? typeof selectedNote.content === 'string'
+                        ? JSON.parse(selectedNote.content)
+                        : selectedNote.content
+                      : undefined
+                  }
+                  onTitleChange={(title) => {
+                    // TODO: Implement title update
+                    console.log('Title changed:', title)
+                  }}
+                  onContentChange={(content) => {
+                    // TODO: Implement content update
+                    console.log('Content changed:', content)
+                  }}
+                />
               </div>
-            </div>
-          )}
-        </div>
+            ) : (
+              <div className='flex-1 flex items-center justify-center p-6'>
+                <div className='text-center max-w-md'>
+                  <h2 className='text-2xl font-semibold mb-2'>
+                    Welcome to Notable
+                  </h2>
+                  <p className='text-muted-foreground mb-6'>
+                    A premium note-taking experience with rich text editing,
+                    bi-directional linking, and powerful features. Select a note
+                    from the sidebar or create a new one to get started.
+                  </p>
+                  <Button onClick={handleCreateNote} size='lg'>
+                    <Plus className='mr-2 h-4 w-4' />
+                    Create Your First Note
+                  </Button>
+                </div>
+              </div>
+            ))}
+        </main>
       </div>
     </div>
   )
