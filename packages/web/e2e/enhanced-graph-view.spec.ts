@@ -2,11 +2,15 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Enhanced Graph View', () => {
   test.beforeEach(async ({ page }) => {
-    // Enable dev auth bypass for testing
-    await page.goto('/')
-    await page.evaluate(() => {
-      document.cookie = 'dev-auth-bypass=true; path=/'
-    })
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
 
     // Navigate to the graph page
     await page.goto('/app/graph')
