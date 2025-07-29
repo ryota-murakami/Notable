@@ -30,7 +30,7 @@ test.describe('Application Shell', () => {
       page.getByRole('heading', { name: 'Welcome to Notable' })
     ).toBeVisible()
     await expect(
-      page.getByText('A modern note-taking experience')
+      page.getByText(/A premium note-taking experience/)
     ).toBeVisible()
   })
 
