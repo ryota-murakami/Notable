@@ -15,7 +15,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { BasicEditor } from './editor/basic-editor'
 import type { Descendant } from 'slate'
 
-export function Shell() {
+export function Shell({ children }: { children?: React.ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([])
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [user, setUser] = useState<SupabaseUser | null>(null)
