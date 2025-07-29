@@ -37,6 +37,7 @@
     "@notable/routing": "workspace:*",
     "@notable/sync": "workspace:*",
     "@platejs/basic-nodes": "^49.0.0",
+    "@platejs/link": "^49.1.1",
     "@platejs/list": "^49.2.0",
     "@platejs/mention": "^49.0.0",
     "@platejs/resizable": "^49.0.0",
