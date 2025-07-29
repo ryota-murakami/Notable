@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotes } from '@/hooks/use-notes'
 import { useRouting } from '@/hooks/use-routing'
@@ -20,6 +20,7 @@ import {
   useCommandPalette,
 } from '@/components/ui/command-palette'
 import { KeyboardShortcutsDialog } from '@/components/ui/keyboard-shortcuts-dialog'
+import { useTagManager } from '@/hooks/use-tags'
 import type { SearchableNote } from '@/lib/search/types'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
@@ -35,6 +36,9 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   const commandPalette = useCommandPalette()
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
+
+  // Tag management
+  const { createTag, getOrCreateTag } = useTagManager()
 
   // Get selected note data
   const selectedNote = selectedNoteId
@@ -150,39 +154,117 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     })
   }, [])
 
+  // Tag-related command handlers
+  const handleAddTag = useCallback(() => {
+    if (!selectedNoteId) {
+      toast({
+        title: 'No note selected',
+        description: 'Please select a note to add tags to.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    // Focus on the tag input in the current note
+    const tagInput = document.querySelector(
+      'input[placeholder*="Add tags"]'
+    ) as HTMLInputElement
+    if (tagInput) {
+      tagInput.focus()
+      toast({
+        title: 'Tag input focused',
+        description: 'You can now type to add tags to this note.',
+      })
+    } else {
+      toast({
+        title: 'Tag input not available',
+        description: 'Please open a note to add tags.',
+        variant: 'destructive',
+      })
+    }
+  }, [selectedNoteId])
+
+  const handleCreateTag = useCallback(async () => {
+    const tagName = prompt('Enter tag name:')
+    if (!tagName || !tagName.trim()) return
+
+    try {
+      await getOrCreateTag(tagName.trim())
+      toast({
+        title: 'Tag created',
+        description: `Tag "${tagName.trim()}" has been created successfully.`,
+      })
+    } catch (error) {
+      console.error('Failed to create tag:', error)
+      toast({
+        title: 'Error creating tag',
+        description: 'There was an error creating the tag. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }, [getOrCreateTag])
+
+  const handleManageTags = useCallback(() => {
+    // TODO: Implement tag management interface
+    toast({
+      title: 'Tag management',
+      description: 'Tag management interface is not yet implemented.',
+    })
+  }, [])
+
+  const handleFilterByTag = useCallback(() => {
+    // TODO: Implement tag filtering
+    toast({
+      title: 'Filter by tag',
+      description: 'Tag filtering is not yet implemented.',
+    })
+  }, [])
+
   // Keyboard shortcuts registration
-  useKeyboardShortcuts([
-    {
-      id: 'create-note',
-      action: handleNewNote,
-    },
-    {
-      id: 'delete-note',
-      action: handleDeleteCurrentNote,
-    },
-    {
-      id: 'open-search',
-      action: commandPalette.toggle,
-    },
-    {
-      id: 'command-palette',
-      action: commandPalette.toggle,
-    },
-    {
-      id: 'shortcuts-help',
-      action: () => setShowKeyboardShortcuts(true),
-    },
-    {
-      id: 'close-dialog',
-      action: () => {
-        if (showKeyboardShortcuts) {
-          setShowKeyboardShortcuts(false)
-        } else if (commandPalette.open) {
-          commandPalette.close()
-        }
+  const shortcuts = useMemo(
+    () => [
+      {
+        id: 'create-note',
+        action: handleNewNote,
       },
-    },
-  ])
+      {
+        id: 'delete-note',
+        action: handleDeleteCurrentNote,
+      },
+      {
+        id: 'open-search',
+        action: commandPalette.toggle, // Cmd+K opens command palette (search functionality)
+      },
+      {
+        id: 'command-palette',
+        action: commandPalette.toggle, // Cmd+Shift+P also opens command palette
+      },
+      {
+        id: 'shortcuts-help',
+        action: () => setShowKeyboardShortcuts(true),
+      },
+      {
+        id: 'close-dialog',
+        action: () => {
+          if (showKeyboardShortcuts) {
+            setShowKeyboardShortcuts(false)
+          } else if (commandPalette.open) {
+            commandPalette.close()
+          }
+        },
+      },
+    ],
+    [
+      handleNewNote,
+      handleDeleteCurrentNote,
+      commandPalette.toggle,
+      commandPalette.close,
+      commandPalette.open,
+      showKeyboardShortcuts,
+    ]
+  )
+
+  useKeyboardShortcuts(shortcuts)
 
   // In test mode, treat as initialized to show the main UI
   const isTestMode = isTest()
@@ -370,6 +452,10 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         onCopyNote={selectedNote ? handleCopyNote : undefined}
         onDeleteNote={selectedNote ? handleDeleteCurrentNote : undefined}
         onEditNote={selectedNote ? handleEditNote : undefined}
+        onAddTag={selectedNote ? handleAddTag : undefined}
+        onCreateTag={handleCreateTag}
+        onManageTags={handleManageTags}
+        onFilterByTag={handleFilterByTag}
         currentTheme={theme}
       />
 

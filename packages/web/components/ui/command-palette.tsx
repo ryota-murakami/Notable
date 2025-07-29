@@ -67,17 +67,8 @@ export function CommandPalette({
 }: CommandPaletteProps) {
   const [search, setSearch] = React.useState('')
 
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        onOpenChange(!open)
-      }
-    }
-
-    document.addEventListener('keydown', down)
-    return () => document.removeEventListener('keydown', down)
-  }, [open, onOpenChange])
+  // Note: Keyboard shortcuts are handled by the global keyboard shortcuts system
+  // in the Shell component. This prevents conflicts and centralizes shortcut management.
 
   const handleSelect = React.useCallback(
     (action: CommandAction) => {
@@ -170,6 +161,10 @@ export function NotableCommandPalette({
   onCopyNote,
   onDeleteNote,
   onEditNote,
+  onAddTag,
+  onManageTags,
+  onFilterByTag,
+  onCreateTag,
   currentTheme = 'light',
 }: {
   open: boolean
@@ -183,6 +178,10 @@ export function NotableCommandPalette({
   onCopyNote?: () => void
   onDeleteNote?: () => void
   onEditNote?: () => void
+  onAddTag?: () => void
+  onManageTags?: () => void
+  onFilterByTag?: () => void
+  onCreateTag?: () => void
   currentTheme?: 'light' | 'dark' | 'system'
 }) {
   const defaultActions: CommandAction[] = [
@@ -256,6 +255,60 @@ export function NotableCommandPalette({
             keywords: ['delete', 'remove', 'trash'],
             onSelect: () => onDeleteNote(),
             group: 'Current Note',
+          },
+        ]
+      : []),
+
+    // Tag actions
+    ...(onAddTag
+      ? [
+          {
+            id: 'add-tag',
+            title: 'Add Tag to Current Note',
+            description: 'Add tags to organize the current note',
+            icon: <TagIcon className='h-4 w-4' />,
+            keywords: ['tag', 'add', 'organize', 'label'],
+            onSelect: () => onAddTag(),
+            group: 'Tags',
+          },
+        ]
+      : []),
+    ...(onCreateTag
+      ? [
+          {
+            id: 'create-tag',
+            title: 'Create New Tag',
+            description: 'Create a new tag for organizing notes',
+            icon: <PlusIcon className='h-4 w-4' />,
+            keywords: ['tag', 'create', 'new', 'organize'],
+            onSelect: () => onCreateTag(),
+            group: 'Tags',
+          },
+        ]
+      : []),
+    ...(onManageTags
+      ? [
+          {
+            id: 'manage-tags',
+            title: 'Manage Tags',
+            description: 'View and organize all your tags',
+            icon: <TagIcon className='h-4 w-4' />,
+            keywords: ['tag', 'manage', 'organize', 'view'],
+            onSelect: () => onManageTags(),
+            group: 'Tags',
+          },
+        ]
+      : []),
+    ...(onFilterByTag
+      ? [
+          {
+            id: 'filter-by-tag',
+            title: 'Filter Notes by Tag',
+            description: 'Show only notes with specific tags',
+            icon: <FilterIcon className='h-4 w-4' />,
+            keywords: ['tag', 'filter', 'search', 'organize'],
+            onSelect: () => onFilterByTag(),
+            group: 'Tags',
           },
         ]
       : []),
@@ -382,14 +435,10 @@ export function SearchCommandPalette({
     persistToStorage: mounted,
   })
 
-  // Handle keyboard shortcuts
+  // Handle modal navigation shortcuts (Escape, /, Ctrl+H)
+  // Note: Cmd+K is handled by the global keyboard shortcuts system
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        onOpenChange(!open)
-      }
-
       if (open) {
         if (e.key === 'Escape') {
           if (mode === 'search' || mode === 'history') {
