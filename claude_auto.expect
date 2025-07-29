@@ -1,0 +1,20 @@
+#!/usr/bin/expect -f
+set timeout -1
+log_user 1
+
+# 1️⃣ Claude Code を “危険権限スキップ” モードで起動
+spawn claude --dangerously-skip-permissions
+
+# ※ログインやディレクトリ移動が必要ならここに expect/send を追加※
+
+# 2️⃣ バナー検知 → 指示送信ループ
+expect {
+    -re {Previous Conversation Compacted} {
+        send "Read ClAUDE.md and ~/.claude/CLAUDE.md. Great Progress🎉 When you dont get the results you expected, or research latest info before thinking, feel free to use a web search and all available MCP tools, such as perprexity_ask, GitHub mcp tool  list_discussions, search_code. search_issues, search_orgs, search_pull_requests, search_repositories, search_users web_search_exa, github_search_exa, deep_researcher_start, deepwiki ask_question, read_wiki_structure, read_wiki_contents to get the best result. I really apreaciate your help.
+ use context7. use sequencialthinking use todo_write tool ultrathink \r"
+        exp_continue
+    }
+    eof {
+        exit
+    }
+}

@@ -21,9 +21,13 @@ test.describe('Note Creation', () => {
     await page.waitForLoadState('networkidle')
   })
 
-  test('should create a new note without errors', async ({ page }) => {
+  test('should create a new note and show the editor', async ({ page }) => {
     // Wait for app shell to be visible
     await page.waitForSelector('[data-testid="app-shell"]')
+
+    // Initially, we should see the welcome message
+    await expect(page.getByText('Welcome to Notable')).toBeVisible()
+    await expect(page.getByText('Click "New Note" to start writing or select a note from the sidebar.')).toBeVisible()
 
     // Find the "New Note" button
     const newNoteButton = page.locator('button:has-text("New Note")')
@@ -36,56 +40,81 @@ test.describe('Note Creation', () => {
     const noNotesMessage = page.locator('text="No notes yet"')
     const hasNoNotes = await noNotesMessage.isVisible()
 
-    // Get initial note count (actual note items, not the no notes message)
-    const noteItems = page.locator(
-      'div:has-text("Recent") + div > div:has(div:has-text("Untitled"))'
-    )
-    const initialNoteCount = await noteItems.count()
-
     // Click the new note button
     await newNoteButton.click()
 
-    // Wait a bit for async operations
-    await page.waitForTimeout(1000)
+    // The welcome message should now be hidden
+    await expect(page.getByText('Welcome to Notable')).toBeHidden()
 
-    // Check that we don't see any error messages
-    const errorText = page.locator('text="Oops! Something went wrong"')
-    await expect(errorText).not.toBeVisible()
+    // The editor should be visible - check for the Slate editor
+    const editor = page.locator('[contenteditable="true"]')
+    await expect(editor).toBeVisible()
 
     // If there were no notes initially, the "No notes yet" message should be gone
     if (hasNoNotes) {
       await expect(noNotesMessage).not.toBeVisible()
     }
 
-    // Check that a new "Untitled" note appears
-    const untitledNotes = page.locator('text="Untitled"')
-    const untitledCount = await untitledNotes.count()
-    expect(untitledCount).toBeGreaterThan(initialNoteCount)
+    // Check that a new "Untitled" note appears in the sidebar
+    const untitledNotes = page.locator('[role="button"]').filter({ hasText: 'Untitled' })
+    await expect(untitledNotes.first()).toBeVisible()
+    
+    // The new note should be selected (has bg-muted class)
+    await expect(untitledNotes.first()).toHaveClass(/bg-muted/)
 
-    // Verify console doesn't have errors
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        expect(msg.text()).not.toContain('Failed to create note')
-      }
-    })
+    // Type some content in the editor
+    await editor.click()
+    await editor.type('This is my first note')
+
+    // The content should be visible in the editor
+    await expect(editor).toContainText('This is my first note')
   })
 
-  test('should create multiple notes successfully', async ({ page }) => {
+  test('should create multiple notes and switch between them', async ({ page }) => {
     // Wait for app shell to be visible
     await page.waitForSelector('[data-testid="app-shell"]')
 
     const newNoteButton = page.locator('button:has-text("New Note")')
+    const editor = page.locator('[contenteditable="true"]')
 
-    // Create 3 notes
-    for (let i = 0; i < 3; i++) {
-      await newNoteButton.click()
-      await page.waitForTimeout(200) // Small delay between creations
-    }
+    // Create first note
+    await newNoteButton.click()
+    await editor.click()
+    await editor.type('First note content')
 
-    // Should see at least 3 notes with "Untitled" text
-    const untitledNotes = page.locator('text="Untitled"')
-    const count = await untitledNotes.count()
-    expect(count).toBeGreaterThanOrEqual(3)
+    // Create second note
+    await newNoteButton.click()
+    await editor.click()
+    await editor.clear()
+    await editor.type('Second note content')
+
+    // Create third note
+    await newNoteButton.click()
+    await editor.click()
+    await editor.clear()
+    await editor.type('Third note content')
+
+    // Should see 3 notes with "Untitled" text
+    const noteItems = page.locator('[role="button"]').filter({ hasText: 'Untitled' })
+    await expect(noteItems).toHaveCount(3)
+
+    // Click on the first note
+    await noteItems.first().click()
+
+    // Editor should show first note content
+    await expect(editor).toContainText('First note content')
+
+    // Click on the second note
+    await noteItems.nth(1).click()
+
+    // Editor should show second note content
+    await expect(editor).toContainText('Second note content')
+
+    // Click on the third note
+    await noteItems.last().click()
+
+    // Editor should show third note content
+    await expect(editor).toContainText('Third note content')
   })
 
   test('should handle authentication errors gracefully', async ({ page }) => {
