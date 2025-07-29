@@ -1,23 +1,70 @@
 import { cookies } from 'next/headers'
-import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { createMockUser } from './test-helpers'
+import { createClient } from '@supabase/supabase-js'
 
 /**
- * Check for development auth bypass and return mock user if enabled
- * This function is designed for server-side use in API routes and middleware
+ * Check if dev auth bypass is enabled and return mock user if so
  */
-export const getDevAuthBypassUser = async (): Promise<SupabaseUser | null> => {
-  try {
-    const cookieStore = await cookies()
-    const devBypassCookie = cookieStore.get('dev-auth-bypass')
+export async function getDevAuthBypassUser() {
+  const cookieStore = await cookies()
+  const devAuthBypassCookie =
+    cookieStore.get('dev-auth-bypass')?.value === 'true'
 
-    if (devBypassCookie?.value === 'true') {
-      return createMockUser()
-    }
+  if (
+    devAuthBypassCookie &&
+    (process.env.NODE_ENV === 'development' ||
+      process.env.NODE_ENV === 'test' ||
+      process.env.CI === 'true')
+  ) {
+    return createMockUser()
+  }
 
-    return null
-  } catch (error) {
-    // If cookies can't be accessed (e.g., not in a server context), return null
+  return null
+}
+
+/**
+ * Create a Supabase client configured for testing with the mock user
+ */
+export async function getTestSupabaseClient() {
+  const mockUser = await getDevAuthBypassUser()
+
+  if (!mockUser) {
     return null
   }
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  )
+
+  // Set the current user ID in the database session for RLS
+  await supabase.rpc('set_config', {
+    setting: 'app.current_user_id',
+    value: mockUser.id,
+    is_local: true,
+  })
+
+  return supabase
+}
+
+/**
+ * Check if we should bypass auth checks for development/testing
+ */
+export async function shouldBypassAuth() {
+  const cookieStore = await cookies()
+  const devAuthBypassCookie =
+    cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+  return (
+    devAuthBypassCookie &&
+    (process.env.NODE_ENV === 'development' ||
+      process.env.NODE_ENV === 'test' ||
+      process.env.CI === 'true')
+  )
 }

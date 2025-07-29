@@ -13,9 +13,11 @@ import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
 import { FileText, Plus } from 'lucide-react'
+import { RichTextEditor } from '@/components/rich-text-editor'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const { notes, loading: notesLoading, createNote } = useNotes()
   const router = useRouter()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
@@ -24,16 +26,6 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
   // In test mode, treat as initialized to show the main UI
   const isTestMode = isTest()
-
-  // Debug logging for test mode
-  if (typeof window !== 'undefined') {
-    console.log('Shell debug:', {
-      isTestMode,
-      notesLoading,
-      shouldShowLoading: notesLoading && !isTestMode,
-      cookieCheck: document.cookie.includes('dev-auth-bypass=true'),
-    })
-  }
 
   // Create mock user for testing when dev-auth-bypass is enabled
   const mockUser: SupabaseUser | null =
@@ -72,7 +64,9 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         content: '',
       })
       if (newNote) {
-        router.push(`/notes/${newNote.id}`)
+        setSelectedNoteId(newNote.id)
+        // Also navigate for URL updates
+        router.push(`/app/notes/${newNote.id}`)
       }
     } catch (error) {
       console.error('Failed to create note:', error)
@@ -82,10 +76,16 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   // Handle note selection
   const handleNoteSelect = useCallback(
     (noteId: string) => {
-      router.push(`/notes/${noteId}`)
+      setSelectedNoteId(noteId)
+      router.push(`/app/notes/${noteId}`)
     },
     [router]
   )
+
+  // Get selected note data
+  const selectedNote = selectedNoteId
+    ? notes.find((note) => note.id === selectedNoteId)
+    : null
 
   if (shouldShowLoading) {
     return (
@@ -174,22 +174,47 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
         {/* Content area */}
         <main className='flex-1 overflow-auto'>
-          {children || (
-            <div className='flex-1 flex items-center justify-center p-6'>
-              <div className='text-center max-w-md'>
-                <h2 className='text-2xl font-semibold mb-2'>
-                  Welcome to Notable
-                </h2>
-                <p className='text-muted-foreground mb-6'>
-                  A modern note-taking experience
-                </p>
-                <Button onClick={handleCreateNote} size='lg'>
-                  <Plus className='mr-2 h-4 w-4' />
-                  Create Your First Note
-                </Button>
+          {children ||
+            (selectedNote ? (
+              <div className='h-full'>
+                <RichTextEditor
+                  noteId={selectedNote.id}
+                  initialTitle={selectedNote.title}
+                  initialContent={
+                    selectedNote.content
+                      ? typeof selectedNote.content === 'string'
+                        ? JSON.parse(selectedNote.content)
+                        : selectedNote.content
+                      : undefined
+                  }
+                  onTitleChange={(title) => {
+                    // TODO: Implement title update
+                    console.log('Title changed:', title)
+                  }}
+                  onContentChange={(content) => {
+                    // TODO: Implement content update
+                    console.log('Content changed:', content)
+                  }}
+                />
               </div>
-            </div>
-          )}
+            ) : (
+              <div className='flex-1 flex items-center justify-center p-6'>
+                <div className='text-center max-w-md'>
+                  <h2 className='text-2xl font-semibold mb-2'>
+                    Welcome to Notable
+                  </h2>
+                  <p className='text-muted-foreground mb-6'>
+                    A premium note-taking experience with rich text editing,
+                    bi-directional linking, and powerful features. Select a note
+                    from the sidebar or create a new one to get started.
+                  </p>
+                  <Button onClick={handleCreateNote} size='lg'>
+                    <Plus className='mr-2 h-4 w-4' />
+                    Create Your First Note
+                  </Button>
+                </div>
+              </div>
+            ))}
         </main>
       </div>
     </div>
