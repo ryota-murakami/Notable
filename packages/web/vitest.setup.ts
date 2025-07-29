@@ -1,9 +1,15 @@
 import React from 'react'
-import { vi } from 'vitest'
+import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 import '@testing-library/jest-dom/vitest'
+import { server } from './mocks/server'
 
 // Make React available globally
 global.React = React
+
+// Setup MSW server for tests
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
 // Mock Next.js router
 const mockRouter = {
@@ -40,13 +46,13 @@ vi.mock('@/utils/supabase/client', () => ({
 
 // Mock Radix UI Themes
 vi.mock('@radix-ui/themes', () => ({
-  Theme: ({ children }: { children: React.ReactNode }) => 
+  Theme: ({ children }: { children: React.ReactNode }) =>
     React.createElement('div', { 'data-theme': 'light' }, children),
-  Spinner: ({ className, size }: { className?: string; size?: string }) => 
-    React.createElement('div', { 
+  Spinner: ({ className, size }: { className?: string; size?: string }) =>
+    React.createElement('div', {
       className: `animate-spin ${className ?? ''}`,
       'data-size': size,
       role: 'status',
-      'aria-label': 'Loading'
+      'aria-label': 'Loading',
     }),
 }))
