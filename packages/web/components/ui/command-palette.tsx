@@ -2,9 +2,14 @@
 
 import * as React from 'react'
 import * as CommandPrimitive from 'cmdk'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 
 const Command = CommandPrimitive.Command
-const CommandDialog = CommandPrimitive.CommandDialog
 const CommandEmpty = CommandPrimitive.CommandEmpty
 const CommandGroup = CommandPrimitive.CommandGroup
 const CommandInput = CommandPrimitive.CommandInput
@@ -99,54 +104,56 @@ export function CommandPalette({
   }, [actions])
 
   return (
-    <CommandDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      className={cn('max-w-2xl', className)}
-    >
-      <Command className='rounded-lg border shadow-lg'>
-        <CommandInput
-          placeholder='Type a command or search...'
-          value={search}
-          onValueChange={setSearch}
-          className='border-0'
-        />
-        <CommandList className='max-h-96'>
-          <CommandEmpty>No results found.</CommandEmpty>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className={cn('max-w-2xl p-0', className)}>
+        <DialogTitle className='sr-only'>Command Palette</DialogTitle>
+        <DialogDescription className='sr-only'>
+          Search for commands and actions
+        </DialogDescription>
+        <Command className='rounded-lg border-0 shadow-none'>
+          <CommandInput
+            placeholder='Type a command or search...'
+            value={search}
+            onValueChange={setSearch}
+            className='border-0'
+          />
+          <CommandList className='max-h-96'>
+            <CommandEmpty>No results found.</CommandEmpty>
 
-          {Object.entries(groupedActions).map(
-            ([groupName, groupActions], index) => (
-              <React.Fragment key={groupName}>
-                {index > 0 && <CommandSeparator />}
-                <CommandGroup heading={groupName}>
-                  {groupActions.map((action) => (
-                    <CommandItem
-                      key={action.id}
-                      onSelect={() => handleSelect(action)}
-                      className='flex items-center gap-3 px-3 py-2 text-sm cursor-pointer'
-                    >
-                      {action.icon && (
-                        <span className='flex-shrink-0 text-muted-foreground'>
-                          {action.icon}
-                        </span>
-                      )}
-                      <div className='flex-1 min-w-0'>
-                        <div className='font-medium'>{action.title}</div>
-                        {action.description && (
-                          <div className='text-xs text-muted-foreground truncate'>
-                            {action.description}
-                          </div>
+            {Object.entries(groupedActions).map(
+              ([groupName, groupActions], index) => (
+                <React.Fragment key={groupName}>
+                  {index > 0 && <CommandSeparator />}
+                  <CommandGroup heading={groupName}>
+                    {groupActions.map((action) => (
+                      <CommandItem
+                        key={action.id}
+                        onSelect={() => handleSelect(action)}
+                        className='flex items-center gap-3 px-3 py-2 text-sm cursor-pointer'
+                      >
+                        {action.icon && (
+                          <span className='flex-shrink-0 text-muted-foreground'>
+                            {action.icon}
+                          </span>
                         )}
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </React.Fragment>
-            )
-          )}
-        </CommandList>
-      </Command>
-    </CommandDialog>
+                        <div className='flex-1 min-w-0'>
+                          <div className='font-medium'>{action.title}</div>
+                          {action.description && (
+                            <div className='text-xs text-muted-foreground truncate'>
+                              {action.description}
+                            </div>
+                          )}
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </React.Fragment>
+              )
+            )}
+          </CommandList>
+        </Command>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -723,31 +730,33 @@ export function SearchCommandPalette({
   }
 
   return (
-    <CommandDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      className={cn('max-w-2xl', className)}
-    >
-      <Command className='rounded-lg border shadow-lg'>
-        {mode === 'command' && renderCommandMode()}
-        {mode === 'search' && renderSearchMode()}
-        {mode === 'history' && renderHistoryMode()}
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className={cn('max-w-2xl p-0', className)}>
+        <DialogTitle className='sr-only'>Search Command Palette</DialogTitle>
+        <DialogDescription className='sr-only'>
+          Search through notes and commands with advanced filtering
+        </DialogDescription>
+        <Command className='rounded-lg border-0 shadow-none'>
+          {mode === 'command' && renderCommandMode()}
+          {mode === 'search' && renderSearchMode()}
+          {mode === 'history' && renderHistoryMode()}
 
-        {/* Status bar */}
-        <div className='flex items-center justify-between px-3 py-2 text-xs text-muted-foreground border-t bg-muted/50'>
-          <div className='flex items-center gap-4'>
-            <span>⌘K to toggle</span>
-            <span>/ for search</span>
-            <span>⌃H for history</span>
+          {/* Status bar */}
+          <div className='flex items-center justify-between px-3 py-2 text-xs text-muted-foreground border-t bg-muted/50'>
+            <div className='flex items-center gap-4'>
+              <span>⌘K to toggle</span>
+              <span>/ for search</span>
+              <span>⌃H for history</span>
+            </div>
+            <div className='flex items-center gap-2'>
+              {mode === 'search' && search.stats && (
+                <span>{search.stats.searchTime.toFixed(0)}ms</span>
+              )}
+              <span>{notes.length} notes indexed</span>
+            </div>
           </div>
-          <div className='flex items-center gap-2'>
-            {mode === 'search' && search.stats && (
-              <span>{search.stats.searchTime.toFixed(0)}ms</span>
-            )}
-            <span>{notes.length} notes indexed</span>
-          </div>
-        </div>
-      </Command>
-    </CommandDialog>
+        </Command>
+      </DialogContent>
+    </Dialog>
   )
 }
