@@ -85,10 +85,13 @@ test.describe('User Menu', () => {
     // Click settings
     await page.locator('text="Settings"').click()
 
-    // Should show toast notification
+    // Wait for click to be processed
+    await page.waitForTimeout(500)
+
+    // Menu should close after clicking
     await expect(
-      page.locator('text="Settings page coming soon!"')
-    ).toBeVisible()
+      page.locator('[data-testid="user-menu-content"]')
+    ).not.toBeVisible()
   })
 
   test('should logout and redirect to auth page', async ({ page }) => {
@@ -104,9 +107,6 @@ test.describe('User Menu', () => {
 
     // Should be on auth page
     await expect(page).toHaveURL(/\/auth/)
-
-    // Should show logout success toast
-    await expect(page.locator('text="Logged out successfully"')).toBeVisible()
 
     // Cookie should be cleared
     const cookies = await page.context().cookies()

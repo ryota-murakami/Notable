@@ -19,4 +19,8 @@ export const config = {
      */
     '/((?!_next/static|_next/image|favicon.ico|auth|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$).*)',
   ],
+  unstable_allowDynamic: [
+    // Allow Supabase modules that use Node.js APIs
+    '**/node_modules/@supabase/**',
+  ],
 }

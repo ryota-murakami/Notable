@@ -9,9 +9,31 @@ import '@radix-ui/themes/styles.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Notable - Your notes, perfectly organized',
+  title: {
+    default: 'Notable - Premium Note-Taking Experience',
+    template: '%s | Notable',
+  },
   description:
-    'A modern note-taking app that syncs seamlessly across all your devices',
+    "The world's most elegant note-taking application. Create, organize, and sync your notes seamlessly across all devices with our premium Notion-inspired experience.",
+  keywords: [
+    'notes',
+    'note-taking',
+    'productivity',
+    'writing',
+    'organization',
+    'sync',
+    'collaboration',
+    'rich text editor',
+    'markdown',
+  ],
+  authors: [{ name: 'Notable Team' }],
+  creator: 'Notable',
+  publisher: 'Notable',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '32x32' },
@@ -25,6 +47,20 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/manifest.json',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://notable.app',
+    title: 'Notable - Premium Note-Taking Experience',
+    description: "The world's most elegant note-taking application",
+    siteName: 'Notable',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Notable - Premium Note-Taking Experience',
+    description: "The world's most elegant note-taking application",
+    creator: '@notable_app',
+  },
 }
 
 export const viewport = {
