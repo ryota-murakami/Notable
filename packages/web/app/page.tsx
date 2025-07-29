@@ -1,5 +1,5 @@
-import { Shell } from '../components/shell'
+import { redirect } from 'next/navigation'
 
 export default function HomePage() {
-  return <Shell />
+  redirect('/app')
 }
