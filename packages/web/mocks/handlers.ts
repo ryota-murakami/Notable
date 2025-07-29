@@ -53,7 +53,7 @@ export const handlers = [
   }),
 
   http.post('*/rest/v1/notes', async ({ request }) => {
-    const body = await request.json()
+    const body = (await request.json()) as Record<string, any>
     return HttpResponse.json({
       id: `note-${Date.now()}`,
       ...body,
@@ -63,7 +63,7 @@ export const handlers = [
   }),
 
   http.patch('*/rest/v1/notes', async ({ request }) => {
-    const body = await request.json()
+    const body = (await request.json()) as Record<string, any>
     return HttpResponse.json({
       ...body,
       updated_at: new Date().toISOString(),
@@ -78,10 +78,10 @@ export const handlers = [
 
   // Mock sync endpoints
   http.post('*/api/sync/offline-changes', async ({ request }) => {
-    const body = await request.json()
+    const body = (await request.json()) as { changes?: any[] }
     return HttpResponse.json({
       success: true,
-      syncedChanges: body.changes,
+      syncedChanges: body?.changes || [],
       timestamp: new Date().toISOString(),
     })
   }),

@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+import React from 'react'
+import { describe, expect, it } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { server } from '../mocks/node'

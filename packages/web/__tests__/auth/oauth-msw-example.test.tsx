@@ -5,7 +5,7 @@
  * our new MSW setup. It shows real-world testing scenarios.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { server } from '../../mocks/node'
