@@ -17,14 +17,48 @@ export async function launchElectronApp(): Promise<ElectronTestContext> {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
   const mainPath = path.join(__dirname, '../../build/main.js')
   
-  // Launch Electron app
+  // Environment detection
+  const isCI = process.env.CI === 'true'
+  const isHeadless = process.env.ELECTRON_HEADLESS !== 'false' || isCI
+  
+  console.log(`[Electron Test] Environment: ${isCI ? 'CI' : 'Local'}, Headless: ${isHeadless}`)
+  
+  // Base launch arguments
+  const launchArgs = [mainPath]
+  
+  // Add headless and stability flags
+  if (isHeadless) {
+    launchArgs.push(
+      '--headless',
+      '--disable-gpu',
+      '--no-sandbox',
+      '--ignore-gpu-blacklist'
+    )
+    
+    // Additional CI-specific flags for stability
+    if (isCI) {
+      launchArgs.push(
+        '--disable-dev-shm-usage',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-features=TranslateUI',
+        '--disable-extensions'
+      )
+    }
+  }
+  
+  console.log(`[Electron Test] Launch args: ${launchArgs.join(' ')}`)
+  
   const app = await electron.launch({
-    args: [mainPath],
+    args: launchArgs,
     env: {
       ...process.env,
       NODE_ENV: 'test',
       ELECTRON_IS_DEV: '1',
+      ELECTRON_HEADLESS: isHeadless ? 'true' : 'false',
     },
+    timeout: isCI ? 60000 : 30000, // Longer timeout for CI
   })
 
   // Wait for the first window to appear

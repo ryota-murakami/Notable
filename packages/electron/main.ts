@@ -11,12 +11,16 @@ import {
 } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
+import { fileURLToPath } from 'url'
 import * as localShortcut from 'electron-localshortcut'
-import { autoUpdater } from 'electron-updater'
-import * as notifier from 'node-notifier'
-import { setupRoutingInMainProcess } from './routing'
+import pkg from 'electron-updater'
+const { autoUpdater } = pkg
+import notifier from 'node-notifier'
+import { setupRoutingInMainProcess } from './routing.js'
 
-// __dirname is automatically available in CommonJS
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
@@ -25,11 +29,40 @@ const windows: Set<BrowserWindow> = new Set()
 
 // Configuration
 const isDevelopment = process.env.NODE_ENV === 'development'
+const isHeadless = process.env.ELECTRON_HEADLESS === 'true' || process.argv.includes('--headless')
+const isCI = process.env.CI === 'true'
 const isMac = process.platform === 'darwin'
 const isWindows = process.platform === 'win32'
 
 // Set app name from package.json productName
 app.setName('Notable')
+
+// Configure headless mode and CI-specific settings
+if (isHeadless) {
+  console.log('[Main] Configuring headless mode')
+  app.commandLine.appendSwitch('headless')
+  app.commandLine.appendSwitch('disable-gpu')
+  app.commandLine.appendSwitch('ignore-gpu-blacklist')
+  app.commandLine.appendSwitch('no-sandbox')
+  app.commandLine.appendSwitch('virtual-time-budget', '5000')
+  app.commandLine.appendSwitch('run-all-compositor-stages-before-draw')
+  app.commandLine.appendSwitch('disable-background-timer-throttling')
+  app.commandLine.appendSwitch('disable-backgrounding-occluded-windows')
+  app.commandLine.appendSwitch('disable-renderer-backgrounding')
+  app.commandLine.appendSwitch('disable-features', 'TranslateUI,VizDisplayCompositor')
+  app.commandLine.appendSwitch('disable-extensions')
+  
+  // macOS specific: Don't activate app  
+  if (isMac) {
+    app.dock?.hide()
+  }
+  
+  // Additional CI-specific stability flags
+  if (isCI) {
+    console.log('[Main] Applying CI-specific stability flags')
+    app.commandLine.appendSwitch('disable-dev-shm-usage')
+  }
+}
 
 const createWindow = () => {
   // Window state management
@@ -40,17 +73,28 @@ const createWindow = () => {
 
   const iconPath = getIconPath()
   const windowOptions: Electron.BrowserWindowConstructorOptions = {
-    width: windowState.width,
-    height: windowState.height,
-    minWidth: 800,
-    minHeight: 600,
+    width: isHeadless ? 1 : windowState.width,
+    height: isHeadless ? 1 : windowState.height,
+    minWidth: isHeadless ? 1 : 800,
+    minHeight: isHeadless ? 1 : 600,
     show: false, // Don't show until ready
     titleBarStyle: isMac ? 'hiddenInset' : 'default',
+    ...(isHeadless && {
+      frame: false,        // Remove window frame
+      transparent: true,   // Make window transparent
+      skipTaskbar: true,   // Don't show in taskbar
+      x: -10000,          // Position far off-screen
+      y: -10000,
+    }),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
       webSecurity: true,
+      ...(isHeadless && {
+        offscreen: true,
+        backgroundThrottling: false,
+      }),
     },
   }
 
@@ -169,11 +213,22 @@ const createWindow = () => {
 
   loadUrlWithFallback()
 
-  // Show window when ready
+  // Show window when ready (skip in headless mode)
   mainWindow.once('ready-to-show', () => {
-    mainWindow?.show()
+    if (!isHeadless) {
+      mainWindow?.show()
+    } else {
+      console.log('[Main] Headless mode: minimizing and hiding window')
+      // Force minimize and hide in headless mode
+      mainWindow?.minimize()
+      mainWindow?.hide()
+      // Additional macOS specific hiding
+      if (isMac) {
+        app.hide()
+      }
+    }
 
-    if (isDevelopment) {
+    if (isDevelopment && !isHeadless) {
       mainWindow?.webContents.openDevTools()
     }
   })
@@ -198,17 +253,23 @@ const createWindow = () => {
 }
 
 app.whenReady().then(() => {
-  // Create native menu
-  createMenu()
+  console.log(`[Main] App ready - Headless: ${isHeadless}, CI: ${isCI}`)
+  
+  // Create native menu (skip in headless)
+  if (!isHeadless) {
+    createMenu()
+  }
 
-  // Create system tray
+  // Create system tray (skip in headless)
   createTray()
 
-  // Register global shortcuts
+  // Register global shortcuts (skip in headless)  
   registerGlobalShortcuts()
 
-  // Setup auto updater
-  setupAutoUpdater()
+  // Setup auto updater (skip in headless)
+  if (!isHeadless) {
+    setupAutoUpdater()
+  }
 
   // Create main window
   createWindow()
@@ -217,7 +278,7 @@ app.whenReady().then(() => {
   setupRoutingInMainProcess()
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
+    if (!isHeadless && BrowserWindow.getAllWindows().length === 0) {
       createWindow()
     }
   })
@@ -789,8 +850,13 @@ function createMenu() {
   Menu.setApplicationMenu(menu)
 }
 
-// Create system tray
+// Create system tray (skip in headless mode)
 function createTray() {
+  if (isHeadless) {
+    console.log('[Main] Headless mode: skipping system tray creation')
+    return
+  }
+
   const iconPath = getIconPath()
   if (!iconPath) {
     console.warn('No icon found for system tray, skipping tray creation')
@@ -837,8 +903,10 @@ function createTray() {
   tray.setToolTip('Notable - Note Taking App')
   tray.setContextMenu(contextMenu)
 
-  // Show window on tray click
+  // Show window on tray click (skip in headless mode)
   tray.on('click', () => {
+    if (isHeadless) return
+    
     if (mainWindow) {
       if (mainWindow.isVisible()) {
         mainWindow.hide()
@@ -881,8 +949,13 @@ function createQuickNoteWindow() {
   })
 }
 
-// Register global shortcuts
+// Register global shortcuts (skip in headless mode)
 function registerGlobalShortcuts() {
+  if (isHeadless) {
+    console.log('[Main] Headless mode: skipping global shortcuts registration')
+    return
+  }
+
   // Quick note capture
   globalShortcut.register('CommandOrControl+Shift+N', () => {
     createQuickNoteWindow()

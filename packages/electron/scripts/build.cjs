@@ -49,6 +49,25 @@ buildContents.forEach(item => {
   console.log(`  ${stats.isDirectory() ? '[DIR] ' : '[FILE]'} ${item}`);
 });
 
+// Convert preload.js from ES modules to CommonJS
+console.log('Converting preload.js to CommonJS...');
+const preloadJsPath = path.join(buildDir, 'preload.js');
+if (fs.existsSync(preloadJsPath)) {
+  let preloadContent = fs.readFileSync(preloadJsPath, 'utf8');
+  
+  // Convert ES modules import to CommonJS require
+  preloadContent = preloadContent.replace(
+    /import\s*{\s*([^}]+)\s*}\s*from\s*['"]([^'"]+)['"]/g,
+    'const { $1 } = require(\'$2\')'
+  );
+  
+  // Write back the converted content
+  fs.writeFileSync(preloadJsPath, preloadContent, 'utf8');
+  console.log('preload.js converted to CommonJS successfully!');
+} else {
+  console.warn('preload.js not found, skipping CommonJS conversion');
+}
+
 // Check for main.js
 console.log('Checking for main.js:');
 const mainJsPath = path.join(buildDir, 'main.js');

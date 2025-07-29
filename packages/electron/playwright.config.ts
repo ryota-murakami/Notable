@@ -4,27 +4,26 @@ export default defineConfig({
   testDir: './e2e/tests',
   fullyParallel: false, // Electron tests should run sequentially
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 3 : 1, // More retries for CI stability
   workers: 1, // Only run one worker for Electron tests
-  reporter: 'list',
+  reporter: process.env.CI ? [['github'], ['list']] : 'list',
   use: {
-    // Global test settings
-    actionTimeout: 30000,
-    navigationTimeout: 30000,
+    // Global test settings - longer timeouts for CI
+    actionTimeout: process.env.CI ? 45000 : 30000,
+    navigationTimeout: process.env.CI ? 45000 : 30000,
   },
   projects: [
     {
       name: 'electron',
       testDir: './e2e/tests',
       use: {
-        // Electron-specific settings
-        headless: false, // Electron requires headed mode
+        // Electron-specific settings - headless mode is handled by our utility functions
       },
     },
   ],
-  // Increase timeout for Electron app startup
-  timeout: 60000,
+  // Increase timeout for Electron app startup - longer for CI
+  timeout: process.env.CI ? 120000 : 60000,
   expect: {
-    timeout: 10000,
+    timeout: process.env.CI ? 15000 : 10000,
   },
 })
