@@ -1,11 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { X, Hash } from 'lucide-react'
+import { Hash, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { useTagSuggestions, useTagManager } from '@/hooks/use-tags'
+import { useTagManager, useTagSuggestions } from '@/hooks/use-tags'
 import type { EnhancedTag } from '@/types/tags'
 
 export interface TagInputProps {

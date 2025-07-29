@@ -5,8 +5,8 @@ import * as CommandPrimitive from 'cmdk'
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogDescription,
+  DialogTitle,
 } from '@/components/ui/dialog'
 
 const Command = CommandPrimitive.Command
@@ -40,6 +40,8 @@ import {
   UserIcon,
 } from 'lucide-react'
 import { useSearch, useSearchHistory } from '../../lib/search'
+import { useServerSearch } from '@/hooks/use-server-search'
+import { useSearchHistory as useServerSearchHistory } from '@/hooks/use-search-history'
 import type { SearchableNote, SearchResult } from '../../lib/search/types'
 
 export interface CommandAction {
@@ -424,15 +426,14 @@ export function SearchCommandPalette({
     setMounted(true)
   }, [])
 
-  const search = useSearch(mounted ? notes : [], {
+  // Use server-side search for better performance and features
+  const search = useServerSearch({
+    limit: 50,
     debounceMs: 200,
-    maxResults: 50,
-    enableHistory: true,
   })
 
-  const searchHistory = useSearchHistory({
-    maxEntries: 50,
-    persistToStorage: mounted,
+  const searchHistory = useServerSearchHistory({
+    limit: 50,
   })
 
   // Handle modal navigation shortcuts (Escape, /, Ctrl+H)
@@ -474,22 +475,11 @@ export function SearchCommandPalette({
 
   const handleSearchSelect = React.useCallback(
     (result: SearchResult) => {
-      searchHistory.addEntry(
-        search.query,
-        search.filters.active,
-        search.results.length
-      )
+      // Search history is automatically saved by the server search hook
       onNoteSelect?.(result.note)
       onOpenChange(false)
     },
-    [
-      search.query,
-      search.filters.active,
-      search.results.length,
-      searchHistory,
-      onNoteSelect,
-      onOpenChange,
-    ]
+    [onNoteSelect, onOpenChange]
   )
 
   const handleHistorySelect = React.useCallback(
@@ -622,97 +612,125 @@ export function SearchCommandPalette({
     )
   }
 
-  const renderSearchMode = () => (
-    <>
-      <CommandInput
-        placeholder='Search notes... (ESC to go back)'
-        value={search.query}
-        onValueChange={search.search}
-        className='border-0'
-      />
-      <CommandList className='max-h-96'>
-        {search.isSearching && (
-          <div className='p-4 text-center text-sm text-muted-foreground'>
-            Searching...
-          </div>
-        )}
-
-        {!search.isSearching &&
-          search.results.length === 0 &&
-          search.hasSearched && (
-            <CommandEmpty>
-              No notes found matching "{search.query}"
-            </CommandEmpty>
-          )}
-
-        {!search.hasSearched && !search.query && (
-          <div className='p-4 text-center text-sm text-muted-foreground'>
-            <div className='flex flex-col gap-2'>
-              <SearchIcon className='h-8 w-8 mx-auto opacity-50' />
-              <div>Start typing to search your notes</div>
-              <div className='text-xs'>
-                Use boolean operators (AND, OR, NOT) for advanced search
+  const renderSearchMode = () => {
+    // Enhanced search mode using server-side search
+    return (
+      <>
+        <CommandInput
+          placeholder='Search notes... (ESC to go back)'
+          value={search.query}
+          onValueChange={(value) => search.search(value)}
+          className='border-0'
+        />
+        <CommandList className='max-h-96'>
+          {search.isSearching && (
+            <div className='p-4 text-center text-sm text-muted-foreground'>
+              <div className='flex items-center justify-center gap-2'>
+                <span className='animate-spin'>⏳</span>
+                Searching...
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {search.results.length > 0 && (
-          <>
-            <CommandGroup heading={`Notes (${search.results.length})`}>
-              {search.results.map((result) => (
-                <CommandItem
-                  key={result.note.id}
-                  onSelect={() => handleSearchSelect(result)}
-                  className='flex items-start gap-3 px-3 py-3 text-sm cursor-pointer'
-                >
-                  <span className='flex-shrink-0 text-muted-foreground mt-0.5'>
-                    {result.note.isFolder ? (
-                      <FolderIcon className='h-4 w-4' />
-                    ) : (
-                      <FileTextIcon className='h-4 w-4' />
-                    )}
-                  </span>
-                  <div className='flex-1 min-w-0'>
-                    <div className='font-medium truncate'>
-                      {result.note.title}
-                    </div>
-                    {result.snippet && (
-                      <div className='text-xs text-muted-foreground mt-1 line-clamp-2'>
-                        {result.snippet.replace(/<[^>]*>/g, '')}
+          {!search.isSearching &&
+            search.results.length === 0 &&
+            search.hasSearched && (
+              <CommandEmpty>
+                <div className='text-center py-4'>
+                  <SearchIcon className='h-8 w-8 mx-auto opacity-50 mb-2' />
+                  <div>No notes found matching "{search.query}"</div>
+                  <div className='text-xs text-muted-foreground mt-1'>
+                    Try different keywords or check your filters
+                  </div>
+                </div>
+              </CommandEmpty>
+            )}
+
+          {!search.hasSearched && !search.query.trim() && (
+            <div className='p-4 text-center text-sm text-muted-foreground'>
+              <div className='flex flex-col gap-2'>
+                <SearchIcon className='h-8 w-8 mx-auto opacity-50' />
+                <div>Start typing to search your notes</div>
+                <div className='text-xs'>
+                  Search titles, content, and tags with advanced filtering
+                </div>
+              </div>
+            </div>
+          )}
+
+          {search.results.length > 0 && (
+            <>
+              <div className='px-3 py-2 border-b text-xs text-muted-foreground'>
+                Found {search.results.length} notes
+                {search.stats && (
+                  <span className='ml-2'>• {search.stats.searchTime}ms</span>
+                )}
+              </div>
+
+              <CommandGroup heading='Search Results'>
+                {search.results.map((result) => (
+                  <CommandItem
+                    key={result.note.id}
+                    onSelect={() => handleSearchSelect(result)}
+                    className='flex items-start gap-3 px-3 py-3 text-sm cursor-pointer'
+                  >
+                    <span className='flex-shrink-0 text-muted-foreground mt-0.5'>
+                      {result.note.isFolder ? (
+                        <FolderIcon className='h-4 w-4' />
+                      ) : (
+                        <FileTextIcon className='h-4 w-4' />
+                      )}
+                    </span>
+                    <div className='flex-1 min-w-0'>
+                      <div className='font-medium truncate'>
+                        {result.note.title}
                       </div>
-                    )}
-                    <div className='flex items-center gap-2 mt-2'>
-                      <div className='text-xs text-muted-foreground'>
-                        Score: {Math.round(result.score * 100)}%
-                      </div>
-                      {result.note.tags.length > 0 && (
-                        <div className='flex items-center gap-1'>
-                          <TagIcon className='h-3 w-3 text-muted-foreground' />
-                          <div className='text-xs text-muted-foreground'>
-                            {result.note.tags.slice(0, 2).join(', ')}
-                            {result.note.tags.length > 2 && (
-                              <span> +{result.note.tags.length - 2}</span>
-                            )}
-                          </div>
+                      {result.snippet && (
+                        <div className='text-xs text-muted-foreground mt-1 line-clamp-2'>
+                          {result.snippet.replace(/<[^>]*>/g, '')}
                         </div>
                       )}
+                      <div className='flex items-center gap-2 mt-2'>
+                        <div className='text-xs text-muted-foreground'>
+                          {new Date(result.note.updated_at).toLocaleDateString(
+                            'en-US',
+                            {
+                              month: 'short',
+                              day: 'numeric',
+                            }
+                          )}
+                        </div>
+                        {result.note.tags.length > 0 && (
+                          <div className='flex items-center gap-1'>
+                            <TagIcon className='h-3 w-3 text-muted-foreground' />
+                            <div className='text-xs text-muted-foreground'>
+                              {result.note.tags.slice(0, 2).join(', ')}
+                              {result.note.tags.length > 2 && (
+                                <span> +{result.note.tags.length - 2}</span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+                    <div className='text-xs text-muted-foreground'>
+                      {Math.round(result.score * 100)}%
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
 
-            {search.hasActiveFilters && (
-              <div className='px-3 py-2 text-xs text-muted-foreground border-t'>
-                Active filters: {search.filterSummary.join(', ')}
-              </div>
-            )}
-          </>
-        )}
-      </CommandList>
-    </>
-  )
+              {search.hasActiveFilters && (
+                <div className='px-3 py-2 text-xs text-muted-foreground border-t'>
+                  Active filters: {search.filterSummary.join(', ')}
+                </div>
+              )}
+            </>
+          )}
+        </CommandList>
+      </>
+    )
+  }
 
   const renderHistoryMode = () => {
     const recentSearches = searchHistory.getRecentSearches(10)
