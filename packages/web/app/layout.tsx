@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { AuthProvider } from '@/providers/auth-provider'
 
 export const metadata: Metadata = {
   title: 'Notable - The Notion Clone but Better',
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )
