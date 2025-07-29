@@ -68,7 +68,7 @@ export async function GET(_request: NextRequest) {
   const supabase = await createClient()
 
   try {
-    let user = devBypassUser
+    let user: any = devBypassUser
 
     if (!user) {
       // Get the current user normally
