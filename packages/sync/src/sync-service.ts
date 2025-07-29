@@ -295,7 +295,8 @@ export class SyncServiceImpl implements SyncService {
   /**
    * Get list of online devices for the user
    */
-  getOnlineDevices(): DeviceInfo[] {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async getOnlineDevices(): Promise<DeviceInfo[]> {
     if (!this.realtimeChannel) {
       return []
     }
