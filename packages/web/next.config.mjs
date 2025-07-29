@@ -3,7 +3,7 @@ const nextConfig = {
   // output: 'export', // Temporarily disabled for development - middleware is needed
   trailingSlash: false,
   // Transpile workspace packages for proper module resolution
-  transpilePackages: ['@notable/sync'],
+  transpilePackages: ['@notable/sync', 'msw'],
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],
