@@ -60,7 +60,6 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       const newNote = await createNote({
         title: 'Untitled',
         content: '',
-        is_folder: false,
       })
       if (newNote) {
         router.push(`/notes/${newNote.id}`)

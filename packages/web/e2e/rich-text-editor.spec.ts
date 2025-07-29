@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Rich Text Editor', () => {
   test.beforeEach(async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe('Rich Text Editor', () => {
     await expect(titleInput).toHaveValue('Test Note Title')
 
     // Edit title
-    await titleInput.selectAll()
+    await titleInput.selectText()
     await titleInput.fill('Updated Test Title')
     await expect(titleInput).toHaveValue('Updated Test Title')
   })
@@ -359,12 +359,3 @@ test.describe('Rich Text Editor', () => {
     ).toBeVisible()
   })
 })
-
-// Helper function to wait for editor to be ready
-async function waitForEditorReady(page: Page) {
-  await page.waitForSelector('[data-slate-editor="true"]', { state: 'visible' })
-  await page.waitForFunction(() => {
-    const editor = document.querySelector('[data-slate-editor="true"]')
-    return editor && !editor.getAttribute('aria-busy')
-  })
-}

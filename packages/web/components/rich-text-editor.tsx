@@ -45,15 +45,10 @@ export function RichTextEditor({
   })
 
   // Auto-save functionality
-  useAutoSave(
-    JSON.stringify({ title, content }),
-    (dataString: string) => {
-      const data = JSON.parse(dataString)
-      onTitleChange?.(data.title)
-      onContentChange?.(data.content)
-    },
-    1000
-  )
+  useAutoSave(noteId, {
+    title,
+    content: JSON.stringify(content),
+  })
 
   useEffect(() => {
     setTitle(initialTitle)

@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { notesService } from '@/lib/services/notes'
 import { useAutoSave } from './use-auto-save'
 import { toast } from './use-toast'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/types/database'
 
 type Note = Database['public']['Tables']['notes']['Row']
 type NoteUpdate = Partial<
@@ -68,10 +68,10 @@ export function useNote(noteId: string) {
   )
 
   // Set up auto-save for title and content changes
-  const { save: autoSaveNote, isAutoSaving } = useAutoSave(
-    useCallback((data: NoteUpdate) => updateNote(data), [updateNote]),
-    500 // 500ms debounce
-  )
+  const { saveNow, isSaving } = useAutoSave(noteId, {
+    title: note?.title,
+    content: note?.content,
+  })
 
   const debouncedUpdateNote = useCallback(
     (updates: NoteUpdate) => {
@@ -79,10 +79,9 @@ export function useNote(noteId: string) {
       if (note) {
         setNote((prev) => (prev ? { ...prev, ...updates } : null))
       }
-      // Trigger auto-save
-      autoSaveNote(updates)
+      // The auto-save will trigger automatically when note data changes
     },
-    [note, autoSaveNote]
+    [note]
   )
 
   return {
@@ -90,6 +89,7 @@ export function useNote(noteId: string) {
     loading,
     error,
     updateNote: debouncedUpdateNote,
-    isAutoSaving,
+    saveNow,
+    isSaving,
   }
 }
