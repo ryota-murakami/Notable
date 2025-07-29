@@ -6,8 +6,8 @@
   "type": "module",
   "main": "build/main.js",
   "scripts": {
-    "build": "node scripts/build.js",
-    "build:electron": "node scripts/build.js && electron-builder",
+    "build": "node scripts/build.cjs",
+    "build:electron": "node scripts/build.cjs && electron-builder",
     "dev": "node scripts/dev-with-server.cjs",
     "dev:electron-only": "ELECTRON_START_URL=http://localhost:4378 electron .",
     "start": "electron .",
