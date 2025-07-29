@@ -12,9 +12,9 @@ test.describe('Enhanced Graph View', () => {
       },
     ])
 
-    // Navigate to the graph page
-    await page.goto('/app/graph')
-    await page.waitForLoadState('networkidle')
+    // Navigate to the graph page with extended timeout for D3.js compilation
+    await page.goto('/app/graph', { timeout: 60000 })
+    await page.waitForLoadState('networkidle', { timeout: 30000 })
   })
 
   test('should display enhanced graph controls', async ({ page }) => {

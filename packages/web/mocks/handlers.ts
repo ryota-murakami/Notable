@@ -121,6 +121,64 @@ export const handlers = [
     })
   }),
 
+  // Mock graph API endpoint
+  http.get('*/api/graph', () => {
+    return HttpResponse.json({
+      success: true,
+      data: {
+        nodes: [
+          {
+            id: 'note-1',
+            label: 'Note 1',
+            title: 'Note 1',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            connections: 2,
+          },
+          {
+            id: 'note-2',
+            label: 'Note 2',
+            title: 'Note 2',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            connections: 1,
+          },
+          {
+            id: 'note-3',
+            label: 'Note 3',
+            title: 'Note 3',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            connections: 1,
+          },
+        ],
+        edges: [
+          {
+            from: 'note-1',
+            to: 'note-2',
+            source: 'note-1',
+            target: 'note-2',
+            label: 'connected to',
+            title: 'Link: connected to',
+          },
+          {
+            from: 'note-1',
+            to: 'note-3',
+            source: 'note-1',
+            target: 'note-3',
+            label: 'references',
+            title: 'Link: references',
+          },
+        ],
+        stats: {
+          totalNotes: 3,
+          totalLinks: 2,
+          avgConnections: 1.33,
+        },
+      },
+    })
+  }),
+
   // Default handler for unhandled requests
   http.get('*', ({ request }) => {
     console.warn(`Unhandled request: ${request.method} ${request.url}`)
