@@ -181,8 +181,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
                   Welcome to Notable
                 </h2>
                 <p className='text-muted-foreground mb-6'>
-                  A modern note-taking experience. Select a note from the
-                  sidebar or create a new one to get started.
+                  A modern note-taking experience
                 </p>
                 <Button onClick={handleCreateNote} size='lg'>
                   <Plus className='mr-2 h-4 w-4' />
