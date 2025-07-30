@@ -235,7 +235,7 @@ export function VisualGraph({
   width = 800,
 }: VisualGraphProps) {
   // Refs
-  const graphRef = useRef<any>()
+  const graphRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // State
@@ -531,7 +531,8 @@ export function VisualGraph({
       ctx.fillRect(
         node.x! - bckgDimensions[0] / 2,
         node.y! - bckgDimensions[1] / 2,
-        ...bckgDimensions
+        bckgDimensions[0],
+        bckgDimensions[1]
       )
 
       // Text
@@ -554,7 +555,8 @@ export function VisualGraph({
         ctx.fillRect(
           node.x! - bckgDimensions[0] / 2,
           node.y! - bckgDimensions[1] / 2,
-          ...bckgDimensions
+          bckgDimensions[0],
+          bckgDimensions[1]
         )
     },
     []
@@ -702,46 +704,40 @@ export function VisualGraph({
           height={isFullscreen ? window.innerHeight : height}
           backgroundColor={settings.visual.backgroundColor}
           // Node styling
-          nodeVal={getNodeSize}
-          nodeColor={getNodeColor}
+          nodeVal={getNodeSize as any}
+          nodeColor={getNodeColor as any}
           nodeOpacity={settings.visual.opacity}
-          nodeLabel={renderNodeLabel}
-          nodeCanvasObject={mode === '2d' ? renderNodeCanvasObject : undefined}
+          nodeLabel={renderNodeLabel as any}
+          nodeCanvasObject={
+            mode === '2d' ? (renderNodeCanvasObject as any) : undefined
+          }
           nodePointerAreaPaint={
-            mode === '2d' ? nodePointerAreaPaint : undefined
+            mode === '2d' ? (nodePointerAreaPaint as any) : undefined
           }
           // Link styling
-          linkWidth={getLinkWidth}
-          linkColor={getLinkColor}
-          linkOpacity={(link) => link.opacity * settings.visual.opacity}
-          linkLabel={(link: GraphLink) =>
-            `${link.sourceTitle} → ${link.targetTitle} (${link.type})`
+          linkWidth={getLinkWidth as any}
+          linkColor={getLinkColor as any}
+          linkOpacity={
+            ((link: any) => link.opacity * settings.visual.opacity) as any
+          }
+          linkLabel={
+            ((link: GraphLink) =>
+              `${link.sourceTitle} → ${link.targetTitle} (${link.type})`) as any
           }
           // Interactions
           enableNodeDrag={settings.interaction.enableDrag}
           enableZoomInteraction={settings.interaction.enableZoom}
           enablePanInteraction={settings.interaction.enablePan}
           // Events
-          onNodeClick={handleNodeClick}
-          onNodeHover={handleNodeHover}
-          onLinkClick={handleLinkClick}
-          onLinkHover={handleLinkHover}
+          onNodeClick={handleNodeClick as any}
+          onNodeHover={handleNodeHover as any}
+          onLinkClick={handleLinkClick as any}
+          onLinkHover={handleLinkHover as any}
           onBackgroundClick={handleBackgroundClick}
           // Physics
           d3AlphaDecay={settings.physics.enabled ? 0.0228 : 0}
           d3VelocityDecay={settings.physics.damping}
-          d3Force={{
-            charge: {
-              strength: settings.physics.strength,
-              distanceMax: settings.physics.distance * 2,
-            },
-            link: {
-              distance: settings.physics.distance,
-            },
-            collision: {
-              radius: settings.physics.collisionRadius,
-            },
-          }}
+          dagLevelDistance={settings.physics.distance}
           // 3D specific props
           {...(mode === '3d' && {
             showNavInfo: false,

@@ -45,9 +45,9 @@ export function markdownToSlate(markdown: string): Descendant[] {
     if (!trimmed) {
       if (currentListItems.length > 0) {
         result.push({
-          type: currentListType as string,
+          type: currentListType as 'ul' | 'ol',
           children: currentListItems,
-        })
+        } as any)
         currentListItems = []
         currentListType = null
       }
@@ -154,9 +154,9 @@ export function markdownToSlate(markdown: string): Descendant[] {
   function flushList() {
     if (currentListItems.length > 0) {
       result.push({
-        type: currentListType as string,
+        type: currentListType as 'ul' | 'ol',
         children: currentListItems as any,
-      })
+      } as any)
       currentListItems = []
       currentListType = null
     }

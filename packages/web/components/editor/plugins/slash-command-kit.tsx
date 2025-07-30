@@ -1,6 +1,6 @@
 'use client'
 
-import { createPlatePlugin } from '@udecode/plate-common'
+import { createPlatePlugin } from 'platejs/react'
 import {
   AlertCircle,
   Brain,
@@ -398,14 +398,14 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
 export const SlashCommandPlugin = createPlatePlugin({
   key: 'slash_command',
   handlers: {
-    onKeyDown: (editor) => (event) => {
+    onKeyDown: ({ event }: any) => {
       if (event.key === '/') {
         // Trigger slash command menu
         // This would be handled by the slash command UI component
         return false
       }
     },
-  },
+  } as any,
 })
 
 // Filter commands based on search query

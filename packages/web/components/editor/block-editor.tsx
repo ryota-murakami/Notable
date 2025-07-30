@@ -2,10 +2,14 @@
 
 import * as React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Plate, PlateContent, usePlateEditor } from 'platejs/react'
+import {
+  Plate,
+  PlateContent,
+  usePlateEditor,
+  createPlatePlugin,
+} from 'platejs/react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { createPlatePlugin } from '@udecode/plate-common'
 
 import { BasicBlocksKit } from './plugins/basic-blocks-kit'
 import { BasicMarksKit } from './plugins/basic-marks-kit'
@@ -47,7 +51,7 @@ const defaultValue = [
 const BlockSelectionPlugin = createPlatePlugin({
   key: 'block_selection',
   handlers: {
-    onClick: (editor) => (event) => {
+    onClick: ({ event }: any) => {
       // Handle block selection logic
       const element = event.target as HTMLElement
       const blockElement = element.closest('[data-slate-node="element"]')
@@ -56,7 +60,7 @@ const BlockSelectionPlugin = createPlatePlugin({
         blockElement.classList.add('block-selected')
       }
     },
-  },
+  } as any,
 })
 
 // Block Drag and Drop Plugin
@@ -107,11 +111,14 @@ export function BlockEditor({
   const editor = usePlateEditor({
     plugins: createBlockEditorPlugins(),
     value,
-    onChange: (newValue) => {
-      setValue(newValue)
-      onChange?.(newValue)
-    },
   })
+
+  // Handle editor value changes
+  useEffect(() => {
+    if (editor && onChange && editor.children !== value) {
+      onChange(editor.children)
+    }
+  }, [editor, editor?.children, onChange, value])
 
   // Slash command management
   const { isOpen, position, openMenu, closeMenu, handleCommandSelect } =
@@ -163,7 +170,7 @@ export function BlockEditor({
         const selection = editor.selection
         if (selection) {
           // Replace the selected text with the suggestion
-          editor.insertText(suggestion)
+          ;(editor as any).insertText(suggestion)
         }
       } catch (error) {
         console.error('Failed to insert AI suggestion:', error)
@@ -274,10 +281,12 @@ export function BlockEditor({
       // Cmd/Ctrl + Enter: Insert new block below
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
         event.preventDefault()
-        editor.insertNodes({
-          type: 'p',
-          children: [{ text: '' }],
-        })
+        if (editor && (editor as any).insertNodes) {
+          ;(editor as any).insertNodes({
+            type: 'p',
+            children: [{ text: '' }],
+          })
+        }
       }
 
       // Cmd/Ctrl + Shift + Enter: Insert new block above
@@ -288,10 +297,12 @@ export function BlockEditor({
       ) {
         event.preventDefault()
         // Insert block above current selection
-        editor.insertNodes({
-          type: 'p',
-          children: [{ text: '' }],
-        })
+        if (editor && (editor as any).insertNodes) {
+          ;(editor as any).insertNodes({
+            type: 'p',
+            children: [{ text: '' }],
+          })
+        }
       }
 
       // Cmd/Ctrl + D: Duplicate current block
