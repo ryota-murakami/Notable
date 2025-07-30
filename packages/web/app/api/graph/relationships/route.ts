@@ -403,7 +403,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    let query = supabase.from('note_relationships')
+    const query = supabase.from('note_relationships')
 
     if (id) {
       // Delete by ID - verify ownership first

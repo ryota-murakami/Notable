@@ -75,7 +75,7 @@ function GraphPageContent() {
     selectedNodes,
     selectedLinks,
     hoveredNode,
-    hoveredLink,
+    hoveredLink: _hoveredLink,
     graphMode,
     isFullscreen,
     setHoveredNode,
