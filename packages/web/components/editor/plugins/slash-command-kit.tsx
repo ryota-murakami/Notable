@@ -3,20 +3,29 @@
 import { createPlatePlugin } from '@udecode/plate-common'
 import {
   AlertCircle,
+  Brain,
   CheckSquare,
   ChevronRight,
   Code,
+  Crown,
+  Expand,
   FileText,
   Heading1,
   Heading2,
   Heading3,
   Image,
+  Lightbulb,
   List,
   ListOrdered,
   Minus,
+  Plus,
   Quote,
+  RotateCcw,
+  Shrink,
+  Sparkles,
   Table,
   Type,
+  Wand2,
 } from 'lucide-react'
 
 // Slash Command Configuration
@@ -26,7 +35,7 @@ export interface SlashCommandItem {
   description: string
   icon: React.ComponentType<any>
   keywords: string[]
-  group: 'basic' | 'media' | 'database' | 'advanced'
+  group: 'basic' | 'media' | 'database' | 'advanced' | 'ai'
   action: (editor: any) => void
 }
 
@@ -220,6 +229,169 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
       })
     },
   },
+
+  // AI-Powered Features
+  {
+    key: 'ai-improve',
+    title: 'AI Improve',
+    description: 'Enhance clarity and readability with AI',
+    icon: Wand2,
+    keywords: ['ai', 'improve', 'enhance', 'fix', 'better'],
+    group: 'ai',
+    action: (editor) => {
+      // Trigger AI improvement on current block
+      const selectedText = editor.getEditorString()
+      if (selectedText.trim()) {
+        // This would integrate with the AI service
+        // For now, we'll add a placeholder that can be enhanced
+        editor.api.block.insertBlock({
+          type: 'p',
+          children: [
+            {
+              text: '[AI Enhancement] - Integrating with AI service...',
+            },
+          ],
+        })
+      }
+    },
+  },
+  {
+    key: 'ai-expand',
+    title: 'AI Expand',
+    description: 'Add more detail and examples with AI',
+    icon: Expand,
+    keywords: ['ai', 'expand', 'elaborate', 'detail', 'examples'],
+    group: 'ai',
+    action: (editor) => {
+      const selectedText = editor.getEditorString()
+      if (selectedText.trim()) {
+        editor.api.block.insertBlock({
+          type: 'p',
+          children: [
+            {
+              text: '[AI Expansion] - Adding more detail...',
+            },
+          ],
+        })
+      }
+    },
+  },
+  {
+    key: 'ai-summarize',
+    title: 'AI Summarize',
+    description: 'Create a concise summary with AI',
+    icon: Shrink,
+    keywords: ['ai', 'summarize', 'summary', 'brief', 'condense'],
+    group: 'ai',
+    action: (editor) => {
+      const selectedText = editor.getEditorString()
+      if (selectedText.trim()) {
+        editor.api.block.insertBlock({
+          type: 'p',
+          children: [
+            {
+              text: '[AI Summary] - Creating summary...',
+            },
+          ],
+        })
+      }
+    },
+  },
+  {
+    key: 'ai-rewrite',
+    title: 'AI Rewrite',
+    description: 'Rewrite in different style with AI',
+    icon: RotateCcw,
+    keywords: ['ai', 'rewrite', 'rephrase', 'style', 'different'],
+    group: 'ai',
+    action: (editor) => {
+      const selectedText = editor.getEditorString()
+      if (selectedText.trim()) {
+        editor.api.block.insertBlock({
+          type: 'p',
+          children: [
+            {
+              text: '[AI Rewrite] - Rewriting content...',
+            },
+          ],
+        })
+      }
+    },
+  },
+  {
+    key: 'ai-continue',
+    title: 'AI Continue',
+    description: 'Continue writing with AI assistance',
+    icon: Plus,
+    keywords: ['ai', 'continue', 'complete', 'finish', 'generate'],
+    group: 'ai',
+    action: (editor) => {
+      editor.api.block.insertBlock({
+        type: 'p',
+        children: [
+          {
+            text: '[AI Continuation] - Continuing your thought...',
+          },
+        ],
+      })
+    },
+  },
+  {
+    key: 'ai-brainstorm',
+    title: 'AI Brainstorm',
+    description: 'Generate ideas and suggestions',
+    icon: Lightbulb,
+    keywords: ['ai', 'brainstorm', 'ideas', 'suggestions', 'creative'],
+    group: 'ai',
+    action: (editor) => {
+      editor.api.block.insertBlock({
+        type: 'p',
+        children: [
+          {
+            text: '[AI Brainstorm] - Generating ideas...',
+          },
+        ],
+      })
+    },
+  },
+  {
+    key: 'ai-outline',
+    title: 'AI Outline',
+    description: 'Create an outline from your topic',
+    icon: FileText,
+    keywords: ['ai', 'outline', 'structure', 'organize', 'plan'],
+    group: 'ai',
+    action: (editor) => {
+      editor.api.block.insertBlock({
+        type: 'p',
+        children: [
+          {
+            text: '[AI Outline] - Creating outline...',
+          },
+        ],
+      })
+    },
+  },
+  {
+    key: 'ai-assistant',
+    title: 'AI Assistant',
+    description: 'Open AI writing assistant panel',
+    icon: Brain,
+    keywords: ['ai', 'assistant', 'help', 'panel', 'premium'],
+    group: 'ai',
+    action: (editor) => {
+      // This would trigger opening the AI assistant panel
+      // For now, show a premium feature indicator
+      editor.api.block.insertBlock({
+        type: 'callout',
+        children: [
+          {
+            text: '✨ AI Assistant - Premium feature for intelligent writing assistance',
+          },
+        ],
+      })
+    },
+  },
 ]
 
 // Slash Command Plugin
@@ -255,6 +427,7 @@ export function filterSlashCommands(query: string): SlashCommandItem[] {
 // Group filtered commands
 export function groupSlashCommands(commands: SlashCommandItem[]) {
   const groups = {
+    ai: commands.filter((cmd) => cmd.group === 'ai'),
     basic: commands.filter((cmd) => cmd.group === 'basic'),
     advanced: commands.filter((cmd) => cmd.group === 'advanced'),
     media: commands.filter((cmd) => cmd.group === 'media'),

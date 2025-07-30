@@ -13,6 +13,12 @@ import { AdvancedBlocksKit } from './plugins/advanced-blocks-kit'
 import { SlashCommandPlugin } from './plugins/slash-command-kit'
 import { SlashCommandMenu, useSlashCommand } from './slash-command-menu'
 import { Editor, EditorContainer } from '@/components/ui/editor'
+import {
+  AIQuickActions,
+  AIWritingInsights,
+  NoteAssistant,
+} from '@/components/ai/note-assistant'
+import { SmartSearch } from '@/components/ai/smart-search'
 import { cn } from '@/lib/utils'
 
 interface BlockEditorProps {
@@ -22,6 +28,12 @@ interface BlockEditorProps {
   className?: string
   readOnly?: boolean
   autoFocus?: boolean
+  /** Note ID for AI context */
+  noteId?: string
+  /** Whether user has premium access for AI features */
+  isPremium?: boolean
+  /** Whether to show AI features */
+  enableAI?: boolean
 }
 
 const defaultValue = [
@@ -70,9 +82,26 @@ export function BlockEditor({
   className,
   readOnly = false,
   autoFocus = false,
+  noteId,
+  isPremium = false,
+  enableAI = true,
 }: BlockEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const [value, setValue] = useState(initialValue)
+
+  // AI Assistant state
+  const [selectedText, setSelectedText] = useState('')
+  const [selectionPosition, setSelectionPosition] = useState<{
+    x: number
+    y: number
+  } | null>(null)
+  const [showQuickActions, setShowQuickActions] = useState(false)
+  const [showAssistant, setShowAssistant] = useState(false)
+  const [showInsights, setShowInsights] = useState(false)
+  const [assistantPosition, setAssistantPosition] = useState<{
+    x: number
+    y: number
+  } | null>(null)
 
   // Create the Plate editor with all plugins
   const editor = usePlateEditor({
@@ -87,6 +116,94 @@ export function BlockEditor({
   // Slash command management
   const { isOpen, position, openMenu, closeMenu, handleCommandSelect } =
     useSlashCommand(editor)
+
+  // AI Assistant handlers
+  const handleTextSelection = useCallback(() => {
+    if (!enableAI) return
+
+    const selection = window.getSelection()
+    if (selection && selection.toString().trim()) {
+      const text = selection.toString().trim()
+      const range = selection.getRangeAt(0)
+      const rect = range.getBoundingClientRect()
+
+      setSelectedText(text)
+      setSelectionPosition({ x: rect.left, y: rect.bottom })
+      setShowQuickActions(true)
+    } else {
+      setSelectedText('')
+      setSelectionPosition(null)
+      setShowQuickActions(false)
+      setShowAssistant(false)
+    }
+  }, [enableAI])
+
+  const handleAIAction = useCallback(
+    (action: any) => {
+      if (!selectedText || !selectionPosition) return
+
+      setShowQuickActions(false)
+      setAssistantPosition({
+        x: Math.min(selectionPosition.x, window.innerWidth - 350),
+        y: selectionPosition.y + 10,
+      })
+      setShowAssistant(true)
+    },
+    [selectedText, selectionPosition]
+  )
+
+  const handleAcceptSuggestion = useCallback(
+    (suggestion: string) => {
+      if (!editor || !selectedText) return
+
+      // Replace selected text with AI suggestion
+      // This would integrate with Plate's transform methods
+      try {
+        // Get current selection in editor
+        const selection = editor.selection
+        if (selection) {
+          // Replace the selected text with the suggestion
+          editor.insertText(suggestion)
+        }
+      } catch (error) {
+        console.error('Failed to insert AI suggestion:', error)
+      }
+
+      setShowAssistant(false)
+      setSelectedText('')
+      setSelectionPosition(null)
+    },
+    [editor, selectedText]
+  )
+
+  const getFullNoteContent = useCallback(() => {
+    try {
+      return editor.children
+        .map((node: any) => {
+          if (node.children) {
+            return node.children.map((child: any) => child.text || '').join('')
+          }
+          return ''
+        })
+        .join('\n')
+    } catch {
+      return ''
+    }
+  }, [editor])
+
+  // Track text selection for AI features
+  useEffect(() => {
+    if (!enableAI) return
+
+    const handleSelectionChange = () => {
+      // Small delay to ensure selection is stable
+      setTimeout(handleTextSelection, 50)
+    }
+
+    document.addEventListener('selectionchange', handleSelectionChange)
+    return () =>
+      document.removeEventListener('selectionchange', handleSelectionChange)
+  }, [enableAI, handleTextSelection])
 
   // Handle slash command trigger
   const handleKeyDown = useCallback(
@@ -231,6 +348,46 @@ export function BlockEditor({
           onSelect={handleCommandSelect}
           position={position}
         />
+
+        {/* AI Features */}
+        {enableAI && (
+          <>
+            {/* AI Quick Actions Toolbar */}
+            <AIQuickActions
+              selectedText={selectedText}
+              onAction={handleAIAction}
+              position={selectionPosition || undefined}
+              visible={showQuickActions && !readOnly}
+              isPremium={isPremium}
+            />
+
+            {/* AI Note Assistant */}
+            <NoteAssistant
+              selectedText={selectedText}
+              noteContent={getFullNoteContent()}
+              noteId={noteId}
+              position={assistantPosition || undefined}
+              visible={showAssistant && !readOnly}
+              onAcceptSuggestion={handleAcceptSuggestion}
+              onClose={() => {
+                setShowAssistant(false)
+                setSelectedText('')
+                setSelectionPosition(null)
+              }}
+              isPremium={isPremium}
+            />
+
+            {/* AI Writing Insights Panel */}
+            {showInsights && (
+              <AIWritingInsights
+                content={getFullNoteContent()}
+                visible={showInsights}
+                onClose={() => setShowInsights(false)}
+                className='fixed right-4 top-20 z-30'
+              />
+            )}
+          </>
+        )}
       </div>
 
       <style>{`

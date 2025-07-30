@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  type NotesResponse,
   type NotesQueryParams,
+  type NotesResponse,
   notesService,
 } from '@/lib/services/notes'
 import { type Database } from '@/types/database'
