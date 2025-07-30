@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import React from 'react'
 import { Input, PasswordInput, SearchInput } from './input'
 import { Calendar, CreditCard, Mail, Phone, User } from 'lucide-react'

@@ -763,7 +763,6 @@ function FiltersPanel({
           Sort By
         </label>
         <Select
-          id='sort-by'
           value={filters.sortBy || 'centrality'}
           onValueChange={(value: any) => onUpdateFilters({ sortBy: value })}
         >

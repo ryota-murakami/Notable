@@ -51,11 +51,15 @@ export default [
         HTMLHeadingElement: 'readonly',
         HTMLParagraphElement: 'readonly',
         HTMLStyleElement: 'readonly',
+        HTMLPreElement: 'readonly',
+        HTMLSpanElement: 'readonly',
+        HTMLSelectElement: 'readonly',
         Element: 'readonly',
         Node: 'readonly',
         Event: 'readonly',
         MouseEvent: 'readonly',
         KeyboardEvent: 'readonly',
+        CanvasRenderingContext2D: 'readonly',
 
         // Node.js globals
         setTimeout: 'readonly',
