@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd ../.. && pnpm --filter @notable/web build",
-  "framework": "nextjs",
-  "outputDirectory": ".next"
+  "buildCommand": "cd ../.. && pnpm install && pnpm turbo build --filter=@notable/web",
+  "outputDirectory": "packages/web/.next/standalone",
+  "installCommand": "pnpm install"
 }
