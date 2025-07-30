@@ -9,7 +9,7 @@ test('smoke test - server responds', async ({ page }) => {
     await page.goto('/', { timeout: 5000, waitUntil: 'domcontentloaded' })
     console.log('✅ Server is responding')
   } catch (error) {
-    console.log('❌ Server not responding within 5s:', error.message)
+    console.log('❌ Server not responding within 5s:', (error as Error).message)
     // Don't fail the test - we just want to see if the test runner works
   }
 
