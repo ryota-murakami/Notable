@@ -345,13 +345,13 @@ async function getCommunityAnalytics(
     }
 
     const communities = groupBy(analytics, 'community_id')
-    const communityStats = {}
+    const communityStats: any = {}
 
     for (const [communityId, members] of Object.entries(communities)) {
       if (communityId === 'unassigned') continue
 
       const memberAnalytics = analytics.filter(
-        (a) => a.community_id === communityId
+        (a: any) => a.community_id === communityId
       )
       communityStats[communityId] = {
         size: members,
@@ -471,7 +471,7 @@ async function getIsolatedAnalytics(
     const suggestions = await generateConnectionSuggestions(
       supabase,
       userId,
-      isolated.map((i) => i.note_id)
+      isolated.map((i: any) => i.note_id)
     )
 
     return NextResponse.json({
@@ -578,7 +578,7 @@ async function recalculateAllAnalytics(supabase: any, userId: string) {
       )
 
     // Trigger recalculation for each note
-    const promises = notes.map((note) =>
+    const promises = notes.map((note: any) =>
       supabase.rpc('calculate_note_graph_metrics', { note_id: note.id })
     )
 
@@ -631,7 +631,7 @@ async function enrichNodesWithTitles(
     throw error
   }
 
-  const notesMap = new Map(notes.map((n) => [n.id, n]))
+  const notesMap = new Map(notes.map((n: any) => [n.id, n]))
 
   return analytics.map((a) => ({
     ...a,

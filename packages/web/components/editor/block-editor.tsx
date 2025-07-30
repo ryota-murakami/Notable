@@ -233,7 +233,7 @@ export function BlockEditor({
         />
       </div>
 
-      <style jsx global>{`
+      <style>{`
         .block-editor-container {
           position: relative;
           width: 100%;
