@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import { TemplateVariableForm } from './template-variable-form'
 import { Button } from '@/components/ui/button'
 import type { Template, TemplateVariable } from '@/types/templates'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/Templates/TemplateVariableForm',

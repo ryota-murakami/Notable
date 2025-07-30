@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 
 // Mock NoteEditor component for Storybook
 // This avoids the need for jest.mock and hook dependencies
@@ -230,7 +230,9 @@ export const EditContent: Story = {
 
     // Verify content updated
     await waitFor(() => {
-      expect(contentTextarea.value).toContain('Additional content added.')
+      expect((contentTextarea as HTMLTextAreaElement).value).toContain(
+        'Additional content added.'
+      )
     })
   },
 }
@@ -347,7 +349,9 @@ console.log(greeting);
     await userEvent.type(contentTextarea, markdownContent)
 
     await waitFor(() => {
-      expect(contentTextarea.value).toContain('# Markdown Test')
+      expect((contentTextarea as HTMLTextAreaElement).value).toContain(
+        '# Markdown Test'
+      )
     })
   },
 }
@@ -439,7 +443,9 @@ export const TabIndentation: Story = {
     await userEvent.type(contentTextarea, '}')
 
     await waitFor(() => {
-      expect(contentTextarea.value).toContain('function example()')
+      expect((contentTextarea as HTMLTextAreaElement).value).toContain(
+        'function example()'
+      )
     })
   },
 }

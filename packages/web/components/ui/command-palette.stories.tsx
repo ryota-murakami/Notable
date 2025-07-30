@@ -1,27 +1,27 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import * as React from 'react'
 import {
+  type CommandAction,
   CommandPalette,
   NotableCommandPalette,
   SearchCommandPalette,
   useCommandPalette,
-  CommandAction,
 } from './command-palette'
 import { expect, userEvent, within } from '@storybook/test'
 import {
-  FileIcon,
-  SearchIcon,
-  SettingsIcon,
-  MoonIcon,
-  KeyboardIcon,
-  PlusIcon,
   EditIcon,
-  TrashIcon,
-  TagIcon,
-  UserIcon,
+  FileIcon,
   FolderIcon,
   HomeIcon,
+  KeyboardIcon,
   MailIcon,
+  MoonIcon,
+  PlusIcon,
+  SearchIcon,
+  SettingsIcon,
+  TagIcon,
+  TrashIcon,
+  UserIcon,
 } from 'lucide-react'
 
 const meta = {
@@ -299,7 +299,7 @@ export const Playground: Story = {
         title: 'Action 1',
         description: 'This is the first action',
         icon: <PlusIcon className='h-4 w-4' />,
-        onSelect: () => alert('Action 1 selected'),
+        onSelect: () => console.info('Action 1 selected'),
         group: 'Group A',
       },
       {
@@ -307,7 +307,7 @@ export const Playground: Story = {
         title: 'Action 2',
         description: 'This is the second action',
         icon: <EditIcon className='h-4 w-4' />,
-        onSelect: () => alert('Action 2 selected'),
+        onSelect: () => console.info('Action 2 selected'),
         group: 'Group A',
       },
       {
@@ -315,7 +315,7 @@ export const Playground: Story = {
         title: 'Action 3',
         description: 'This is the third action',
         icon: <TrashIcon className='h-4 w-4' />,
-        onSelect: () => alert('Action 3 selected'),
+        onSelect: () => console.info('Action 3 selected'),
         group: 'Group B',
       },
       {
@@ -323,7 +323,7 @@ export const Playground: Story = {
         title: 'Action 4',
         description: 'This is the fourth action',
         icon: <TagIcon className='h-4 w-4' />,
-        onSelect: () => alert('Action 4 selected'),
+        onSelect: () => console.info('Action 4 selected'),
         group: 'Group B',
       },
     ]

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { KeyboardShortcutsDialog } from './keyboard-shortcuts-dialog'
 import { Button } from '@/design-system/components/button'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/KeyboardShortcutsDialog',

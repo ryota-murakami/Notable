@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import type { EnhancedTag } from '@/types/tags'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 import {
-  ChevronRight,
   ChevronDown,
+  ChevronRight,
+  Edit,
   Hash,
   MoreHorizontal,
   Plus,
-  Edit,
-  Trash,
   Search,
+  Trash,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

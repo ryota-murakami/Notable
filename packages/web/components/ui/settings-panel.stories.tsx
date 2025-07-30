@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
-  SettingsPanel,
   GeneralSettings,
-  ThemeSettings,
   KeyboardSettings,
-  NotificationSettings,
   NotableSettingsPanel,
+  NotificationSettings,
+  SettingsPanel,
   type SettingsSection,
+  ThemeSettings,
 } from './settings-panel'
 import { Button } from '@/design-system/components/button'
 import {
@@ -21,7 +21,7 @@ import {
   ShieldIcon,
   UserIcon,
 } from 'lucide-react'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/SettingsPanel',

@@ -3,7 +3,62 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import { TemplatePicker } from './template-picker'
 import { Button } from '@/components/ui/button'
 import type { Template, TemplateCategory } from '@/types/templates'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
+
+// Mock data - moved to top before usage
+const mockCategories: TemplateCategory[] = [
+  {
+    id: 'personal',
+    name: 'Personal',
+    icon: '👤',
+    templateCount: 8,
+    displayOrder: 1,
+    isSystem: false,
+  },
+  {
+    id: 'work',
+    name: 'Work',
+    icon: '💼',
+    templateCount: 12,
+    displayOrder: 2,
+    isSystem: false,
+  },
+  {
+    id: 'education',
+    name: 'Education',
+    icon: '📚',
+    templateCount: 6,
+    displayOrder: 3,
+    isSystem: false,
+  },
+  {
+    id: 'creative',
+    name: 'Creative',
+    icon: '🎨',
+    templateCount: 4,
+    displayOrder: 4,
+    isSystem: false,
+  },
+]
+
+const mockTemplates: Template[] = [
+  {
+    id: '1',
+    name: 'Daily Journal',
+    description: 'A simple template for daily reflection',
+    category: 'personal',
+    content: '# Daily Journal\n\n## Today I...\n\n## Reflection\n\n',
+    isPublic: true,
+    isSystem: false,
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-01',
+    usageCount: 150,
+    rating: 4.5,
+    ratingCount: 32,
+    variableCount: 0,
+  },
+  // Add more mock templates as needed
+]
 
 const meta = {
   title: 'UI/Templates/TemplatePicker',
@@ -61,188 +116,6 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-// Mock data
-const mockCategories: TemplateCategory[] = [
-  {
-    id: 'personal',
-    name: 'Personal',
-    icon: '👤',
-    templateCount: 8,
-  },
-  {
-    id: 'work',
-    name: 'Work',
-    icon: '💼',
-    templateCount: 12,
-  },
-  {
-    id: 'education',
-    name: 'Education',
-    icon: '📚',
-    templateCount: 6,
-  },
-  {
-    id: 'creative',
-    name: 'Creative',
-    icon: '🎨',
-    templateCount: 5,
-  },
-]
-
-const mockTemplates: Template[] = [
-  // Personal templates
-  {
-    id: '1',
-    name: 'Daily Journal',
-    description: 'Track your thoughts, gratitude, and daily reflections',
-    category: 'personal',
-    categoryName: 'Personal',
-    categoryIcon: '👤',
-    content:
-      "# {{date}}\n\n## Gratitude\n- \n\n## Today's Thoughts\n\n## Tomorrow's Goals\n",
-    variableCount: 1,
-    rating: 4.8,
-    usageCount: 156,
-    isSystem: true,
-    variables: [{ name: 'date', type: 'date', required: true }],
-    tags: ['journal', 'daily', 'reflection'],
-  },
-  {
-    id: '2',
-    name: 'Habit Tracker',
-    description:
-      'Monitor and build positive habits with this tracking template',
-    category: 'personal',
-    categoryName: 'Personal',
-    categoryIcon: '👤',
-    content:
-      '# Habit Tracking - {{month}}\n\n## Habits to Track\n- [ ] Morning Exercise\n- [ ] Reading (30 min)\n- [ ] Meditation\n',
-    variableCount: 1,
-    rating: 4.6,
-    usageCount: 89,
-    isSystem: true,
-    variables: [{ name: 'month', type: 'text', required: true }],
-    tags: ['habits', 'tracking', 'goals'],
-  },
-  // Work templates
-  {
-    id: '3',
-    name: 'Meeting Notes',
-    description:
-      'Structured template for capturing meeting details and action items',
-    category: 'work',
-    categoryName: 'Work',
-    categoryIcon: '💼',
-    content:
-      '# Meeting: {{title}}\n**Date:** {{date}}\n**Attendees:** {{attendees}}\n\n## Agenda\n\n## Discussion\n\n## Action Items\n- [ ] \n',
-    variableCount: 3,
-    rating: 4.9,
-    usageCount: 342,
-    isSystem: true,
-    variables: [
-      { name: 'title', type: 'text', required: true },
-      { name: 'date', type: 'date', required: true },
-      { name: 'attendees', type: 'text', required: false },
-    ],
-    tags: ['meeting', 'work', 'notes'],
-  },
-  {
-    id: '4',
-    name: 'Project Proposal',
-    description:
-      'Professional template for creating detailed project proposals',
-    category: 'work',
-    categoryName: 'Work',
-    categoryIcon: '💼',
-    content:
-      '# Project Proposal: {{projectName}}\n\n## Executive Summary\n\n## Objectives\n\n## Timeline\n\n## Budget\n\n## Resources',
-    variableCount: 1,
-    rating: 4.7,
-    usageCount: 128,
-    isSystem: true,
-    variables: [{ name: 'projectName', type: 'text', required: true }],
-    tags: ['project', 'proposal', 'planning'],
-  },
-  // Education templates
-  {
-    id: '5',
-    name: 'Lecture Notes',
-    description: 'Organize your class notes with this structured template',
-    category: 'education',
-    categoryName: 'Education',
-    categoryIcon: '📚',
-    content:
-      '# {{subject}} - Lecture {{number}}\n**Date:** {{date}}\n**Topic:** {{topic}}\n\n## Key Concepts\n\n## Examples\n\n## Questions\n',
-    variableCount: 4,
-    rating: 4.5,
-    usageCount: 234,
-    isSystem: true,
-    variables: [
-      { name: 'subject', type: 'text', required: true },
-      { name: 'number', type: 'number', required: true },
-      { name: 'date', type: 'date', required: true },
-      { name: 'topic', type: 'text', required: true },
-    ],
-    tags: ['education', 'notes', 'study'],
-  },
-  {
-    id: '6',
-    name: 'Study Plan',
-    description: 'Create an effective study schedule and track progress',
-    category: 'education',
-    categoryName: 'Education',
-    categoryIcon: '📚',
-    content:
-      '# Study Plan: {{subject}}\n\n## Goals\n\n## Schedule\n\n### Week 1\n- [ ] \n\n## Resources\n\n## Progress Tracking',
-    variableCount: 1,
-    rating: 4.4,
-    usageCount: 167,
-    isSystem: false,
-    variables: [{ name: 'subject', type: 'text', required: true }],
-    tags: ['study', 'planning', 'education'],
-  },
-  // Creative templates
-  {
-    id: '7',
-    name: 'Story Outline',
-    description:
-      'Plan your creative writing with character and plot development',
-    category: 'creative',
-    categoryName: 'Creative',
-    categoryIcon: '🎨',
-    content:
-      '# {{storyTitle}}\n\n## Characters\n\n### Protagonist\n\n### Antagonist\n\n## Plot Outline\n\n### Act 1\n\n### Act 2\n\n### Act 3',
-    variableCount: 1,
-    rating: 4.6,
-    usageCount: 78,
-    isSystem: true,
-    variables: [{ name: 'storyTitle', type: 'text', required: true }],
-    tags: ['writing', 'creative', 'story'],
-  },
-  {
-    id: '8',
-    name: 'Recipe Card',
-    description:
-      'Document your favorite recipes with ingredients and instructions',
-    category: 'creative',
-    categoryName: 'Creative',
-    categoryIcon: '🎨',
-    content:
-      '# {{recipeName}}\n\n**Prep Time:** {{prepTime}}\n**Cook Time:** {{cookTime}}\n**Servings:** {{servings}}\n\n## Ingredients\n- \n\n## Instructions\n1. ',
-    variableCount: 4,
-    rating: 4.8,
-    usageCount: 95,
-    isSystem: false,
-    variables: [
-      { name: 'recipeName', type: 'text', required: true },
-      { name: 'prepTime', type: 'text', required: false },
-      { name: 'cookTime', type: 'text', required: false },
-      { name: 'servings', type: 'number', required: false },
-    ],
-    tags: ['recipe', 'cooking', 'food'],
-  },
-]
-
 // Wrapper component for controlled state
 const TemplatePickerDemo = ({
   defaultOpen = false,
@@ -281,15 +154,30 @@ const TemplatePickerDemo = ({
 }
 
 export const Default: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo />,
 }
 
 export const OpenByDefault: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
 }
 
 // Interactive stories
 export const SearchTemplates: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -321,6 +209,11 @@ export const SearchTemplates: Story = {
 }
 
 export const CategoryFilter: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -353,6 +246,11 @@ export const CategoryFilter: Story = {
 }
 
 export const TabNavigation: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -386,6 +284,11 @@ export const TabNavigation: Story = {
 }
 
 export const SortOptions: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -408,6 +311,11 @@ export const SortOptions: Story = {
 }
 
 export const SelectTemplate: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -436,6 +344,11 @@ export const SelectTemplate: Story = {
 }
 
 export const CreateBlank: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -457,6 +370,11 @@ export const CreateBlank: Story = {
 }
 
 export const TemplateWithStats: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -477,6 +395,11 @@ export const TemplateWithStats: Story = {
 }
 
 export const EmptyState: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -523,6 +446,11 @@ export const LoadingState: Story = {
       ],
     },
   },
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
+  },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
 }
 
@@ -531,6 +459,11 @@ export const MobileResponsive: Story = {
     viewport: {
       defaultViewport: 'mobile1',
     },
+  },
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
   },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
 }
@@ -565,6 +498,11 @@ export const WithManyTemplates: Story = {
         },
       ],
     },
+  },
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onTemplateSelect: () => {},
   },
   render: () => <TemplatePickerDemo defaultOpen={true} />,
 }

@@ -268,7 +268,6 @@ export const WithChangeHandler: Story = {
     ])
 
     const handleChange = (value: any[]) => {
-      console.log('Editor content changed:', value)
       setContent(value)
     }
 
@@ -396,7 +395,7 @@ export const Playground: Story = {
           readOnly={readOnly}
           autoFocus={autoFocus}
           placeholder={placeholder}
-          onChange={(value) => console.log('Content changed:', value)}
+          onChange={() => {}}
         />
       </div>
     )

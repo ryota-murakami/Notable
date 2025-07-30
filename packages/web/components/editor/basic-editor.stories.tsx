@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { BasicEditor } from './basic-editor'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 import type { Descendant } from 'slate'
 
 const meta = {

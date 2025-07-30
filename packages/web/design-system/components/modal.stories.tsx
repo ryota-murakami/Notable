@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
+import Image from 'next/image'
 import * as React from 'react'
 import {
   ConfirmModal,
@@ -656,9 +657,11 @@ export const ImageModal: Story = {
         <Button onClick={() => setOpen(true)}>View Image</Button>
         <Modal open={open} onClose={() => setOpen(false)} size='xl'>
           <ModalBody className='p-0'>
-            <img
+            <Image
               src='https://via.placeholder.com/800x600'
               alt='Placeholder'
+              width={800}
+              height={600}
               className='w-full h-auto'
             />
           </ModalBody>

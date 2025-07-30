@@ -152,6 +152,12 @@ export const KeyboardNavigation: Story = {
 }
 
 export const DifferentPositions: Story = {
+  args: {
+    isOpen: true,
+    position: { x: 200, y: 150 },
+    onClose: () => {},
+    onSelect: () => {},
+  },
   render: () => {
     const [position, setPosition] = React.useState({ x: 200, y: 150 })
     const [isOpen, setIsOpen] = React.useState(true)
@@ -189,8 +195,7 @@ export const DifferentPositions: Story = {
           isOpen={isOpen}
           position={position}
           onClose={() => setIsOpen(false)}
-          onSelect={(command) => {
-            console.log('Selected:', command)
+          onSelect={() => {
             setIsOpen(false)
           }}
         />
@@ -213,6 +218,12 @@ export const DifferentPositions: Story = {
 }
 
 export const Playground: Story = {
+  args: {
+    isOpen: false,
+    position: { x: 0, y: 0 },
+    onClose: () => {},
+    onSelect: () => {},
+  },
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [position, setPosition] = React.useState({ x: 0, y: 0 })

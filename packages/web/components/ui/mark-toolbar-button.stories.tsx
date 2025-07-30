@@ -7,13 +7,13 @@ import { BasicNodesKit } from '@/components/editor/plugins/basic-nodes-kit'
 import { Editor, EditorContainer } from '@/components/ui/editor'
 import {
   BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  StrikethroughIcon,
   CodeIcon,
   HighlighterIcon,
+  ItalicIcon,
+  StrikethroughIcon,
+  UnderlineIcon,
 } from 'lucide-react'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/MarkToolbarButton',

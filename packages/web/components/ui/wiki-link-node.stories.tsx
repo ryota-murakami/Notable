@@ -4,7 +4,7 @@ import { Plate, usePlateEditor } from 'platejs/react'
 import { WikiLinkElement } from './wiki-link-node'
 import { BasicNodesKit } from '@/components/editor/plugins/basic-nodes-kit'
 import { Editor, EditorContainer } from '@/components/ui/editor'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 // Wrapper component to provide Plate context
 const WikiLinkDemo = ({

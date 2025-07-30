@@ -349,7 +349,7 @@ export const FormValidation: Story = {
         setError(true)
       } else {
         setError(false)
-        alert(`Selected: ${value}`)
+        console.info(`Selected: ${value}`)
       }
     }
 

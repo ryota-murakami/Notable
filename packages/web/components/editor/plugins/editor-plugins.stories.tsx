@@ -6,10 +6,10 @@ import { BasicNodesKit } from './basic-nodes-kit'
 import { BasicBlocksKit } from './basic-blocks-kit'
 import { BasicMarksKit } from './basic-marks-kit'
 import { EnhancedEditorKit } from './enhanced-editor-kit'
-import { LinkPlugin } from './link-plugin'
-import { SlashCommandKit } from './slash-command-kit'
-import { BlockReferenceKit } from './block-reference-kit'
-import { within, userEvent, expect } from '@storybook/test'
+import { LinkKit } from './link-plugin'
+import { SlashCommandPlugin } from './slash-command-kit'
+import { BlockReferencePlugin } from './block-reference-kit'
+import { expect, userEvent, within } from '@storybook/test'
 
 // Wrapper component for demonstrating plugins
 const PluginDemo = ({
@@ -135,7 +135,7 @@ export const EnhancedEditor: Story = {
 
 export const WithLinkPlugin: Story = {
   args: {
-    plugins: [...BasicNodesKit, LinkPlugin],
+    plugins: [...BasicNodesKit, ...LinkKit],
     initialValue: [
       {
         type: 'p',
@@ -156,7 +156,7 @@ export const WithLinkPlugin: Story = {
 
 export const SlashCommands: Story = {
   args: {
-    plugins: [...BasicNodesKit, ...SlashCommandKit],
+    plugins: [...BasicNodesKit, SlashCommandPlugin],
     placeholder: 'Type "/" to see slash commands...',
   },
   play: async ({ canvasElement }) => {
@@ -180,7 +180,7 @@ export const SlashCommands: Story = {
 
 export const BlockReferences: Story = {
   args: {
-    plugins: [...BasicNodesKit, ...BlockReferenceKit],
+    plugins: [...BasicNodesKit, BlockReferencePlugin],
     initialValue: [
       {
         type: 'p',

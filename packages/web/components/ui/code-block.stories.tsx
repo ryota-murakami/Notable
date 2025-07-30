@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { CodeBlock } from './code-block'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/Blocks/CodeBlock',
@@ -425,14 +425,14 @@ export const InteractiveCopy: Story = {
     await userEvent.click(copyButton)
 
     // Should show check icon
-    await waitFor(() => {
-      expect(canvas.getByTitle('Copied!')).toBeInTheDocument()
+    await waitFor(async () => {
+      await expect(canvas.getByTitle('Copied!')).toBeInTheDocument()
     })
 
     // Should revert after 2 seconds
     await waitFor(
-      () => {
-        expect(canvas.getByTitle('Copy code')).toBeInTheDocument()
+      async () => {
+        await expect(canvas.getByTitle('Copy code')).toBeInTheDocument()
       },
       { timeout: 3000 }
     )

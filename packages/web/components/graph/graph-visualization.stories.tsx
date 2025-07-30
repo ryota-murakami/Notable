@@ -2,7 +2,16 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { GraphVisualization } from './graph-visualization'
 import type { GraphData } from './graph-visualization'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
+
+// Helper function to add source/target to edges for D3 compatibility
+function transformEdges(edges: any[]): any[] {
+  return edges.map((edge) => ({
+    ...edge,
+    source: edge.from,
+    target: edge.to,
+  }))
+}
 
 const meta = {
   title: 'UI/Visualization/GraphVisualization',
@@ -71,7 +80,7 @@ const generateSampleData = (
   })
 
   // Create edges
-  const edges = []
+  const edges: any[] = []
   for (let i = 0; i < edgeCount; i++) {
     const fromIdx =
       Math.floor(Math.random() * (nodeCount - isolated)) + isolated
@@ -101,7 +110,7 @@ const generateSampleData = (
 
   return {
     nodes,
-    edges,
+    edges: transformEdges(edges),
     stats: {
       totalNotes: nodes.length,
       totalLinks: edges.length,
@@ -223,7 +232,7 @@ const knowledgeBaseData: GraphData = {
       centrality: 0,
     },
   ],
-  edges: [
+  edges: transformEdges([
     // AI connections
     {
       from: 'ai',
@@ -273,7 +282,7 @@ const knowledgeBaseData: GraphData = {
       label: 'guides',
       title: 'Ethics-ML Connection',
     },
-  ],
+  ]),
   stats: {
     totalNotes: 10,
     totalLinks: 13,
@@ -375,7 +384,7 @@ const projectPlanningData: GraphData = {
       centrality: 0.3,
     },
   ],
-  edges: [
+  edges: transformEdges([
     {
       from: 'project',
       to: 'requirements',
@@ -444,7 +453,7 @@ const projectPlanningData: GraphData = {
       title: 'Backend Deploy',
     },
     { from: 'api-docs', to: 'frontend', label: 'used by', title: 'API Usage' },
-  ],
+  ]),
   stats: {
     totalNotes: 9,
     totalLinks: 13,
@@ -705,6 +714,9 @@ export const NodeInteraction: Story = {
 }
 
 export const RealTimeData: Story = {
+  args: {
+    data: generateSampleData(20, 30, 2),
+  },
   render: () => {
     const [data, setData] = React.useState(generateSampleData(20, 30, 2))
 
@@ -736,7 +748,10 @@ export const RealTimeData: Story = {
 
             return {
               nodes: [...prevData.nodes, newNode],
-              edges: [...prevData.edges, newEdge],
+              edges: [
+                ...prevData.edges,
+                { ...newEdge, source: newEdge.from, target: newEdge.to },
+              ],
               stats: {
                 totalNotes: prevData.nodes.length + 1,
                 totalLinks: prevData.edges.length + 1,
@@ -775,7 +790,7 @@ export const DenseNetwork: Story = {
       }))
 
       // Create a highly connected network
-      const edges = []
+      const edges: any[] = []
       for (let i = 0; i < nodeCount; i++) {
         // Connect to 3-8 random nodes
         const connectionCount = Math.floor(Math.random() * 6) + 3
@@ -801,7 +816,7 @@ export const DenseNetwork: Story = {
 
       return {
         nodes,
-        edges,
+        edges: transformEdges(edges),
         stats: {
           totalNotes: nodes.length,
           totalLinks: edges.length,

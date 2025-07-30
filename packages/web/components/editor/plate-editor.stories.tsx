@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { PlateEditor } from './plate-editor'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'Editor/PlateEditor',

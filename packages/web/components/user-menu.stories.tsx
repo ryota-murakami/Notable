@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
-import { Toaster, toast } from 'sonner'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
+import { toast, Toaster } from 'sonner'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { User, Settings, LogOut } from 'lucide-react'
+import { LogOut, Settings, User } from 'lucide-react'
 
 // Mock UserMenu component for Storybook
 const UserMenuMock = ({

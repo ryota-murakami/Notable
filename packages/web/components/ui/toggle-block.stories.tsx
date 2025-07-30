@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { ToggleBlock } from './toggle-block'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/Blocks/ToggleBlock',

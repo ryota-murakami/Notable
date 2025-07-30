@@ -5,7 +5,7 @@ import { TodoListElement } from './todo-list-node'
 import { TodoBlock } from './todo-block'
 import { BasicNodesKit } from '@/components/editor/plugins/basic-nodes-kit'
 import { Editor, EditorContainer } from '@/components/ui/editor'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 // Wrapper component to provide Plate context
 const TodoDemo = ({

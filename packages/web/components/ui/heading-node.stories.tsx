@@ -2,17 +2,17 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Plate, usePlateEditor } from 'platejs/react'
 import {
-  HeadingElement,
   H1Element,
   H2Element,
   H3Element,
   H4Element,
   H5Element,
   H6Element,
+  HeadingElement,
 } from './heading-node'
 import { BasicNodesKit } from '@/components/editor/plugins/basic-nodes-kit'
 import { Editor, EditorContainer } from '@/components/ui/editor'
-import { within, expect } from '@storybook/test'
+import { expect, within } from '@storybook/test'
 
 // Wrapper component to provide Plate context
 const HeadingDemo = ({

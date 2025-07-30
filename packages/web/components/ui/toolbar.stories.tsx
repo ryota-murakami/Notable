@@ -1,36 +1,36 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
-  Toolbar,
-  EditorToolbar,
   ContextToolbar,
+  EditorToolbar,
+  Toolbar,
   type ToolbarAction,
 } from './toolbar'
 import {
   BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  CodeIcon,
-  ListIcon,
-  ListOrderedIcon,
+  BookmarkIcon,
   CheckSquareIcon,
-  QuoteIcon,
-  LinkIcon,
-  ImageIcon,
-  CopyIcon,
-  ScissorsIcon,
   ClipboardIcon,
-  TrashIcon,
-  SettingsIcon,
-  SaveIcon,
-  PrintIcon,
-  ShareIcon,
+  CodeIcon,
+  CopyIcon,
   DownloadIcon,
   HeartIcon,
+  ImageIcon,
+  ItalicIcon,
+  LinkIcon,
+  ListIcon,
+  ListOrderedIcon,
+  PrintIcon,
+  QuoteIcon,
+  SaveIcon,
+  ScissorsIcon,
+  SettingsIcon,
+  ShareIcon,
   StarIcon,
-  BookmarkIcon,
+  TrashIcon,
+  UnderlineIcon,
 } from 'lucide-react'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/Toolbar',

@@ -18,30 +18,56 @@ The theme system is built on CSS custom properties (CSS variables) that can be d
 
 ## Available Themes
 
-### Light Theme (Default)
+Notable includes 8 carefully crafted themes to suit different preferences and accessibility needs:
+
+### Standard Themes
+
+#### Light Theme (Default)
 
 The light theme is optimized for daylight viewing with high contrast and readability.
 
-```css
-[data-theme='light'] {
-  --background: 0 0% 100%;
-  --foreground: 224 71.4% 4.1%;
-  --primary: 220.9 39.3% 11%;
-  --primary-foreground: 210 20% 98%;
-  /* ... more tokens */
-}
-```
-
-### Dark Theme
+#### Dark Theme
 
 The dark theme provides a comfortable viewing experience in low-light environments.
 
+### Special Themes
+
+#### Midnight Theme
+
+A deep blue dark theme with excellent contrast, perfect for late-night coding sessions.
+
+#### Sunset Theme
+
+A warm, cozy theme inspired by golden hour with orange and amber tones.
+
+#### Forest Theme
+
+A natural green theme inspired by deep forests, easy on the eyes for extended use.
+
+#### Ocean Theme
+
+A cool blue theme inspired by deep waters, calming and focused.
+
+### Accessibility Themes
+
+#### High Contrast Light
+
+Maximum contrast light theme designed for users with visual impairments.
+
+#### High Contrast Dark
+
+Maximum contrast dark theme with pure black background and white text.
+
+### Theme Colors
+
+All themes use the OKLCH color space for perceptually uniform colors:
+
 ```css
-[data-theme='dark'] {
-  --background: 224 71.4% 4.1%;
-  --foreground: 210 20% 98%;
-  --primary: 210 20% 98%;
-  --primary-foreground: 220.9 39.3% 11%;
+/* Example: Light theme colors */
+[data-theme='light'] {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.646 0.222 41.116);
   /* ... more tokens */
 }
 ```
@@ -64,7 +90,8 @@ function App() {
 
 ### Props
 
-- `defaultTheme`: Initial theme (`"light"`, `"dark"`, or `"system"`)
+- `defaultTheme`: Initial theme (`"light"`, `"dark"`, `"midnight"`, `"sunset"`, `"forest"`, `"ocean"`,
+  `"highContrastLight"`, `"highContrastDark"`, or `"system"`)
 - `storageKey`: LocalStorage key for persisting user preference
 - `attribute`: HTML attribute to set on root element (default: `"data-theme"`)
 

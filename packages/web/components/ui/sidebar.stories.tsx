@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
+  NotableSidebar,
   Sidebar,
-  SidebarHeader,
   SidebarContent,
   SidebarFooter,
-  SidebarItem,
   SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
   SidebarToggle,
-  NotableSidebar,
 } from './sidebar'
 import {
   FileTextIcon,
@@ -21,7 +21,7 @@ import {
   TrashIcon,
   UserIcon,
 } from 'lucide-react'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'UI/Sidebar',

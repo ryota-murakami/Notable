@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import { ExportDialog } from './export-dialog'
 import { Button } from '@/design-system/components/button'
 import { Download } from 'lucide-react'
-import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 import type { Note } from '@/types/note'
 import type { ExportFormat } from '@/types/export'
 
@@ -73,10 +73,16 @@ console.log(greet('Notable User'));
 
 Notable makes it easy to capture and organize your thoughts.`,
   tags: ['tutorial', 'getting-started'],
-  createdAt: new Date('2024-01-01'),
-  updatedAt: new Date('2024-01-15'),
+  created_at: '2024-01-01T00:00:00.000Z',
+  updated_at: '2024-01-15T00:00:00.000Z',
   userId: 'user123',
-  workspaceId: 'workspace123',
+  version: 1,
+  device_id: 'device123',
+  last_modified: '2024-01-15T00:00:00.000Z',
+  vector_clock: { device123: 1 },
+  local_changes: false,
+  deleted: false,
+  is_folder: false,
 }
 
 export const Default: Story = {
@@ -89,7 +95,7 @@ export const WithCustomTrigger: Story = {
   args: {
     note: sampleNote,
     children: (
-      <Button variant='outline' className='gap-2'>
+      <Button variant='secondary' className='gap-2'>
         <Download className='h-4 w-4' />
         Export Note
       </Button>
@@ -119,6 +125,9 @@ export const ReactDefault: Story = {
 }
 
 export const WithCallbacks: Story = {
+  args: {
+    note: sampleNote,
+  },
   render: () => {
     const [exportHistory, setExportHistory] = useState<
       Array<{ format: ExportFormat; timestamp: Date }>
@@ -500,6 +509,9 @@ export const ErrorState: Story = {
 }
 
 export const LoadingState: Story = {
+  args: {
+    note: sampleNote,
+  },
   render: () => {
     // This would show the loading state during export
     const [isExporting, setIsExporting] = useState(false)
