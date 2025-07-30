@@ -3,9 +3,10 @@
  * Provides advanced graph analysis, insights, and metrics
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { match } from 'ts-pattern'
 
 // Request validation schema
 const AnalyticsRequestSchema = z.object({
@@ -56,31 +57,37 @@ export async function GET(request: NextRequest) {
 
     const validatedParams = AnalyticsRequestSchema.parse(params)
 
-    switch (validatedParams.analysisType) {
-      case 'overview':
-        return await getOverviewAnalytics(supabase, user.id, validatedParams)
-
-      case 'centrality':
-        return await getCentralityAnalytics(supabase, user.id, validatedParams)
-
-      case 'communities':
-        return await getCommunityAnalytics(supabase, user.id, validatedParams)
-
-      case 'hubs':
-        return await getHubAnalytics(supabase, user.id, validatedParams)
-
-      case 'isolated':
-        return await getIsolatedAnalytics(supabase, user.id, validatedParams)
-
-      case 'temporal':
-        return await getTemporalAnalytics(supabase, user.id, validatedParams)
-
-      default:
-        return NextResponse.json(
-          { error: 'Invalid analysis type' },
-          { status: 400 }
-        )
-    }
+    return match(validatedParams.analysisType)
+      .with(
+        'overview',
+        async () =>
+          await getOverviewAnalytics(supabase, user.id, validatedParams)
+      )
+      .with(
+        'centrality',
+        async () =>
+          await getCentralityAnalytics(supabase, user.id, validatedParams)
+      )
+      .with(
+        'communities',
+        async () =>
+          await getCommunityAnalytics(supabase, user.id, validatedParams)
+      )
+      .with(
+        'hubs',
+        async () => await getHubAnalytics(supabase, user.id, validatedParams)
+      )
+      .with(
+        'isolated',
+        async () =>
+          await getIsolatedAnalytics(supabase, user.id, validatedParams)
+      )
+      .with(
+        'temporal',
+        async () =>
+          await getTemporalAnalytics(supabase, user.id, validatedParams)
+      )
+      .exhaustive()
   } catch (error) {
     console.error('Error in graph analytics API:', error)
     return NextResponse.json(
@@ -106,22 +113,26 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const action = body.action
 
-    switch (action) {
-      case 'recalculate-all':
-        return await recalculateAllAnalytics(supabase, user.id)
-
-      case 'detect-communities':
-        return await detectCommunities(supabase, user.id, body)
-
-      case 'find-similar-notes':
-        return await findSimilarNotes(supabase, user.id, body)
-
-      case 'analyze-note':
-        return await analyzeSpecificNote(supabase, user.id, body)
-
-      default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
-    }
+    return match(action)
+      .with(
+        'recalculate-all',
+        async () => await recalculateAllAnalytics(supabase, user.id)
+      )
+      .with(
+        'detect-communities',
+        async () => await detectCommunities(supabase, user.id, body)
+      )
+      .with(
+        'find-similar-notes',
+        async () => await findSimilarNotes(supabase, user.id, body)
+      )
+      .with(
+        'analyze-note',
+        async () => await analyzeSpecificNote(supabase, user.id, body)
+      )
+      .otherwise(() =>
+        NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+      )
   } catch (error) {
     console.error('Error in graph analytics POST API:', error)
     return NextResponse.json(

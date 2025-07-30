@@ -3,14 +3,14 @@
 import * as React from 'react'
 import { useState } from 'react'
 import {
-  Info,
+  AlertCircle,
   AlertTriangle,
   CheckCircle,
-  XCircle,
+  Info,
   Lightbulb,
-  AlertCircle,
-  Zap,
   Quote,
+  XCircle,
+  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

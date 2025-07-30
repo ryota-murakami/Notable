@@ -2,8 +2,8 @@
 
 import { createPlatePlugin } from '@udecode/plate-common'
 import * as React from 'react'
-import { useState, useCallback, useEffect } from 'react'
-import { Link, ArrowUpRight, Copy, Edit3 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { ArrowUpRight, Copy, Edit3, Link } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // Types for block references

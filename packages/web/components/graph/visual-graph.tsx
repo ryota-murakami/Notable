@@ -1,31 +1,31 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import {
-  Maximize2,
-  Minimize2,
-  RotateCcw,
-  ZoomIn,
-  ZoomOut,
-  Settings,
-  Filter,
+  Download,
   Eye,
   EyeOff,
-  Move3D,
-  MousePointer,
+  Filter,
+  Info,
+  Layers,
   Link,
-  Trash2,
+  Maximize2,
+  Minimize2,
+  MousePointer,
+  Move3D,
+  Pause,
   Pin,
   PinOff,
   Play,
-  Pause,
-  Download,
-  Share,
-  Layers,
+  RotateCcw,
   Search,
-  Info,
+  Settings,
+  Share,
+  Trash2,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -263,7 +263,7 @@ export function VisualGraph({
   const filteredData = useMemo(() => {
     if (!data) return { nodes: [], links: [] }
 
-    let filteredNodes = data.nodes.filter((node) => {
+    const filteredNodes = data.nodes.filter((node) => {
       // Search filter
       if (
         filters.searchQuery &&
@@ -298,7 +298,7 @@ export function VisualGraph({
 
     const nodeIds = new Set(filteredNodes.map((n) => n.id))
 
-    let filteredLinks = data.links.filter((link) => {
+    const filteredLinks = data.links.filter((link) => {
       const sourceId =
         typeof link.source === 'string' ? link.source : link.source.id
       const targetId =

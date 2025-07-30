@@ -1,15 +1,15 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Command } from 'cmdk'
 import { Portal } from '@radix-ui/react-portal'
 import { cn } from '@/lib/utils'
 import {
-  SlashCommandItem,
-  SLASH_COMMANDS,
   filterSlashCommands,
   groupSlashCommands,
+  SLASH_COMMANDS,
+  type SlashCommandItem,
 } from './plugins/slash-command-kit'
 
 interface SlashCommandMenuProps {

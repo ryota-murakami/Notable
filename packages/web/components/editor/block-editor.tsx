@@ -1,8 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useCallback, useEffect, useRef } from 'react'
-import { Plate, usePlateEditor, PlateContent } from 'platejs/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Plate, PlateContent, usePlateEditor } from 'platejs/react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { createPlatePlugin } from '@udecode/plate-common'

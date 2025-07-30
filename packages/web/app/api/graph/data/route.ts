@@ -3,9 +3,10 @@
  * Provides graph nodes and edges data with analytics and filtering
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { match } from 'ts-pattern'
 
 // Request validation schema
 const GraphDataRequestSchema = z.object({
@@ -97,20 +98,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Apply sorting
-    switch (validatedParams.sortBy) {
-      case 'centrality':
-        nodeQuery = nodeQuery.order('degree_centrality', { ascending: false })
-        break
-      case 'connections':
-        nodeQuery = nodeQuery.order('total_connections', { ascending: false })
-        break
-      case 'recent':
-        nodeQuery = nodeQuery.order('updated_at', { ascending: false })
-        break
-      case 'alphabetical':
-        nodeQuery = nodeQuery.order('title', { ascending: true })
-        break
-    }
+    nodeQuery = match(validatedParams.sortBy)
+      .with('centrality', () =>
+        nodeQuery.order('degree_centrality', { ascending: false })
+      )
+      .with('connections', () =>
+        nodeQuery.order('total_connections', { ascending: false })
+      )
+      .with('recent', () => nodeQuery.order('updated_at', { ascending: false }))
+      .with('alphabetical', () => nodeQuery.order('title', { ascending: true }))
+      .otherwise(() => nodeQuery)
 
     // Apply node limit
     nodeQuery = nodeQuery.limit(validatedParams.maxNodes)
@@ -292,22 +289,26 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const action = body.action
 
-    switch (action) {
-      case 'refresh-analytics':
-        return await refreshGraphAnalytics(supabase, user.id)
-
-      case 'create-relationship':
-        return await createRelationship(supabase, user.id, body)
-
-      case 'update-canvas-position':
-        return await updateCanvasPosition(supabase, user.id, body)
-
-      case 'bulk-update-positions':
-        return await bulkUpdatePositions(supabase, user.id, body)
-
-      default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
-    }
+    return match(action)
+      .with(
+        'refresh-analytics',
+        async () => await refreshGraphAnalytics(supabase, user.id)
+      )
+      .with(
+        'create-relationship',
+        async () => await createRelationship(supabase, user.id, body)
+      )
+      .with(
+        'update-canvas-position',
+        async () => await updateCanvasPosition(supabase, user.id, body)
+      )
+      .with(
+        'bulk-update-positions',
+        async () => await bulkUpdatePositions(supabase, user.id, body)
+      )
+      .otherwise(() =>
+        NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+      )
   } catch (error) {
     console.error('Error in graph data POST API:', error)
     return NextResponse.json(
@@ -454,7 +455,7 @@ async function updateCanvasPosition(supabase: any, userId: string, body: any) {
         y: y || 0,
         z: z || 0,
         is_pinned: isPinned || false,
-        color: color,
+        color,
         scale: scale || 1.0,
         group_id: groupId,
         created_by: userId,

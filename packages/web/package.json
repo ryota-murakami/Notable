@@ -138,6 +138,7 @@
     "stripe": "^18.3.0",
     "tailwind-merge": "^2.6.0",
     "tailwind-scrollbar-hide": "^4.0.0",
+    "ts-pattern": "^5.8.0",
     "uploadthing": "7.7.2",
     "use-file-picker": "^2.1.2",
     "uuid": "^11.0.3",

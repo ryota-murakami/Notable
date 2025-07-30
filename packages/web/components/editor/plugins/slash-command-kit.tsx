@@ -2,21 +2,21 @@
 
 import { createPlatePlugin } from '@udecode/plate-common'
 import {
-  Type,
+  AlertCircle,
+  CheckSquare,
+  ChevronRight,
+  Code,
+  FileText,
   Heading1,
   Heading2,
   Heading3,
+  Image,
   List,
   ListOrdered,
-  CheckSquare,
-  Code,
-  Quote,
-  Image,
-  Table,
-  ChevronRight,
-  AlertCircle,
   Minus,
-  FileText,
+  Quote,
+  Table,
+  Type,
 } from 'lucide-react'
 
 // Slash Command Configuration

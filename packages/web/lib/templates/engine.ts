@@ -4,6 +4,8 @@
  * conditional rendering, loops, and system variables
  */
 
+import { match } from 'ts-pattern'
+
 export interface TemplateVariable {
   name: string
   label: string
@@ -286,73 +288,53 @@ export class TemplateEngine {
     args: any[],
     context: TemplateContext
   ): string {
-    switch (helperName) {
-      case 'capitalize':
-        return (
-          String(args[0] || '')
-            .charAt(0)
-            .toUpperCase() +
-          String(args[0] || '')
-            .slice(1)
-            .toLowerCase()
-        )
-
-      case 'uppercase':
-        return String(args[0] || '').toUpperCase()
-
-      case 'lowercase':
-        return String(args[0] || '').toLowerCase()
-
-      case 'truncate':
+    return match(helperName)
+      .with('capitalize', () => {
+        const str = String(args[0] || '')
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+      })
+      .with('uppercase', () => String(args[0] || '').toUpperCase())
+      .with('lowercase', () => String(args[0] || '').toLowerCase())
+      .with('truncate', () => {
         const text = String(args[0] || '')
         const length = parseInt(args[1]) || 100
         return text.length > length ? `${text.substring(0, length)}...` : text
-
-      case 'repeat':
-        return String(args[0] || '').repeat(parseInt(args[1]) || 1)
-
-      case 'replace':
-        return String(args[0] || '').replace(
-          new RegExp(args[1], 'g'),
-          args[2] || ''
-        )
-
-      case 'dateAdd':
+      })
+      .with('repeat', () =>
+        String(args[0] || '').repeat(parseInt(args[1]) || 1)
+      )
+      .with('replace', () =>
+        String(args[0] || '').replace(new RegExp(args[1], 'g'), args[2] || '')
+      )
+      .with('dateAdd', () => {
         const date = new Date(args[0])
         const days = parseInt(args[1]) || 0
         date.setDate(date.getDate() + days)
         return this.formatDate(date, 'YYYY-MM-DD')
-
-      case 'dateFormat':
-        return this.formatDate(new Date(args[0]), args[1] || 'YYYY-MM-DD')
-
-      case 'join':
-        return Array.isArray(args[0]) ? args[0].join(args[1] || ', ') : ''
-
-      case 'default':
-        return args[0] || args[1] || ''
-
-      case 'math':
+      })
+      .with('dateFormat', () =>
+        this.formatDate(new Date(args[0]), args[1] || 'YYYY-MM-DD')
+      )
+      .with('join', () =>
+        Array.isArray(args[0]) ? args[0].join(args[1] || ', ') : ''
+      )
+      .with('default', () => args[0] || args[1] || '')
+      .with('math', () => {
         const operation = args[0]
         const a = parseFloat(args[1]) || 0
         const b = parseFloat(args[2]) || 0
-        switch (operation) {
-          case 'add':
-            return String(a + b)
-          case 'subtract':
-            return String(a - b)
-          case 'multiply':
-            return String(a * b)
-          case 'divide':
-            return String(b !== 0 ? a / b : 0)
-          default:
-            return String(a)
-        }
 
-      default:
+        return match(operation)
+          .with('add', () => String(a + b))
+          .with('subtract', () => String(a - b))
+          .with('multiply', () => String(a * b))
+          .with('divide', () => String(b !== 0 ? a / b : 0))
+          .otherwise(() => String(a))
+      })
+      .otherwise(() => {
         console.warn(`Unknown template helper: ${helperName}`)
         return ''
-    }
+      })
   }
 
   /**

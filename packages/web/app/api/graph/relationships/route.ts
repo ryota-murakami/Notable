@@ -3,9 +3,10 @@
  * Manages relationships between notes in the knowledge graph
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { match } from 'ts-pattern'
 
 // Request validation schemas
 const CreateRelationshipSchema = z.object({
@@ -239,22 +240,26 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const action = body.action || 'create'
 
-    switch (action) {
-      case 'create':
-        return await createRelationship(supabase, user.id, body)
-
-      case 'bulk-create':
-        return await bulkCreateRelationships(supabase, user.id, body)
-
-      case 'auto-discover':
-        return await autoDiscoverRelationships(supabase, user.id, body)
-
-      case 'suggest':
-        return await suggestRelationships(supabase, user.id, body)
-
-      default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
-    }
+    return match(action)
+      .with(
+        'create',
+        async () => await createRelationship(supabase, user.id, body)
+      )
+      .with(
+        'bulk-create',
+        async () => await bulkCreateRelationships(supabase, user.id, body)
+      )
+      .with(
+        'auto-discover',
+        async () => await autoDiscoverRelationships(supabase, user.id, body)
+      )
+      .with(
+        'suggest',
+        async () => await suggestRelationships(supabase, user.id, body)
+      )
+      .otherwise(() =>
+        NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+      )
   } catch (error) {
     console.error('Error in relationships POST API:', error)
     return NextResponse.json(

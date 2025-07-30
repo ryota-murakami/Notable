@@ -2,6 +2,7 @@
 
 // Inspired by react-hot-toast library
 import * as React from 'react'
+import { match } from 'ts-pattern'
 
 // Mock toast types - removed UI dependency
 type ToastActionElement = any
@@ -74,24 +75,18 @@ const addToRemoveQueue = (toastId: string) => {
 }
 
 export const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'ADD_TOAST':
-      return {
-        ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
-      }
-
-    case 'UPDATE_TOAST':
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === action.toast.id ? { ...t, ...action.toast } : t
-        ),
-      }
-
-    case 'DISMISS_TOAST': {
-      const { toastId } = action
-
+  return match(action)
+    .with({ type: 'ADD_TOAST' }, ({ toast }) => ({
+      ...state,
+      toasts: [toast, ...state.toasts].slice(0, TOAST_LIMIT),
+    }))
+    .with({ type: 'UPDATE_TOAST' }, ({ toast }) => ({
+      ...state,
+      toasts: state.toasts.map((t) =>
+        t.id === toast.id ? { ...t, ...toast } : t
+      ),
+    }))
+    .with({ type: 'DISMISS_TOAST' }, ({ toastId }) => {
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
       if (toastId) {
@@ -113,9 +108,9 @@ export const reducer = (state: State, action: Action): State => {
             : t
         ),
       }
-    }
-    case 'REMOVE_TOAST':
-      if (action.toastId === undefined) {
+    })
+    .with({ type: 'REMOVE_TOAST' }, ({ toastId }) => {
+      if (toastId === undefined) {
         return {
           ...state,
           toasts: [],
@@ -123,9 +118,10 @@ export const reducer = (state: State, action: Action): State => {
       }
       return {
         ...state,
-        toasts: state.toasts.filter((t) => t.id !== action.toastId),
+        toasts: state.toasts.filter((t) => t.id !== toastId),
       }
-  }
+    })
+    .exhaustive()
 }
 
 const listeners: Array<(state: State) => void> = []

@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { cn } from '../utils/theme'
 import { AnimatePresence, motion } from 'framer-motion'
+import { match } from 'ts-pattern'
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -96,53 +97,52 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const validateInput = React.useCallback(
       (inputValue: string) => {
         for (const rule of validation) {
-          switch (rule.type) {
-            case 'required':
-              if (!inputValue.trim()) {
-                return rule.message
-              }
-              break
-            case 'email': {
+          const errorMessage = match(rule)
+            .with({ type: 'required' }, () =>
+              !inputValue.trim() ? rule.message : null
+            )
+            .with({ type: 'email' }, () => {
               const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-              if (inputValue && !emailRegex.test(inputValue)) {
+              return inputValue && !emailRegex.test(inputValue)
+                ? rule.message
+                : null
+            })
+            .with({ type: 'url' }, () => {
+              if (!inputValue) return null
+              try {
+                new URL(inputValue)
+                return null
+              } catch {
                 return rule.message
               }
-              break
-            }
-            case 'url':
-              if (inputValue) {
-                try {
-                  new URL(inputValue)
-                } catch {
-                  return rule.message
-                }
-              }
-              break
-            case 'number':
-              if (inputValue && isNaN(Number(inputValue))) {
-                return rule.message
-              }
-              break
-            case 'minLength':
-              if (inputValue && inputValue.length < (rule.value as number)) {
-                return rule.message
-              }
-              break
-            case 'maxLength':
-              if (inputValue && inputValue.length > (rule.value as number)) {
-                return rule.message
-              }
-              break
-            case 'pattern':
-              if (inputValue && !(rule.value as RegExp).test(inputValue)) {
-                return rule.message
-              }
-              break
-            case 'custom':
-              if (inputValue && rule.validator && !rule.validator(inputValue)) {
-                return rule.message
-              }
-              break
+            })
+            .with({ type: 'number' }, () =>
+              inputValue && isNaN(Number(inputValue)) ? rule.message : null
+            )
+            .with({ type: 'minLength' }, () =>
+              inputValue && inputValue.length < (rule.value as number)
+                ? rule.message
+                : null
+            )
+            .with({ type: 'maxLength' }, () =>
+              inputValue && inputValue.length > (rule.value as number)
+                ? rule.message
+                : null
+            )
+            .with({ type: 'pattern' }, () =>
+              inputValue && !(rule.value as RegExp).test(inputValue)
+                ? rule.message
+                : null
+            )
+            .with({ type: 'custom' }, () =>
+              inputValue && rule.validator && !rule.validator(inputValue)
+                ? rule.message
+                : null
+            )
+            .exhaustive()
+
+          if (errorMessage) {
+            return errorMessage
           }
         }
         return ''

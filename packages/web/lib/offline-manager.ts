@@ -4,6 +4,7 @@
  */
 
 import type { Note } from '@/types/note'
+import { match } from 'ts-pattern'
 
 export interface SyncQueueItem {
   id: string
@@ -303,45 +304,38 @@ class OfflineManager {
 
     if (!item || item.status !== 'conflict') return
 
-    switch (resolution.strategy) {
-      case 'local':
+    const shouldDelete = await match(resolution.strategy)
+      .with('local', () => {
         // Keep local changes, retry sync
         item.status = 'pending'
         item.retries = 0
-        break
-
-      case 'remote':
-        // Discard local changes
+        return false
+      })
+      .with('remote', 'manual', async () => {
+        // Discard local changes or manually resolved
         await new Promise((resolve, reject) => {
           const request = store.delete(itemId)
           request.onsuccess = () => resolve(undefined)
           request.onerror = () => reject(request.error)
         })
-        this.notifySyncQueueUpdate()
-        return
-
-      case 'merge':
+        return true
+      })
+      .with('merge', () => {
         // Apply merged data
         if (resolution.resolvedData) {
           item.data = resolution.resolvedData
           item.status = 'pending'
           item.retries = 0
         }
-        break
+        return false
+      })
+      .exhaustive()
 
-      case 'manual':
-        // User manually resolved, remove from queue
-        await new Promise((resolve, reject) => {
-          const request = store.delete(itemId)
-          request.onsuccess = () => resolve(undefined)
-          request.onerror = () => reject(request.error)
-        })
-        this.notifySyncQueueUpdate()
-        return
-    }
-
-    await this.updateSyncItem(item)
     this.notifySyncQueueUpdate()
+
+    if (!shouldDelete) {
+      await this.updateSyncItem(item)
+    }
 
     // Try to sync again if online
     if (this.isOnline()) {
