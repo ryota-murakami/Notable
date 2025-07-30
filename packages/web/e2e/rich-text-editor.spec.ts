@@ -43,7 +43,7 @@ test.describe('Rich Text Editor', () => {
       // Check if we navigated to a note page
       const url = page.url()
       if (url.includes('/notes/')) {
-        console.log('Successfully navigated to note editor')
+        console.info('Successfully navigated to note editor')
       }
     }
 
@@ -77,13 +77,13 @@ test.describe('Rich Text Editor', () => {
         .catch(() => false)
       if (hasEditor) {
         foundEditor = true
-        console.log(`Found editor with selector: ${selector}`)
+        console.info(`Found editor with selector: ${selector}`)
         break
       }
     }
 
     if (!foundEditor) {
-      console.log('No editor elements found, but app is stable')
+      console.info('No editor elements found, but app is stable')
     }
 
     // App should remain stable
@@ -111,9 +111,9 @@ test.describe('Rich Text Editor', () => {
     if (hasEditor) {
       await editor.click()
       await page.keyboard.type('Test content')
-      console.log('Successfully typed in editor')
+      console.info('Successfully typed in editor')
     } else {
-      console.log('No editable element found')
+      console.info('No editable element found')
     }
 
     // App should remain stable
@@ -145,13 +145,13 @@ test.describe('Rich Text Editor', () => {
         .catch(() => false)
       if (hasButton) {
         foundToolbar = true
-        console.log(`Found toolbar button: ${selector}`)
+        console.info(`Found toolbar button: ${selector}`)
         break
       }
     }
 
     if (!foundToolbar) {
-      console.log('No formatting toolbar found')
+      console.info('No formatting toolbar found')
     }
 
     // App should remain stable

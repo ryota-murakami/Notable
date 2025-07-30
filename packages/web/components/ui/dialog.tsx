@@ -103,6 +103,15 @@ const DialogDescription: React.FC<
   <p className={cn('text-sm text-muted-foreground', className)} {...props} />
 )
 
+const DialogTrigger: React.FC<
+  React.HTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
+> = ({ children, asChild = false, ...props }) => {
+  if (asChild) {
+    return <>{children}</>
+  }
+  return <button {...props}>{children}</button>
+}
+
 export {
   Dialog,
   DialogContent,
@@ -110,4 +119,5 @@ export {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 }

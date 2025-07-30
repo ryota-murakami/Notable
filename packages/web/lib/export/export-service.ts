@@ -1,4 +1,5 @@
 import { type Descendant } from 'slate'
+import { match } from 'ts-pattern'
 import {
   type BulkExportOptions,
   type ExportFormat,
@@ -145,8 +146,8 @@ export class ExportService implements IExportService {
     }
 
     // Format-specific validation
-    switch (options.format) {
-      case 'pdf':
+    match(options.format)
+      .with('pdf', () => {
         const pdfOptions = options as any
         if (
           pdfOptions.pageSize &&
@@ -154,9 +155,8 @@ export class ExportService implements IExportService {
         ) {
           errors.push('Invalid page size')
         }
-        break
-
-      case 'react':
+      })
+      .with('react', () => {
         const reactOptions = options as any
         if (
           reactOptions.styleType &&
@@ -166,8 +166,10 @@ export class ExportService implements IExportService {
         ) {
           errors.push('Invalid style type')
         }
-        break
-    }
+      })
+      .otherwise(() => {
+        // No additional validation for other formats
+      })
 
     return {
       valid: errors.length === 0,

@@ -101,7 +101,7 @@ test.describe('Keyboard Shortcuts', () => {
       await createNoteButton.click()
     } else {
       // If no button is found, just verify the shell loads
-      console.log(
+      console.info(
         'Note management buttons not found, but app shell loaded successfully'
       )
       await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()

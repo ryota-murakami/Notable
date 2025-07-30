@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { match } from 'ts-pattern'
 import {
   Code,
   Download,
@@ -672,46 +673,56 @@ function getDefaultOptionsForFormat(format: ExportFormat): ExportOptions {
     },
   }
 
-  switch (format) {
-    case 'markdown':
-      return {
-        ...baseOptions,
-        format: 'markdown',
-        useGFM: true,
-        imageHandling: 'embed' as const,
-      } as MarkdownExportOptions
-    case 'pdf':
-      return {
-        ...baseOptions,
-        format: 'pdf',
-        pageFormat: 'A4' as const,
-        pageOrientation: 'portrait' as const,
-        includePageNumbers: true,
-        generateTOC: true,
-        margins: { top: 20, right: 20, bottom: 20, left: 20 },
-      } as PDFExportOptions
-    case 'html':
-      return {
-        ...baseOptions,
-        format: 'html',
-        selfContained: true,
-        includeSearch: true,
-        includeNavigation: true,
-        responsive: true,
-        darkMode: true,
-      } as HTMLExportOptions
-    case 'react':
-      return {
-        ...baseOptions,
-        format: 'react',
-        useTypeScript: true,
-        styling: 'tailwind' as const,
-        functional: true,
-        includePropTypes: false,
-      } as ReactExportOptions
-    default:
-      return baseOptions
-  }
+  return match(format)
+    .with(
+      'markdown',
+      () =>
+        ({
+          ...baseOptions,
+          format: 'markdown',
+          useGFM: true,
+          imageHandling: 'embed' as const,
+        }) as MarkdownExportOptions
+    )
+    .with(
+      'pdf',
+      () =>
+        ({
+          ...baseOptions,
+          format: 'pdf',
+          pageFormat: 'A4' as const,
+          pageOrientation: 'portrait' as const,
+          includePageNumbers: true,
+          generateTOC: true,
+          margins: { top: 20, right: 20, bottom: 20, left: 20 },
+        }) as PDFExportOptions
+    )
+    .with(
+      'html',
+      () =>
+        ({
+          ...baseOptions,
+          format: 'html',
+          selfContained: true,
+          includeSearch: true,
+          includeNavigation: true,
+          responsive: true,
+          darkMode: true,
+        }) as HTMLExportOptions
+    )
+    .with(
+      'react',
+      () =>
+        ({
+          ...baseOptions,
+          format: 'react',
+          useTypeScript: true,
+          styling: 'tailwind' as const,
+          functional: true,
+          includePropTypes: false,
+        }) as ReactExportOptions
+    )
+    .otherwise(() => baseOptions)
 }
 
 function getFormatIcon(format: ExportFormat) {

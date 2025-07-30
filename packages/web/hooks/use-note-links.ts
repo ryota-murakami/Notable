@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database'
 
-type NoteLink = Database['public']['Tables']['note_links']['Row']
+type _NoteLink = Database['public']['Tables']['note_links']['Row']
 type NoteLinkInsert = Database['public']['Tables']['note_links']['Insert']
 
 const supabase = createClient()
@@ -77,7 +77,7 @@ export function useDeleteNoteLink() {
 
       if (error) throw error
     },
-    onSuccess: (_, linkId) => {
+    onSuccess: (_, _linkId) => {
       // Invalidate all note-links queries since we don't know which notes were affected
       queryClient.invalidateQueries({ queryKey: ['note-links'] })
     },

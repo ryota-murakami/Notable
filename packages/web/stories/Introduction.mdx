@@ -1,0 +1,146 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title='Notable Design System/Introduction' />
+
+# Notable Design System
+
+Welcome to the **Notable Design System** - a comprehensive collection of reusable components, design tokens, and
+patterns that power the Notable note-taking application.
+
+## 🎯 Design Philosophy
+
+Notable's design system is built around these core principles:
+
+- **Clarity**: Clean, readable interfaces that help users focus on their content
+- **Consistency**: Unified visual language across all features and platforms
+- **Accessibility**: WCAG 2.1 AA compliant components for everyone
+- **Performance**: Lightweight, fast-loading components optimized for productivity
+- **Flexibility**: Adaptable components that work across different contexts
+
+## 🏗️ Architecture
+
+The design system is organized into several key areas:
+
+### Components
+
+- **Button**: Primary interaction elements with multiple variants
+- **Input**: Form controls for user input with validation states
+- **Badge**: Status indicators and tags for organization
+- **Card**: Content containers for notes, settings, and features
+- **And more**: Modal, Dropdown, Tooltip, etc.
+
+### Design Tokens
+
+- **Colors**: Semantic color palette supporting light/dark themes
+- **Typography**: Font families, sizes, and hierarchy
+- **Spacing**: Consistent spacing scale for layouts
+- **Motion**: Animation curves and timing for smooth interactions
+
+### Theme System
+
+- **Light/Dark modes**: Complete theme switching capability
+- **Custom themes**: Brand customization and user preferences
+- **Responsive design**: Mobile-first approach with desktop enhancements
+
+## 🚀 Getting Started
+
+All components are built with:
+
+- **React 19** + **TypeScript** for type safety
+- **Tailwind CSS v4** for styling and theming
+- **Radix UI** primitives for accessibility
+- **Framer Motion** for animations
+- **Class Variance Authority** for component variants
+
+## 📚 Component Categories
+
+### Core Components
+
+Essential building blocks used throughout Notable:
+
+- Buttons, Inputs, Cards, Badges
+- Navigation, Layout, Typography
+
+### Editor Components
+
+Specialized components for the block editor:
+
+- Block handles, Slash commands, AI toolbars
+- Rich text formatting, Link previews
+
+### Premium Features
+
+Components for Notable's premium tier:
+
+- AI assistant panels, Smart search
+- Advanced export options, Analytics
+
+## 🎨 Usage Guidelines
+
+### Spacing
+
+Use the spacing scale consistently:
+
+- `gap-1` (4px) for tight spacing
+- `gap-4` (16px) for standard spacing
+- `gap-8` (32px) for section spacing
+
+### Colors
+
+Leverage semantic color tokens:
+
+- `primary` for main actions
+- `secondary` for supporting elements
+- `destructive` for dangerous actions
+- `muted` for backgrounds and disabled states
+
+### Typography
+
+Follow the type hierarchy:
+
+- `text-3xl font-bold` for page titles
+- `text-lg font-semibold` for section headers
+- `text-sm text-muted-foreground` for metadata
+
+## 🔧 Development
+
+### Running Storybook
+
+```bash
+pnpm run storybook
+```
+
+### Building for Production
+
+```bash
+pnpm run build-storybook
+```
+
+### Testing Components
+
+All components include:
+
+- Visual regression tests via Chromatic
+- Accessibility testing with axe-core
+- Interaction testing with Storybook test runner
+
+## 🌟 Notable-Specific Features
+
+This design system is tailored for note-taking applications:
+
+- **Block-based editor** components
+- **Tag and folder** organization elements
+- **Search and filter** interfaces
+- **AI-powered** writing assistance UI
+- **Export and sharing** workflows
+- **Collaboration** features
+
+## 📱 Platform Support
+
+- **Web**: Full-featured Progressive Web App
+- **Desktop**: Electron app with native integrations
+- **Mobile**: React Native with Expo (planned)
+
+---
+
+Ready to build amazing note-taking experiences? Explore the component library and start creating! 🚀
