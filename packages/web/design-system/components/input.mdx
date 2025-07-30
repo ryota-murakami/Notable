@@ -1,0 +1,348 @@
+import { Meta, ArgTypes, Canvas, Story } from '@storybook/blocks'
+import { Input } from './input'
+import * as InputStories from './input.stories'
+
+<Meta of={InputStories} />
+
+# Input
+
+Input components are used to collect user input in forms and interactive interfaces. They support various types, states,
+and configurations to handle different data entry scenarios.
+
+<Canvas of={InputStories.Default} />
+
+## Props
+
+<ArgTypes of={Input} />
+
+## Variants
+
+### Default
+
+The default input style with a subtle border.
+
+<Canvas of={InputStories.Default} />
+
+```tsx
+<Input placeholder='Enter text...' />
+```
+
+### Filled
+
+Filled inputs have a background color for better visibility.
+
+<Canvas of={InputStories.Filled} />
+
+```tsx
+<Input variant='filled' placeholder='Filled input' />
+```
+
+### Flushed
+
+Flushed inputs have only a bottom border for a minimal look.
+
+<Canvas of={InputStories.Flushed} />
+
+```tsx
+<Input variant='flushed' placeholder='Flushed input' />
+```
+
+### Outlined
+
+Outlined inputs have a more prominent border.
+
+<Canvas of={InputStories.Outlined} />
+
+```tsx
+<Input variant='outlined' placeholder='Outlined input' />
+```
+
+## Sizes
+
+Inputs come in three sizes to fit different contexts.
+
+<Canvas of={InputStories.Sizes} />
+
+```tsx
+<Input size="sm" placeholder="Small" />
+<Input size="md" placeholder="Medium" />
+<Input size="lg" placeholder="Large" />
+```
+
+## States
+
+### Error State
+
+Display validation errors with visual feedback.
+
+<Canvas of={InputStories.WithError} />
+
+```tsx
+<Input placeholder='Email' error='Please enter a valid email address' defaultValue='invalid-email' />
+```
+
+### Success State
+
+Indicate successful validation.
+
+<Canvas of={InputStories.WithSuccess} />
+
+```tsx
+<Input placeholder='Username' success defaultValue='johndoe' />
+```
+
+### Disabled State
+
+Prevent user interaction when needed.
+
+<Canvas of={InputStories.Disabled} />
+
+```tsx
+<Input placeholder='Disabled input' disabled />
+```
+
+### Loading State
+
+Show loading indicator for async operations.
+
+<Canvas of={InputStories.Loading} />
+
+```tsx
+<Input placeholder='Checking availability...' loading />
+```
+
+## With Icons
+
+Icons can be added to provide visual context.
+
+<Canvas of={InputStories.WithIcon} />
+
+```tsx
+import { Search, User, Lock } from 'lucide-react'
+
+<Input placeholder="Search..." icon={<Search />} />
+<Input placeholder="Username" icon={<User />} iconPosition="left" />
+<Input placeholder="Password" icon={<Lock />} iconPosition="right" type="password" />
+```
+
+## Labels and Helpers
+
+Add labels and helper text for better UX.
+
+<Canvas of={InputStories.WithLabel} />
+
+```tsx
+<Input label='Email Address' placeholder='john@example.com' helper="We'll never share your email" />
+```
+
+## Floating Labels
+
+Floating labels provide a modern, space-efficient design.
+
+<Canvas of={InputStories.FloatingLabel} />
+
+```tsx
+<Input floatingLabel='Email Address' placeholder=' ' defaultValue='john@example.com' />
+```
+
+## Character Count
+
+Show character limits for length-restricted inputs.
+
+<Canvas of={InputStories.WithCharacterCount} />
+
+```tsx
+<Input
+  placeholder='Bio'
+  maxLength={100}
+  showCharacterCount
+  defaultValue='Full-stack developer passionate about React'
+/>
+```
+
+## Clearable
+
+Allow users to quickly clear the input.
+
+<Canvas of={InputStories.Clearable} />
+
+```tsx
+<Input placeholder='Search...' clearable defaultValue='React components' />
+```
+
+## Suggestions
+
+Provide inline suggestions as users type.
+
+<Canvas of={InputStories.WithSuggestions} />
+
+```tsx
+<Input placeholder='Programming language' suggestions={['JavaScript', 'TypeScript', 'Python', 'Java', 'Go']} />
+```
+
+## Specialized Inputs
+
+### Search Input
+
+<Canvas of={InputStories.SearchInput} />
+
+```tsx
+<SearchInput placeholder='Search notes...' onSearch={(value) => console.log('Searching:', value)} />
+```
+
+### Password Input
+
+<Canvas of={InputStories.PasswordInput} />
+
+```tsx
+<PasswordInput placeholder='Enter password' showStrength />
+```
+
+## Input Types
+
+Support for various HTML5 input types.
+
+<Canvas of={InputStories.InputTypes} />
+
+```tsx
+<Input type="email" placeholder="Email" />
+<Input type="number" placeholder="Age" />
+<Input type="tel" placeholder="Phone" />
+<Input type="url" placeholder="Website" />
+<Input type="date" />
+<Input type="time" />
+```
+
+## Form Integration
+
+<Canvas of={InputStories.FormExample} />
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <div className='space-y-4'>
+    <Input label='Full Name' placeholder='John Doe' required />
+    <Input label='Email' type='email' placeholder='john@example.com' required />
+    <Input label='Password' type='password' placeholder='••••••••' required />
+    <Button type='submit'>Submit</Button>
+  </div>
+</form>
+```
+
+## Usage Guidelines
+
+### When to Use
+
+- **Forms**: Primary method for collecting user input
+- **Search**: For search boxes and filters
+- **Settings**: Configuration and preference inputs
+- **Data Entry**: Any scenario requiring user input
+
+### Best Practices
+
+1. **Clear Labels**: Always provide clear labels or placeholders
+2. **Validation Feedback**: Show errors and success states promptly
+3. **Helper Text**: Provide guidance for complex inputs
+4. **Appropriate Types**: Use correct input types for better UX
+5. **Character Limits**: Show limits for restricted inputs
+
+### Accessibility
+
+- Proper label association with `htmlFor`
+- ARIA attributes for validation states
+- Keyboard navigation support
+- Screen reader announcements for dynamic content
+- High contrast mode support
+
+## Validation
+
+### Client-side Validation
+
+```tsx
+const [email, setEmail] = useState('')
+const [error, setError] = useState('')
+
+const validateEmail = (value: string) => {
+  if (!value.includes('@')) {
+    setError('Please enter a valid email')
+  } else {
+    setError('')
+  }
+}
+
+;<Input
+  value={email}
+  onChange={(e) => {
+    setEmail(e.target.value)
+    validateEmail(e.target.value)
+  }}
+  error={error}
+  placeholder='Email'
+/>
+```
+
+### With Form Libraries
+
+```tsx
+// With react-hook-form
+<Controller
+  name='username'
+  control={control}
+  rules={{ required: 'Username is required' }}
+  render={({ field, fieldState }) => <Input {...field} placeholder='Username' error={fieldState.error?.message} />}
+/>
+```
+
+## Examples
+
+### Login Form
+
+```tsx
+<Card className='w-full max-w-md'>
+  <CardHeader>
+    <CardTitle>Login</CardTitle>
+    <CardDescription>Enter your credentials to continue</CardDescription>
+  </CardHeader>
+  <CardContent className='space-y-4'>
+    <Input label='Email' type='email' placeholder='john@example.com' icon={<Mail />} />
+    <PasswordInput label='Password' placeholder='Enter your password' />
+  </CardContent>
+  <CardFooter>
+    <Button fullWidth>Sign In</Button>
+  </CardFooter>
+</Card>
+```
+
+### Search with Filters
+
+```tsx
+<div className='flex gap-2'>
+  <SearchInput placeholder='Search products...' className='flex-1' />
+  <Select placeholder='Category'>
+    <option>All</option>
+    <option>Electronics</option>
+    <option>Clothing</option>
+  </Select>
+  <Button>Search</Button>
+</div>
+```
+
+### Profile Form
+
+```tsx
+<div className='space-y-6'>
+  <div className='grid grid-cols-2 gap-4'>
+    <Input label='First Name' placeholder='John' />
+    <Input label='Last Name' placeholder='Doe' />
+  </div>
+  <Input label='Bio' placeholder='Tell us about yourself...' maxLength={200} showCharacterCount />
+  <Input label='Website' type='url' placeholder='https://example.com' icon={<Globe />} />
+</div>
+```
+
+## Related Components
+
+- [Textarea](/?path=/docs/components-textarea--docs) - Multi-line text input
+- [Select](/?path=/docs/components-select--docs) - Dropdown selection
+- [Checkbox](/?path=/docs/components-checkbox--docs) - Boolean input
+- [Radio](/?path=/docs/components-radio--docs) - Single choice selection
+- [DatePicker](/?path=/docs/components-datepicker--docs) - Date selection

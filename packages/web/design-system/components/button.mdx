@@ -1,0 +1,269 @@
+import { Meta, ArgTypes, Canvas, Story } from '@storybook/blocks'
+import { Button } from './button'
+import * as ButtonStories from './button.stories'
+
+<Meta of={ButtonStories} />
+
+# Button
+
+Buttons are interactive elements that trigger actions when clicked. They come in various styles, sizes, and states to
+accommodate different use cases throughout the Notable interface.
+
+<Canvas of={ButtonStories.Default} />
+
+## Props
+
+<ArgTypes of={Button} />
+
+## Variants
+
+The Button component supports multiple visual variants to communicate different levels of emphasis and intent.
+
+### Primary
+
+Primary buttons are used for the main call-to-action on a page or in a section.
+
+<Canvas of={ButtonStories.Primary} />
+
+```tsx
+<Button variant='primary'>Primary Button</Button>
+```
+
+### Secondary
+
+Secondary buttons are used for secondary actions that complement the primary action.
+
+<Canvas of={ButtonStories.Secondary} />
+
+```tsx
+<Button variant='secondary'>Secondary Button</Button>
+```
+
+### Destructive
+
+Destructive buttons are used for actions that delete data or have significant consequences.
+
+<Canvas of={ButtonStories.Destructive} />
+
+```tsx
+<Button variant='destructive'>Delete</Button>
+```
+
+### Ghost
+
+Ghost buttons have minimal visual weight and are used for tertiary actions.
+
+<Canvas of={ButtonStories.Ghost} />
+
+```tsx
+<Button variant='ghost'>Ghost Button</Button>
+```
+
+### Link
+
+Link buttons look like hyperlinks but behave like buttons.
+
+<Canvas of={ButtonStories.Link} />
+
+```tsx
+<Button variant='link'>Link Button</Button>
+```
+
+### Gradient
+
+Gradient buttons add visual interest for special actions or premium features.
+
+<Canvas of={ButtonStories.Gradient} />
+
+```tsx
+<Button variant='gradient'>Gradient Button</Button>
+```
+
+## Sizes
+
+Buttons come in five different sizes to fit various contexts.
+
+<Canvas of={ButtonStories.Sizes} />
+
+```tsx
+<Button size="xs">Extra Small</Button>
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+<Button size="xl">Extra Large</Button>
+```
+
+## States
+
+### Loading State
+
+Buttons can show a loading state to indicate that an action is in progress.
+
+<Canvas of={ButtonStories.Loading} />
+
+```tsx
+<Button loading>Loading...</Button>
+```
+
+### Disabled State
+
+Disabled buttons prevent user interaction when an action is not available.
+
+<Canvas of={ButtonStories.Disabled} />
+
+```tsx
+<Button disabled>Disabled</Button>
+```
+
+## Icons
+
+Buttons can include icons to provide additional visual context.
+
+<Canvas of={ButtonStories.WithIcon} />
+
+```tsx
+import { Download } from 'lucide-react'
+
+;<Button icon={<Download className='h-4 w-4' />}>Download</Button>
+```
+
+### Icon Position
+
+Icons can be positioned on either side of the button text.
+
+<Canvas of={ButtonStories.IconPositions} />
+
+```tsx
+<Button icon={<ChevronLeft />} iconPosition="left">
+  Previous
+</Button>
+<Button icon={<ChevronRight />} iconPosition="right">
+  Next
+</Button>
+```
+
+### Icon Only
+
+For compact interfaces, buttons can be icon-only.
+
+<Canvas of={ButtonStories.IconOnly} />
+
+```tsx
+<Button icon={<Settings className='h-5 w-5' />} aria-label='Settings' />
+```
+
+## Full Width
+
+Buttons can expand to fill their container width.
+
+<Canvas of={ButtonStories.FullWidth} />
+
+```tsx
+<Button fullWidth>Full Width Button</Button>
+```
+
+## Ripple Effect
+
+The ripple effect provides visual feedback on click (enabled by default).
+
+<Canvas of={ButtonStories.Ripple} />
+
+```tsx
+<Button ripple>Click for Ripple</Button>
+<Button ripple={false}>No Ripple</Button>
+```
+
+## Usage Guidelines
+
+### When to Use
+
+- **Primary Actions**: Use primary buttons for the main action on a page
+- **Secondary Actions**: Use secondary buttons for supporting actions
+- **Dangerous Actions**: Use destructive buttons for delete or irreversible actions
+- **Navigation**: Use link buttons for navigation that doesn't look like traditional links
+- **Low Priority**: Use ghost buttons for low-priority actions
+
+### Best Practices
+
+1. **Clear Labels**: Use action-oriented labels that clearly describe what will happen
+2. **Button Hierarchy**: Limit primary buttons to one per section to maintain clear hierarchy
+3. **Consistent Sizing**: Use consistent button sizes within the same context
+4. **Loading States**: Always show loading states for async actions
+5. **Disabled States**: Provide tooltips or helper text explaining why a button is disabled
+
+### Accessibility
+
+- All buttons include proper ARIA attributes
+- Keyboard navigation is fully supported (Tab, Enter, Space)
+- Focus states are clearly visible
+- Icon-only buttons must include `aria-label`
+- Loading states announce status changes to screen readers
+
+## Examples
+
+### Form Actions
+
+```tsx
+<div className='flex gap-3'>
+  <Button variant='secondary'>Cancel</Button>
+  <Button variant='primary'>Save Changes</Button>
+</div>
+```
+
+### Confirmation Dialog
+
+```tsx
+<div className='flex gap-3'>
+  <Button variant='ghost'>Cancel</Button>
+  <Button variant='destructive'>Delete Account</Button>
+</div>
+```
+
+### Button Group
+
+<Canvas of={ButtonStories.ButtonGroup} />
+
+```tsx
+<div className='flex gap-1 p-1 bg-muted rounded-lg'>
+  <Button variant='ghost' size='sm'>
+    Day
+  </Button>
+  <Button variant='ghost' size='sm'>
+    Week
+  </Button>
+  <Button variant='ghost' size='sm'>
+    Month
+  </Button>
+</div>
+```
+
+### Social Login
+
+<Canvas of={ButtonStories.SocialButtons} />
+
+```tsx
+<div className='space-y-3'>
+  <Button variant='outline' fullWidth icon={<Github />}>
+    Continue with GitHub
+  </Button>
+  <Button variant='outline' fullWidth icon={<Google />}>
+    Continue with Google
+  </Button>
+</div>
+```
+
+## Keyboard Shortcuts
+
+Buttons support keyboard navigation:
+
+- `Tab` - Focus next button
+- `Shift + Tab` - Focus previous button
+- `Enter` or `Space` - Activate button
+- `Escape` - Remove focus (in some contexts)
+
+## Related Components
+
+- [Link](/?path=/docs/components-link--docs) - For navigation
+- [IconButton](/?path=/docs/components-iconbutton--docs) - Specialized icon-only buttons
+- [ToggleButton](/?path=/docs/components-togglebutton--docs) - For toggling states
+- [ButtonGroup](/?path=/docs/components-buttongroup--docs) - For grouping related actions

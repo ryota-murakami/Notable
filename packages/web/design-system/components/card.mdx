@@ -1,0 +1,345 @@
+import { Meta, ArgTypes, Canvas, Story } from '@storybook/blocks'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './card'
+import * as CardStories from './card.stories'
+
+<Meta of={CardStories} />
+
+# Card
+
+Cards are versatile container components that group related content and actions. They provide a clean way to organize
+information with consistent styling and spacing.
+
+<Canvas of={CardStories.Default} />
+
+## Anatomy
+
+Cards are composed of several sub-components:
+
+- **Card**: The main container
+- **CardHeader**: Contains the title and description
+- **CardTitle**: The main heading
+- **CardDescription**: Supporting text
+- **CardContent**: Main content area
+- **CardFooter**: Actions or metadata
+
+## Props
+
+### Card
+
+<ArgTypes of={Card} />
+
+## Basic Usage
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+
+;<Card>
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Card description goes here</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>Card content goes here</p>
+  </CardContent>
+</Card>
+```
+
+## Variants
+
+### Elevated
+
+Elevated cards have a subtle shadow to lift them off the background.
+
+<Canvas of={CardStories.Elevated} />
+
+```tsx
+<Card variant='elevated'>
+  <CardHeader>
+    <CardTitle>Elevated Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>This card appears raised with shadow</p>
+  </CardContent>
+</Card>
+```
+
+### Bordered
+
+Bordered cards use a border instead of shadow for definition.
+
+<Canvas of={CardStories.Bordered} />
+
+```tsx
+<Card variant='bordered'>
+  <CardHeader>
+    <CardTitle>Bordered Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>This card has a subtle border</p>
+  </CardContent>
+</Card>
+```
+
+### Ghost
+
+Ghost cards have minimal visual styling.
+
+<Canvas of={CardStories.Ghost} />
+
+```tsx
+<Card variant='ghost'>
+  <CardHeader>
+    <CardTitle>Ghost Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>Minimal styling for subtle content</p>
+  </CardContent>
+</Card>
+```
+
+### Gradient
+
+Gradient cards add visual interest with gradient borders.
+
+<Canvas of={CardStories.Gradient} />
+
+```tsx
+<Card variant='gradient'>
+  <CardHeader>
+    <CardTitle>Gradient Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>Eye-catching gradient border effect</p>
+  </CardContent>
+</Card>
+```
+
+### Glass
+
+Glass cards have a frosted glass effect.
+
+<Canvas of={CardStories.Glass} />
+
+```tsx
+<Card variant='glass'>
+  <CardHeader>
+    <CardTitle>Glass Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>Translucent with backdrop blur</p>
+  </CardContent>
+</Card>
+```
+
+### Premium
+
+Premium cards combine gradients and glass effects for a luxurious feel.
+
+<Canvas of={CardStories.Premium} />
+
+```tsx
+<Card variant='premium'>
+  <CardHeader>
+    <CardTitle>Premium Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>For highlighting special content</p>
+  </CardContent>
+</Card>
+```
+
+## Interactive Cards
+
+Cards can be made interactive with hover effects and click handlers.
+
+<Canvas of={CardStories.Interactive} />
+
+```tsx
+<Card interactive onClick={() => console.log('Card clicked')}>
+  <CardHeader>
+    <CardTitle>Interactive Card</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>Click anywhere on this card</p>
+  </CardContent>
+</Card>
+```
+
+## Specialized Card Types
+
+### Feature Card
+
+<Canvas of={CardStories.FeatureCard} />
+
+```tsx
+<FeatureCard
+  icon={<Zap className='h-6 w-6' />}
+  title='Lightning Fast'
+  description='Optimized for speed and performance'
+  variant='gradient'
+/>
+```
+
+### Metric Card
+
+<Canvas of={CardStories.MetricCard} />
+
+```tsx
+<MetricCard title='Total Revenue' value='$12,345' change={+12.5} trend='up' icon={<DollarSign className='h-4 w-4' />} />
+```
+
+### Progress Card
+
+<Canvas of={CardStories.ProgressCard} />
+
+```tsx
+<ProgressCard title='Project Progress' description='Sprint 3 - Feature Development' progress={65} showPercentage />
+```
+
+### Notification Card
+
+<Canvas of={CardStories.NotificationCard} />
+
+```tsx
+<NotificationCard
+  type='success'
+  title='Success!'
+  description='Your changes have been saved'
+  timestamp='2 minutes ago'
+  onDismiss={() => console.log('Dismissed')}
+/>
+```
+
+### Action Card
+
+<Canvas of={CardStories.ActionCard} />
+
+```tsx
+<ActionCard
+  title='Upgrade to Pro'
+  description='Unlock advanced features'
+  buttonText='Upgrade Now'
+  onAction={() => console.log('Action clicked')}
+  variant='premium'
+/>
+```
+
+## Complex Layouts
+
+### Card Grid
+
+<Canvas of={CardStories.CardGrid} />
+
+```tsx
+<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+  <Card>...</Card>
+  <Card>...</Card>
+  <Card>...</Card>
+</div>
+```
+
+### Nested Cards
+
+<Canvas of={CardStories.NestedCards} />
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Parent Card</CardTitle>
+  </CardHeader>
+  <CardContent className='space-y-3'>
+    <Card variant='bordered'>
+      <CardContent className='pt-4'>
+        <p>Nested card content</p>
+      </CardContent>
+    </Card>
+  </CardContent>
+</Card>
+```
+
+## Usage Guidelines
+
+### When to Use
+
+- **Content Grouping**: Group related information together
+- **Lists**: Display items in a grid or list layout
+- **Forms**: Contain form sections with clear boundaries
+- **Stats/Metrics**: Show data visualizations and KPIs
+- **Actions**: Present options or actions to users
+
+### Best Practices
+
+1. **Consistent Spacing**: Use consistent padding and margins
+2. **Clear Hierarchy**: Use CardTitle and CardDescription appropriately
+3. **Limit Content**: Don't overload cards with too much information
+4. **Visual Balance**: Mix card variants thoughtfully
+5. **Responsive Design**: Ensure cards work well on all screen sizes
+
+### Accessibility
+
+- Semantic HTML structure with proper heading hierarchy
+- Interactive cards have appropriate ARIA roles
+- Keyboard navigation support for interactive elements
+- Focus states are clearly visible
+- Color contrast meets WCAG standards
+
+## Examples
+
+### Dashboard Widget
+
+```tsx
+<Card className='w-full'>
+  <CardHeader className='flex flex-row items-center justify-between'>
+    <CardTitle className='text-sm font-medium'>Active Users</CardTitle>
+    <Users className='h-4 w-4 text-muted-foreground' />
+  </CardHeader>
+  <CardContent>
+    <div className='text-2xl font-bold'>1,234</div>
+    <p className='text-xs text-muted-foreground'>+20.1% from last month</p>
+  </CardContent>
+</Card>
+```
+
+### Settings Section
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Notifications</CardTitle>
+    <CardDescription>Configure how you receive notifications</CardDescription>
+  </CardHeader>
+  <CardContent className='space-y-4'>
+    <div className='flex items-center justify-between'>
+      <Label>Email notifications</Label>
+      <Switch />
+    </div>
+    <div className='flex items-center justify-between'>
+      <Label>Push notifications</Label>
+      <Switch />
+    </div>
+  </CardContent>
+  <CardFooter>
+    <Button variant='primary'>Save preferences</Button>
+  </CardFooter>
+</Card>
+```
+
+### Empty State
+
+```tsx
+<Card className='text-center py-12'>
+  <CardContent>
+    <FileText className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+    <CardTitle>No documents yet</CardTitle>
+    <CardDescription className='mt-2'>Create your first document to get started</CardDescription>
+    <Button className='mt-4'>Create Document</Button>
+  </CardContent>
+</Card>
+```
+
+## Related Components
+
+- [Paper](/?path=/docs/components-paper--docs) - Simpler container without sections
+- [Box](/?path=/docs/components-box--docs) - Basic container component
+- [Panel](/?path=/docs/components-panel--docs) - For sidebar content
+- [Alert](/?path=/docs/components-alert--docs) - For important messages
