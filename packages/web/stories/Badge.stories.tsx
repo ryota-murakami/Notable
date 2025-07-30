@@ -106,7 +106,7 @@ export const StatusIndicators: Story = {
     <div className='space-y-4 p-4'>
       <div className='flex items-center gap-2'>
         <span className='text-sm'>Note Status:</span>
-        <Badge variant='outline'>
+        <Badge variant='secondary'>
           <Clock className='mr-1 h-3 w-3' />
           Draft
         </Badge>
@@ -180,39 +180,48 @@ export const NoteCategories: Story = {
     <div className='space-y-3 p-4'>
       <div className='flex flex-wrap gap-2'>
         <span className='text-sm font-medium'>Work:</span>
-        <Badge variant='outline' className='border-blue-300 text-blue-700'>
+        <Badge variant='secondary' className='border-blue-300 text-blue-700'>
           meetings
         </Badge>
-        <Badge variant='outline' className='border-blue-300 text-blue-700'>
+        <Badge variant='secondary' className='border-blue-300 text-blue-700'>
           projects
         </Badge>
-        <Badge variant='outline' className='border-blue-300 text-blue-700'>
+        <Badge variant='secondary' className='border-blue-300 text-blue-700'>
           deadlines
         </Badge>
       </div>
 
       <div className='flex flex-wrap gap-2'>
         <span className='text-sm font-medium'>Personal:</span>
-        <Badge variant='outline' className='border-green-300 text-green-700'>
+        <Badge variant='secondary' className='border-green-300 text-green-700'>
           health
         </Badge>
-        <Badge variant='outline' className='border-green-300 text-green-700'>
+        <Badge variant='secondary' className='border-green-300 text-green-700'>
           travel
         </Badge>
-        <Badge variant='outline' className='border-green-300 text-green-700'>
+        <Badge variant='secondary' className='border-green-300 text-green-700'>
           hobbies
         </Badge>
       </div>
 
       <div className='flex flex-wrap gap-2'>
         <span className='text-sm font-medium'>Learning:</span>
-        <Badge variant='outline' className='border-purple-300 text-purple-700'>
+        <Badge
+          variant='secondary'
+          className='border-purple-300 text-purple-700'
+        >
           tutorial
         </Badge>
-        <Badge variant='outline' className='border-purple-300 text-purple-700'>
+        <Badge
+          variant='secondary'
+          className='border-purple-300 text-purple-700'
+        >
           course
         </Badge>
-        <Badge variant='outline' className='border-purple-300 text-purple-700'>
+        <Badge
+          variant='secondary'
+          className='border-purple-300 text-purple-700'
+        >
           reference
         </Badge>
       </div>
@@ -285,7 +294,7 @@ export const InteractiveTags: Story = {
           ))}
         </div>
         <Badge
-          variant='outline'
+          variant='secondary'
           className='cursor-pointer hover:bg-gray-50 border-dashed'
         >
           + Add tag

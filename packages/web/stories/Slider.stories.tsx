@@ -12,7 +12,7 @@ import { useState } from 'react'
 import {
   Moon,
   Sun,
-  TextSizeIcon,
+  Type as TextSizeIcon,
   Volume2,
   VolumeX,
   ZoomIn,
@@ -122,7 +122,7 @@ export const VolumeControl: Story = {
         <div className='flex items-center gap-4'>
           <Button
             variant='ghost'
-            size='icon'
+            size='xs'
             onClick={() => setVolume(isMuted ? [75] : [0])}
           >
             {isMuted ? (
@@ -241,7 +241,7 @@ export const ZoomControl: Story = {
         <div className='flex items-center gap-3'>
           <Button
             variant='ghost'
-            size='icon'
+            size='xs'
             onClick={() => {
               const currentIndex = zoomLevels.findIndex(
                 (level) => level >= zoom[0]
@@ -265,7 +265,7 @@ export const ZoomControl: Story = {
           </div>
           <Button
             variant='ghost'
-            size='icon'
+            size='xs'
             onClick={() => {
               const currentIndex = zoomLevels.findIndex(
                 (level) => level > zoom[0]
@@ -425,7 +425,7 @@ export const NotableTagFiltering: Story = {
           </div>
 
           <div className='flex gap-2'>
-            <Button variant='outline' size='sm' className='flex-1'>
+            <Button variant='secondary' size='sm' className='flex-1'>
               Reset Filters
             </Button>
             <Button size='sm' className='flex-1'>

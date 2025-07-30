@@ -164,11 +164,11 @@ export const NotableExamples: Story = {
           <Plus className='mr-2 h-4 w-4' />
           New Note
         </Button>
-        <Button variant='outline'>
+        <Button variant='secondary'>
           <Settings className='mr-2 h-4 w-4' />
           Settings
         </Button>
-        <Button variant='ghost' size='icon'>
+        <Button variant='ghost' size='xs'>
           <Heart className='h-4 w-4' />
         </Button>
       </div>

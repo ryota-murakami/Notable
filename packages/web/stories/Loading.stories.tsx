@@ -701,7 +701,7 @@ export const AllLoadingTypes: Story = {
             <Spinner size='sm' className='mr-2' />
             Loading...
           </Button>
-          <Button variant='outline' disabled className='w-full'>
+          <Button variant='secondary' disabled className='w-full'>
             <Dots size='sm' className='mr-2' />
             Processing...
           </Button>

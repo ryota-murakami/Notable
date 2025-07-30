@@ -99,7 +99,7 @@ export const BasicModal: Story = {
             </p>
           </ModalBody>
           <ModalFooter>
-            <Button variant='outline' onClick={() => setOpen(false)}>
+            <Button variant='secondary' onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button onClick={() => setOpen(false)}>Save Changes</Button>
@@ -128,7 +128,7 @@ export const ModalSizes: Story = {
           {sizes.map((size) => (
             <Button
               key={size}
-              variant='outline'
+              variant='secondary'
               onClick={() => setActiveModal(size)}
             >
               {size.toUpperCase()}
@@ -198,7 +198,7 @@ export const ModalAnimations: Story = {
           {animations.map(({ type, label }) => (
             <Button
               key={type}
-              variant='outline'
+              variant='secondary'
               onClick={() => setActiveModal(type)}
             >
               {label}
@@ -265,7 +265,7 @@ export const ModalPositions: Story = {
           {positions.map(({ pos, label }) => (
             <Button
               key={pos}
-              variant='outline'
+              variant='secondary'
               onClick={() => setActiveModal(pos)}
             >
               {label}
@@ -432,7 +432,7 @@ export const NotableNoteSettings: Story = {
                   </Badge>
                 ))}
                 <Badge
-                  variant='outline'
+                  variant='secondary'
                   className='cursor-pointer border-dashed'
                 >
                   + Add tag
@@ -469,7 +469,7 @@ export const NotableNoteSettings: Story = {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant='outline' onClick={() => setOpen(false)}>
+            <Button variant='secondary' onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button onClick={() => setOpen(false)}>Save Settings</Button>
@@ -557,7 +557,7 @@ export const NotableShareDialog: Story = {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant='outline' onClick={() => setOpen(false)}>
+            <Button variant='secondary' onClick={() => setOpen(false)}>
               Close
             </Button>
           </ModalFooter>
@@ -651,7 +651,7 @@ export const NotableTemplateSelector: Story = {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant='outline' onClick={() => setOpen(false)}>
+            <Button variant='secondary' onClick={() => setOpen(false)}>
               Cancel
             </Button>
           </ModalFooter>
@@ -701,7 +701,7 @@ export const NotableDeleteConfirmation: Story = {
             </p>
             <div className='flex gap-3 justify-center'>
               <Button
-                variant='outline'
+                variant='secondary'
                 onClick={() => setShowDelete(false)}
                 disabled={loading}
               >
@@ -792,7 +792,7 @@ export const FormModal: Story = {
             <ModalFooter>
               <Button
                 type='button'
-                variant='outline'
+                variant='secondary'
                 onClick={() => setOpen(false)}
               >
                 Cancel

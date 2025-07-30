@@ -1,3 +1,4 @@
+import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Textarea } from '../design-system/components/textarea'
 import { Button } from '../design-system/components/button'
@@ -49,11 +50,6 @@ const meta: Meta<typeof Textarea> = {
     cols: {
       control: 'number',
       description: 'Visible width of text area',
-    },
-    resize: {
-      control: 'select',
-      options: ['none', 'both', 'horizontal', 'vertical'],
-      description: 'Resize behavior',
     },
   },
 }
@@ -351,7 +347,11 @@ export const AIWritingAssistant: Story = {
               <Sparkles className='mr-2 h-4 w-4' />
               {isGenerating ? 'Analyzing...' : 'Get AI Suggestions'}
             </Button>
-            <Button variant='outline' size='sm' onClick={() => setContent('')}>
+            <Button
+              variant='secondary'
+              size='sm'
+              onClick={() => setContent('')}
+            >
               <RotateCcw className='mr-2 h-4 w-4' />
               Clear
             </Button>
@@ -369,7 +369,7 @@ export const AIWritingAssistant: Story = {
                     <div className='flex-1 text-sm'>{suggestion}</div>
                     <Button
                       size='sm'
-                      variant='outline'
+                      variant='secondary'
                       onClick={() => handleApplySuggestion(suggestion)}
                     >
                       Apply
@@ -437,8 +437,8 @@ The team discussed the importance of realistic goal setting for Q4. We need to b
               </CardDescription>
             </div>
             <div className='flex gap-2'>
-              <Badge variant='outline'>{wordCount} words</Badge>
-              <Badge variant='outline'>Auto-saved</Badge>
+              <Badge variant='secondary'>{wordCount} words</Badge>
+              <Badge variant='secondary'>Auto-saved</Badge>
             </div>
           </div>
         </CardHeader>
@@ -460,7 +460,7 @@ The team discussed the importance of realistic goal setting for Q4. We need to b
                 <button className='ml-1 hover:text-destructive'>×</button>
               </Badge>
             ))}
-            <Badge variant='outline' className='cursor-pointer border-dashed'>
+            <Badge variant='secondary' className='cursor-pointer border-dashed'>
               + Add tag
             </Badge>
           </div>
@@ -483,7 +483,7 @@ The team discussed the importance of realistic goal setting for Q4. We need to b
               </Button>
             </div>
             <div className='flex gap-2'>
-              <Button variant='outline'>Save Draft</Button>
+              <Button variant='secondary'>Save Draft</Button>
               <Button>Publish</Button>
             </div>
           </div>
@@ -543,7 +543,7 @@ export const FeedbackForm: Story = {
           </div>
 
           <div className='flex gap-2'>
-            <Button variant='outline' className='flex-1'>
+            <Button variant='secondary' className='flex-1'>
               Cancel
             </Button>
             <Button className='flex-1' disabled={!feedback.trim()}>

@@ -67,7 +67,7 @@ export const WithFooter: Story = {
         </p>
       </CardContent>
       <CardFooter className='flex justify-between'>
-        <Button variant='outline'>Cancel</Button>
+        <Button variant='secondary'>Cancel</Button>
         <Button>Save</Button>
       </CardFooter>
     </Card>
@@ -91,7 +91,7 @@ export const NoteCard: Story = {
               2:30 PM
             </CardDescription>
           </div>
-          <Button variant='ghost' size='icon' className='h-8 w-8'>
+          <Button variant='ghost' size='xs' className='h-8 w-8'>
             <MoreHorizontal className='h-4 w-4' />
           </Button>
         </div>
@@ -258,7 +258,7 @@ export const UserProfileCard: Story = {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant='outline' className='w-full'>
+        <Button variant='secondary' className='w-full'>
           View Profile
         </Button>
       </CardFooter>

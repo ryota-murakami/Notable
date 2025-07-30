@@ -146,24 +146,24 @@ export const Placements: Story = {
     <div className='grid grid-cols-3 gap-8 p-8'>
       {/* Top row */}
       <Tooltip content='Top start' placement='top-start'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Top Start
         </Button>
       </Tooltip>
       <Tooltip content='Top center' placement='top'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Top
         </Button>
       </Tooltip>
       <Tooltip content='Top end' placement='top-end'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Top End
         </Button>
       </Tooltip>
 
       {/* Middle row */}
       <Tooltip content='Left start' placement='left-start'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Left Start
         </Button>
       </Tooltip>
@@ -173,48 +173,48 @@ export const Placements: Story = {
         </Button>
       </div>
       <Tooltip content='Right start' placement='right-start'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Right Start
         </Button>
       </Tooltip>
 
       <Tooltip content='Left center' placement='left'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Left
         </Button>
       </Tooltip>
       <div />
       <Tooltip content='Right center' placement='right'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Right
         </Button>
       </Tooltip>
 
       <Tooltip content='Left end' placement='left-end'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Left End
         </Button>
       </Tooltip>
       <div />
       <Tooltip content='Right end' placement='right-end'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Right End
         </Button>
       </Tooltip>
 
       {/* Bottom row */}
       <Tooltip content='Bottom start' placement='bottom-start'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Bottom Start
         </Button>
       </Tooltip>
       <Tooltip content='Bottom center' placement='bottom'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Bottom
         </Button>
       </Tooltip>
       <Tooltip content='Bottom end' placement='bottom-end'>
-        <Button variant='outline' size='sm'>
+        <Button variant='secondary' size='sm'>
           Bottom End
         </Button>
       </Tooltip>
@@ -234,13 +234,13 @@ export const TriggerTypes: Story = {
   render: () => (
     <div className='flex gap-4'>
       <Tooltip content='Shows on hover' trigger='hover'>
-        <Button variant='outline'>Hover</Button>
+        <Button variant='secondary'>Hover</Button>
       </Tooltip>
       <Tooltip content='Shows on click' trigger='click'>
-        <Button variant='outline'>Click</Button>
+        <Button variant='secondary'>Click</Button>
       </Tooltip>
       <Tooltip content='Shows on focus' trigger='focus'>
-        <Button variant='outline'>Focus</Button>
+        <Button variant='secondary'>Focus</Button>
       </Tooltip>
     </div>
   ),
@@ -258,25 +258,25 @@ export const Variants: Story = {
   render: () => (
     <div className='flex flex-wrap gap-4'>
       <Tooltip content='Default tooltip' variant='default'>
-        <Button variant='outline'>Default</Button>
+        <Button variant='secondary'>Default</Button>
       </Tooltip>
       <Tooltip content='Dark tooltip' variant='dark'>
-        <Button variant='outline'>Dark</Button>
+        <Button variant='secondary'>Dark</Button>
       </Tooltip>
       <Tooltip content='Light tooltip' variant='light'>
-        <Button variant='outline'>Light</Button>
+        <Button variant='secondary'>Light</Button>
       </Tooltip>
       <InfoTooltip content='Information tooltip'>
-        <Button variant='outline'>Info</Button>
+        <Button variant='secondary'>Info</Button>
       </InfoTooltip>
       <SuccessTooltip content='Success tooltip'>
-        <Button variant='outline'>Success</Button>
+        <Button variant='secondary'>Success</Button>
       </SuccessTooltip>
       <WarningTooltip content='Warning tooltip'>
-        <Button variant='outline'>Warning</Button>
+        <Button variant='secondary'>Warning</Button>
       </WarningTooltip>
       <ErrorTooltip content='Error tooltip'>
-        <Button variant='outline'>Error</Button>
+        <Button variant='secondary'>Error</Button>
       </ErrorTooltip>
     </div>
   ),
@@ -294,13 +294,13 @@ export const Sizes: Story = {
   render: () => (
     <div className='flex gap-4'>
       <Tooltip content='Small tooltip' size='sm'>
-        <Button variant='outline'>Small</Button>
+        <Button variant='secondary'>Small</Button>
       </Tooltip>
       <Tooltip content='Medium tooltip' size='md'>
-        <Button variant='outline'>Medium</Button>
+        <Button variant='secondary'>Medium</Button>
       </Tooltip>
       <Tooltip content='Large tooltip with more content' size='lg'>
-        <Button variant='outline'>Large</Button>
+        <Button variant='secondary'>Large</Button>
       </Tooltip>
     </div>
   ),
@@ -318,22 +318,22 @@ export const IconTooltips: Story = {
   render: () => (
     <div className='flex gap-2'>
       <Tooltip content='Get help and support'>
-        <Button variant='ghost' size='icon'>
+        <Button variant='ghost' size='xs'>
           <HelpCircle className='h-4 w-4' />
         </Button>
       </Tooltip>
       <InfoTooltip content='Additional information about this feature'>
-        <Button variant='ghost' size='icon'>
+        <Button variant='ghost' size='xs'>
           <Info className='h-4 w-4' />
         </Button>
       </InfoTooltip>
       <WarningTooltip content='This action requires caution'>
-        <Button variant='ghost' size='icon'>
+        <Button variant='ghost' size='xs'>
           <AlertTriangle className='h-4 w-4' />
         </Button>
       </WarningTooltip>
       <SuccessTooltip content='Operation completed successfully'>
-        <Button variant='ghost' size='icon'>
+        <Button variant='ghost' size='xs'>
           <CheckCircle className='h-4 w-4' />
         </Button>
       </SuccessTooltip>
@@ -370,7 +370,7 @@ export const StatusTooltips: Story = {
         </Badge>
       </ErrorTooltip>
       <WarningTooltip content="Changes haven't been saved for 5 minutes">
-        <Badge variant='outline'>
+        <Badge variant='secondary'>
           <AlertTriangle className='mr-1 h-3 w-3' />
           Unsaved
         </Badge>
@@ -393,43 +393,43 @@ export const NotableToolbar: Story = {
       <CardContent className='p-3'>
         <div className='flex gap-1'>
           <Tooltip content='Create new note' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Plus className='h-4 w-4' />
             </Button>
           </Tooltip>
           <Tooltip content='Share this note with others' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Share className='h-4 w-4' />
             </Button>
           </Tooltip>
           <Tooltip content='Add to favorites' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Star className='h-4 w-4' />
             </Button>
           </Tooltip>
           <Tooltip content='Like this note' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Heart className='h-4 w-4' />
             </Button>
           </Tooltip>
           <Tooltip content='View note activity' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Eye className='h-4 w-4' />
             </Button>
           </Tooltip>
           <div className='border-l mx-1' />
           <Tooltip content='Download note as PDF' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Download className='h-4 w-4' />
             </Button>
           </Tooltip>
           <Tooltip content='Copy note link' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Copy className='h-4 w-4' />
             </Button>
           </Tooltip>
           <Tooltip content='Edit note settings' placement='bottom'>
-            <Button variant='ghost' size='icon'>
+            <Button variant='ghost' size='xs'>
               <Settings className='h-4 w-4' />
             </Button>
           </Tooltip>
@@ -472,12 +472,12 @@ export const NotableNoteCard: Story = {
           </div>
           <div className='flex gap-1'>
             <Tooltip content='Edit note'>
-              <Button variant='ghost' size='icon' className='h-8 w-8'>
+              <Button variant='ghost' size='xs' className='h-8 w-8'>
                 <Edit className='h-4 w-4' />
               </Button>
             </Tooltip>
             <Tooltip content='More options'>
-              <Button variant='ghost' size='icon' className='h-8 w-8'>
+              <Button variant='ghost' size='xs' className='h-8 w-8'>
                 <Settings className='h-4 w-4' />
               </Button>
             </Tooltip>
@@ -602,12 +602,12 @@ export const NotableAIAssistant: Story = {
               </div>
               <div className='flex gap-1'>
                 <Tooltip content='Apply this suggestion'>
-                  <Button variant='ghost' size='icon' className='h-8 w-8'>
+                  <Button variant='ghost' size='xs' className='h-8 w-8'>
                     <CheckCircle className='h-4 w-4' />
                   </Button>
                 </Tooltip>
                 <Tooltip content='Dismiss this suggestion'>
-                  <Button variant='ghost' size='icon' className='h-8 w-8'>
+                  <Button variant='ghost' size='xs' className='h-8 w-8'>
                     <X className='h-4 w-4' />
                   </Button>
                 </Tooltip>
@@ -638,10 +638,10 @@ export const TooltipWithProvider: Story = {
         </p>
         <div className='flex gap-4'>
           <Tooltip content='Fast tooltip with global settings'>
-            <Button variant='outline'>Global Settings</Button>
+            <Button variant='secondary'>Global Settings</Button>
           </Tooltip>
           <Tooltip content='This also uses global delay' delay={500}>
-            <Button variant='outline'>Override Delay</Button>
+            <Button variant='secondary'>Override Delay</Button>
           </Tooltip>
         </div>
       </div>
