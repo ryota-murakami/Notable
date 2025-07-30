@@ -78,8 +78,8 @@ const ButtonComponent = React.forwardRef<HTMLButtonElement, ButtonProps>(
         'disabled:opacity-50 disabled:pointer-events-none'
       ),
       primary: cn(
-        'bg-brand-500 text-white shadow-sm',
-        'hover:bg-brand-600 hover:shadow-md hover:shadow-brand-500/20',
+        'bg-brand text-white shadow-sm',
+        'hover:opacity-90 hover:shadow-md hover:shadow-brand/20',
         'active:scale-[0.98]',
         'disabled:opacity-50 disabled:pointer-events-none'
       ),
@@ -106,8 +106,8 @@ const ButtonComponent = React.forwardRef<HTMLButtonElement, ButtonProps>(
         'disabled:opacity-50 disabled:pointer-events-none'
       ),
       gradient: cn(
-        'bg-gradient-to-r from-brand-500 to-purple-500 text-white shadow-sm',
-        'hover:shadow-lg hover:shadow-brand-500/20',
+        'bg-gradient-to-r from-brand to-purple-500 text-white shadow-sm',
+        'hover:shadow-lg hover:shadow-brand/20',
         'active:scale-[0.98]',
         'disabled:opacity-50 disabled:pointer-events-none'
       ),
