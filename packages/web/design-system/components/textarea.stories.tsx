@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import * as React from 'react'
 import { Textarea } from '@/components/ui/textarea'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Forms/Textarea',
