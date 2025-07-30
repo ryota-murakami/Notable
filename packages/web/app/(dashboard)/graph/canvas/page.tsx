@@ -2,6 +2,9 @@
 
 import * as React from 'react'
 import { useCallback, useEffect, useState } from 'react'
+
+// Force dynamic rendering since this page uses React Query
+export const dynamic = 'force-dynamic'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
