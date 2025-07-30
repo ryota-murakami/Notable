@@ -4,6 +4,7 @@ import * as React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
+  BookOpen,
   Circle,
   Copy,
   Eye,
@@ -22,7 +23,6 @@ import {
   Pin,
   PinOff,
   Plus,
-  Resize,
   RotateCcw,
   Save,
   Settings,

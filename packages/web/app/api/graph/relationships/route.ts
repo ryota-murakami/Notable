@@ -697,7 +697,7 @@ async function autoDiscoverRelationships(
       const batchSize = 10
       for (let i = 0; i < notes.length; i += batchSize) {
         const batch = notes.slice(i, i + batchSize)
-        const promises = batch.map((note) =>
+        const promises = batch.map((note: any) =>
           supabase.rpc('create_automatic_relationships', { note_id: note.id })
         )
         await Promise.allSettled(promises)
@@ -725,7 +725,7 @@ async function suggestRelationships(supabase: any, userId: string, body: any) {
     // In a real implementation, this would use content similarity,
     // semantic analysis, or other ML techniques
 
-    const suggestions = []
+    const suggestions: any[] = []
 
     return NextResponse.json({
       success: true,
