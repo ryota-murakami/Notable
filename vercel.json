@@ -1,6 +1,0 @@
-{
-  "framework": "nextjs",
-  "buildCommand": "pnpm turbo build --filter=@notable/web",
-  "installCommand": "pnpm install",
-  "rootDirectory": "packages/web"
-}
