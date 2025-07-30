@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Terminal, AlertCircle, CheckCircle2, Info } from 'lucide-react'
+import {
+  Terminal,
+  AlertCircle,
+  CheckCircle2,
+  Info as InfoIcon,
+} from 'lucide-react'
 
 const meta = {
   title: 'Design System/Alert',
@@ -59,7 +64,7 @@ export const Success: Story = {
 export const Info: Story = {
   render: () => (
     <Alert variant='info'>
-      <Info className='h-4 w-4' />
+      <InfoIcon className='h-4 w-4' />
       <AlertTitle>Information</AlertTitle>
       <AlertDescription>
         This is an informational message for your reference.
@@ -118,7 +123,7 @@ export const MultipleAlerts: Story = {
       </Alert>
 
       <Alert variant='warning'>
-        <Info className='h-4 w-4' />
+        <InfoIcon className='h-4 w-4' />
         <AlertTitle>Warning Alert</AlertTitle>
         <AlertDescription>
           This alert provides a warning message.
@@ -126,7 +131,7 @@ export const MultipleAlerts: Story = {
       </Alert>
 
       <Alert variant='info'>
-        <Info className='h-4 w-4' />
+        <InfoIcon className='h-4 w-4' />
         <AlertTitle>Info Alert</AlertTitle>
         <AlertDescription>
           This alert provides informational content.
