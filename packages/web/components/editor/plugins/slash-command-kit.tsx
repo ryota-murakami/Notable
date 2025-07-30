@@ -226,7 +226,7 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
 export const SlashCommandPlugin = createPlatePlugin({
   key: 'slash_command',
   handlers: {
-    onKeyDown: () => () => {
+    onKeyDown: () => {
       // Slash command handling is done in the main component
       return
     },

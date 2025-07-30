@@ -235,7 +235,7 @@ export function VisualGraph({
   width = 800,
 }: VisualGraphProps) {
   // Refs
-  const graphRef = useRef<any>()
+  const graphRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // State
@@ -717,7 +717,7 @@ export function VisualGraph({
           // Link styling
           linkWidth={getLinkWidth as any}
           linkColor={getLinkColor as any}
-          linkOpacity={(link: any) => link.opacity * settings.visual.opacity}
+          linkOpacity={settings.visual.opacity}
           linkLabel={(link: any) =>
             `${link.sourceTitle} → ${link.targetTitle} (${link.type})`
           }
@@ -734,18 +734,6 @@ export function VisualGraph({
           // Physics
           d3AlphaDecay={settings.physics.enabled ? 0.0228 : 0}
           d3VelocityDecay={settings.physics.damping}
-          d3Force={{
-            charge: {
-              strength: settings.physics.strength,
-              distanceMax: settings.physics.distance * 2,
-            },
-            link: {
-              distance: settings.physics.distance,
-            },
-            collision: {
-              radius: settings.physics.collisionRadius,
-            },
-          }}
           // 3D specific props
           {...(mode === '3d' && {
             showNavInfo: false,

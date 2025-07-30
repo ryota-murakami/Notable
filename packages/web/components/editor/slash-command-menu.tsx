@@ -112,7 +112,7 @@ export function SlashCommandMenu({
       <div
         ref={commandRef}
         className={cn(
-          'fixed z-50 w-80 rounded-lg border bg-popover p-0 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95',
+          'slash-command-menu fixed z-50 w-80 rounded-lg border bg-popover p-0 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95',
           className
         )}
         style={{

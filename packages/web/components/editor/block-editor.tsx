@@ -35,7 +35,7 @@ const defaultValue = [
 const BlockSelectionPlugin = createPlatePlugin({
   key: 'block_selection',
   handlers: {
-    onClick: () => () => {
+    onClick: () => {
       // Handle block selection logic
       return
     },
@@ -185,7 +185,11 @@ export function BlockEditor({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={cn('block-editor-container', className)} ref={editorRef}>
+      <div
+        className={cn('block-editor-container', className)}
+        ref={editorRef}
+        data-testid='block-editor'
+      >
         <Plate
           editor={editor}
           onChange={(newValue: any) => {

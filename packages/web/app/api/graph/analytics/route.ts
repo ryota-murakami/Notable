@@ -676,7 +676,15 @@ async function enrichNodesWithTitles(
   )
 
   return analytics.map((a: { note_id: string }) => {
-    const note = notesMap.get(a.note_id)
+    const note = notesMap.get(a.note_id) as
+      | {
+          id: string
+          title: string
+          tags: string[] | null
+          created_at: string
+          updated_at: string
+        }
+      | undefined
     return {
       ...a,
       title: note?.title || 'Unknown',
