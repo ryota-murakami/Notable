@@ -1,6 +1,5 @@
 {
   "buildCommand": "pnpm --filter @notable/web build",
   "outputDirectory": "packages/web/.next",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "ignoreCommand": "git diff HEAD^ HEAD --quiet ."
+  "installCommand": "pnpm install --frozen-lockfile"
 }
