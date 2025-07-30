@@ -9,8 +9,8 @@ on:
     types: [opened, synchronize, reopened]
 
 env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_ORG_ID: team_AHTJzBiuzJOVVPaLDeuexMz5
+  VERCEL_PROJECT_ID: prj_WrONHP6wGNto2THjZUTwQauFmSX2
 
 jobs:
   deploy:
