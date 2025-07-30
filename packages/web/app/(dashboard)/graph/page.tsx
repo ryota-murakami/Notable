@@ -79,7 +79,7 @@ function GraphPageContent() {
     graphMode,
     isFullscreen,
     setHoveredNode,
-    _setHoveredLink,
+    setHoveredLink: _setHoveredLink,
     clearSelection,
     selectNode,
     selectLink,
@@ -113,9 +113,9 @@ function GraphPageContent() {
   const {
     refreshAnalytics,
     createRelationship,
-    _updatePosition,
+    updatePosition: _updatePosition,
     autoDiscover,
-    _deleteRelationship,
+    deleteRelationship: _deleteRelationship,
   } = useGraphMutations()
 
   // Search functionality
@@ -337,7 +337,7 @@ function GraphPageContent() {
                     <OverviewPanel
                       data={graphData}
                       selectedNodes={selectedNodes}
-                      selectedLinks={selectedLinks}
+                      _selectedLinks={selectedLinks}
                       hoveredNode={hoveredNode}
                       onOpenNote={handleOpenNote}
                     />

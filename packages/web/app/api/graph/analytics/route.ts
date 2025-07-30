@@ -633,13 +633,16 @@ async function enrichNodesWithTitles(
 
   const notesMap = new Map(notes.map((n: any) => [n.id, n]))
 
-  return analytics.map((a) => ({
-    ...a,
-    title: notesMap.get(a.note_id)?.title || 'Unknown',
-    tags: notesMap.get(a.note_id)?.tags || [],
-    createdAt: notesMap.get(a.note_id)?.created_at,
-    updatedAt: notesMap.get(a.note_id)?.updated_at,
-  }))
+  return analytics.map((a) => {
+    const note = notesMap.get(a.note_id) as any
+    return {
+      ...a,
+      title: note?.title || 'Unknown',
+      tags: note?.tags || [],
+      createdAt: note?.created_at,
+      updatedAt: note?.updated_at,
+    }
+  })
 }
 
 function groupBy<T>(array: T[], key: keyof T): Record<string, number> {
@@ -692,7 +695,7 @@ function getTimeframeFilter(timeframe: string): Date {
 }
 
 function groupByTimePeriod(data: any[], timeframe: string, dateField: string) {
-  const periods = {}
+  const periods: Record<string, number> = {}
 
   data.forEach((item) => {
     const date = new Date(item[dateField])
