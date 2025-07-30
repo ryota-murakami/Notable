@@ -6,7 +6,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // output: 'export', // Temporarily disabled for development - middleware is needed
-  output: 'standalone',
   trailingSlash: false,
   experimental: {
     // pnpm virtual-store-dir is outside the app directory
