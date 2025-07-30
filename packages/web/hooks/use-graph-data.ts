@@ -640,6 +640,7 @@ export function useGraphKeyboardShortcuts(callbacks: {
       if (
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement ||
+        // eslint-disable-next-line no-undef
         event.target instanceof HTMLSelectElement ||
         (event.target as HTMLElement)?.contentEditable === 'true'
       ) {

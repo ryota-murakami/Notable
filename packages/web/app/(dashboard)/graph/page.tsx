@@ -1,6 +1,10 @@
 'use client'
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic'
+
 import * as React from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -83,7 +87,7 @@ import {
   useGraphViews,
 } from '@/hooks/use-graph-data'
 
-export default function GraphPage() {
+function GraphPageContent() {
   const router = useRouter()
 
   // Graph state management
@@ -222,7 +226,7 @@ export default function GraphPage() {
 
   const handleAutoDiscover = useCallback(async () => {
     try {
-      await autoDiscover.mutateAsync()
+      await autoDiscover.mutateAsync(undefined)
     } catch (error) {
       console.error('Failed to auto-discover relationships:', error)
     }
@@ -463,6 +467,26 @@ export default function GraphPage() {
   )
 }
 
+export default function GraphPage() {
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            retry: false,
+          },
+        },
+      })
+  )
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <GraphPageContent />
+    </QueryClientProvider>
+  )
+}
+
 // Sidebar Panels
 function OverviewPanel({
   data,
@@ -617,7 +641,9 @@ function OverviewPanel({
                 ([type, count]) => (
                   <div key={type} className='flex justify-between text-sm'>
                     <span className='capitalize'>{type}</span>
-                    <span className='text-muted-foreground'>{count}</span>
+                    <span className='text-muted-foreground'>
+                      {count as number}
+                    </span>
                   </div>
                 )
               )}
@@ -831,7 +857,9 @@ function FiltersPanel({
                     />
                     <span className='capitalize'>{type}</span>
                   </label>
-                  <span className='text-xs text-muted-foreground'>{count}</span>
+                  <span className='text-xs text-muted-foreground'>
+                    {count as number}
+                  </span>
                 </div>
               )
             )}

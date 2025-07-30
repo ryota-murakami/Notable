@@ -1,13 +1,9 @@
 'use client'
 
-import { createPlatePlugin } from '@udecode/plate-common'
+import { createPlatePlugin } from 'platejs/react'
 
-import { CodeLeaf } from '@/components/ui/code-node'
-import { HighlightLeaf } from '@/components/ui/highlight-node'
-import { KbdLeaf } from '@/components/ui/kbd-node'
-
-// Text Mark Plugins with proper v49 configuration
-const BoldPlugin = createPlatePlugin({
+// Basic mark plugins using createPlatePlugin
+export const BoldPlugin = createPlatePlugin({
   key: 'bold',
   node: {
     isLeaf: true,
@@ -15,7 +11,7 @@ const BoldPlugin = createPlatePlugin({
   },
 })
 
-const ItalicPlugin = createPlatePlugin({
+export const ItalicPlugin = createPlatePlugin({
   key: 'italic',
   node: {
     isLeaf: true,
@@ -23,7 +19,7 @@ const ItalicPlugin = createPlatePlugin({
   },
 })
 
-const UnderlinePlugin = createPlatePlugin({
+export const UnderlinePlugin = createPlatePlugin({
   key: 'underline',
   node: {
     isLeaf: true,
@@ -31,16 +27,15 @@ const UnderlinePlugin = createPlatePlugin({
   },
 })
 
-const CodePlugin = createPlatePlugin({
+export const CodePlugin = createPlatePlugin({
   key: 'code',
   node: {
     isLeaf: true,
     type: 'code',
-    component: CodeLeaf,
   },
 })
 
-const StrikethroughPlugin = createPlatePlugin({
+export const StrikethroughPlugin = createPlatePlugin({
   key: 'strikethrough',
   node: {
     isLeaf: true,
@@ -48,7 +43,7 @@ const StrikethroughPlugin = createPlatePlugin({
   },
 })
 
-const SubscriptPlugin = createPlatePlugin({
+export const SubscriptPlugin = createPlatePlugin({
   key: 'subscript',
   node: {
     isLeaf: true,
@@ -56,7 +51,7 @@ const SubscriptPlugin = createPlatePlugin({
   },
 })
 
-const SuperscriptPlugin = createPlatePlugin({
+export const SuperscriptPlugin = createPlatePlugin({
   key: 'superscript',
   node: {
     isLeaf: true,
@@ -64,21 +59,19 @@ const SuperscriptPlugin = createPlatePlugin({
   },
 })
 
-const HighlightPlugin = createPlatePlugin({
+export const HighlightPlugin = createPlatePlugin({
   key: 'highlight',
   node: {
     isLeaf: true,
     type: 'highlight',
-    component: HighlightLeaf,
   },
 })
 
-const KbdPlugin = createPlatePlugin({
+export const KbdPlugin = createPlatePlugin({
   key: 'kbd',
   node: {
     isLeaf: true,
     type: 'kbd',
-    component: KbdLeaf,
   },
 })
 

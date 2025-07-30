@@ -1,6 +1,4 @@
-import { ThemeProvider } from '../components/theme-provider'
-import { SyncProviderWrapper } from '../components/sync-provider-wrapper'
-import { RoutingProvider } from '../components/routing-provider'
+import { Providers } from '../components/providers'
 import { MSWProviderWrapper } from './msw-provider'
 import { Toaster } from 'sonner'
 import { Theme } from '@radix-ui/themes'
@@ -78,19 +76,12 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body>
         <MSWProviderWrapper>
-          <ThemeProvider
-            attribute='data-theme'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
+          <Providers>
             <Theme>
-              <RoutingProvider>
-                <SyncProviderWrapper>{children}</SyncProviderWrapper>
-              </RoutingProvider>
+              {children}
               <Toaster position='top-center' richColors />
             </Theme>
-          </ThemeProvider>
+          </Providers>
         </MSWProviderWrapper>
       </body>
     </html>

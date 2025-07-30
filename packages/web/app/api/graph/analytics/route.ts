@@ -33,7 +33,7 @@ type AnalyticsRequest = z.infer<typeof AnalyticsRequestSchema>
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -166,7 +166,7 @@ async function getOverviewAnalytics(
         'relationship_type, relationship_strength, created_at, discovery_method'
       )
       .or(
-        `source_note_id.in.(${notes.map((n) => n.id).join(',')}),target_note_id.in.(${notes.map((n) => n.id).join(',')})`
+        `source_note_id.in.(${notes.map((n: any) => n.id).join(',')}),target_note_id.in.(${notes.map((n: any) => n.id).join(',')})`
       )
 
     if (relsError) {
@@ -178,7 +178,7 @@ async function getOverviewAnalytics(
       .select('*')
       .in(
         'note_id',
-        notes.map((n) => n.id)
+        notes.map((n: any) => n.id)
       )
 
     if (analyticsError) {
@@ -193,8 +193,10 @@ async function getOverviewAnalytics(
 
     const avgConnections =
       analytics.length > 0
-        ? analytics.reduce((sum, a) => sum + (a.total_connections || 0), 0) /
-          analytics.length
+        ? analytics.reduce(
+            (sum: any, a: any) => sum + (a.total_connections || 0),
+            0
+          ) / analytics.length
         : 0
 
     const maxConnections = Math.max(
@@ -352,16 +354,16 @@ async function getCommunityAnalytics(
         size: members,
         avgCentrality:
           memberAnalytics.reduce(
-            (sum, a) => sum + (a.degree_centrality || 0),
+            (sum: any, a: any) => sum + (a.degree_centrality || 0),
             0
           ) / memberAnalytics.length,
         totalConnections: memberAnalytics.reduce(
-          (sum, a) => sum + (a.total_connections || 0),
+          (sum: any, a: any) => sum + (a.total_connections || 0),
           0
         ),
         avgClustering:
           memberAnalytics.reduce(
-            (sum, a) => sum + (a.clustering_coefficient || 0),
+            (sum: any, a: any) => sum + (a.clustering_coefficient || 0),
             0
           ) / memberAnalytics.length,
         ...(params.includeDetails && {
@@ -510,7 +512,7 @@ async function getTemporalAnalytics(
       .select('created_at, relationship_type')
       .gte('created_at', timeframe.toISOString())
       .or(
-        `source_note_id.in.(${notes.map((n) => n.id).join(',')}),target_note_id.in.(${notes.map((n) => n.id).join(',')})`
+        `source_note_id.in.(${notes.map((n: any) => n.id).join(',')}),target_note_id.in.(${notes.map((n: any) => n.id).join(',')})`
       )
 
     if (relsError) {
@@ -569,7 +571,7 @@ async function recalculateAllAnalytics(supabase: any, userId: string) {
       .update({ needs_recalculation: true, is_stale: true })
       .in(
         'note_id',
-        notes.map((n) => n.id)
+        notes.map((n: any) => n.id)
       )
 
     // Trigger recalculation for each note
@@ -607,7 +609,7 @@ async function getUserNoteIds(
     throw error
   }
 
-  return notes.map((n) => n.id)
+  return notes.map((n: any) => n.id)
 }
 
 async function enrichNodesWithTitles(

@@ -1,6 +1,10 @@
 'use client'
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic'
+
 import * as React from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -12,7 +16,9 @@ import {
   Grid3X3,
   Layers,
   Layout,
+  Lock,
   Palette,
+  Pin,
   Plus,
   RefreshCw,
   Save,
@@ -154,7 +160,7 @@ const defaultViewport: CanvasViewport = {
   rotation: 0,
 }
 
-export default function CanvasPage() {
+function CanvasPageContent() {
   const router = useRouter()
 
   // State
@@ -1005,4 +1011,24 @@ function getConnectionStyle(type: string): 'solid' | 'dashed' | 'dotted' {
     default:
       return 'solid'
   }
+}
+
+export default function CanvasPage() {
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            retry: false,
+          },
+        },
+      })
+  )
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <CanvasPageContent />
+    </QueryClientProvider>
+  )
 }

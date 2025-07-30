@@ -221,8 +221,8 @@ test.describe('Block Editor', () => {
       await editor.type('/')
 
       // Verify slash command menu appears
-      const slashMenu = page.locator('.slash-command-menu', { timeout: 5000 })
-      await expect(slashMenu).toBeVisible()
+      const slashMenu = page.locator('.slash-command-menu')
+      await expect(slashMenu).toBeVisible({ timeout: 5000 })
 
       // Verify default commands are present
       await expect(page.locator('text="Text"')).toBeVisible()
