@@ -298,6 +298,13 @@ const TagTreeMock = ({
             variant='ghost'
             size='sm'
             className='h-5 w-5 p-0'
+            aria-label={
+              hasChildren
+                ? isExpanded
+                  ? `Collapse ${tag.name}`
+                  : `Expand ${tag.name}`
+                : undefined
+            }
             onClick={(e) => {
               e.stopPropagation()
               if (hasChildren) {
