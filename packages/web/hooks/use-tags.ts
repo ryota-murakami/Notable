@@ -255,15 +255,15 @@ export function useTagTree() {
     // First pass: create map and identify root tags
     allTags.forEach((tag) => {
       tagMap.set(tag.id, { ...tag, children: [] })
-      if (!tag.parentId) {
+      if (!(tag as any).parent_id) {
         rootTags.push(tagMap.get(tag.id)!)
       }
     })
 
     // Second pass: build parent-child relationships
     allTags.forEach((tag) => {
-      if (tag.parentId) {
-        const parent = tagMap.get(tag.parentId)
+      if ((tag as any).parent_id) {
+        const parent = tagMap.get((tag as any).parent_id)
         const child = tagMap.get(tag.id)
         if (parent && child) {
           parent.children = parent.children || []

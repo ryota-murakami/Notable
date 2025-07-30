@@ -188,7 +188,7 @@ async function getOverviewAnalytics(
     // Calculate overview metrics
     const totalNotes = notes.length
     const totalRelationships = relationships.length
-    const isolatedNotes = analytics.filter((a) => a.is_isolated).length
+    const isolatedNotes = analytics.filter((a: any) => a.is_isolated).length
     const connectedNotes = totalNotes - isolatedNotes
 
     const avgConnections =
@@ -200,7 +200,7 @@ async function getOverviewAnalytics(
         : 0
 
     const maxConnections = Math.max(
-      ...analytics.map((a) => a.total_connections || 0),
+      ...analytics.map((a: any) => a.total_connections || 0),
       0
     )
 
@@ -214,16 +214,16 @@ async function getOverviewAnalytics(
     ).length
 
     // Hub detection
-    const hubs = analytics.filter((a) => a.is_hub).length
-    const authorities = analytics.filter((a) => a.is_authority).length
+    const hubs = analytics.filter((a: any) => a.is_hub).length
+    const authorities = analytics.filter((a: any) => a.is_authority).length
 
     // Temporal analysis
     const timeframe = getTimeframeFilter(params.timeframe)
     const recentNotes = notes.filter(
-      (n) => new Date(n.created_at) >= timeframe
+      (n: any) => new Date(n.created_at) >= timeframe
     ).length
     const recentRelationships = relationships.filter(
-      (r) => new Date(r.created_at) >= timeframe
+      (r: any) => new Date(r.created_at) >= timeframe
     ).length
 
     // Graph density (actual connections / possible connections)
@@ -233,7 +233,10 @@ async function getOverviewAnalytics(
 
     // Top nodes by centrality
     const topNodesByCentrality = analytics
-      .sort((a, b) => (b.degree_centrality || 0) - (a.degree_centrality || 0))
+      .sort(
+        (a: any, b: any) =>
+          (b.degree_centrality || 0) - (a.degree_centrality || 0)
+      )
       .slice(0, params.nodeLimit)
 
     const result = {
@@ -734,8 +737,8 @@ function generateInsights(
   const insights: string[] = []
 
   const totalNotes = notes.length
-  const connectedNotes = analytics.filter((a) => !a.is_isolated).length
-  const hubs = analytics.filter((a) => a.is_hub).length
+  const connectedNotes = analytics.filter((a: any) => !a.is_isolated).length
+  const hubs = analytics.filter((a: any) => a.is_hub).length
 
   if (totalNotes === 0) {
     insights.push(
