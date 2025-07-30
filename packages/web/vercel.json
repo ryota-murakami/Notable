@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && export SKIP_ENV_VALIDATION=1 && pnpm build",
+  "buildCommand": "cd ../.. && export SKIP_ENV_VALIDATION=1 && turbo run build --filter=@notable/web",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "framework": "nextjs",
   "outputDirectory": ".next",
