@@ -12,25 +12,18 @@ import {
   AlertCircle,
   BarChart3,
   BookOpen,
-  Download,
   Eye,
-  Filter,
-  Layers,
   Lightbulb,
   Link as LinkIcon,
   Network,
   Plus,
   RefreshCw,
-  Save,
   Search,
-  Settings,
-  Share,
   Target,
   TrendingUp,
   Users,
   Zap,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -49,28 +42,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 
 import { VisualGraph } from '@/components/graph/visual-graph'
 import {
@@ -99,7 +79,7 @@ function GraphPageContent() {
     graphMode,
     isFullscreen,
     setHoveredNode,
-    setHoveredLink,
+    _setHoveredLink,
     clearSelection,
     selectNode,
     selectLink,
@@ -127,15 +107,15 @@ function GraphPageContent() {
       analysisType: 'overview',
       includeDetails: true,
     })
-  const { views, isLoading: isLoadingViews } = useGraphViews()
+  const { views: _views, isLoading: _isLoadingViews } = useGraphViews()
 
   // Mutations
   const {
     refreshAnalytics,
     createRelationship,
-    updatePosition,
+    _updatePosition,
     autoDiscover,
-    deleteRelationship,
+    _deleteRelationship,
   } = useGraphMutations()
 
   // Search functionality
@@ -491,13 +471,13 @@ export default function GraphPage() {
 function OverviewPanel({
   data,
   selectedNodes,
-  selectedLinks,
+  _selectedLinks,
   hoveredNode,
   onOpenNote,
 }: {
   data: any
   selectedNodes: Set<string>
-  selectedLinks: Set<string>
+  _selectedLinks: Set<string>
   hoveredNode: GraphNode | null
   onOpenNote: (nodeId: string) => void
 }) {

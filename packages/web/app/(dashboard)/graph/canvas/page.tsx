@@ -30,27 +30,7 @@ import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Separator } from '@/components/ui/separator'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { CanvasView } from '@/components/graph/canvas-view'
@@ -202,7 +182,7 @@ function CanvasPageContent() {
   const canvasConnections: CanvasConnection[] = React.useMemo(() => {
     if (!graphData?.links) return []
 
-    return graphData.links.map((link, index) => ({
+    return graphData.links.map((link, _index) => ({
       id: link.id,
       sourceId: typeof link.source === 'string' ? link.source : link.source.id,
       targetId: typeof link.target === 'string' ? link.target : link.target.id,
@@ -304,7 +284,7 @@ function CanvasPageContent() {
   )
 
   const handleNodeClick = useCallback(
-    (node: CanvasNode, event: React.MouseEvent) => {
+    (_node: CanvasNode, _event: React.MouseEvent) => {
       // Handle node selection logic here
     },
     []
@@ -554,7 +534,7 @@ function CanvasPageContent() {
             onNodesUpdate={handleNodesUpdate}
             onConnectionCreate={handleConnectionCreate}
             onViewportChange={handleViewportChange}
-            onSelectionChange={(nodeIds, connectionIds) => {
+            onSelectionChange={(_nodeIds, _connectionIds) => {
               // Handle selection change
             }}
             onNodeClick={handleNodeClick}
@@ -579,7 +559,7 @@ function LayersPanel({
   nodes: CanvasNode[]
   connections: CanvasConnection[]
   selectedNodes: Set<string>
-  onNodeClick: (node: CanvasNode, event: React.MouseEvent) => void
+  onNodeClick: (_node: CanvasNode, _event: React.MouseEvent) => void
 }) {
   return (
     <div className='space-y-4'>

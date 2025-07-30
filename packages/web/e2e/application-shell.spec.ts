@@ -29,7 +29,7 @@ test.describe('Application Shell', () => {
     // Give it a moment for console logs to appear
     await page.waitForTimeout(1000)
 
-    console.log('Console messages:', consoleMessages)
+    console.info('Console messages:', consoleMessages)
 
     // Check sidebar structure
     await expect(page.getByText('Notable')).toBeVisible()

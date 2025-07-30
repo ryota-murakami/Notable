@@ -21,7 +21,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
     const hasContent = await page.locator('html').count()
     expect(hasContent).toBeGreaterThan(0)
 
-    console.log(
+    console.info(
       `✅ E2E Infrastructure working - Server responded with status: ${response!.status()}`
     )
   })
@@ -46,7 +46,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
     // Basic HTML structure should be present
     await expect(page.locator('html')).toBeAttached()
 
-    console.log(
+    console.info(
       `✅ Server responded in ${loadTime}ms with status ${response!.status()}`
     )
   })
@@ -72,7 +72,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
     // Basic document structure should exist even with errors
     await expect(page.locator('html')).toBeAttached()
 
-    console.log(
+    console.info(
       `✅ Page loaded with status ${response!.status()} and ${errors.length} console errors (expected in development)`
     )
   })
