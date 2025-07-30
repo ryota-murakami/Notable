@@ -4,6 +4,7 @@ import * as React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Command } from 'cmdk'
 import { Portal } from '@radix-ui/react-portal'
+import { match } from 'ts-pattern'
 import { cn } from '@/lib/utils'
 import {
   filterSlashCommands,
@@ -46,36 +47,38 @@ export function SlashCommandMenu({
     (event: KeyboardEvent) => {
       if (!isOpen) return
 
-      switch (event.key) {
-        case 'Escape':
+      match(event.key)
+        .with('Escape', () => {
           event.preventDefault()
           onClose()
-          break
-        case 'ArrowDown':
+        })
+        .with('ArrowDown', () => {
           event.preventDefault()
           setSelectedIndex((prev) =>
             prev < flatCommands.length - 1 ? prev + 1 : 0
           )
-          break
-        case 'ArrowUp':
+        })
+        .with('ArrowUp', () => {
           event.preventDefault()
           setSelectedIndex((prev) =>
             prev > 0 ? prev - 1 : flatCommands.length - 1
           )
-          break
-        case 'Enter':
+        })
+        .with('Enter', () => {
           event.preventDefault()
           if (flatCommands[selectedIndex]) {
             onSelect(flatCommands[selectedIndex])
           }
-          break
-        case 'Tab':
+        })
+        .with('Tab', () => {
           event.preventDefault()
           if (flatCommands[selectedIndex]) {
             onSelect(flatCommands[selectedIndex])
           }
-          break
-      }
+        })
+        .otherwise(() => {
+          // No action for other keys
+        })
     },
     [isOpen, onClose, onSelect, flatCommands, selectedIndex]
   )

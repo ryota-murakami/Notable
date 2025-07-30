@@ -396,28 +396,16 @@ export class TemplateEngine {
     value: any,
     variable: TemplateVariable
   ): any {
-    switch (variable.type) {
-      case 'date':
-        return this.formatDate(new Date(value), 'YYYY-MM-DD')
-
-      case 'time':
-        return this.formatTime(new Date(value), 'HH:mm')
-
-      case 'datetime':
-        return new Date(value).toISOString()
-
-      case 'number':
-        return isNaN(Number(value)) ? value : Number(value)
-
-      case 'boolean':
-        return value ? 'Yes' : 'No'
-
-      case 'multi-select':
-        return Array.isArray(value) ? value.join(', ') : value
-
-      default:
-        return value
-    }
+    return match(variable.type)
+      .with('date', () => this.formatDate(new Date(value), 'YYYY-MM-DD'))
+      .with('time', () => this.formatTime(new Date(value), 'HH:mm'))
+      .with('datetime', () => new Date(value).toISOString())
+      .with('number', () => (isNaN(Number(value)) ? value : Number(value)))
+      .with('boolean', () => (value ? 'Yes' : 'No'))
+      .with('multi-select', () =>
+        Array.isArray(value) ? value.join(', ') : value
+      )
+      .otherwise(() => value)
   }
 
   /**
