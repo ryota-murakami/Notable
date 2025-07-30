@@ -88,8 +88,8 @@ export function useServerSearch(
   >([])
   const [isAutocompleting, setIsAutocompleting] = useState(false)
 
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>()
-  const autocompleteTimeoutRef = useRef<NodeJS.Timeout | undefined>()
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const autocompleteTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   // Build search URL with parameters
   const buildSearchUrl = useCallback(

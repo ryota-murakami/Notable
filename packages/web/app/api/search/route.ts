@@ -207,18 +207,18 @@ export async function GET(request: NextRequest) {
 
     // Cache the results for future requests (fire and forget)
     if (!isAutocomplete && transformedResults.length > 0) {
-      supabase
-        .rpc('cache_search_results', {
-          p_user_id: user.id,
-          p_query_hash: cacheKey,
-          p_results: JSON.stringify(response),
-        })
-        .then(() => {
-          // Cache saved successfully
-        })
-        .catch((error: any) => {
+      const cachePromise = supabase.rpc('cache_search_results', {
+        p_user_id: user.id,
+        p_query_hash: cacheKey,
+        p_results: JSON.stringify(response),
+      })
+
+      // Handle cache save without blocking response
+      void cachePromise.then(({ error }: { error: any }) => {
+        if (error) {
           console.warn('Failed to cache search results:', error)
-        })
+        }
+      })
     }
 
     return NextResponse.json(response)

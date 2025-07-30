@@ -783,9 +783,7 @@ export function SearchCommandPalette({
                       <div className='font-medium'>{entry.query}</div>
                       <div className='text-xs text-muted-foreground'>
                         {entry.results_count} results •{' '}
-                        {new Date(entry.searched_at).toLocaleDateString(
-                          'en-US'
-                        )}
+                        {new Date(entry.created_at).toLocaleDateString('en-US')}
                       </div>
                     </div>
                   </CommandItem>

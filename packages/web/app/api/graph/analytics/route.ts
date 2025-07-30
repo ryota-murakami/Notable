@@ -675,13 +675,16 @@ async function enrichNodesWithTitles(
     )
   )
 
-  return analytics.map((a: { note_id: string }) => ({
-    ...a,
-    title: notesMap.get(a.note_id)?.title || 'Unknown',
-    tags: notesMap.get(a.note_id)?.tags || [],
-    createdAt: notesMap.get(a.note_id)?.created_at,
-    updatedAt: notesMap.get(a.note_id)?.updated_at,
-  }))
+  return analytics.map((a: { note_id: string }) => {
+    const note = notesMap.get(a.note_id)
+    return {
+      ...a,
+      title: note?.title || 'Unknown',
+      tags: note?.tags || [],
+      createdAt: note?.created_at,
+      updatedAt: note?.updated_at,
+    }
+  })
 }
 
 function groupBy<T>(array: T[], key: keyof T): Record<string, number> {
