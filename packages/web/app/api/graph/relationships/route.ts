@@ -432,7 +432,20 @@ export async function DELETE(request: NextRequest) {
         )
       }
 
-      query = query.delete().eq('id', id)
+      const { error: deleteError } = await supabase
+        .from('note_relationships')
+        .delete()
+        .eq('id', id)
+
+      if (deleteError) {
+        console.error('Delete error:', deleteError)
+        return NextResponse.json(
+          { error: 'Failed to delete relationship' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({ success: true })
     } else {
       // Delete by source/target - verify ownership of source note
       const { data: sourceNote, error: sourceError } = await supabase
@@ -449,30 +462,22 @@ export async function DELETE(request: NextRequest) {
         )
       }
 
-      query = query
+      const { error: deleteError } = await supabase
+        .from('note_relationships')
         .delete()
         .eq('source_note_id', sourceNoteId!)
         .eq('target_note_id', targetNoteId!)
 
-      if (relationshipType) {
-        query = query.eq('relationship_type', relationshipType)
+      if (deleteError) {
+        console.error('Delete error:', deleteError)
+        return NextResponse.json(
+          { error: 'Failed to delete relationship' },
+          { status: 500 }
+        )
       }
+
+      return NextResponse.json({ success: true })
     }
-
-    const { error } = await query
-
-    if (error) {
-      console.error('Error deleting relationship:', error)
-      return NextResponse.json(
-        { error: 'Failed to delete relationship' },
-        { status: 500 }
-      )
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Relationship deleted successfully',
-    })
   } catch (error) {
     console.error('Error in relationships DELETE API:', error)
     return NextResponse.json(

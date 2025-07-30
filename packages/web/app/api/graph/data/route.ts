@@ -358,7 +358,7 @@ async function refreshGraphAnalytics(supabase: any, userId: string) {
     }
 
     // Call the database function to recalculate metrics for each note
-    const promises = notes.map((note) =>
+    const promises = notes.map((note: any) =>
       supabase.rpc('calculate_note_graph_metrics', { note_id: note.id })
     )
 

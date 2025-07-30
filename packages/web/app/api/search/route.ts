@@ -213,8 +213,10 @@ export async function GET(request: NextRequest) {
           p_query_hash: cacheKey,
           p_results: JSON.stringify(response),
         })
-        .catch((error) => {
-          console.warn('Failed to cache search results:', error)
+        .then((result) => {
+          if (result.error) {
+            console.warn('Failed to cache search results:', result.error)
+          }
         })
     }
 
