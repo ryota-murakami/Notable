@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && export SKIP_ENV_VALIDATION=1 && pnpm --filter @notable/sync... build && pnpm --filter @notable/web... build",
+  "buildCommand": "cd ../.. && export SKIP_ENV_VALIDATION=1 && pnpm build",
   "installCommand": "cd ../.. && pnpm install",
   "framework": "nextjs",
   "regions": ["iad1"],
