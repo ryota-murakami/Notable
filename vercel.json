@@ -2,8 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "packages/web/package.json",
-      "use": "@vercel/next"
+      "src": "packages/web/next.config.mjs",
+      "use": "@vercel/next",
+      "config": {
+        "zeroConfig": false
+      }
     }
-  ]
+  ],
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "cd packages/web && pnpm build",
+  "outputDirectory": "packages/web/.next"
 }
