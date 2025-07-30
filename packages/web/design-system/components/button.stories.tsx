@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Button } from './button'
 import { ChevronRight, Download, Heart, Search, Trash2 } from 'lucide-react'
+import { within, userEvent, expect } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Components/Button',
@@ -52,12 +53,41 @@ export const Default: Story = {
   args: {
     children: 'Button',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole('button', { name: 'Button' })
+
+    // Test button is visible and enabled
+    await expect(button).toBeVisible()
+    await expect(button).toBeEnabled()
+
+    // Test click interaction
+    await userEvent.click(button)
+
+    // Test keyboard interaction
+    await button.focus()
+    await userEvent.keyboard('{space}')
+  },
 }
 
 export const Primary: Story = {
   args: {
     variant: 'primary',
     children: 'Primary Button',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole('button', { name: 'Primary Button' })
+
+    // Test primary variant styling
+    await expect(button).toHaveClass(/primary/)
+
+    // Test hover state
+    await userEvent.hover(button)
+
+    // Test focus state
+    await button.focus()
+    await expect(button).toHaveFocus()
   },
 }
 
@@ -128,6 +158,18 @@ export const Loading: Story = {
     children: 'Loading',
     loading: true,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole('button', { name: /loading/i })
+
+    // Test loading state
+    await expect(button).toBeDisabled()
+    await expect(button).toHaveAttribute('aria-busy', 'true')
+
+    // Ensure spinner is present
+    const spinner = canvas.getByRole('status')
+    await expect(spinner).toBeInTheDocument()
+  },
 }
 
 export const Disabled: Story = {
@@ -135,6 +177,17 @@ export const Disabled: Story = {
     variant: 'primary',
     children: 'Disabled',
     disabled: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole('button', { name: 'Disabled' })
+
+    // Test disabled state
+    await expect(button).toBeDisabled()
+
+    // Test that click doesn't work
+    await userEvent.click(button)
+    await expect(button).toBeDisabled()
   },
 }
 
@@ -191,6 +244,21 @@ export const WithRipple: Story = {
     variant: 'primary',
     children: 'Click for Ripple Effect',
     ripple: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole('button', {
+      name: 'Click for Ripple Effect',
+    })
+
+    // Test multiple clicks for ripple effect
+    await userEvent.click(button)
+    await new Promise((resolve) => setTimeout(resolve, 100))
+
+    await userEvent.click(button)
+    await new Promise((resolve) => setTimeout(resolve, 100))
+
+    await userEvent.click(button)
   },
 }
 

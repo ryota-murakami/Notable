@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import React from 'react'
 import { Input, PasswordInput, SearchInput } from './input'
 import { Calendar, CreditCard, Mail, Phone, User } from 'lucide-react'
+import { within, userEvent, expect } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Components/Input',
@@ -58,6 +59,22 @@ export const Default: Story = {
       </div>
     ),
   ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const input = canvas.getByPlaceholderText('Enter text...')
+
+    // Test input is visible and enabled
+    await expect(input).toBeVisible()
+    await expect(input).toBeEnabled()
+
+    // Test typing
+    await userEvent.type(input, 'Hello, World!')
+    await expect(input).toHaveValue('Hello, World!')
+
+    // Test clearing
+    await userEvent.clear(input)
+    await expect(input).toHaveValue('')
+  },
 }
 
 export const WithLabel: Story = {
@@ -72,6 +89,19 @@ export const WithLabel: Story = {
       </div>
     ),
   ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const input = canvas.getByLabelText('Username')
+    const label = canvas.getByText('Username')
+
+    // Test label association
+    await expect(label).toBeVisible()
+    await expect(input).toBeVisible()
+
+    // Test focus on label click
+    await userEvent.click(label)
+    await expect(input).toHaveFocus()
+  },
 }
 
 export const WithIcon: Story = {
