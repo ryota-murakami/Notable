@@ -92,7 +92,7 @@ jobs:
       - name: Run E2E Tests
         run: |
           cd packages/web
-          pnpm run e2e
+          DEBUG=pw:webserver pnpm run e2e
         env:
           CI: true
           PLAYWRIGHT_BROWSERS_PATH: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
@@ -101,6 +101,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key'
           NEXT_PUBLIC_APP_URL: 'http://localhost:4378'
           NODE_ENV: 'test'
+          DEBUG: 'pw:webserver'
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
