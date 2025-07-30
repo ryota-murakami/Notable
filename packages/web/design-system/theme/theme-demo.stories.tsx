@@ -13,18 +13,18 @@ import {
   CardTitle,
 } from '../components/card'
 import { Badge } from '../components/badge'
-import { Alert, AlertDescription, AlertTitle } from '../components/alert'
-import { Input } from '../components/input'
-import { Label } from '../components/label'
-import { Switch } from '../components/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/tabs'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/select'
+} from '@/components/ui/select'
 import { Slider } from '../components/slider'
 import {
   AlertCircle,
@@ -179,15 +179,15 @@ function ThemeDemo() {
                   <Button variant='default'>Primary</Button>
                   <Button variant='secondary'>Secondary</Button>
                   <Button variant='destructive'>Destructive</Button>
-                  <Button variant='outline'>Outline</Button>
+                  <Button variant='secondary'>Secondary</Button>
                   <Button variant='ghost'>Ghost</Button>
                   <Button variant='link'>Link</Button>
                 </div>
                 <div className='flex flex-wrap gap-2'>
                   <Button size='sm'>Small</Button>
-                  <Button size='default'>Default</Button>
+                  <Button size='md'>Medium</Button>
                   <Button size='lg'>Large</Button>
-                  <Button size='icon'>
+                  <Button size='xs'>
                     <Sparkles className='h-4 w-4' />
                   </Button>
                 </div>

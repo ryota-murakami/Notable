@@ -85,6 +85,14 @@ export const Default: Story = {
 }
 
 export const WithLanguages: Story = {
+  args: {
+    attributes: {},
+    element: {
+      type: 'code-block',
+      language: 'javascript',
+    },
+    children: javascriptCode,
+  },
   render: () => (
     <div className='space-y-6'>
       <CodeBlock

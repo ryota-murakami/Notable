@@ -110,16 +110,29 @@ const defaultSections: SettingsSection[] = [
 ]
 
 export const Default: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => <SettingsPanelDemo sections={defaultSections} />,
 }
 
 export const OpenByDefault: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => (
     <SettingsPanelDemo defaultOpen={true} sections={defaultSections} />
   ),
 }
 
 export const WithDefaultSection: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    defaultSection: 'appearance',
+  },
   render: () => (
     <SettingsPanelDemo
       defaultOpen={true}
@@ -130,6 +143,10 @@ export const WithDefaultSection: Story = {
 }
 
 export const CustomSections: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const customSections: SettingsSection[] = [
       {
@@ -186,6 +203,10 @@ export const CustomSections: Story = {
 
 // Individual section stories
 export const GeneralSettingsSection: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
 
@@ -216,6 +237,10 @@ export const GeneralSettingsSection: Story = {
 }
 
 export const ThemeSettingsSection: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
     const [currentTheme, setCurrentTheme] = useState<
@@ -259,6 +284,10 @@ export const ThemeSettingsSection: Story = {
 }
 
 export const KeyboardSettingsSection: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
 
@@ -326,6 +355,10 @@ export const KeyboardSettingsSection: Story = {
 }
 
 export const NotificationSettingsSection: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
     const [enableNotifications, setEnableNotifications] = useState(true)
@@ -387,6 +420,10 @@ export const NotificationSettingsSection: Story = {
 
 // Notable pre-built panel
 export const NotableSettingsPanelStory: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(false)
     const [currentTheme, setCurrentTheme] = useState<
@@ -415,6 +452,10 @@ export const NotableSettingsPanelStory: Story = {
 
 // Interactive stories
 export const InteractiveNavigation: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => (
     <SettingsPanelDemo defaultOpen={true} sections={defaultSections} />
   ),
@@ -450,6 +491,10 @@ export const InteractiveNavigation: Story = {
 }
 
 export const ThemeSelection: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
     const [currentTheme, setCurrentTheme] = useState<
@@ -510,6 +555,10 @@ export const ThemeSelection: Story = {
 }
 
 export const ClosePanel: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => (
     <SettingsPanelDemo defaultOpen={true} sections={defaultSections} />
   ),
@@ -533,6 +582,10 @@ export const ClosePanel: Story = {
 }
 
 export const ScrollableContent: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const manySections: SettingsSection[] = [
       ...defaultSections,
@@ -561,6 +614,10 @@ export const ScrollableContent: Story = {
 }
 
 export const EmptyState: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
 
@@ -574,6 +631,10 @@ export const EmptyState: Story = {
 }
 
 export const ResponsiveLayout: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   parameters: {
     viewport: {
       defaultViewport: 'mobile1',

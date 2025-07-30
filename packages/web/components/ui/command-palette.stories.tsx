@@ -99,6 +99,7 @@ const sampleActions: CommandAction[] = [
 export const Default: Story = {
   args: {
     open: true,
+    onOpenChange: () => {},
     actions: sampleActions,
   },
   play: async ({ canvasElement }) => {
@@ -122,6 +123,7 @@ export const Default: Story = {
 export const EmptyState: Story = {
   args: {
     open: true,
+    onOpenChange: () => {},
     actions: [],
   },
   play: async ({ canvasElement }) => {
@@ -135,6 +137,7 @@ export const EmptyState: Story = {
 export const WithGroups: Story = {
   args: {
     open: true,
+    onOpenChange: () => {},
     actions: [
       ...sampleActions,
       {
@@ -158,6 +161,11 @@ export const WithGroups: Story = {
 }
 
 export const NotableDefault: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    actions: [],
+  },
   render: () => {
     const [open, setOpen] = React.useState(true)
 
@@ -177,6 +185,11 @@ export const NotableDefault: Story = {
 }
 
 export const NotableWithNoteActions: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    actions: [],
+  },
   render: () => {
     const [open, setOpen] = React.useState(true)
 
@@ -204,6 +217,11 @@ export const NotableWithNoteActions: Story = {
 }
 
 export const SearchPalette: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    actions: [],
+  },
   render: () => {
     const [open, setOpen] = React.useState(true)
 
@@ -215,6 +233,7 @@ export const SearchPalette: Story = {
           'React is a JavaScript library for building user interfaces...',
         tags: ['react', 'javascript', 'tutorial'],
         isFolder: false,
+        path: '/notes/getting-started-react',
         created_at: new Date('2024-01-01').toISOString(),
         updated_at: new Date('2024-01-15').toISOString(),
       },
@@ -224,6 +243,7 @@ export const SearchPalette: Story = {
         content: 'TypeScript adds static typing to JavaScript...',
         tags: ['typescript', 'best-practices'],
         isFolder: false,
+        path: '/notes/typescript-best-practices',
         created_at: new Date('2024-01-05').toISOString(),
         updated_at: new Date('2024-01-20').toISOString(),
       },
@@ -233,6 +253,7 @@ export const SearchPalette: Story = {
         content: '',
         tags: [],
         isFolder: true,
+        path: '/notes/project-ideas',
         created_at: new Date('2024-01-10').toISOString(),
         updated_at: new Date('2024-01-25').toISOString(),
       },
@@ -257,6 +278,7 @@ export const SearchPalette: Story = {
 export const WithCustomActions: Story = {
   args: {
     open: true,
+    onOpenChange: () => {},
     actions: [
       {
         id: 'custom-1',
@@ -290,6 +312,11 @@ export const WithCustomActions: Story = {
 }
 
 export const Playground: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    actions: [],
+  },
   render: () => {
     const { open, setOpen } = useCommandPalette()
 
@@ -350,6 +377,7 @@ export const Playground: Story = {
 export const InteractionTest: Story = {
   args: {
     open: true,
+    onOpenChange: () => {},
     actions: sampleActions,
   },
   play: async ({ canvasElement }) => {

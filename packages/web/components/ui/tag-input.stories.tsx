@@ -19,64 +19,72 @@ const mockTags: EnhancedTag[] = [
     name: 'work',
     color: '#3B82F6',
     usage_count: 12,
-    created_at: new Date('2024-01-01'),
-    updated_at: new Date('2024-01-15'),
+    created_at: new Date('2024-01-01').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
   {
     id: '2',
     name: 'personal',
     color: '#10B981',
     usage_count: 8,
-    created_at: new Date('2024-01-05'),
-    updated_at: new Date('2024-01-20'),
+    created_at: new Date('2024-01-05').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
   {
     id: '3',
     name: 'project',
     color: '#F59E0B',
     usage_count: 15,
-    created_at: new Date('2024-01-10'),
-    updated_at: new Date('2024-01-25'),
+    created_at: new Date('2024-01-10').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
   {
     id: '4',
     name: 'ideas',
     color: '#8B5CF6',
     usage_count: 6,
-    created_at: new Date('2024-01-15'),
-    updated_at: new Date('2024-02-01'),
+    created_at: new Date('2024-01-15').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
   {
     id: '5',
     name: 'research',
     color: '#EF4444',
     usage_count: 10,
-    created_at: new Date('2024-01-20'),
-    updated_at: new Date('2024-02-05'),
+    created_at: new Date('2024-01-20').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
   {
     id: '6',
     name: 'documentation',
     color: '#6366F1',
     usage_count: 4,
-    created_at: new Date('2024-02-01'),
-    updated_at: new Date('2024-02-10'),
+    created_at: new Date('2024-02-01').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
   {
     id: '7',
     name: 'meeting-notes',
     color: '#EC4899',
     usage_count: 7,
-    created_at: new Date('2024-02-05'),
-    updated_at: new Date('2024-02-15'),
+    created_at: new Date('2024-02-05').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
   {
     id: '8',
     name: 'todo',
     color: '#14B8A6',
     usage_count: 20,
-    created_at: new Date('2024-02-10'),
-    updated_at: new Date('2024-02-20'),
+    created_at: new Date('2024-02-10').toISOString(),
+    user_id: 'user1',
+    parent_id: null,
   },
 ]
 
@@ -135,8 +143,9 @@ const TagInputMock = ({
       name: inputValue.trim(),
       color: '#6B7280',
       usage_count: 0,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: new Date().toISOString(),
+      user_id: 'user1',
+      parent_id: null,
     }
 
     handleAddTag(newTag)
@@ -317,22 +326,40 @@ const TagInputDemo = ({
 }
 
 export const Default: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
 }
 
 export const WithSelectedTags: Story = {
+  args: {
+    tags: mockTags.slice(0, 3),
+    onTagsChange: () => {},
+  },
   render: () => (
     <TagInputDemo initialTags={[mockTags[0], mockTags[1], mockTags[2]]} />
   ),
 }
 
 export const CustomPlaceholder: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+    placeholder: 'Add your tags here...',
+  },
   render: () => (
     <TagInputDemo placeholder='Type to add tags (e.g., work, personal, ideas)' />
   ),
 }
 
 export const MaxTagsLimit: Story = {
+  args: {
+    tags: mockTags.slice(0, 3),
+    onTagsChange: () => {},
+    maxTags: 5,
+  },
   render: () => (
     <TagInputDemo
       initialTags={[mockTags[0], mockTags[1], mockTags[2]]}
@@ -342,12 +369,22 @@ export const MaxTagsLimit: Story = {
 }
 
 export const Disabled: Story = {
+  args: {
+    tags: mockTags.slice(0, 2),
+    onTagsChange: () => {},
+    disabled: true,
+  },
   render: () => (
     <TagInputDemo initialTags={[mockTags[0], mockTags[1]]} disabled />
   ),
 }
 
 export const NoCreate: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+    allowCreate: false,
+  },
   render: () => (
     <TagInputDemo
       allowCreate={false}
@@ -357,11 +394,19 @@ export const NoCreate: Story = {
 }
 
 export const ColorfulTags: Story = {
+  args: {
+    tags: mockTags.slice(0, 6),
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo initialTags={mockTags.slice(0, 6)} />,
 }
 
 // Interactive stories
 export const TypeAndSearch: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -390,6 +435,10 @@ export const TypeAndSearch: Story = {
 }
 
 export const SelectFromSuggestions: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -414,6 +463,10 @@ export const SelectFromSuggestions: Story = {
 }
 
 export const CreateNewTag: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -442,6 +495,10 @@ export const CreateNewTag: Story = {
 }
 
 export const KeyboardNavigation: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -476,6 +533,10 @@ export const KeyboardNavigation: Story = {
 }
 
 export const RemoveTag: Story = {
+  args: {
+    tags: mockTags.slice(0, 3),
+    onTagsChange: () => {},
+  },
   render: () => (
     <TagInputDemo initialTags={[mockTags[0], mockTags[1], mockTags[2]]} />
   ),
@@ -483,8 +544,10 @@ export const RemoveTag: Story = {
     const canvas = within(canvasElement)
 
     // Find remove button for 'personal' tag
-    const personalTag = canvas.getByText('personal').closest('[class*="badge"]')
-    const removeButton = within(personalTag!).getByRole('button')
+    const personalTag = canvas
+      .getByText('personal')
+      .closest('[class*="badge"]') as HTMLElement
+    const removeButton = within(personalTag).getByRole('button')
 
     await userEvent.click(removeButton)
 
@@ -498,6 +561,10 @@ export const RemoveTag: Story = {
 }
 
 export const EscapeKey: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -519,6 +586,11 @@ export const EscapeKey: Story = {
 }
 
 export const MaxTagsReached: Story = {
+  args: {
+    tags: mockTags.slice(0, 5),
+    onTagsChange: () => {},
+    maxTags: 5,
+  },
   render: () => (
     <TagInputDemo
       initialTags={[mockTags[0], mockTags[1], mockTags[2]]}
@@ -547,6 +619,10 @@ export const MaxTagsReached: Story = {
 }
 
 export const ClickOutsideToClose: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -573,6 +649,10 @@ export const ClickOutsideToClose: Story = {
 }
 
 export const EmptyState: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -590,6 +670,11 @@ export const EmptyState: Story = {
 }
 
 export const NoCreateEmptyState: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+    allowCreate: false,
+  },
   render: () => <TagInputDemo allowCreate={false} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -607,6 +692,10 @@ export const NoCreateEmptyState: Story = {
 }
 
 export const LoadingState: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => {
     const [tags, setTags] = useState<EnhancedTag[]>([])
     const [isLoading, setIsLoading] = useState(false)
@@ -634,10 +723,18 @@ export const LoadingState: Story = {
 }
 
 export const ManyTags: Story = {
+  args: {
+    tags: mockTags,
+    onTagsChange: () => {},
+  },
   render: () => <TagInputDemo initialTags={mockTags} />,
 }
 
 export const LongTagNames: Story = {
+  args: {
+    tags: [],
+    onTagsChange: () => {},
+  },
   render: () => (
     <TagInputDemo
       initialTags={[
@@ -646,16 +743,18 @@ export const LongTagNames: Story = {
           name: 'very-long-tag-name-that-might-wrap',
           color: '#3B82F6',
           usage_count: 5,
-          created_at: new Date(),
-          updated_at: new Date(),
+          created_at: new Date().toISOString(),
+          user_id: 'user1',
+          parent_id: null,
         },
         {
           id: '2',
           name: 'another-extremely-long-tag-name-for-testing',
           color: '#10B981',
           usage_count: 3,
-          created_at: new Date(),
-          updated_at: new Date(),
+          created_at: new Date().toISOString(),
+          user_id: 'user1',
+          parent_id: null,
         },
       ]}
     />
@@ -663,6 +762,10 @@ export const LongTagNames: Story = {
 }
 
 export const MobileResponsive: Story = {
+  args: {
+    tags: [mockTags[0], mockTags[1]],
+    onTagsChange: () => {},
+  },
   parameters: {
     viewport: {
       defaultViewport: 'mobile1',
@@ -672,6 +775,10 @@ export const MobileResponsive: Story = {
 }
 
 export const DarkMode: Story = {
+  args: {
+    tags: [mockTags[0], mockTags[1], mockTags[2]],
+    onTagsChange: () => {},
+  },
   parameters: {
     backgrounds: { default: 'dark' },
   },

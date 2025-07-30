@@ -20,7 +20,7 @@ import {
   LinkIcon,
   ListIcon,
   ListOrderedIcon,
-  PrintIcon,
+  PrinterIcon,
   QuoteIcon,
   SaveIcon,
   ScissorsIcon,
@@ -186,7 +186,7 @@ export const DisabledStates: Story = {
       {
         id: 'print',
         label: 'Print',
-        icon: <PrintIcon className='h-4 w-4' />,
+        icon: <PrinterIcon className='h-4 w-4' />,
         action: () => console.info('Print clicked'),
         isDisabled: true,
       },

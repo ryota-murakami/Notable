@@ -44,6 +44,11 @@ export const Default: Story = {
 }
 
 export const AllTypes: Story = {
+  args: {
+    attributes: {},
+    element: { type: 'callout' },
+    children: null,
+  },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <CalloutBlock
@@ -174,6 +179,11 @@ export const CustomStyling: Story = {
 }
 
 export const Playground: Story = {
+  args: {
+    attributes: {},
+    element: { type: 'callout' },
+    children: null,
+  },
   render: () => {
     const [selectedType, setSelectedType] = React.useState<string>('info')
     const [showEmoji, setShowEmoji] = React.useState(true)
@@ -268,6 +278,11 @@ export const NestedContent: Story = {
 
 export const CalloutElementWrapper: Story = {
   name: 'CalloutElement (Wrapper)',
+  args: {
+    attributes: {},
+    element: { type: 'callout' },
+    children: null,
+  },
   render: () => (
     <CalloutElement
       attributes={{}}

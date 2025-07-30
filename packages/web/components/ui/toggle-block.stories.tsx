@@ -106,6 +106,15 @@ export const WithLongContent: Story = {
 }
 
 export const MultipleToggles: Story = {
+  args: {
+    attributes: {},
+    element: {
+      type: 'toggle',
+      open: false,
+      title: 'Toggle Block',
+    },
+    children: 'Toggle content',
+  },
   render: () => (
     <div className='space-y-4'>
       <ToggleBlock
@@ -233,6 +242,15 @@ console.log(result); // 15`}</code>
 }
 
 export const FAQ: Story = {
+  args: {
+    attributes: {},
+    element: {
+      type: 'toggle',
+      open: false,
+      title: 'FAQ Item',
+    },
+    children: 'FAQ answer',
+  },
   render: () => (
     <div className='space-y-3'>
       <h2 className='text-xl font-bold mb-4'>Frequently Asked Questions</h2>
@@ -455,6 +473,15 @@ export const CustomStyling: Story = {
 }
 
 export const AnimatedTransition: Story = {
+  args: {
+    attributes: {},
+    element: {
+      type: 'toggle',
+      open: false,
+      title: 'Animated Toggle',
+    },
+    children: 'Toggle content',
+  },
   render: () => {
     const [isOpen, setIsOpen] = useState(false)
 

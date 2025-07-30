@@ -50,14 +50,26 @@ const KeyboardShortcutsDialogDemo = ({
 }
 
 export const Default: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => <KeyboardShortcutsDialogDemo />,
 }
 
 export const OpenByDefault: Story = {
+  args: {
+    open: true,
+    onOpenChange: () => {},
+  },
   render: () => <KeyboardShortcutsDialogDemo defaultOpen={true} />,
 }
 
 export const WithTriggerButton: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -67,7 +79,7 @@ export const WithTriggerButton: Story = {
           <Button onClick={() => setOpen(true)}>
             Show Shortcuts (Click or Cmd+/)
           </Button>
-          <Button variant='outline' onClick={() => setOpen(true)}>
+          <Button variant='secondary' onClick={() => setOpen(true)}>
             <kbd className='pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100'>
               <span className='text-xs'>⌘</span>/
             </kbd>
@@ -80,6 +92,10 @@ export const WithTriggerButton: Story = {
 }
 
 export const SimulateKeyboardShortcut: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(false)
     const [lastAction, setLastAction] = useState('')
@@ -150,6 +166,10 @@ export const SimulateKeyboardShortcut: Story = {
 
 // Interactive stories
 export const InteractiveDialog: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => <KeyboardShortcutsDialogDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -187,6 +207,10 @@ export const InteractiveDialog: Story = {
 }
 
 export const TabNavigation: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => <KeyboardShortcutsDialogDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -229,6 +253,10 @@ export const TabNavigation: Story = {
 }
 
 export const CloseWithEscape: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => <KeyboardShortcutsDialogDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -249,6 +277,10 @@ export const CloseWithEscape: Story = {
 }
 
 export const CloseWithButton: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => <KeyboardShortcutsDialogDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -270,6 +302,10 @@ export const CloseWithButton: Story = {
 }
 
 export const PlatformSpecificKeys: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
     const isMac =
@@ -295,6 +331,10 @@ export const PlatformSpecificKeys: Story = {
 }
 
 export const ScrollableContent: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
 
@@ -325,6 +365,10 @@ export const ScrollableContent: Story = {
 }
 
 export const WithCustomStyling: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => {
     const [open, setOpen] = useState(true)
 
@@ -347,6 +391,10 @@ export const WithCustomStyling: Story = {
 }
 
 export const AccessibilityFeatures: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   render: () => <KeyboardShortcutsDialogDemo defaultOpen={true} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -385,6 +433,10 @@ export const AccessibilityFeatures: Story = {
 }
 
 export const MobileResponsive: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+  },
   parameters: {
     viewport: {
       defaultViewport: 'mobile1',

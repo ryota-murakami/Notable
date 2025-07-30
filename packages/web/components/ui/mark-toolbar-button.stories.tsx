@@ -81,6 +81,9 @@ const MarkToolbarDemo = ({
 }
 
 export const BoldButton: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <MarkToolbarDemo>
       <MarkToolbarButton nodeType='bold' tooltip='Bold (Cmd+B)'>
@@ -91,6 +94,9 @@ export const BoldButton: Story = {
 }
 
 export const ItalicButton: Story = {
+  args: {
+    nodeType: 'italic',
+  },
   render: () => (
     <MarkToolbarDemo>
       <MarkToolbarButton nodeType='italic' tooltip='Italic (Cmd+I)'>
@@ -101,6 +107,9 @@ export const ItalicButton: Story = {
 }
 
 export const UnderlineButton: Story = {
+  args: {
+    nodeType: 'underline',
+  },
   render: () => (
     <MarkToolbarDemo>
       <MarkToolbarButton nodeType='underline' tooltip='Underline (Cmd+U)'>
@@ -111,6 +120,9 @@ export const UnderlineButton: Story = {
 }
 
 export const MultipleButtons: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <MarkToolbarDemo>
       <MarkToolbarButton nodeType='bold' tooltip='Bold (Cmd+B)'>
@@ -133,6 +145,9 @@ export const MultipleButtons: Story = {
 }
 
 export const WithFormattedText: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <MarkToolbarDemo
       initialValue={[
@@ -164,6 +179,9 @@ export const WithFormattedText: Story = {
 }
 
 export const WithClearMarks: Story = {
+  args: {
+    nodeType: 'code',
+  },
   render: () => (
     <MarkToolbarDemo
       initialValue={[
@@ -193,6 +211,9 @@ export const WithClearMarks: Story = {
 
 // Simple Toolbar Button Stories
 export const SimpleToolbarButton: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => {
     const [pressed, setPressed] = useState(false)
 
@@ -214,6 +235,9 @@ export const SimpleToolbarButton: Story = {
 }
 
 export const SimpleToolbarButtonGroup: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => {
     const [activeButtons, setActiveButtons] = useState(new Set<string>())
 
@@ -276,6 +300,9 @@ export const SimpleToolbarButtonGroup: Story = {
 }
 
 export const DisabledToolbarButton: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <div className='flex items-center gap-2'>
       <ToolbarButton tooltip='Enabled button'>
@@ -292,6 +319,9 @@ export const DisabledToolbarButton: Story = {
 }
 
 export const CustomStyling: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <div className='flex items-center gap-2'>
       <ToolbarButton
@@ -313,6 +343,9 @@ export const CustomStyling: Story = {
 
 // Interactive stories
 export const InteractiveMarkButton: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <MarkToolbarDemo
       initialValue={[
@@ -347,6 +380,9 @@ export const InteractiveMarkButton: Story = {
 }
 
 export const InteractiveSimpleButton: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => {
     const [clickCount, setClickCount] = useState(0)
 
@@ -379,6 +415,9 @@ export const InteractiveSimpleButton: Story = {
 }
 
 export const TooltipHover: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <div className='flex items-center gap-2'>
       <ToolbarButton tooltip='This is a helpful tooltip'>
@@ -403,6 +442,9 @@ export const TooltipHover: Story = {
 }
 
 export const RealWorldToolbar: Story = {
+  args: {
+    nodeType: 'bold',
+  },
   render: () => (
     <MarkToolbarDemo
       initialValue={[

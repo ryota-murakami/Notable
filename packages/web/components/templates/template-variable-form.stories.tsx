@@ -86,6 +86,10 @@ const simpleTemplate: Template = {
   usageCount: 156,
   isSystem: true,
   tags: ['meeting', 'work'],
+  isPublic: true,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-15T00:00:00.000Z',
+  ratingCount: 32,
 }
 
 const complexTemplate: Template = {
@@ -186,7 +190,7 @@ const complexTemplate: Template = {
       placeholder: 'Check if planning is complete',
       required: false,
       displayOrder: 9,
-      defaultValue: false,
+      defaultValue: 'false',
     },
   ],
   variableCount: 9,
@@ -194,6 +198,10 @@ const complexTemplate: Template = {
   usageCount: 89,
   isSystem: true,
   tags: ['project', 'planning'],
+  isPublic: true,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-15T00:00:00.000Z',
+  ratingCount: 24,
 }
 
 const timeTrackingTemplate: Template = {
@@ -260,6 +268,10 @@ const timeTrackingTemplate: Template = {
   usageCount: 234,
   isSystem: false,
   tags: ['time', 'tracking'],
+  isPublic: true,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-15T00:00:00.000Z',
+  ratingCount: 18,
 }
 
 // Wrapper component for controlled state
@@ -306,22 +318,46 @@ const TemplateVariableFormDemo = ({
 }
 
 export const Default: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => <TemplateVariableFormDemo template={simpleTemplate} />,
 }
 
 export const OpenByDefault: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={simpleTemplate} defaultOpen={true} />
   ),
 }
 
 export const ComplexForm: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={complexTemplate} defaultOpen={true} />
   ),
 }
 
 export const TimeTracking: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo
       template={timeTrackingTemplate}
@@ -331,11 +367,23 @@ export const TimeTracking: Story = {
 }
 
 export const NoTemplate: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => <TemplateVariableFormDemo template={null} defaultOpen={true} />,
 }
 
 // Interactive stories
 export const FillSimpleForm: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={simpleTemplate} defaultOpen={true} />
   ),
@@ -380,6 +428,12 @@ export const FillSimpleForm: Story = {
 }
 
 export const ValidationErrors: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={complexTemplate} defaultOpen={true} />
   ),
@@ -418,6 +472,12 @@ export const ValidationErrors: Story = {
 }
 
 export const MultiSelectInteraction: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={complexTemplate} defaultOpen={true} />
   ),
@@ -450,6 +510,12 @@ export const MultiSelectInteraction: Story = {
 }
 
 export const SelectDropdown: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={complexTemplate} defaultOpen={true} />
   ),
@@ -477,6 +543,12 @@ export const SelectDropdown: Story = {
 }
 
 export const NumberValidation: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={complexTemplate} defaultOpen={true} />
   ),
@@ -511,6 +583,12 @@ export const NumberValidation: Story = {
 }
 
 export const BooleanField: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={complexTemplate} defaultOpen={true} />
   ),
@@ -541,6 +619,12 @@ export const BooleanField: Story = {
 }
 
 export const ScrollableForm: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => {
     const manyFieldsTemplate: Template = {
       ...complexTemplate,
@@ -568,6 +652,12 @@ export const ScrollableForm: Story = {
 }
 
 export const CancelForm: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => (
     <TemplateVariableFormDemo template={simpleTemplate} defaultOpen={true} />
   ),
@@ -595,6 +685,12 @@ export const CancelForm: Story = {
 }
 
 export const LoadingState: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   render: () => {
     const [isLoading, setIsLoading] = useState(false)
 
@@ -619,6 +715,12 @@ export const LoadingState: Story = {
 }
 
 export const MobileResponsive: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    template: null,
+    onSubmit: async () => {},
+  },
   parameters: {
     viewport: {
       defaultViewport: 'mobile1',

@@ -114,6 +114,10 @@ export const H6: Story = {
 }
 
 export const AllHeadings: Story = {
+  args: {
+    variant: 'h1',
+    content: 'All Headings',
+  },
   render: () => {
     const editor = usePlateEditor({
       plugins: BasicNodesKit,
@@ -171,6 +175,10 @@ export const WithEmoji: Story = {
 }
 
 export const MixedContent: Story = {
+  args: {
+    variant: 'h1',
+    content: 'Mixed Content Document',
+  },
   render: () => {
     const editor = usePlateEditor({
       plugins: BasicNodesKit,
@@ -213,6 +221,10 @@ export const MixedContent: Story = {
 }
 
 export const HeadingStyles: Story = {
+  args: {
+    variant: 'h1',
+    content: 'Heading Styles Example',
+  },
   render: () => {
     const editor = usePlateEditor({
       plugins: BasicNodesKit,

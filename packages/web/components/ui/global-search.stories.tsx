@@ -20,12 +20,15 @@ const mockSearchResults: SearchResult[] = [
       title: 'Getting Started with React',
       content: 'React is a JavaScript library for building user interfaces...',
       tags: ['react', 'javascript', 'frontend'],
+      path: '/notes/getting-started-react',
+      isFolder: false,
       created_at: new Date('2024-01-15').toISOString(),
       updated_at: new Date('2024-01-20').toISOString(),
     },
     snippet:
       'React is a JavaScript library for building user interfaces. Learn the basics of components, props, and state.',
     score: 0.95,
+    matches: [],
   },
   {
     note: {
@@ -33,12 +36,15 @@ const mockSearchResults: SearchResult[] = [
       title: 'TypeScript Best Practices',
       content: 'TypeScript adds static typing to JavaScript...',
       tags: ['typescript', 'javascript'],
+      path: '/notes/typescript-best-practices',
+      isFolder: false,
       created_at: new Date('2024-01-10').toISOString(),
       updated_at: new Date('2024-01-18').toISOString(),
     },
     snippet:
       'TypeScript adds static typing to JavaScript. Use interfaces for object shapes and enums for constants.',
     score: 0.87,
+    matches: [],
   },
   {
     note: {
@@ -46,12 +52,15 @@ const mockSearchResults: SearchResult[] = [
       title: 'Next.js App Router Guide',
       content: 'The App Router is a new paradigm for building applications...',
       tags: ['nextjs', 'react', 'routing'],
+      path: '/notes/nextjs-app-router-guide',
+      isFolder: false,
       created_at: new Date('2024-01-05').toISOString(),
       updated_at: new Date('2024-01-16').toISOString(),
     },
     snippet:
       "The App Router is a new paradigm for building applications using React's latest features.",
     score: 0.82,
+    matches: [],
   },
 ]
 
