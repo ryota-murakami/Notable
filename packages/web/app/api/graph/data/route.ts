@@ -34,7 +34,7 @@ type GraphDataRequest = z.infer<typeof GraphDataRequestSchema>
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -278,7 +278,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -357,7 +357,7 @@ async function refreshGraphAnalytics(supabase: any, userId: string) {
     }
 
     // Call the database function to recalculate metrics for each note
-    const promises = notes.map((note) =>
+    const promises = notes.map((note: { id: string }) =>
       supabase.rpc('calculate_note_graph_metrics', { note_id: note.id })
     )
 

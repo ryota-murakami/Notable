@@ -26,6 +26,7 @@ export interface CardProps extends Omit<MotionProps, 'children'> {
   collapsible?: boolean
   collapsed?: boolean
   onToggle?: () => void
+  onClick?: () => void
   className?: string
 }
 

@@ -27,7 +27,7 @@ import {
   Save,
   Settings,
   Square,
-  Sticky,
+  StickyNote,
   Trash2,
   Type,
   Unlock,
@@ -786,7 +786,7 @@ export function CanvasView({
                       onClick={() => setTool('note')}
                       className='h-8 w-8 p-0'
                     >
-                      <Sticky className='h-4 w-4' />
+                      <StickyNote className='h-4 w-4' />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Note Tool (1)</TooltipContent>

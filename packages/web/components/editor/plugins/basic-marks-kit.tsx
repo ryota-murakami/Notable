@@ -1,6 +1,6 @@
 'use client'
 
-import { createPlatePlugin } from '@udecode/plate-common'
+import { createPlatePlugin } from 'platejs/react'
 
 import { CodeLeaf } from '@/components/ui/code-node'
 import { HighlightLeaf } from '@/components/ui/highlight-node'

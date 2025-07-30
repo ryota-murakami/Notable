@@ -41,7 +41,7 @@ const BulkCreateSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -225,7 +225,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -266,7 +266,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -371,7 +371,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -397,8 +397,6 @@ export async function DELETE(request: NextRequest) {
         { status: 400 }
       )
     }
-
-    let query = supabase.from('note_relationships')
 
     if (id) {
       // Delete by ID - verify ownership first
@@ -427,7 +425,18 @@ export async function DELETE(request: NextRequest) {
         )
       }
 
-      query = query.delete().eq('id', id)
+      const { error } = await supabase
+        .from('note_relationships')
+        .delete()
+        .eq('id', id)
+
+      if (error) {
+        console.error('Error deleting relationship:', error)
+        return NextResponse.json(
+          { error: 'Failed to delete relationship' },
+          { status: 500 }
+        )
+      }
     } else {
       // Delete by source/target - verify ownership of source note
       const { data: sourceNote, error: sourceError } = await supabase
@@ -444,24 +453,25 @@ export async function DELETE(request: NextRequest) {
         )
       }
 
-      query = query
+      let deleteQuery = supabase
+        .from('note_relationships')
         .delete()
         .eq('source_note_id', sourceNoteId!)
         .eq('target_note_id', targetNoteId!)
 
       if (relationshipType) {
-        query = query.eq('relationship_type', relationshipType)
+        deleteQuery = deleteQuery.eq('relationship_type', relationshipType)
       }
-    }
 
-    const { error } = await query
+      const { error } = await deleteQuery
 
-    if (error) {
-      console.error('Error deleting relationship:', error)
-      return NextResponse.json(
-        { error: 'Failed to delete relationship' },
-        { status: 500 }
-      )
+      if (error) {
+        console.error('Error deleting relationship:', error)
+        return NextResponse.json(
+          { error: 'Failed to delete relationship' },
+          { status: 500 }
+        )
+      }
     }
 
     return NextResponse.json({
@@ -687,7 +697,7 @@ async function autoDiscoverRelationships(
       const batchSize = 10
       for (let i = 0; i < notes.length; i += batchSize) {
         const batch = notes.slice(i, i + batchSize)
-        const promises = batch.map((note) =>
+        const promises = batch.map((note: { id: string }) =>
           supabase.rpc('create_automatic_relationships', { note_id: note.id })
         )
         await Promise.allSettled(promises)
@@ -715,7 +725,7 @@ async function suggestRelationships(supabase: any, userId: string, body: any) {
     // In a real implementation, this would use content similarity,
     // semantic analysis, or other ML techniques
 
-    const suggestions = []
+    const suggestions: any[] = []
 
     return NextResponse.json({
       success: true,

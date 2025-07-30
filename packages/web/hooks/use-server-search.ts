@@ -88,8 +88,8 @@ export function useServerSearch(
   >([])
   const [isAutocompleting, setIsAutocompleting] = useState(false)
 
-  const debounceTimeoutRef = useRef<NodeJS.Timeout>()
-  const autocompleteTimeoutRef = useRef<NodeJS.Timeout>()
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>()
+  const autocompleteTimeoutRef = useRef<NodeJS.Timeout | undefined>()
 
   // Build search URL with parameters
   const buildSearchUrl = useCallback(
@@ -323,11 +323,12 @@ export function useServerSearch(
   }
 
   // Calculate filter information
-  const hasActiveFilters =
+  const hasActiveFilters: boolean =
     (options.tags && options.tags.length > 0) ||
-    options.dateFrom ||
-    options.dateTo ||
-    (options.sortBy && options.sortBy !== 'relevance')
+    !!options.dateFrom ||
+    !!options.dateTo ||
+    (options.sortBy && options.sortBy !== 'relevance') ||
+    false
 
   const filterSummary = []
   if (options.tags && options.tags.length > 0) {

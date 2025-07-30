@@ -32,7 +32,7 @@ type AnalyticsRequest = z.infer<typeof AnalyticsRequestSchema>
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get current user
     const {
@@ -140,13 +140,21 @@ async function getOverviewAnalytics(
 ) {
   try {
     // Get basic statistics
-    const { data: notes, error: notesError } = await supabase
+    const { data: notes, error: notesError } = (await supabase
       .from('notes')
       .select('id, created_at, updated_at, tags')
-      .eq('user_id', userId)
+      .eq('user_id', userId)) as {
+      data: Array<{
+        id: string
+        created_at: string
+        updated_at: string
+        tags: string[] | null
+      }> | null
+      error: any
+    }
 
-    if (notesError) {
-      throw notesError
+    if (notesError || !notes) {
+      throw notesError || new Error('Failed to fetch notes')
     }
 
     const { data: relationships, error: relsError } = await supabase
@@ -155,39 +163,61 @@ async function getOverviewAnalytics(
         'relationship_type, relationship_strength, created_at, discovery_method'
       )
       .or(
-        `source_note_id.in.(${notes.map((n) => n.id).join(',')}),target_note_id.in.(${notes.map((n) => n.id).join(',')})`
+        `source_note_id.in.(${notes.map((n: { id: string }) => n.id).join(',')}),target_note_id.in.(${notes.map((n: { id: string }) => n.id).join(',')})`
       )
 
     if (relsError) {
       throw relsError
     }
 
-    const { data: analytics, error: analyticsError } = await supabase
+    const { data: analytics, error: analyticsError } = (await supabase
       .from('note_graph_analytics')
       .select('*')
       .in(
         'note_id',
-        notes.map((n) => n.id)
-      )
+        notes.map((n: { id: string }) => n.id)
+      )) as {
+      data: Array<{
+        is_isolated: boolean
+        total_connections: number
+        community_id: string
+        centrality_score: number
+        influence_score: number
+        hub_score: number
+        clustering_coefficient: number
+        betweenness_centrality: number
+        degree_centrality?: number
+        is_hub?: boolean
+        is_authority?: boolean
+      }> | null
+      error: any
+    }
 
-    if (analyticsError) {
-      throw analyticsError
+    if (analyticsError || !analytics) {
+      throw analyticsError || new Error('Failed to fetch analytics')
     }
 
     // Calculate overview metrics
     const totalNotes = notes.length
     const totalRelationships = relationships.length
-    const isolatedNotes = analytics.filter((a) => a.is_isolated).length
+    const isolatedNotes = analytics.filter(
+      (a: { is_isolated: boolean }) => a.is_isolated
+    ).length
     const connectedNotes = totalNotes - isolatedNotes
 
     const avgConnections =
       analytics.length > 0
-        ? analytics.reduce((sum, a) => sum + (a.total_connections || 0), 0) /
-          analytics.length
+        ? analytics.reduce(
+            (sum: number, a: { total_connections?: number }) =>
+              sum + (a.total_connections || 0),
+            0
+          ) / analytics.length
         : 0
 
     const maxConnections = Math.max(
-      ...analytics.map((a) => a.total_connections || 0),
+      ...analytics.map(
+        (a: { total_connections?: number }) => a.total_connections || 0
+      ),
       0
     )
 
@@ -201,16 +231,18 @@ async function getOverviewAnalytics(
     ).length
 
     // Hub detection
-    const hubs = analytics.filter((a) => a.is_hub).length
-    const authorities = analytics.filter((a) => a.is_authority).length
+    const hubs = analytics.filter((a: { is_hub?: boolean }) => a.is_hub).length
+    const authorities = analytics.filter(
+      (a: { is_authority?: boolean }) => a.is_authority
+    ).length
 
     // Temporal analysis
     const timeframe = getTimeframeFilter(params.timeframe)
     const recentNotes = notes.filter(
-      (n) => new Date(n.created_at) >= timeframe
+      (n: { created_at: string }) => new Date(n.created_at) >= timeframe
     ).length
     const recentRelationships = relationships.filter(
-      (r) => new Date(r.created_at) >= timeframe
+      (r: { created_at: string }) => new Date(r.created_at) >= timeframe
     ).length
 
     // Graph density (actual connections / possible connections)
@@ -220,7 +252,12 @@ async function getOverviewAnalytics(
 
     // Top nodes by centrality
     const topNodesByCentrality = analytics
-      .sort((a, b) => (b.degree_centrality || 0) - (a.degree_centrality || 0))
+      .sort(
+        (
+          a: { degree_centrality?: number },
+          b: { degree_centrality?: number }
+        ) => (b.degree_centrality || 0) - (a.degree_centrality || 0)
+      )
       .slice(0, params.nodeLimit)
 
     const result = {
@@ -329,28 +366,39 @@ async function getCommunityAnalytics(
     }
 
     const communities = groupBy(analytics, 'community_id')
-    const communityStats = {}
+    const communityStats: Record<
+      string,
+      {
+        size: any
+        avgCentrality: number
+        totalConnections: number
+        avgClustering: number
+      }
+    > = {}
 
     for (const [communityId, members] of Object.entries(communities)) {
       if (communityId === 'unassigned') continue
 
       const memberAnalytics = analytics.filter(
-        (a) => a.community_id === communityId
+        (a: { community_id: string }) => a.community_id === communityId
       )
-      communityStats[communityId] = {
+      communityStats[communityId as string] = {
         size: members,
         avgCentrality:
           memberAnalytics.reduce(
-            (sum, a) => sum + (a.degree_centrality || 0),
+            (sum: number, a: { degree_centrality?: number }) =>
+              sum + (a.degree_centrality || 0),
             0
           ) / memberAnalytics.length,
         totalConnections: memberAnalytics.reduce(
-          (sum, a) => sum + (a.total_connections || 0),
+          (sum: number, a: { total_connections?: number }) =>
+            sum + (a.total_connections || 0),
           0
         ),
         avgClustering:
           memberAnalytics.reduce(
-            (sum, a) => sum + (a.clustering_coefficient || 0),
+            (sum: number, a: { clustering_coefficient?: number }) =>
+              sum + (a.clustering_coefficient || 0),
             0
           ) / memberAnalytics.length,
         ...(params.includeDetails && {
@@ -455,7 +503,7 @@ async function getIsolatedAnalytics(
     const suggestions = await generateConnectionSuggestions(
       supabase,
       userId,
-      isolated.map((i) => i.note_id)
+      isolated.map((i: { note_id: string }) => i.note_id)
     )
 
     return NextResponse.json({
@@ -499,7 +547,7 @@ async function getTemporalAnalytics(
       .select('created_at, relationship_type')
       .gte('created_at', timeframe.toISOString())
       .or(
-        `source_note_id.in.(${notes.map((n) => n.id).join(',')}),target_note_id.in.(${notes.map((n) => n.id).join(',')})`
+        `source_note_id.in.(${notes.map((n: { id: string }) => n.id).join(',')}),target_note_id.in.(${notes.map((n: { id: string }) => n.id).join(',')})`
       )
 
     if (relsError) {
@@ -548,8 +596,8 @@ async function recalculateAllAnalytics(supabase: any, userId: string) {
       .select('id')
       .eq('user_id', userId)
 
-    if (error) {
-      throw error
+    if (error || !notes) {
+      throw error || new Error('Failed to fetch notes')
     }
 
     // Mark all analytics as needing recalculation
@@ -558,11 +606,11 @@ async function recalculateAllAnalytics(supabase: any, userId: string) {
       .update({ needs_recalculation: true, is_stale: true })
       .in(
         'note_id',
-        notes.map((n) => n.id)
+        notes.map((n: { id: string }) => n.id)
       )
 
     // Trigger recalculation for each note
-    const promises = notes.map((note) =>
+    const promises = notes.map((note: { id: string }) =>
       supabase.rpc('calculate_note_graph_metrics', { note_id: note.id })
     )
 
@@ -596,7 +644,7 @@ async function getUserNoteIds(
     throw error
   }
 
-  return notes.map((n) => n.id)
+  return notes.map((n: { id: string }) => n.id)
 }
 
 async function enrichNodesWithTitles(
@@ -611,13 +659,23 @@ async function enrichNodesWithTitles(
     .select('id, title, tags, created_at, updated_at')
     .in('id', noteIds)
 
-  if (error) {
-    throw error
+  if (error || !notes) {
+    throw error || new Error('Failed to fetch notes')
   }
 
-  const notesMap = new Map(notes.map((n) => [n.id, n]))
+  const notesMap = new Map(
+    notes.map(
+      (n: {
+        id: string
+        title: string
+        tags: string[] | null
+        created_at: string
+        updated_at: string
+      }) => [n.id, n]
+    )
+  )
 
-  return analytics.map((a) => ({
+  return analytics.map((a: { note_id: string }) => ({
     ...a,
     title: notesMap.get(a.note_id)?.title || 'Unknown',
     tags: notesMap.get(a.note_id)?.tags || [],
@@ -676,7 +734,7 @@ function getTimeframeFilter(timeframe: string): Date {
 }
 
 function groupByTimePeriod(data: any[], timeframe: string, dateField: string) {
-  const periods = {}
+  const periods: Record<string, number> = {}
 
   data.forEach((item) => {
     const date = new Date(item[dateField])

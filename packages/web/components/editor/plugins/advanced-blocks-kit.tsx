@@ -1,6 +1,6 @@
 'use client'
 
-import { createPlatePlugin } from '@udecode/plate-common'
+import { createPlatePlugin } from 'platejs/react'
 
 // Advanced Block Plugins for Notion-like experience
 

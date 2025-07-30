@@ -1,6 +1,6 @@
 'use client'
 
-import { createPlatePlugin } from '@udecode/plate-common'
+import { createPlatePlugin } from 'platejs/react'
 
 import { BasicNodesKit } from './basic-nodes-kit'
 import { BasicMarksKit } from './basic-marks-kit'

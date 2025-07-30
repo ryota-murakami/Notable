@@ -222,7 +222,7 @@ export default function GraphPage() {
 
   const handleAutoDiscover = useCallback(async () => {
     try {
-      await autoDiscover.mutateAsync()
+      await autoDiscover.mutateAsync(undefined)
     } catch (error) {
       console.error('Failed to auto-discover relationships:', error)
     }
@@ -617,7 +617,9 @@ function OverviewPanel({
                 ([type, count]) => (
                   <div key={type} className='flex justify-between text-sm'>
                     <span className='capitalize'>{type}</span>
-                    <span className='text-muted-foreground'>{count}</span>
+                    <span className='text-muted-foreground'>
+                      {String(count)}
+                    </span>
                   </div>
                 )
               )}
@@ -831,7 +833,9 @@ function FiltersPanel({
                     />
                     <span className='capitalize'>{type}</span>
                   </label>
-                  <span className='text-xs text-muted-foreground'>{count}</span>
+                  <span className='text-xs text-muted-foreground'>
+                    {String(count)}
+                  </span>
                 </div>
               )
             )}

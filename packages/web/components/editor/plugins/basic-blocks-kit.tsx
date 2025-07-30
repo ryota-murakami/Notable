@@ -1,6 +1,6 @@
 'use client'
 
-import { createPlatePlugin } from '@udecode/plate-common'
+import { createPlatePlugin } from 'platejs/react'
 import { ParagraphPlugin } from 'platejs/react'
 
 import { BlockquoteElement } from '@/components/ui/blockquote-node'

@@ -640,7 +640,7 @@ export function useGraphKeyboardShortcuts(callbacks: {
       if (
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement ||
-        event.target instanceof HTMLSelectElement ||
+        event.target instanceof globalThis.HTMLSelectElement ||
         (event.target as HTMLElement)?.contentEditable === 'true'
       ) {
         return
