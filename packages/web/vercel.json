@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd ../.. && pnpm --filter @notable/web build",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
+}
