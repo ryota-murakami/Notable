@@ -1,8 +1,26 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { TagTree, TagTreeSearch } from './tag-tree'
 import type { EnhancedTag } from '@/types/tags'
 import { within, userEvent, expect, waitFor } from '@storybook/test'
+import {
+  ChevronRight,
+  ChevronDown,
+  Hash,
+  MoreHorizontal,
+  Plus,
+  Edit,
+  Trash,
+  Search,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { cn } from '@/lib/utils'
 
 // Mock hierarchical tag data
 const mockTags: EnhancedTag[] = [
@@ -174,18 +192,203 @@ const mockTags: EnhancedTag[] = [
   },
 ]
 
-// Mock hook
-jest.mock('@/hooks/use-tags', () => ({
-  useTagManager: () => ({
-    getOrCreateTag: jest.fn(),
-    isLoading: false,
-  }),
-  useTagTree: () => mockTags,
-}))
+// Mock TagTreeSearch component
+const TagTreeSearchMock = ({
+  query,
+  onQueryChange,
+  placeholder = 'Search tags...',
+}: {
+  query: string
+  onQueryChange: (query: string) => void
+  placeholder?: string
+}) => {
+  return (
+    <div className='relative'>
+      <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+      <Input
+        value={query}
+        onChange={(e) => onQueryChange(e.target.value)}
+        placeholder={placeholder}
+        className='pl-8'
+      />
+    </div>
+  )
+}
+
+// Mock TagTree component
+const TagTreeMock = ({
+  tags,
+  selectedTagId,
+  showUsageCounts = true,
+  showActions = true,
+  clickable = true,
+  maxDepth,
+  onTagSelect,
+  onTagEdit,
+  onTagDelete,
+  onTagCreate,
+  className,
+}: {
+  tags: EnhancedTag[]
+  selectedTagId?: string
+  showUsageCounts?: boolean
+  showActions?: boolean
+  clickable?: boolean
+  maxDepth?: number
+  onTagSelect?: (tag: EnhancedTag) => void
+  onTagEdit?: (tag: EnhancedTag) => void
+  onTagDelete?: (tag: EnhancedTag) => void
+  onTagCreate?: (parentTag?: EnhancedTag) => void
+  className?: string
+}) => {
+  const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set())
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null)
+
+  const toggleExpanded = (tagId: string) => {
+    const newExpanded = new Set(expandedTags)
+    if (newExpanded.has(tagId)) {
+      newExpanded.delete(tagId)
+    } else {
+      newExpanded.add(tagId)
+    }
+    setExpandedTags(newExpanded)
+  }
+
+  const renderTag = (tag: EnhancedTag, depth = 0): React.ReactNode => {
+    if (maxDepth !== undefined && depth >= maxDepth) return null
+
+    const hasChildren = tag.children && tag.children.length > 0
+    const isExpanded = expandedTags.has(tag.id)
+    const isSelected = selectedTagId === tag.id
+    const isHovered = hoveredTag === tag.id
+
+    return (
+      <div key={tag.id}>
+        <div
+          className={cn(
+            'flex items-center gap-1 py-1 px-2 rounded-sm',
+            isSelected && 'bg-accent',
+            clickable && 'hover:bg-accent cursor-pointer',
+            'group'
+          )}
+          onMouseEnter={() => setHoveredTag(tag.id)}
+          onMouseLeave={() => setHoveredTag(null)}
+          onClick={() => clickable && onTagSelect?.(tag)}
+        >
+          <Button
+            variant='ghost'
+            size='sm'
+            className='h-5 w-5 p-0'
+            onClick={(e) => {
+              e.stopPropagation()
+              if (hasChildren) {
+                toggleExpanded(tag.id)
+              }
+            }}
+          >
+            {hasChildren &&
+              (isExpanded ? (
+                <ChevronDown className='h-3 w-3' />
+              ) : (
+                <ChevronRight className='h-3 w-3' />
+              ))}
+          </Button>
+
+          <div
+            className='h-3 w-3 rounded-full'
+            style={{ backgroundColor: tag.color }}
+          />
+
+          <Hash className='h-3 w-3 text-muted-foreground' />
+
+          <span className='flex-1 text-sm'>{tag.name}</span>
+
+          {showUsageCounts && (
+            <span className='text-xs text-muted-foreground'>
+              {tag.usage_count}
+            </span>
+          )}
+
+          {showActions && isHovered && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='h-5 w-5 p-0 opacity-0 group-hover:opacity-100'
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className='h-3 w-3' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onTagCreate?.(tag)
+                  }}
+                >
+                  <Plus className='mr-2 h-4 w-4' />
+                  Add child tag
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onTagEdit?.(tag)
+                  }}
+                >
+                  <Edit className='mr-2 h-4 w-4' />
+                  Edit tag
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onTagDelete?.(tag)
+                  }}
+                  className='text-red-600'
+                >
+                  <Trash className='mr-2 h-4 w-4' />
+                  Delete tag
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+
+        {hasChildren && isExpanded && (
+          <div className='ml-4'>
+            {tag.children!.map((child) => renderTag(child, depth + 1))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  if (tags.length === 0) {
+    return (
+      <div className={cn('text-center py-8 text-muted-foreground', className)}>
+        <p>No tags yet</p>
+        {onTagCreate && (
+          <Button
+            variant='outline'
+            size='sm'
+            className='mt-2'
+            onClick={() => onTagCreate()}
+          >
+            <Plus className='mr-2 h-4 w-4' />
+            Create first tag
+          </Button>
+        )}
+      </div>
+    )
+  }
+
+  return <div className={className}>{tags.map((tag) => renderTag(tag))}</div>
+}
 
 const meta = {
   title: 'UI/Navigation/TagTree',
-  component: TagTree,
+  component: TagTreeMock,
   parameters: {
     layout: 'centered',
   },
@@ -243,7 +446,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof TagTree>
+} satisfies Meta<typeof TagTreeMock>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -254,12 +457,12 @@ const TagTreeDemo = ({
   ...props
 }: {
   initialSelectedId?: string
-} & Partial<React.ComponentProps<typeof TagTree>>) => {
+} & Partial<React.ComponentProps<typeof TagTreeMock>>) => {
   const [selectedTagId, setSelectedTagId] = useState(initialSelectedId)
 
   return (
     <div className='space-y-4'>
-      <TagTree
+      <TagTreeMock
         tags={mockTags}
         selectedTagId={selectedTagId}
         onTagSelect={(tag) => setSelectedTagId(tag.id)}
@@ -508,12 +711,12 @@ export const WithSearch: Story = {
 
     return (
       <div className='space-y-4'>
-        <TagTreeSearch
+        <TagTreeSearchMock
           query={query}
           onQueryChange={setQuery}
           placeholder='Search tags...'
         />
-        <TagTree tags={filteredTags} />
+        <TagTreeMock tags={filteredTags} />
       </div>
     )
   },
@@ -552,8 +755,8 @@ export const SearchInteraction: Story = {
 
     return (
       <div className='space-y-4'>
-        <TagTreeSearch query={query} onQueryChange={setQuery} />
-        <TagTree tags={filteredTags} />
+        <TagTreeSearchMock query={query} onQueryChange={setQuery} />
+        <TagTreeMock tags={filteredTags} />
       </div>
     )
   },

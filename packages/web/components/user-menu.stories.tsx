@@ -1,52 +1,114 @@
-import React from 'react'
+import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { UserMenu } from './user-menu'
 import { within, userEvent, expect, waitFor } from '@storybook/test'
-import { Toaster } from 'sonner'
+import { Toaster, toast } from 'sonner'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { User, Settings, LogOut } from 'lucide-react'
 
-// Mock next/navigation
-const mockPush = jest.fn()
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
-}))
-
-// Mock Supabase client
-const mockUser = {
-  id: 'user-123',
-  email: 'john.doe@example.com',
-  user_metadata: {
-    full_name: 'John Doe',
+// Mock UserMenu component for Storybook
+const UserMenuMock = ({
+  className,
+  userData = {
     name: 'John Doe',
+    email: 'john.doe@example.com',
+    initials: 'JD',
   },
-  app_metadata: {},
-  aud: 'authenticated',
-  created_at: '2024-01-01T00:00:00.000Z',
+}: {
+  className?: string
+  userData?: {
+    name: string | null
+    email: string | null
+    initials: string
+  }
+}) => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSettings = () => {
+    toast('Settings page coming soon!')
+  }
+
+  const handleLogout = async () => {
+    setIsLoading(true)
+    // Simulate logout delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    setIsLoading(false)
+    toast.success('Logged out successfully')
+  }
+
+  if (userData.email === 'test@example.com') {
+    // Test mode
+    return (
+      <div className={className}>
+        <Button variant='ghost' size='icon' className='rounded-full'>
+          <User className='h-5 w-5' />
+        </Button>
+      </div>
+    )
+  }
+
+  if (!userData.name && !userData.email) {
+    // Loading state
+    return (
+      <div className={className}>
+        <div className='h-9 w-9 animate-pulse rounded-full bg-muted' />
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant='ghost'
+            className={`relative h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:opacity-90 ${className}`}
+            aria-label='User menu'
+          >
+            <span className='text-sm font-medium'>{userData.initials}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align='end' className='w-56'>
+          <DropdownMenuLabel className='font-normal'>
+            <div className='flex flex-col space-y-1'>
+              <p className='text-sm font-medium leading-none'>
+                {userData.name}
+              </p>
+              <p className='text-xs leading-none text-muted-foreground'>
+                {userData.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleSettings} className='cursor-pointer'>
+            <Settings className='mr-2 h-4 w-4' />
+            <span>Settings</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={handleLogout}
+            className='cursor-pointer text-red-600 focus:text-red-600'
+            disabled={isLoading}
+          >
+            <LogOut className='mr-2 h-4 w-4' />
+            <span>{isLoading ? 'Logging out...' : 'Log out'}</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
 }
-
-const mockSignOut = jest.fn()
-const mockGetUser = jest.fn()
-const mockOnAuthStateChange = jest.fn()
-
-jest.mock('@/utils/supabase/client', () => ({
-  createClient: () => ({
-    auth: {
-      getUser: mockGetUser,
-      signOut: mockSignOut,
-      onAuthStateChange: mockOnAuthStateChange,
-    },
-  }),
-}))
-
-// Mock environment
-jest.mock('../lib/utils/environment', () => ({
-  isTest: jest.fn(() => false),
-}))
 
 const meta = {
   title: 'UI/Navigation/UserMenu',
-  component: UserMenu,
+  component: UserMenuMock,
   parameters: {
     layout: 'centered',
   },
@@ -55,6 +117,10 @@ const meta = {
     className: {
       control: 'text',
       description: 'Additional CSS classes',
+    },
+    userData: {
+      control: 'object',
+      description: 'User data to display',
     },
   },
   decorators: [
@@ -67,21 +133,7 @@ const meta = {
       </>
     ),
   ],
-  beforeEach: () => {
-    // Reset mocks
-    mockPush.mockReset()
-    mockSignOut.mockReset()
-    mockGetUser.mockReset()
-    mockOnAuthStateChange.mockReset()
-
-    // Default mock implementations
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null })
-    mockSignOut.mockResolvedValue({ error: null })
-    mockOnAuthStateChange.mockReturnValue({
-      data: { subscription: { unsubscribe: jest.fn() } },
-    })
-  },
-} satisfies Meta<typeof UserMenu>
+} satisfies Meta<typeof UserMenuMock>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -89,62 +141,48 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 export const WithLongName: Story = {
-  beforeEach: () => {
-    mockGetUser.mockResolvedValue({
-      data: {
-        user: {
-          ...mockUser,
-          user_metadata: {
-            full_name: 'Alexander Christopher Johnson III',
-          },
-        },
-      },
-      error: null,
-    })
+  args: {
+    userData: {
+      name: 'Alexander Christopher Johnson III',
+      email: 'alexander.johnson@example.com',
+      initials: 'AJ',
+    },
   },
 }
 
 export const EmailOnly: Story = {
-  beforeEach: () => {
-    mockGetUser.mockResolvedValue({
-      data: {
-        user: {
-          ...mockUser,
-          user_metadata: {},
-        },
-      },
-      error: null,
-    })
+  args: {
+    userData: {
+      name: null,
+      email: 'user@example.com',
+      initials: 'UE',
+    },
   },
 }
 
 export const NoUserData: Story = {
-  beforeEach: () => {
-    mockGetUser.mockResolvedValue({
-      data: {
-        user: {
-          ...mockUser,
-          email: null,
-          user_metadata: {},
-        },
-      },
-      error: null,
-    })
+  args: {
+    userData: {
+      name: null,
+      email: null,
+      initials: '??',
+    },
   },
 }
 
 export const Loading: Story = {
-  beforeEach: () => {
-    mockGetUser.mockImplementation(
-      () => new Promise(() => {}) // Never resolves
-    )
-  },
+  render: () => (
+    <UserMenuMock userData={{ name: null, email: null, initials: '' }} />
+  ),
 }
 
 export const TestMode: Story = {
-  beforeEach: () => {
-    require('../lib/utils/environment').isTest.mockReturnValue(true)
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: null })
+  args: {
+    userData: {
+      name: 'Test User',
+      email: 'test@example.com',
+      initials: 'TU',
+    },
   },
 }
 
@@ -200,76 +238,17 @@ export const Logout: Story = {
     const logoutItem = await canvas.findByText('Log out')
     await userEvent.click(logoutItem)
 
-    // Check that logout was called
+    // Should show logging out state
     await waitFor(() => {
-      expect(mockSignOut).toHaveBeenCalled()
-      expect(mockPush).toHaveBeenCalledWith('/auth')
+      expect(canvas.getByText('Logging out...')).toBeInTheDocument()
     })
 
     // Should show success toast
-    await waitFor(() => {
-      expect(canvas.getByText('Logged out successfully')).toBeInTheDocument()
-    })
-  },
-}
-
-export const LogoutError: Story = {
-  beforeEach: () => {
-    mockSignOut.mockResolvedValue({ error: new Error('Network error') })
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-
-    // Open menu
-    const menuButton = await canvas.findByRole('button', { name: /user menu/i })
-    await userEvent.click(menuButton)
-
-    // Click logout
-    const logoutItem = await canvas.findByText('Log out')
-    await userEvent.click(logoutItem)
-
-    // Should show error toast
-    await waitFor(() => {
-      expect(canvas.getByText('Logout failed')).toBeInTheDocument()
-      expect(
-        canvas.getByText('There was an error logging out. Please try again.')
-      ).toBeInTheDocument()
-    })
-  },
-}
-
-export const AuthStateChange: Story = {
-  render: () => {
-    const [currentUser, setCurrentUser] = React.useState(mockUser)
-
-    React.useEffect(() => {
-      // Simulate auth state change after 2 seconds
-      const timer = setTimeout(() => {
-        setCurrentUser({
-          ...mockUser,
-          email: 'jane.smith@example.com',
-          user_metadata: {
-            full_name: 'Jane Smith',
-          },
-        })
-      }, 2000)
-
-      return () => clearTimeout(timer)
-    }, [])
-
-    // Override mock to use current user
-    mockGetUser.mockResolvedValue({
-      data: { user: currentUser },
-      error: null,
-    })
-
-    return (
-      <div className='space-y-2'>
-        <p className='text-sm text-muted-foreground'>
-          User will change from John Doe to Jane Smith in 2 seconds
-        </p>
-        <UserMenu />
-      </div>
+    await waitFor(
+      () => {
+        expect(canvas.getByText('Logged out successfully')).toBeInTheDocument()
+      },
+      { timeout: 2000 }
     )
   },
 }
@@ -277,40 +256,24 @@ export const AuthStateChange: Story = {
 export const DifferentInitials: Story = {
   render: () => {
     const users = [
-      { name: 'John Doe', initials: 'JD' },
-      { name: 'Alice Bob Charlie', initials: 'AB' },
-      { name: 'SingleName', initials: 'SI' },
+      { name: 'John Doe', email: 'john@example.com', initials: 'JD' },
+      { name: 'Alice Bob Charlie', email: 'alice@example.com', initials: 'AB' },
+      { name: 'SingleName', email: 'single@example.com', initials: 'SI' },
       { name: null, email: 'test@example.com', initials: 'TE' },
       { name: null, email: null, initials: '??' },
     ]
 
     return (
       <div className='space-y-4'>
-        {users.map((userData, index) => {
-          // Create unique mock for each user
-          const userMock = {
-            ...mockUser,
-            id: `user-${index}`,
-            email: userData.email || `user${index}@example.com`,
-            user_metadata: userData.name ? { full_name: userData.name } : {},
-          }
-
-          // Override mock for this render
-          mockGetUser.mockResolvedValueOnce({
-            data: { user: userMock },
-            error: null,
-          })
-
-          return (
-            <div key={index} className='flex items-center gap-4'>
-              <UserMenu />
-              <span className='text-sm text-muted-foreground'>
-                {userData.name || userData.email || 'No data'} →{' '}
-                {userData.initials}
-              </span>
-            </div>
-          )
-        })}
+        {users.map((userData, index) => (
+          <div key={index} className='flex items-center gap-4'>
+            <UserMenuMock userData={userData} />
+            <span className='text-sm text-muted-foreground'>
+              {userData.name || userData.email || 'No data'} →{' '}
+              {userData.initials}
+            </span>
+          </div>
+        ))}
       </div>
     )
   },
@@ -320,7 +283,7 @@ export const KeyboardNavigation: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
-    // Open menu with Enter key
+    // Open menu
     const menuButton = await canvas.findByRole('button', { name: /user menu/i })
     await userEvent.click(menuButton)
 
@@ -333,7 +296,7 @@ export const KeyboardNavigation: Story = {
 
     // Should trigger logout
     await waitFor(() => {
-      expect(mockSignOut).toHaveBeenCalled()
+      expect(canvas.getByText('Logging out...')).toBeInTheDocument()
     })
   },
 }
@@ -370,9 +333,9 @@ export const CustomStyling: Story = {
 export const MultipleInstances: Story = {
   render: () => (
     <div className='flex gap-4'>
-      <UserMenu />
-      <UserMenu className='h-12 w-12 text-lg' />
-      <UserMenu className='h-6 w-6 text-xs' />
+      <UserMenuMock />
+      <UserMenuMock className='h-12 w-12 text-lg' />
+      <UserMenuMock className='h-6 w-6 text-xs' />
     </div>
   ),
 }

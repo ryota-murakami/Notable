@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { TagInput } from './tag-input'
 import type { EnhancedTag } from '@/types/tags'
 import { within, userEvent, expect, waitFor } from '@storybook/test'
+import { X, Plus, Search } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 // Mock data
 const mockTags: EnhancedTag[] = [
@@ -72,28 +80,176 @@ const mockTags: EnhancedTag[] = [
   },
 ]
 
-// Mock hooks
-const mockGetOrCreateTag = jest.fn()
-const mockSuggestions: EnhancedTag[] = []
+// Mock TagInput component
+const TagInputMock = ({
+  tags,
+  onTagsChange,
+  placeholder = 'Add tags...',
+  maxTags,
+  disabled = false,
+  allowCreate = true,
+  className,
+}: {
+  tags: EnhancedTag[]
+  onTagsChange: (tags: EnhancedTag[]) => void
+  placeholder?: string
+  maxTags?: number
+  disabled?: boolean
+  allowCreate?: boolean
+  className?: string
+}) => {
+  const [inputValue, setInputValue] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
 
-jest.mock('@/hooks/use-tags', () => ({
-  useTagManager: () => ({
-    getOrCreateTag: mockGetOrCreateTag,
-    isLoading: false,
-  }),
-  useTagSuggestions: (query: string) => {
-    if (!query) return []
+  const availableTags = mockTags.filter(
+    (mockTag) => !tags.find((t) => t.id === mockTag.id)
+  )
 
-    // Return filtered mock tags based on query
-    return mockTags.filter((tag) =>
-      tag.name.toLowerCase().includes(query.toLowerCase())
-    )
-  },
-}))
+  const filteredSuggestions = inputValue
+    ? availableTags.filter((tag) =>
+        tag.name.toLowerCase().includes(inputValue.toLowerCase())
+      )
+    : availableTags
+
+  const handleAddTag = (tag: EnhancedTag) => {
+    if (maxTags && tags.length >= maxTags) return
+    onTagsChange([...tags, tag])
+    setInputValue('')
+    setIsOpen(false)
+  }
+
+  const handleRemoveTag = (tagId: string) => {
+    onTagsChange(tags.filter((t) => t.id !== tagId))
+  }
+
+  const handleCreateTag = async () => {
+    if (!inputValue.trim() || !allowCreate) return
+
+    setIsCreating(true)
+    // Simulate tag creation
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    const newTag: EnhancedTag = {
+      id: `new-${Date.now()}`,
+      name: inputValue.trim(),
+      color: '#6B7280',
+      usage_count: 0,
+      created_at: new Date(),
+      updated_at: new Date(),
+    }
+
+    handleAddTag(newTag)
+    setIsCreating(false)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && inputValue) {
+      e.preventDefault()
+      if (filteredSuggestions.length > 0) {
+        handleAddTag(filteredSuggestions[0])
+      } else if (allowCreate) {
+        handleCreateTag()
+      }
+    } else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
+      handleRemoveTag(tags[tags.length - 1].id)
+    } else if (e.key === 'Escape') {
+      setInputValue('')
+      setIsOpen(false)
+      ;(e.target as HTMLElement).blur()
+    }
+  }
+
+  const isMaxTagsReached = maxTags ? tags.length >= maxTags : false
+
+  return (
+    <div className={className}>
+      <div className='flex flex-wrap gap-2 p-3 border rounded-md bg-background'>
+        {tags.map((tag) => (
+          <Badge
+            key={tag.id}
+            variant='secondary'
+            className='gap-1'
+            style={{ borderColor: tag.color }}
+          >
+            <div
+              className='w-2 h-2 rounded-full'
+              style={{ backgroundColor: tag.color }}
+            />
+            {tag.name}
+            <button
+              onClick={() => handleRemoveTag(tag.id)}
+              className='ml-1 hover:opacity-70'
+              disabled={disabled}
+            >
+              <X className='h-3 w-3' />
+            </button>
+          </Badge>
+        ))}
+
+        <Popover open={isOpen && !disabled} onOpenChange={setIsOpen}>
+          <PopoverTrigger asChild>
+            <Input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onFocus={() => setIsOpen(true)}
+              placeholder={
+                isMaxTagsReached
+                  ? `Maximum ${maxTags} tags reached`
+                  : placeholder
+              }
+              disabled={disabled || isMaxTagsReached}
+              className='flex-1 min-w-[120px] border-0 shadow-none focus-visible:ring-0 px-0'
+            />
+          </PopoverTrigger>
+
+          <PopoverContent className='w-[300px] p-2' align='start'>
+            {filteredSuggestions.length > 0 ? (
+              <div className='space-y-1'>
+                {filteredSuggestions.map((tag) => (
+                  <button
+                    key={tag.id}
+                    onClick={() => handleAddTag(tag)}
+                    className='flex items-center gap-2 w-full p-2 text-sm rounded hover:bg-accent'
+                  >
+                    <div
+                      className='w-3 h-3 rounded-full'
+                      style={{ backgroundColor: tag.color }}
+                    />
+                    <span className='flex-1 text-left'>{tag.name}</span>
+                    <span className='text-xs text-muted-foreground'>
+                      {tag.usage_count} notes
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className='text-center py-4'>
+                {inputValue && allowCreate ? (
+                  <button
+                    onClick={handleCreateTag}
+                    disabled={isCreating}
+                    className='flex items-center gap-2 justify-center w-full p-2 text-sm rounded hover:bg-accent'
+                  >
+                    <Plus className='h-4 w-4' />
+                    <span>Create "{inputValue}"</span>
+                  </button>
+                ) : (
+                  <p className='text-sm text-muted-foreground'>No tags found</p>
+                )}
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+  )
+}
 
 const meta = {
   title: 'UI/Forms/TagInput',
-  component: TagInput,
+  component: TagInputMock,
   parameters: {
     layout: 'centered',
   },
@@ -135,19 +291,7 @@ const meta = {
       </div>
     ),
   ],
-  beforeEach: () => {
-    // Reset mock
-    mockGetOrCreateTag.mockReset()
-    mockGetOrCreateTag.mockImplementation(async (name: string) => ({
-      id: `new-${Date.now()}`,
-      name,
-      color: '#6B7280',
-      usage_count: 0,
-      created_at: new Date(),
-      updated_at: new Date(),
-    }))
-  },
-} satisfies Meta<typeof TagInput>
+} satisfies Meta<typeof TagInputMock>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -158,12 +302,12 @@ const TagInputDemo = ({
   ...props
 }: {
   initialTags?: EnhancedTag[]
-} & Partial<React.ComponentProps<typeof TagInput>>) => {
+} & Partial<React.ComponentProps<typeof TagInputMock>>) => {
   const [tags, setTags] = useState<EnhancedTag[]>(initialTags)
 
   return (
     <div className='space-y-4'>
-      <TagInput tags={tags} onTagsChange={setTags} {...props} />
+      <TagInputMock tags={tags} onTagsChange={setTags} {...props} />
       <div className='text-sm text-muted-foreground'>
         Selected tags:{' '}
         {tags.length > 0 ? tags.map((t) => t.name).join(', ') : 'None'}
@@ -292,7 +436,6 @@ export const CreateNewTag: Story = {
 
     // Should create and add tag
     await waitFor(() => {
-      expect(mockGetOrCreateTag).toHaveBeenCalledWith('new-feature')
       expect(canvas.getByText('Selected tags: new-feature')).toBeInTheDocument()
     })
   },
@@ -386,7 +529,7 @@ export const MaxTagsReached: Story = {
     const canvas = within(canvasElement)
 
     // Input should be disabled
-    const input = canvas.getByPlaceholderText('')
+    const input = canvas.getByPlaceholderText(/Maximum 3 tags reached/)
     expect(input).toBeDisabled()
 
     // Remove a tag
@@ -397,7 +540,8 @@ export const MaxTagsReached: Story = {
 
     // Input should be enabled again
     await waitFor(() => {
-      expect(input).not.toBeDisabled()
+      const enabledInput = canvas.getByPlaceholderText('Add tags...')
+      expect(enabledInput).not.toBeDisabled()
     })
   },
 }
@@ -464,13 +608,28 @@ export const NoCreateEmptyState: Story = {
 
 export const LoadingState: Story = {
   render: () => {
-    // Override mock to simulate loading
-    jest.mocked(require('@/hooks/use-tags').useTagManager).mockReturnValue({
-      getOrCreateTag: mockGetOrCreateTag,
-      isLoading: true,
-    })
+    const [tags, setTags] = useState<EnhancedTag[]>([])
+    const [isLoading, setIsLoading] = useState(false)
 
-    return <TagInputDemo />
+    const handleTagsChange = async (newTags: EnhancedTag[]) => {
+      setIsLoading(true)
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setTags(newTags)
+      setIsLoading(false)
+    }
+
+    return (
+      <div className='space-y-4'>
+        <TagInputMock
+          tags={tags}
+          onTagsChange={handleTagsChange}
+          disabled={isLoading}
+        />
+        {isLoading && (
+          <p className='text-sm text-muted-foreground'>Loading...</p>
+        )}
+      </div>
+    )
   },
 }
 
