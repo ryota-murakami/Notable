@@ -1,0 +1,115 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as SliderStories from './slider.stories'
+
+<Meta of={SliderStories} />
+
+<Title />
+
+<Subtitle>An input control for selecting a value from a continuous range.</Subtitle>
+
+<Description>
+  The Slider component allows users to select a value or range of values along a continuous scale. It's ideal for
+  settings like volume, brightness, or any numeric value within a defined range.
+</Description>
+
+## Usage
+
+```tsx
+import { Slider } from '@notable/web/design-system/components'
+
+// Basic usage
+<Slider defaultValue={[50]} max={100} step={1} />
+
+// Controlled
+const [value, setValue] = useState([50])
+
+<Slider
+  value={value}
+  onValueChange={setValue}
+  max={100}
+  step={1}
+/>
+
+// Range slider
+<Slider defaultValue={[20, 80]} max={100} step={1} />
+```
+
+## Examples
+
+<Primary />
+
+## Features
+
+- **Single or range**: Select a single value or a range
+- **Steps**: Define increments for value changes
+- **Custom range**: Set minimum and maximum values
+- **Orientation**: Horizontal or vertical layouts
+- **Accessibility**: Full keyboard and screen reader support
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### With Label and Value
+
+```tsx
+function SliderWithLabel() {
+  const [value, setValue] = useState([50])
+
+  return (
+    <div className='space-y-2'>
+      <div className='flex justify-between'>
+        <Label>Volume</Label>
+        <span className='text-sm text-muted-foreground'>{value[0]}%</span>
+      </div>
+      <Slider value={value} onValueChange={setValue} max={100} step={1} />
+    </div>
+  )
+}
+```
+
+### Range Selection
+
+```tsx
+function PriceRangeSlider() {
+  const [range, setRange] = useState([0, 1000])
+
+  return (
+    <div className='space-y-4'>
+      <Label>Price Range</Label>
+      <Slider value={range} onValueChange={setRange} max={2000} step={50} />
+      <div className='flex justify-between text-sm'>
+        <span>${range[0]}</span>
+        <span>${range[1]}</span>
+      </div>
+    </div>
+  )
+}
+```
+
+### Custom Styling
+
+```tsx
+<Slider defaultValue={[50]} max={100} step={1} className='[&_[role=slider]]:h-4 [&_[role=slider]]:w-4' />
+```
+
+## Best Practices
+
+1. **Clear labels**: Always provide context for what the slider controls
+2. **Show values**: Display the current value(s) near the slider
+3. **Appropriate steps**: Choose step values that make sense for the data
+4. **Keyboard support**: Ensure arrow keys work properly
+5. **Touch friendly**: Make touch targets large enough on mobile
+
+## Accessibility
+
+- Arrow keys for fine control
+- Page Up/Down for larger jumps
+- Home/End keys for min/max values
+- ARIA attributes for screen readers
+- Visual focus indicators
+- Proper labeling

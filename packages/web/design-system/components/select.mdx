@@ -1,0 +1,130 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as SelectStories from './select.stories'
+
+<Meta of={SelectStories} />
+
+<Title />
+
+<Subtitle>A dropdown component that allows users to choose from a list of options.</Subtitle>
+
+<Description>
+  The Select component provides a customizable dropdown interface for selecting a single value from a list. It offers
+  better styling control and consistency compared to native select elements.
+</Description>
+
+## Usage
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@notable/web/design-system/components'
+
+;<Select>
+  <SelectTrigger>
+    <SelectValue placeholder='Select a theme' />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value='light'>Light</SelectItem>
+    <SelectItem value='dark'>Dark</SelectItem>
+    <SelectItem value='system'>System</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+## Examples
+
+<Primary />
+
+## Component Structure
+
+- **Select**: Root component that manages state
+- **SelectTrigger**: The button that opens the dropdown
+- **SelectValue**: Displays the selected value
+- **SelectContent**: The dropdown container
+- **SelectItem**: Individual selectable options
+- **SelectGroup**: Groups related items
+- **SelectLabel**: Label for option groups
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### Controlled Select
+
+```tsx
+const [value, setValue] = useState("")
+
+<Select value={value} onValueChange={setValue}>
+  <SelectTrigger>
+    <SelectValue placeholder="Choose an option" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Option 1</SelectItem>
+    <SelectItem value="option2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+### Grouped Options
+
+```tsx
+<Select>
+  <SelectTrigger>
+    <SelectValue placeholder='Select a fruit' />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      <SelectLabel>Citrus</SelectLabel>
+      <SelectItem value='orange'>Orange</SelectItem>
+      <SelectItem value='lemon'>Lemon</SelectItem>
+    </SelectGroup>
+    <SelectGroup>
+      <SelectLabel>Berries</SelectLabel>
+      <SelectItem value='strawberry'>Strawberry</SelectItem>
+      <SelectItem value='blueberry'>Blueberry</SelectItem>
+    </SelectGroup>
+  </SelectContent>
+</Select>
+```
+
+### With Icons
+
+```tsx
+<Select>
+  <SelectTrigger>
+    <SelectValue placeholder='Select status' />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value='active'>
+      <div className='flex items-center'>
+        <CheckCircle className='mr-2 h-4 w-4' />
+        Active
+      </div>
+    </SelectItem>
+    <SelectItem value='inactive'>
+      <div className='flex items-center'>
+        <XCircle className='mr-2 h-4 w-4' />
+        Inactive
+      </div>
+    </SelectItem>
+  </SelectContent>
+</Select>
+```
+
+## Best Practices
+
+1. **Clear placeholders**: Use descriptive placeholder text
+2. **Logical ordering**: Order options logically (alphabetical, by frequency, etc.)
+3. **Group related items**: Use SelectGroup for better organization
+4. **Keyboard support**: Ensure all options are keyboard accessible
+5. **Loading states**: Show loading indicator when fetching options
+
+## Accessibility
+
+- Full keyboard navigation (Arrow keys, Enter, Escape)
+- Screen reader support with proper ARIA labels
+- Type-ahead search functionality
+- Focus management
+- Clear visual indicators for hover and selection states

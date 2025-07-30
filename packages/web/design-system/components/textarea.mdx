@@ -1,0 +1,144 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as TextareaStories from './textarea.stories'
+
+<Meta of={TextareaStories} />
+
+<Title />
+
+<Subtitle>A multi-line text input control for longer form content.</Subtitle>
+
+<Description>
+  The Textarea component allows users to input multi-line text. It's ideal for comments, descriptions, messages, and any
+  content that requires more than a single line of text.
+</Description>
+
+## Usage
+
+```tsx
+import { Textarea } from '@notable/web/design-system/components'
+import { Label } from '@notable/web/design-system/components'
+
+// Basic usage
+<Textarea placeholder="Type your message here." />
+
+// With label
+<div className="space-y-2">
+  <Label htmlFor="message">Your message</Label>
+  <Textarea id="message" placeholder="Type your message here." />
+</div>
+
+// Controlled
+const [value, setValue] = useState("")
+
+<Textarea
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  placeholder="Controlled textarea"
+/>
+```
+
+## Examples
+
+<Primary />
+
+## Features
+
+- **Auto-resize**: Optional automatic height adjustment
+- **Character limit**: Built-in character counting
+- **Validation**: Error and success states
+- **Accessibility**: Full keyboard and screen reader support
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### With Character Count
+
+```tsx
+function TextareaWithCount() {
+  const [value, setValue] = useState('')
+  const maxLength = 500
+
+  return (
+    <div className='space-y-2'>
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        maxLength={maxLength}
+        placeholder='Enter your bio'
+      />
+      <p className='text-sm text-muted-foreground text-right'>
+        {value.length}/{maxLength}
+      </p>
+    </div>
+  )
+}
+```
+
+### Auto-resize
+
+```tsx
+function AutoResizeTextarea() {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }, [value])
+
+  return (
+    <Textarea
+      ref={textareaRef}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      className='resize-none'
+      rows={1}
+    />
+  )
+}
+```
+
+### Form Integration
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <div className='space-y-4'>
+    <div>
+      <Label htmlFor='feedback'>Feedback</Label>
+      <Textarea
+        id='feedback'
+        name='feedback'
+        required
+        minLength={10}
+        placeholder='Please share your feedback...'
+        className='mt-1'
+      />
+    </div>
+    <Button type='submit'>Submit Feedback</Button>
+  </div>
+</form>
+```
+
+## Best Practices
+
+1. **Appropriate sizing**: Set reasonable default rows
+2. **Clear placeholders**: Use descriptive placeholder text
+3. **Resize control**: Consider disabling resize or making it vertical-only
+4. **Character limits**: Show limits when they exist
+5. **Error messages**: Provide clear validation feedback
+
+## Accessibility
+
+- Proper labeling with Label component
+- Keyboard navigation support
+- Screen reader announcements
+- Error state announcements
+- Focus indicators
+- Support for required and validation attributes

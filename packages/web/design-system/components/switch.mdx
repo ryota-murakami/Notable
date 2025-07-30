@@ -1,0 +1,150 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as SwitchStories from './switch.stories'
+
+<Meta of={SwitchStories} />
+
+<Title />
+
+<Subtitle>A toggle control that allows users to switch between on and off states.</Subtitle>
+
+<Description>
+  The Switch component is used for binary on/off choices. Unlike checkboxes, switches have an immediate effect and are
+  commonly used for settings that take effect right away.
+</Description>
+
+## Usage
+
+```tsx
+import { Switch } from '@notable/web/design-system/components'
+import { Label } from '@notable/web/design-system/components'
+
+// Basic usage
+<Switch />
+
+// With label
+<div className="flex items-center space-x-2">
+  <Switch id="airplane-mode" />
+  <Label htmlFor="airplane-mode">Airplane Mode</Label>
+</div>
+
+// Controlled
+const [enabled, setEnabled] = useState(false)
+
+<Switch
+  checked={enabled}
+  onCheckedChange={setEnabled}
+/>
+```
+
+## Examples
+
+<Primary />
+
+## States
+
+The Switch component supports the following states:
+
+- **Off**: Default unchecked state
+- **On**: Checked/active state
+- **Disabled**: Non-interactive state
+- **Loading**: Processing state (custom implementation)
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### Settings Panel
+
+```tsx
+function SettingsPanel() {
+  const [notifications, setNotifications] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
+  const [autoSave, setAutoSave] = useState(true)
+
+  return (
+    <div className='space-y-4'>
+      <div className='flex items-center justify-between'>
+        <Label htmlFor='notifications'>Push Notifications</Label>
+        <Switch id='notifications' checked={notifications} onCheckedChange={setNotifications} />
+      </div>
+      <div className='flex items-center justify-between'>
+        <Label htmlFor='dark-mode'>Dark Mode</Label>
+        <Switch id='dark-mode' checked={darkMode} onCheckedChange={setDarkMode} />
+      </div>
+      <div className='flex items-center justify-between'>
+        <Label htmlFor='auto-save'>Auto-save</Label>
+        <Switch id='auto-save' checked={autoSave} onCheckedChange={setAutoSave} />
+      </div>
+    </div>
+  )
+}
+```
+
+### With Description
+
+```tsx
+<div className='space-y-2'>
+  <div className='flex items-center space-x-2'>
+    <Switch id='marketing' />
+    <Label htmlFor='marketing'>Marketing emails</Label>
+  </div>
+  <p className='text-sm text-muted-foreground'>Receive emails about new products, features, and more.</p>
+</div>
+```
+
+### Async State
+
+```tsx
+function AsyncSwitch() {
+  const [isOn, setIsOn] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleChange = async (checked: boolean) => {
+    setIsLoading(true)
+    try {
+      await updateSetting(checked)
+      setIsOn(checked)
+    } catch (error) {
+      // Handle error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return <Switch checked={isOn} onCheckedChange={handleChange} disabled={isLoading} />
+}
+```
+
+## Best Practices
+
+1. **Immediate effect**: Use switches for settings that take effect immediately
+2. **Clear labels**: Always provide clear labels describing what the switch controls
+3. **Visual feedback**: Show loading states for async operations
+4. **Consistent placement**: Place switches consistently (usually right-aligned)
+5. **Appropriate use**: Use checkboxes for forms, switches for settings
+
+## Switch vs Checkbox
+
+Use a **Switch** when:
+
+- The setting takes effect immediately
+- You're toggling between two opposing states
+- The interaction is for preferences or settings
+
+Use a **Checkbox** when:
+
+- The user needs to submit a form
+- Multiple selections are possible
+- You're collecting consent or agreement
+
+## Accessibility
+
+- Keyboard support (Space to toggle)
+- ARIA switch role
+- Proper labeling with associated text
+- Focus indicators
+- Screen reader announcements for state changes
