@@ -192,7 +192,7 @@ export function CanvasView({
 }: CanvasViewProps) {
   // Refs
   const canvasRef = useRef<HTMLDivElement>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
+  const svgRef = useRef<globalThis.SVGSVGElement>(null)
   const isDraggingRef = useRef(false)
   const isConnectingRef = useRef(false)
   const dragStartRef = useRef({ x: 0, y: 0 })

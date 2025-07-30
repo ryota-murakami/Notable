@@ -8,25 +8,18 @@ export const dynamic = 'force-dynamic'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
-  BarChart3,
   Download,
   Eye,
   EyeOff,
   Grid3X3,
-  Layers,
   Layout,
   Lock,
-  Palette,
   Pin,
   Plus,
   RefreshCw,
-  Save,
-  Settings,
-  Share,
   Target,
   Upload,
   Users,
-  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -34,42 +27,9 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { CanvasView } from '@/components/graph/canvas-view'
@@ -221,7 +181,7 @@ export default function CanvasPage() {
   const canvasConnections: CanvasConnection[] = React.useMemo(() => {
     if (!graphData?.links) return []
 
-    return graphData.links.map((link, index) => ({
+    return graphData.links.map((link) => ({
       id: link.id,
       sourceId: typeof link.source === 'string' ? link.source : link.source.id,
       targetId: typeof link.target === 'string' ? link.target : link.target.id,
@@ -323,7 +283,7 @@ export default function CanvasPage() {
   )
 
   const handleNodeClick = useCallback(
-    (node: CanvasNode, event: React.MouseEvent) => {
+    (_node: CanvasNode, _event: React.MouseEvent) => {
       // Handle node selection logic here
     },
     []
@@ -573,7 +533,7 @@ export default function CanvasPage() {
             onNodesUpdate={handleNodesUpdate}
             onConnectionCreate={handleConnectionCreate}
             onViewportChange={handleViewportChange}
-            onSelectionChange={(nodeIds, connectionIds) => {
+            onSelectionChange={(_nodeIds, _connectionIds) => {
               // Handle selection change
             }}
             onNodeClick={handleNodeClick}
@@ -623,6 +583,13 @@ function LayersPanel({
                   : 'hover:bg-muted'
               )}
               onClick={(e) => onNodeClick(node, e)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onNodeClick(node, e as any)
+                }
+              }}
+              role='button'
+              tabIndex={0}
             >
               <div
                 className='w-3 h-3 rounded border'
@@ -683,8 +650,11 @@ function SettingsPanel({
         </CardHeader>
         <CardContent className='space-y-3'>
           <div className='flex items-center justify-between'>
-            <label className='text-sm'>Show Grid</label>
+            <label htmlFor='show-grid' className='text-sm'>
+              Show Grid
+            </label>
             <Switch
+              id='show-grid'
               checked={settings.showGrid}
               onCheckedChange={(checked) =>
                 onSettingsChange({ showGrid: checked })
@@ -693,8 +663,11 @@ function SettingsPanel({
           </div>
 
           <div className='flex items-center justify-between'>
-            <label className='text-sm'>Snap to Grid</label>
+            <label htmlFor='snap-to-grid' className='text-sm'>
+              Snap to Grid
+            </label>
             <Switch
+              id='snap-to-grid'
               checked={settings.snapToGrid}
               onCheckedChange={(checked) =>
                 onSettingsChange({ snapToGrid: checked })
@@ -703,10 +676,11 @@ function SettingsPanel({
           </div>
 
           <div>
-            <label className='text-sm mb-2 block'>
+            <label htmlFor='grid-size' className='text-sm mb-2 block'>
               Grid Size: {settings.gridSize}px
             </label>
             <Slider
+              id='grid-size'
               value={[settings.gridSize]}
               onValueChange={([value]) => onSettingsChange({ gridSize: value })}
               min={10}
@@ -724,9 +698,12 @@ function SettingsPanel({
         </CardHeader>
         <CardContent className='space-y-3'>
           <div>
-            <label className='text-sm mb-2 block'>Background Color</label>
+            <label htmlFor='bg-color' className='text-sm mb-2 block'>
+              Background Color
+            </label>
             <div className='flex items-center gap-2'>
               <Input
+                id='bg-color'
                 type='color'
                 value={settings.backgroundColor}
                 onChange={(e) =>
@@ -745,8 +722,11 @@ function SettingsPanel({
           </div>
 
           <div className='flex items-center justify-between'>
-            <label className='text-sm'>Show Minimap</label>
+            <label htmlFor='show-minimap' className='text-sm'>
+              Show Minimap
+            </label>
             <Switch
+              id='show-minimap'
               checked={settings.showMinimap}
               onCheckedChange={(checked) =>
                 onSettingsChange({ showMinimap: checked })
@@ -755,8 +735,11 @@ function SettingsPanel({
           </div>
 
           <div className='flex items-center justify-between'>
-            <label className='text-sm'>Show Ruler</label>
+            <label htmlFor='show-ruler' className='text-sm'>
+              Show Ruler
+            </label>
             <Switch
+              id='show-ruler'
               checked={settings.showRuler}
               onCheckedChange={(checked) =>
                 onSettingsChange({ showRuler: checked })
@@ -806,8 +789,11 @@ function SettingsPanel({
 
       {/* Auto-save */}
       <div className='flex items-center justify-between'>
-        <label className='text-sm font-medium'>Auto-save</label>
+        <label htmlFor='auto-save' className='text-sm font-medium'>
+          Auto-save
+        </label>
         <Switch
+          id='auto-save'
           checked={settings.autoSave}
           onCheckedChange={(checked) => onSettingsChange({ autoSave: checked })}
         />

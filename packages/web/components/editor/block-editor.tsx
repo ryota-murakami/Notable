@@ -238,7 +238,9 @@ export function BlockEditor({
         />
       </div>
 
-      <style jsx global>{`
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .block-editor-container {
           position: relative;
           width: 100%;
@@ -384,7 +386,9 @@ export function BlockEditor({
           margin-top: 0.125rem;
           cursor: pointer;
         }
-      `}</style>
+      `,
+        }}
+      />
     </DndProvider>
   )
 }

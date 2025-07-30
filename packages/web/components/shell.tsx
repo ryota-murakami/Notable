@@ -185,7 +185,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   }, [selectedNoteId])
 
   const handleCreateTag = useCallback(async () => {
-    const tagName = prompt('Enter tag name:')
+    const tagName = window.prompt('Enter tag name:')
     if (!tagName || !tagName.trim()) return
 
     try {
