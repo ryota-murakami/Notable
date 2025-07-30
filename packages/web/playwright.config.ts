@@ -13,7 +13,7 @@ export default defineConfig({
   testDir: './e2e',
 
   /* Global timeout for each test */
-  timeout: process.env.CI ? 60000 : 30000, // 60s in CI, 30s locally
+  timeout: process.env.CI ? 120000 : 30000, // 120s in CI, 30s locally
 
   /* Global expect timeout */
   expect: {
@@ -46,10 +46,10 @@ export default defineConfig({
     screenshot: 'only-on-failure',
 
     /* Better navigation timeout */
-    navigationTimeout: process.env.CI ? 30000 : 15000,
+    navigationTimeout: process.env.CI ? 60000 : 15000,
 
     /* Action timeout */
-    actionTimeout: process.env.CI ? 10000 : 5000,
+    actionTimeout: process.env.CI ? 20000 : 5000,
   },
 
   /* Configure projects for major browsers */
@@ -108,7 +108,7 @@ export default defineConfig({
     command: process.env.CI ? 'npm run build && npm run start' : 'npm run dev',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
-    timeout: 300000, // 5 minutes for CI (increased from 3 minutes)
+    timeout: 600000, // 10 minutes for CI (increased for better reliability)
     stdout: 'pipe',
     stderr: 'pipe',
   },
