@@ -286,7 +286,7 @@ export class TemplateEngine {
   private static executeHelper(
     helperName: string,
     args: any[],
-    context: TemplateContext
+    _context: TemplateContext
   ): string {
     return match(helperName)
       .with('capitalize', () => {
