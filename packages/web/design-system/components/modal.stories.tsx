@@ -1,14 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import {
+  ConfirmModal,
   Modal,
+  ModalBody,
+  ModalDescription,
+  ModalFooter,
   ModalHeader,
   ModalTitle,
-  ModalDescription,
-  ModalBody,
-  ModalFooter,
-  ConfirmModal,
 } from './modal'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 import { Button } from './button'
 import { Input } from './input'
 import { Textarea } from './textarea'
@@ -56,6 +57,11 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -102,6 +108,11 @@ export const Default: Story = {
 }
 
 export const Sizes: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [size, setSize] = useState<'sm' | 'md' | 'lg' | 'xl' | 'full'>('md')
     const [open, setOpen] = useState(false)
@@ -173,6 +184,11 @@ export const Sizes: Story = {
 }
 
 export const Positions: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [position, setPosition] = useState<'center' | 'top' | 'bottom'>(
       'center'
@@ -230,6 +246,11 @@ export const Positions: Story = {
 }
 
 export const Animations: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [animation, setAnimation] = useState<
       'fade' | 'slide' | 'scale' | 'drawer'
@@ -296,6 +317,11 @@ export const Animations: Story = {
 }
 
 export const FormModal: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -342,6 +368,11 @@ export const FormModal: Story = {
 }
 
 export const ScrollableContent: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -375,6 +406,11 @@ export const ScrollableContent: Story = {
 }
 
 export const NoCloseButton: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -405,6 +441,11 @@ export const NoCloseButton: Story = {
 }
 
 export const NoOverlayClick: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -435,6 +476,11 @@ export const NoOverlayClick: Story = {
 }
 
 export const NoEscapeKey: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -458,6 +504,11 @@ export const NoEscapeKey: Story = {
 }
 
 export const NoBlur: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -481,6 +532,11 @@ export const NoBlur: Story = {
 }
 
 export const ConfirmationModal: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -491,7 +547,7 @@ export const ConfirmationModal: Story = {
           open={open}
           onClose={() => setOpen(false)}
           onConfirm={() => {
-            console.log('Item deleted')
+            console.info('Item deleted')
             setOpen(false)
           }}
           title='Delete Item'
@@ -506,6 +562,11 @@ export const ConfirmationModal: Story = {
 }
 
 export const ConfirmationModalLoading: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -537,6 +598,11 @@ export const ConfirmationModalLoading: Story = {
 }
 
 export const NestedModals: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [firstOpen, setFirstOpen] = useState(false)
     const [secondOpen, setSecondOpen] = useState(false)
@@ -577,6 +643,11 @@ export const NestedModals: Story = {
 }
 
 export const ImageModal: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 
@@ -598,6 +669,11 @@ export const ImageModal: Story = {
 }
 
 export const DrawerExample: Story = {
+  args: {
+    open: false,
+    onClose: () => {},
+    children: null,
+  },
   render: () => {
     const [open, setOpen] = useState(false)
 

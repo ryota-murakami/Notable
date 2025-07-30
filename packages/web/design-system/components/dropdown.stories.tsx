@@ -1,20 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import {
-  Dropdown,
-  SearchableDropdown,
-  MultiSelectDropdown,
   CreatableDropdown,
+  Dropdown,
+  MultiSelectDropdown,
+  SearchableDropdown,
 } from './dropdown'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 import {
-  Home,
-  User,
-  Settings,
-  FileText,
   Calendar,
+  FileText,
+  Home,
   Mail,
-  Phone,
   MapPin,
+  Phone,
+  Settings,
+  User,
 } from 'lucide-react'
 
 const meta = {
@@ -210,7 +211,7 @@ export const Creatable: Story = {
     placeholder: 'Select or create...',
     creatable: true,
     searchable: true,
-    onCreateOption: (value) => console.log('Creating:', value),
+    onCreateOption: (value) => console.info('Creating:', value),
   },
 }
 
@@ -224,53 +225,57 @@ export const WithLabel: Story = {
 }
 
 export const Sizes: Story = {
-  render: () => (
+  args: {
+    options: simpleOptions,
+  },
+  render: (args) => (
     <div className='space-y-4'>
-      <Dropdown options={simpleOptions} size='sm' placeholder='Small' />
-      <Dropdown options={simpleOptions} size='md' placeholder='Medium' />
-      <Dropdown options={simpleOptions} size='lg' placeholder='Large' />
+      <Dropdown {...args} size='sm' placeholder='Small' />
+      <Dropdown {...args} size='md' placeholder='Medium' />
+      <Dropdown {...args} size='lg' placeholder='Large' />
     </div>
   ),
 }
 
 export const Variants: Story = {
-  render: () => (
+  args: {
+    options: simpleOptions,
+  },
+  render: (args) => (
     <div className='space-y-4'>
-      <Dropdown
-        options={simpleOptions}
-        variant='default'
-        placeholder='Default'
-      />
-      <Dropdown options={simpleOptions} variant='filled' placeholder='Filled' />
-      <Dropdown
-        options={simpleOptions}
-        variant='outlined'
-        placeholder='Outlined'
-      />
+      <Dropdown {...args} variant='default' placeholder='Default' />
+      <Dropdown {...args} variant='filled' placeholder='Filled' />
+      <Dropdown {...args} variant='outlined' placeholder='Outlined' />
     </div>
   ),
 }
 
 export const States: Story = {
-  render: () => (
+  args: {
+    options: simpleOptions,
+  },
+  render: (args) => (
     <div className='space-y-4'>
-      <Dropdown options={simpleOptions} placeholder='Normal' />
-      <Dropdown options={simpleOptions} placeholder='Disabled' disabled />
-      <Dropdown options={simpleOptions} placeholder='Loading' loading />
+      <Dropdown {...args} placeholder='Normal' />
+      <Dropdown {...args} placeholder='Disabled' disabled />
+      <Dropdown {...args} placeholder='Loading' loading />
       <Dropdown
-        options={simpleOptions}
+        {...args}
         placeholder='With Error'
         error='Please select an option'
       />
-      <Dropdown options={simpleOptions} placeholder='Success' success />
+      <Dropdown {...args} placeholder='Success' success />
     </div>
   ),
 }
 
 export const SearchableDropdownExample: Story = {
-  render: () => (
+  args: {
+    options: detailedOptions,
+  },
+  render: (args) => (
     <SearchableDropdown
-      options={detailedOptions}
+      {...args}
       placeholder='Search people...'
       label='Select Person'
     />
@@ -278,9 +283,12 @@ export const SearchableDropdownExample: Story = {
 }
 
 export const MultiSelectDropdownExample: Story = {
-  render: () => (
+  args: {
+    options: iconOptions,
+  },
+  render: (args) => (
     <MultiSelectDropdown
-      options={iconOptions}
+      {...args}
       placeholder='Select multiple items...'
       label='Select Items'
     />
@@ -288,12 +296,15 @@ export const MultiSelectDropdownExample: Story = {
 }
 
 export const CreatableDropdownExample: Story = {
-  render: () => (
+  args: {
+    options: simpleOptions,
+  },
+  render: (args) => (
     <CreatableDropdown
-      options={simpleOptions}
+      {...args}
       placeholder='Select or create fruit...'
       label='Fruit Selection'
-      onCreateOption={(value) => console.log('Creating:', value)}
+      onCreateOption={(value) => console.info('Creating:', value)}
     />
   ),
 }

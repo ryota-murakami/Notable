@@ -177,7 +177,7 @@ export const MaxLength: Story = {
 
     // Should only accept 100 characters
     await expect(textarea).toHaveValue('a'.repeat(100))
-    await expect(textarea.value.length).toBe(100)
+    await expect((textarea as HTMLTextAreaElement).value.length).toBe(100)
   },
 }
 
@@ -201,6 +201,7 @@ export const ReadOnly: Story = {
 }
 
 export const WithLabel: Story = {
+  args: {},
   render: () => (
     <div className='space-y-2'>
       <label htmlFor='message' className='text-sm font-medium'>
@@ -231,6 +232,7 @@ export const WithLabel: Story = {
 }
 
 export const WithHelperText: Story = {
+  args: {},
   render: () => (
     <div className='space-y-2'>
       <label htmlFor='description' className='text-sm font-medium'>
@@ -265,6 +267,7 @@ export const WithHelperText: Story = {
 }
 
 export const WithCharacterCount: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState('')
     const maxLength = 200
@@ -309,12 +312,13 @@ export const WithCharacterCount: Story = {
 
     // Test max length enforcement
     await userEvent.type(textarea, 'bcdefghijk')
-    await expect(textarea).toHaveValue(longText + 'bcdef')
+    await expect(textarea).toHaveValue(`${longText}bcdef`)
     await expect(canvas.getByText('200/200')).toBeVisible()
   },
 }
 
 export const FullWidthForm: Story = {
+  args: {},
   render: () => (
     <form className='w-full max-w-2xl space-y-4'>
       <div className='space-y-2'>

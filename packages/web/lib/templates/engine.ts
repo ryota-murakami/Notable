@@ -284,7 +284,7 @@ export class TemplateEngine {
   private static executeHelper(
     helperName: string,
     args: any[],
-    context: TemplateContext
+    _context: TemplateContext
   ): string {
     switch (helperName) {
       case 'capitalize':
@@ -303,10 +303,11 @@ export class TemplateEngine {
       case 'lowercase':
         return String(args[0] || '').toLowerCase()
 
-      case 'truncate':
+      case 'truncate': {
         const text = String(args[0] || '')
         const length = parseInt(args[1]) || 100
         return text.length > length ? `${text.substring(0, length)}...` : text
+      }
 
       case 'repeat':
         return String(args[0] || '').repeat(parseInt(args[1]) || 1)
@@ -317,11 +318,12 @@ export class TemplateEngine {
           args[2] || ''
         )
 
-      case 'dateAdd':
+      case 'dateAdd': {
         const date = new Date(args[0])
         const days = parseInt(args[1]) || 0
         date.setDate(date.getDate() + days)
         return this.formatDate(date, 'YYYY-MM-DD')
+      }
 
       case 'dateFormat':
         return this.formatDate(new Date(args[0]), args[1] || 'YYYY-MM-DD')
@@ -332,7 +334,7 @@ export class TemplateEngine {
       case 'default':
         return args[0] || args[1] || ''
 
-      case 'math':
+      case 'math': {
         const operation = args[0]
         const a = parseFloat(args[1]) || 0
         const b = parseFloat(args[2]) || 0
@@ -348,6 +350,7 @@ export class TemplateEngine {
           default:
             return String(a)
         }
+      }
 
       default:
         console.warn(`Unknown template helper: ${helperName}`)

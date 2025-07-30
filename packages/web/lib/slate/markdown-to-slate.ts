@@ -5,7 +5,7 @@
 
 import type { Descendant } from 'slate'
 
-interface SlateElement {
+interface _SlateElement {
   type:
     | 'paragraph'
     | 'heading-one'
@@ -15,7 +15,7 @@ interface SlateElement {
     | 'bulleted-list'
     | 'numbered-list'
     | 'list-item'
-  children: Array<SlateText | SlateElement>
+  children: Array<SlateText | _SlateElement>
 }
 
 interface SlateText {
@@ -45,7 +45,7 @@ export function markdownToSlate(markdown: string): Descendant[] {
     if (!trimmed) {
       if (currentListItems.length > 0) {
         result.push({
-          type: currentListType!,
+          type: currentListType || 'bulleted-list',
           children: currentListItems,
         })
         currentListItems = []
@@ -154,7 +154,7 @@ export function markdownToSlate(markdown: string): Descendant[] {
   function flushList() {
     if (currentListItems.length > 0) {
       result.push({
-        type: currentListType!,
+        type: currentListType || 'bulleted-list',
         children: currentListItems as any,
       })
       currentListItems = []
@@ -176,7 +176,7 @@ function parseInlineStyles(text: string): SlateText[] {
 
   const result: SlateText[] = []
   const currentText = text
-  const currentIndex = 0
+  const _currentIndex = 0
 
   // Simple regex patterns for markdown formatting
   const patterns = [

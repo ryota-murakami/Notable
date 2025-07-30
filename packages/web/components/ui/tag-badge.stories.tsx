@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { TagBadge, TagList } from './tag-badge'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 import type { EnhancedTag } from '@/types/tags'
+import React from 'react'
 
 const meta = {
   title: 'UI/Components/TagBadge',
@@ -41,9 +42,7 @@ const mockTag: EnhancedTag = {
   user_id: 'user-1',
   parent_id: null,
   color: '#3b82f6',
-  description: 'JavaScript programming language',
   created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z',
   usage_count: 42,
 }
 
@@ -54,9 +53,7 @@ const mockTags: EnhancedTag[] = [
     user_id: 'user-1',
     parent_id: null,
     color: '#3b82f6',
-    description: 'JavaScript programming language',
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
     usage_count: 42,
   },
   {
@@ -65,9 +62,7 @@ const mockTags: EnhancedTag[] = [
     user_id: 'user-1',
     parent_id: null,
     color: '#06b6d4',
-    description: 'React library',
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
     usage_count: 35,
   },
   {
@@ -76,9 +71,7 @@ const mockTags: EnhancedTag[] = [
     user_id: 'user-1',
     parent_id: null,
     color: '#8b5cf6',
-    description: 'TypeScript language',
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
     usage_count: 28,
   },
   {
@@ -87,9 +80,7 @@ const mockTags: EnhancedTag[] = [
     user_id: 'user-1',
     parent_id: null,
     color: '#10b981',
-    description: 'Next.js framework',
     created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
     usage_count: 15,
   },
 ]
@@ -108,22 +99,28 @@ export const Default: Story = {
 }
 
 export const Sizes: Story = {
-  render: () => (
+  args: {
+    tag: mockTag,
+  },
+  render: (args) => (
     <div className='flex items-center gap-4'>
-      <TagBadge tag={mockTag} size='sm' />
-      <TagBadge tag={mockTag} size='md' />
-      <TagBadge tag={mockTag} size='lg' />
+      <TagBadge {...args} size='sm' />
+      <TagBadge {...args} size='md' />
+      <TagBadge {...args} size='lg' />
     </div>
   ),
 }
 
 export const Variants: Story = {
-  render: () => (
+  args: {
+    tag: mockTag,
+  },
+  render: (args) => (
     <div className='flex items-center gap-4'>
-      <TagBadge tag={mockTag} variant='default' />
-      <TagBadge tag={mockTag} variant='secondary' />
-      <TagBadge tag={mockTag} variant='outline' />
-      <TagBadge tag={mockTag} variant='destructive' />
+      <TagBadge {...args} variant='default' />
+      <TagBadge {...args} variant='secondary' />
+      <TagBadge {...args} variant='outline' />
+      <TagBadge {...args} variant='destructive' />
     </div>
   ),
 }
@@ -132,7 +129,7 @@ export const Clickable: Story = {
   args: {
     tag: mockTag,
     clickable: true,
-    onClick: (tag) => console.log('Clicked tag:', tag.name),
+    onClick: (tag) => console.info('Clicked tag:', tag.name),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -147,7 +144,7 @@ export const Removable: Story = {
   args: {
     tag: mockTag,
     removable: true,
-    onRemove: (tag) => console.log('Removed tag:', tag.name),
+    onRemove: (tag) => console.info('Removed tag:', tag.name),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -175,6 +172,9 @@ export const WithoutUsageCount: Story = {
 }
 
 export const CustomColors: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => (
     <div className='flex items-center gap-2 flex-wrap'>
       <TagBadge tag={{ ...mockTag, color: '#ef4444', name: 'urgent' }} />
@@ -188,30 +188,42 @@ export const CustomColors: Story = {
 }
 
 export const TagListDefault: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => <TagList tags={mockTags} />,
 }
 
 export const TagListClickable: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => (
     <TagList
       tags={mockTags}
       clickable
-      onTagClick={(tag) => console.log('Clicked:', tag.name)}
+      onTagClick={(tag) => console.info('Clicked:', tag.name)}
     />
   ),
 }
 
 export const TagListRemovable: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => (
     <TagList
       tags={mockTags}
       removable
-      onTagRemove={(tag) => console.log('Removed:', tag.name)}
+      onTagRemove={(tag) => console.info('Removed:', tag.name)}
     />
   ),
 }
 
 export const TagListSizes: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => (
     <div className='space-y-4'>
       <div>
@@ -231,6 +243,9 @@ export const TagListSizes: Story = {
 }
 
 export const TagListMaxTags: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => (
     <div className='space-y-4'>
       <div>
@@ -246,6 +261,9 @@ export const TagListMaxTags: Story = {
 }
 
 export const TagListVertical: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => (
     <div className='w-48'>
       <TagList tags={mockTags} direction='vertical' />
@@ -254,10 +272,16 @@ export const TagListVertical: Story = {
 }
 
 export const TagListEmpty: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => <TagList tags={[]} />,
 }
 
 export const InteractiveExample: Story = {
+  args: {
+    tag: mockTag,
+  },
   render: () => {
     const [tags, setTags] = React.useState(mockTags)
 
@@ -273,7 +297,7 @@ export const InteractiveExample: Story = {
           removable
           clickable
           onTagRemove={handleRemove}
-          onTagClick={(tag) => console.log('Clicked:', tag.name)}
+          onTagClick={(tag) => console.info('Clicked:', tag.name)}
         />
         {tags.length === 0 && (
           <p className='text-sm text-muted-foreground'>All tags removed!</p>

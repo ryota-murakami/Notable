@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import * as React from 'react'
 import { Checkbox } from '../../components/ui/checkbox'
 import { Label } from '../../components/ui/label'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Components/Checkbox',
@@ -108,6 +108,7 @@ export const DisabledChecked: Story = {
 
 // With label
 export const WithLabel: Story = {
+  args: {},
   render: (args) => (
     <div className='flex items-center space-x-2'>
       <Checkbox id='terms' {...args} />
@@ -142,6 +143,7 @@ export const WithLabel: Story = {
 
 // Multiple checkboxes
 export const MultipleCheckboxes: Story = {
+  args: {},
   render: () => (
     <div className='space-y-4'>
       <div className='flex items-center space-x-2'>
@@ -200,6 +202,7 @@ export const MultipleCheckboxes: Story = {
 
 // Form example
 export const FormExample: Story = {
+  args: {},
   render: () => (
     <form className='space-y-6 w-80'>
       <div className='space-y-4'>
@@ -273,6 +276,7 @@ export const FormExample: Story = {
 
 // Indeterminate state (requires custom implementation)
 export const IndeterminateState: Story = {
+  args: {},
   render: () => {
     const [checked, setChecked] = React.useState<boolean | 'indeterminate'>(
       'indeterminate'
@@ -340,6 +344,7 @@ export const IndeterminateState: Story = {
 
 // Interactive example
 export const Interactive: Story = {
+  args: {},
   render: () => {
     const [checkedItems, setCheckedItems] = React.useState({
       item1: false,

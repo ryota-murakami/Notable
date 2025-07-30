@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import {
-  type NotesQueryParams,
-  type NotesResponse,
-  notesService,
-} from '@/lib/services/notes'
+import { type NotesQueryParams, notesService } from '@/lib/services/notes'
 import { type Database } from '@/types/database'
 import { toast } from './use-toast'
 import { isTest } from '@/lib/utils/environment'
@@ -52,7 +48,7 @@ export function useNotes(options: UseNotesOptions = {}) {
     } finally {
       setLoading(false)
     }
-  }, [enabled, JSON.stringify(queryParams)])
+  }, [enabled, queryParams])
 
   useEffect(() => {
     fetchNotes()
@@ -233,8 +229,9 @@ export function useNote(id: string, enabled = true) {
 
       // In test environment, update mock note
       if (isTest() && id.startsWith('mock-note-')) {
+        if (!note) return
         const updatedNote: Note = {
-          ...note!,
+          ...note,
           ...data,
           updated_at: new Date().toISOString(),
         }

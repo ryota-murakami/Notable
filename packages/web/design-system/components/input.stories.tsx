@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import React from 'react'
 import { Input, PasswordInput, SearchInput } from './input'
 import { Calendar, CreditCard, Mail, Phone, User } from 'lucide-react'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Components/Input',
@@ -150,6 +150,7 @@ export const FloatingLabel: Story = {
 }
 
 export const Variants: Story = {
+  args: {},
   render: () => (
     <div
       style={{
@@ -168,6 +169,7 @@ export const Variants: Story = {
 }
 
 export const Sizes: Story = {
+  args: {},
   render: () => (
     <div
       style={{
@@ -185,6 +187,7 @@ export const Sizes: Story = {
 }
 
 export const States: Story = {
+  args: {},
   render: () => (
     <div
       style={{
@@ -221,6 +224,7 @@ export const WithHelperText: Story = {
 }
 
 export const WithValidation: Story = {
+  args: {},
   render: () => {
     const [email, setEmail] = React.useState('')
 
@@ -243,6 +247,7 @@ export const WithValidation: Story = {
 }
 
 export const WithCharacterCount: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState('')
 
@@ -263,6 +268,7 @@ export const WithCharacterCount: Story = {
 }
 
 export const Clearable: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState('Clear me!')
 
@@ -281,6 +287,7 @@ export const Clearable: Story = {
 }
 
 export const WithSuggestions: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState('')
     const countries = [
@@ -312,6 +319,7 @@ export const WithSuggestions: Story = {
 }
 
 export const DebouncedInput: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState('')
     const [debouncedValue, setDebouncedValue] = React.useState('')
@@ -335,6 +343,7 @@ export const DebouncedInput: Story = {
 }
 
 export const SearchInputExample: Story = {
+  args: {},
   render: () => {
     const [searchResults, setSearchResults] = React.useState<string[]>([])
 
@@ -377,6 +386,7 @@ export const SearchInputExample: Story = {
 }
 
 export const PasswordInputExample: Story = {
+  args: {},
   render: () => (
     <div style={{ width: '400px' }}>
       <PasswordInput
@@ -389,6 +399,7 @@ export const PasswordInputExample: Story = {
 }
 
 export const FormExample: Story = {
+  args: {},
   render: () => {
     const [formData, setFormData] = React.useState({
       name: '',
@@ -469,6 +480,7 @@ export const FormExample: Story = {
 }
 
 export const CustomValidation: Story = {
+  args: {},
   render: () => {
     const [username, setUsername] = React.useState('')
 
@@ -507,6 +519,7 @@ export const CustomValidation: Story = {
 }
 
 export const CompleteFeatures: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState('')
     const [loading, setLoading] = React.useState(false)

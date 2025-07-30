@@ -107,7 +107,7 @@ export function useTemplates(
   })
 
   const searchTemplates = useCallback(
-    (query: string) => {
+    (_query: string) => {
       // This would trigger a refetch with new search params
       // In a real implementation, you might want to use a separate state for search
       refetch()
@@ -116,7 +116,7 @@ export function useTemplates(
   )
 
   const filterByCategory = useCallback(
-    (categoryId: string) => {
+    (_categoryId: string) => {
       // Similar to search, this would trigger a refetch
       refetch()
     },
@@ -124,7 +124,7 @@ export function useTemplates(
   )
 
   const sortTemplates = useCallback(
-    (newSortBy: UseTemplateOptions['sortBy']) => {
+    (_newSortBy: UseTemplateOptions['sortBy']) => {
       // This would trigger a refetch with new sort params
       refetch()
     },

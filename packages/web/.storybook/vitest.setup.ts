@@ -1,4 +1,4 @@
-import { beforeAll } from 'vitest'
+import { beforeAll, vi } from 'vitest'
 import { setProjectAnnotations } from '@storybook/react'
 import * as projectAnnotations from './preview'
 

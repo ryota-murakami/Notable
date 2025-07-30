@@ -1,16 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import { Toggle } from '@/components/ui/toggle'
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Bold,
   Italic,
-  Underline,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Moon,
-  Sun,
   Mic,
   MicOff,
+  Moon,
+  Sun,
+  Underline,
   Volume2,
   VolumeX,
 } from 'lucide-react'
@@ -68,6 +69,7 @@ export const WithIcon: Story = {
 }
 
 export const Sizes: Story = {
+  args: {},
   render: () => (
     <div className='flex items-center gap-4'>
       <Toggle size='sm'>
@@ -84,6 +86,7 @@ export const Sizes: Story = {
 }
 
 export const Variants: Story = {
+  args: {},
   render: () => (
     <div className='flex gap-4'>
       <Toggle variant='default'>Default</Toggle>
@@ -93,6 +96,7 @@ export const Variants: Story = {
 }
 
 export const Disabled: Story = {
+  args: {},
   render: () => (
     <div className='flex gap-4'>
       <Toggle disabled>Disabled</Toggle>
@@ -104,6 +108,7 @@ export const Disabled: Story = {
 }
 
 export const TextFormatting: Story = {
+  args: {},
   render: () => {
     const [bold, setBold] = React.useState(false)
     const [italic, setItalic] = React.useState(false)
@@ -138,6 +143,7 @@ export const TextFormatting: Story = {
 }
 
 export const TextAlignment: Story = {
+  args: {},
   render: () => {
     const [alignment, setAlignment] = React.useState('left')
 
@@ -170,6 +176,7 @@ export const TextAlignment: Story = {
 }
 
 export const ThemeToggle: Story = {
+  args: {},
   render: () => {
     const [isDark, setIsDark] = React.useState(false)
 
@@ -186,6 +193,7 @@ export const ThemeToggle: Story = {
 }
 
 export const MicrophoneToggle: Story = {
+  args: {},
   render: () => {
     const [isMuted, setIsMuted] = React.useState(false)
 
@@ -210,6 +218,7 @@ export const MicrophoneToggle: Story = {
 }
 
 export const SoundToggle: Story = {
+  args: {},
   render: () => {
     const [isMuted, setIsMuted] = React.useState(false)
 
@@ -237,6 +246,7 @@ export const SoundToggle: Story = {
 }
 
 export const WithTooltip: Story = {
+  args: {},
   render: () => (
     <div className='flex gap-4'>
       <div className='relative group'>
@@ -252,6 +262,7 @@ export const WithTooltip: Story = {
 }
 
 export const ComplexExample: Story = {
+  args: {},
   render: () => {
     const [settings, setSettings] = React.useState({
       notifications: true,

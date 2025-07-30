@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import { Button } from './button'
 import { ChevronRight, Download, Heart, Search, Trash2 } from 'lucide-react'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Components/Button',
@@ -207,6 +208,7 @@ export const FullWidth: Story = {
 }
 
 export const Sizes: Story = {
+  args: {},
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <Button size='xs'>Extra Small</Button>
@@ -219,6 +221,7 @@ export const Sizes: Story = {
 }
 
 export const Variants: Story = {
+  args: {},
   render: () => (
     <div
       style={{
@@ -271,6 +274,7 @@ export const NoRipple: Story = {
 }
 
 export const ButtonGroup: Story = {
+  args: {},
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem' }}>
       <Button variant='secondary' icon={<Download className='h-4 w-4' />}>
@@ -287,6 +291,7 @@ export const ButtonGroup: Story = {
 }
 
 export const LoadingStates: Story = {
+  args: {},
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
       <Button loading>Default Loading</Button>

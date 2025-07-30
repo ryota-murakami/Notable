@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Card,
@@ -39,6 +40,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+  args: {},
   render: () => (
     <Tabs defaultValue='tab1' className='w-[400px]'>
       <TabsList>
@@ -60,6 +62,7 @@ export const Default: Story = {
 }
 
 export const AccountSettings: Story = {
+  args: {},
   render: () => (
     <Tabs defaultValue='account' className='w-[600px]'>
       <TabsList className='grid w-full grid-cols-2'>
@@ -115,6 +118,7 @@ export const AccountSettings: Story = {
 }
 
 export const WithIcons: Story = {
+  args: {},
   render: () => (
     <Tabs defaultValue='overview' className='w-[600px]'>
       <TabsList>
@@ -207,6 +211,7 @@ export const WithIcons: Story = {
 }
 
 export const Disabled: Story = {
+  args: {},
   render: () => (
     <Tabs defaultValue='tab1' className='w-[400px]'>
       <TabsList>
@@ -230,6 +235,7 @@ export const Disabled: Story = {
 }
 
 export const Controlled: Story = {
+  args: {},
   render: () => {
     const [activeTab, setActiveTab] = React.useState('tab1')
 
@@ -284,6 +290,7 @@ export const Controlled: Story = {
 }
 
 export const FullWidth: Story = {
+  args: {},
   render: () => (
     <Tabs defaultValue='overview' className='w-full'>
       <TabsList className='grid w-full grid-cols-4'>
@@ -337,6 +344,7 @@ export const FullWidth: Story = {
 }
 
 export const NestedTabs: Story = {
+  args: {},
   render: () => (
     <Tabs defaultValue='settings' className='w-[600px]'>
       <TabsList>
@@ -379,6 +387,7 @@ export const NestedTabs: Story = {
 }
 
 export const WithBadges: Story = {
+  args: {},
   render: () => (
     <Tabs defaultValue='inbox' className='w-[500px]'>
       <TabsList>

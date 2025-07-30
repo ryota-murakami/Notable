@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import {
   Popover,
   PopoverContent,
@@ -8,12 +9,12 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import {
-  Settings,
-  HelpCircle,
-  MoreVertical,
-  User,
   Calendar,
   ChevronRight,
+  HelpCircle,
+  MoreVertical,
+  Settings,
+  User,
 } from 'lucide-react'
 
 const meta = {
@@ -29,6 +30,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+  args: {},
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -47,6 +49,7 @@ export const Default: Story = {
 }
 
 export const FormInPopover: Story = {
+  args: {},
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -104,6 +107,7 @@ export const FormInPopover: Story = {
 }
 
 export const UserProfile: Story = {
+  args: {},
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -142,6 +146,7 @@ export const UserProfile: Story = {
 }
 
 export const HelpTooltip: Story = {
+  args: {},
   render: () => (
     <div className='flex items-center gap-2'>
       <Label>API Key</Label>
@@ -169,6 +174,7 @@ export const HelpTooltip: Story = {
 }
 
 export const OptionsMenu: Story = {
+  args: {},
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -198,6 +204,7 @@ export const OptionsMenu: Story = {
 }
 
 export const CalendarPopover: Story = {
+  args: {},
   render: () => {
     const [date, setDate] = React.useState<Date | null>(null)
 
@@ -241,6 +248,7 @@ export const CalendarPopover: Story = {
 }
 
 export const NestedPopover: Story = {
+  args: {},
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -286,6 +294,7 @@ export const NestedPopover: Story = {
 }
 
 export const NotificationPopover: Story = {
+  args: {},
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -359,6 +368,7 @@ export const NotificationPopover: Story = {
 }
 
 export const CustomStyling: Story = {
+  args: {},
   render: () => (
     <div className='flex gap-4'>
       <Popover>

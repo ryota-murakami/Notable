@@ -54,11 +54,11 @@ export async function createClient() {
   const devBypassUser = await getDevAuthBypassUser()
   if (devBypassUser) {
     // Override the auth.getUser method to return mock user
-    const originalGetUser = client.auth.getUser.bind(client.auth)
-    client.auth.getUser = async () => ({
-      data: { user: devBypassUser },
-      error: null,
-    })
+    client.auth.getUser = () =>
+      Promise.resolve({
+        data: { user: devBypassUser },
+        error: null,
+      })
   }
 
   return client

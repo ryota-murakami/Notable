@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import React from 'react'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 
@@ -21,6 +22,9 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <RadioGroup defaultValue='option-one'>
       <div className='flex items-center space-x-2'>
@@ -40,6 +44,9 @@ export const Default: Story = {
 }
 
 export const NotificationPreferences: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-4'>
       <div className='space-y-2'>
@@ -71,6 +78,9 @@ export const NotificationPreferences: Story = {
 }
 
 export const PaymentMethod: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-4'>
       <h3 className='text-lg font-medium'>Payment Method</h3>
@@ -108,6 +118,9 @@ export const PaymentMethod: Story = {
 }
 
 export const Controlled: Story = {
+  args: {
+    children: null,
+  },
   render: () => {
     const [value, setValue] = React.useState('option-one')
 
@@ -140,6 +153,9 @@ export const Controlled: Story = {
 }
 
 export const DisabledOptions: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <RadioGroup defaultValue='active'>
       <div className='flex items-center space-x-2'>
@@ -163,6 +179,9 @@ export const DisabledOptions: Story = {
 }
 
 export const HorizontalLayout: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <RadioGroup defaultValue='left' className='flex flex-row gap-4'>
       <div className='flex items-center space-x-2'>
@@ -182,6 +201,9 @@ export const HorizontalLayout: Story = {
 }
 
 export const ThemeSelector: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-4'>
       <h3 className='text-lg font-medium'>Choose Theme</h3>
@@ -271,6 +293,9 @@ export const ThemeSelector: Story = {
 }
 
 export const SurveyQuestion: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <form className='space-y-6'>
       <div className='space-y-4'>
@@ -311,6 +336,9 @@ export const SurveyQuestion: Story = {
 }
 
 export const FormValidation: Story = {
+  args: {
+    children: null,
+  },
   render: () => {
     const [value, setValue] = React.useState('')
     const [error, setError] = React.useState(false)

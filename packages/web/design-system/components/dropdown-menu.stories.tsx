@@ -2,23 +2,26 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import * as React from 'react'
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuGroup,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuShortcut,
+  DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu'
 import { Button } from '../../components/ui/button'
 import {
+  ChevronDown,
+  Clipboard,
   Cloud,
+  Copy,
   CreditCard,
   Github,
   Keyboard,
@@ -28,14 +31,11 @@ import {
   MessageSquare,
   Plus,
   PlusCircle,
+  Scissors,
   Settings,
   User,
   UserPlus,
   Users,
-  ChevronDown,
-  Copy,
-  Scissors,
-  Clipboard,
 } from 'lucide-react'
 
 const meta = {
@@ -52,6 +52,7 @@ type Story = StoryObj<typeof meta>
 
 // Basic dropdown menu
 export const Default: Story = {
+  args: {},
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -69,6 +70,7 @@ export const Default: Story = {
 
 // With icons and shortcuts
 export const WithIconsAndShortcuts: Story = {
+  args: {},
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -161,6 +163,7 @@ export const WithIconsAndShortcuts: Story = {
 
 // With checkable items
 export const WithCheckableItems: Story = {
+  args: {},
   render: () => {
     const [showStatusBar, setShowStatusBar] = React.useState(true)
     const [showActivityBar, setShowActivityBar] = React.useState(false)
@@ -200,6 +203,7 @@ export const WithCheckableItems: Story = {
 
 // With radio items
 export const WithRadioItems: Story = {
+  args: {},
   render: () => {
     const [position, setPosition] = React.useState('bottom')
 
@@ -224,6 +228,7 @@ export const WithRadioItems: Story = {
 
 // Context menu style
 export const ContextMenuStyle: Story = {
+  args: {},
   render: () => (
     <div className='h-[150px] w-[300px] rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center'>
       <DropdownMenu>
@@ -255,6 +260,7 @@ export const ContextMenuStyle: Story = {
 
 // Complex nested menu
 export const ComplexNested: Story = {
+  args: {},
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -311,6 +317,7 @@ export const ComplexNested: Story = {
 
 // Disabled items
 export const DisabledItems: Story = {
+  args: {},
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -332,6 +339,7 @@ export const DisabledItems: Story = {
 
 // Custom trigger
 export const CustomTrigger: Story = {
+  args: {},
   render: () => (
     <div className='flex gap-4'>
       <DropdownMenu>
@@ -365,6 +373,7 @@ export const CustomTrigger: Story = {
 
 // Interactive example with state
 export const InteractiveExample: Story = {
+  args: {},
   render: () => {
     const [fontSize, setFontSize] = React.useState('medium')
     const [theme, setTheme] = React.useState('system')

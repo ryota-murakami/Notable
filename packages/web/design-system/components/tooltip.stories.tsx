@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
   Tooltip,
   TooltipContent,
@@ -8,13 +8,13 @@ import {
 import { Button } from '@/components/ui/button'
 import {
   Bold,
-  Italic,
-  Underline,
   Copy,
-  Settings,
   HelpCircle,
   Info,
+  Italic,
   Plus,
+  Settings,
+  Underline,
 } from 'lucide-react'
 
 const meta = {

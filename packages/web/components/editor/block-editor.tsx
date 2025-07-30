@@ -1,11 +1,10 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Plate, PlateContent, usePlateEditor } from 'platejs/react'
+import { useCallback, useRef, useState } from 'react'
+import { createPlatePlugin, Plate, usePlateEditor } from 'platejs/react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { createPlatePlugin } from 'platejs/react'
 
 import { BasicBlocksKit } from './plugins/basic-blocks-kit'
 import { BasicMarksKit } from './plugins/basic-marks-kit'
@@ -66,7 +65,7 @@ export function BlockEditor({
   readOnly = false,
   autoFocus = false,
 }: BlockEditorProps) {
-  const editorRef = useRef<HTMLDivElement>(null)
+  const _editorRef = useRef<HTMLDivElement>(null)
   const [value, setValue] = useState(initialValue)
 
   // Create the Plate editor with all plugins
@@ -180,21 +179,21 @@ export function BlockEditor({
         // Delete current block logic
       }
     },
-    [editor, readOnly]
+    [readOnly]
   )
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div
         className={cn('block-editor-container', className)}
-        ref={editorRef}
+        ref={_editorRef}
         data-testid='block-editor'
       >
         <Plate
           editor={editor}
-          onChange={(newValue: any) => {
-            setValue(newValue)
-            onChange?.(newValue)
+          onChange={({ value }) => {
+            setValue(value)
+            onChange?.(value)
           }}
         >
           <EditorContainer

@@ -544,11 +544,11 @@ export const ActionCards: Story = {
         description='Learn the basics with our comprehensive tutorial'
         primaryAction={{
           label: 'Start Tutorial',
-          onClick: () => console.log('Start tutorial'),
+          onClick: () => console.info('Start tutorial'),
         }}
         secondaryAction={{
           label: 'Skip',
-          onClick: () => console.log('Skip'),
+          onClick: () => console.info('Skip'),
         }}
       />
       <ActionCard
@@ -557,12 +557,12 @@ export const ActionCards: Story = {
         description='Unlock premium features and unlimited access'
         primaryAction={{
           label: 'Upgrade Now',
-          onClick: () => console.log('Upgrade'),
+          onClick: () => console.info('Upgrade'),
           loading: false,
         }}
         secondaryAction={{
           label: 'Learn More',
-          onClick: () => console.log('Learn more'),
+          onClick: () => console.info('Learn more'),
         }}
       />
     </div>

@@ -1,15 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
+import React from 'react'
 import {
-  Spinner,
-  Dots,
-  Pulse,
   Bars,
-  Skeleton,
-  Progress,
-  LoadingOverlay,
   CircularProgress,
+  Dots,
+  LoadingOverlay,
+  Progress,
+  Pulse,
+  Skeleton,
+  Spinner,
 } from './loading'
-import { within, expect } from '@storybook/test'
+import { expect, within } from '@storybook/test'
 import { Button } from './button'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 

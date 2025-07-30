@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 
@@ -8,11 +9,11 @@ const meta = {
   tags: ['autodocs'],
   argTypes: {
     defaultValue: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Default value',
     },
     value: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Controlled value',
     },
     min: {
@@ -80,6 +81,7 @@ export const CustomRange: Story = {
 }
 
 export const WithLabel: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState([50])
 
@@ -100,6 +102,7 @@ export const WithLabel: Story = {
 }
 
 export const PriceRange: Story = {
+  args: {},
   render: () => {
     const [value, setValue] = React.useState([20, 80])
 
@@ -119,6 +122,7 @@ export const PriceRange: Story = {
 }
 
 export const AudioControls: Story = {
+  args: {},
   render: () => {
     const [volume, setVolume] = React.useState([75])
     const [bass, setBass] = React.useState([50])
@@ -176,6 +180,7 @@ export const AudioControls: Story = {
 }
 
 export const ColorPicker: Story = {
+  args: {},
   render: () => {
     const [hue, setHue] = React.useState([180])
     const [saturation, setSaturation] = React.useState([100])
@@ -220,6 +225,7 @@ export const ColorPicker: Story = {
 }
 
 export const TimePicker: Story = {
+  args: {},
   render: () => {
     const [hours, setHours] = React.useState([12])
     const [minutes, setMinutes] = React.useState([30])

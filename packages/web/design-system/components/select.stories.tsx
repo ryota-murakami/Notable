@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import * as React from 'react'
 import {
   Select,
   SelectContent,
@@ -7,6 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { expect, userEvent, waitFor, within } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Forms/Select',
@@ -27,6 +29,9 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <Select>
       <SelectTrigger className='w-[180px]'>
@@ -41,9 +46,37 @@ export const Default: Story = {
       </SelectContent>
     </Select>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const trigger = canvas.getByRole('combobox')
+
+    // Test trigger is visible and enabled
+    await expect(trigger).toBeVisible()
+    await expect(trigger).toBeEnabled()
+    await expect(trigger).toHaveTextContent('Select a fruit')
+
+    // Open select dropdown
+    await userEvent.click(trigger)
+
+    // Wait for and verify dropdown content
+    await waitFor(async () => {
+      const appleOption = canvas.getByRole('option', { name: 'Apple' })
+      await expect(appleOption).toBeVisible()
+    })
+
+    // Select an option
+    const bananaOption = canvas.getByRole('option', { name: 'Banana' })
+    await userEvent.click(bananaOption)
+
+    // Verify selection
+    await expect(trigger).toHaveTextContent('Banana')
+  },
 }
 
 export const WithLabel: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-2'>
       <Label htmlFor='fruit-select'>Choose a fruit</Label>
@@ -64,6 +97,9 @@ export const WithLabel: Story = {
 }
 
 export const Countries: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <Select>
       <SelectTrigger className='w-[250px]'>
@@ -84,6 +120,9 @@ export const Countries: Story = {
 }
 
 export const Controlled: Story = {
+  args: {
+    children: null,
+  },
   render: () => {
     const [value, setValue] = React.useState('')
 
@@ -114,6 +153,9 @@ export const Controlled: Story = {
 }
 
 export const FormExample: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <form className='space-y-6 max-w-md'>
       <div className='space-y-2'>
@@ -169,6 +211,9 @@ export const FormExample: Story = {
 }
 
 export const TimeZoneSelector: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-2'>
       <Label>Time Zone</Label>
@@ -192,6 +237,9 @@ export const TimeZoneSelector: Story = {
 }
 
 export const LanguageSelector: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-2'>
       <Label>Language</Label>
@@ -216,6 +264,9 @@ export const LanguageSelector: Story = {
 }
 
 export const Disabled: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-4'>
       <Select>
@@ -232,6 +283,9 @@ export const Disabled: Story = {
 }
 
 export const SizingExamples: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div className='space-y-4'>
       <div>
@@ -290,6 +344,9 @@ export const SizingExamples: Story = {
 }
 
 export const ComplexForm: Story = {
+  args: {
+    children: null,
+  },
   render: () => {
     const [country, setCountry] = React.useState('')
     const [state, setState] = React.useState('')

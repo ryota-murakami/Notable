@@ -2,14 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type {
-  BulkTagOperation,
-  BulkTagResult,
-  EnhancedTag,
-  TagFilter,
-  TagFormData,
-  TagOperationResult,
-} from '@/types/tags'
+import type { EnhancedTag, TagFilter, TagFormData } from '@/types/tags'
 
 // Fetch all tags with filtering
 export function useTags(filter?: TagFilter) {
@@ -256,7 +249,10 @@ export function useTagTree() {
     allTags.forEach((tag) => {
       tagMap.set(tag.id, { ...tag, children: [] })
       if (!tag.parent_id) {
-        rootTags.push(tagMap.get(tag.id)!)
+        const tagEntry = tagMap.get(tag.id)
+        if (tagEntry) {
+          rootTags.push(tagEntry)
+        }
       }
     })
 
@@ -319,11 +315,11 @@ export function useTagManager() {
       for (const match of matches) {
         const tagPath = match[1]
         const parts = tagPath.split('/')
-        let parentId: string | null = null
+        let _parentId: string | null = null
 
         // Create tags hierarchically
         for (let i = 0; i < parts.length; i++) {
-          const tagName = parts[i]
+          const _tagName = parts[i]
           const fullPath = parts.slice(0, i + 1).join('/')
 
           try {
@@ -331,7 +327,7 @@ export function useTagManager() {
             if (i === parts.length - 1) {
               createdTags.push(tag)
             }
-            parentId = tag.id
+            _parentId = tag.id
           } catch (error) {
             console.error(`Failed to create tag: ${fullPath}`, error)
           }

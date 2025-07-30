@@ -13,7 +13,7 @@ import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
 import { Textarea } from '../../components/ui/textarea'
-import { within, userEvent, expect } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 const meta = {
   title: 'Design System/Components/Dialog',
@@ -29,6 +29,7 @@ type Story = StoryObj<typeof meta>
 
 // Default dialog
 export const Default: Story = {
+  args: {},
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -68,6 +69,7 @@ export const Default: Story = {
 
 // Dialog with form
 export const WithForm: Story = {
+  args: {},
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -139,6 +141,7 @@ export const WithForm: Story = {
 
 // Confirmation dialog
 export const Confirmation: Story = {
+  args: {},
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -163,6 +166,7 @@ export const Confirmation: Story = {
 
 // Long content dialog
 export const LongContent: Story = {
+  args: {},
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -199,6 +203,7 @@ export const LongContent: Story = {
 
 // Custom close button
 export const CustomClose: Story = {
+  args: {},
   render: () => {
     const [open, setOpen] = React.useState(false)
 
@@ -229,6 +234,7 @@ export const CustomClose: Story = {
 
 // Nested dialogs
 export const NestedDialogs: Story = {
+  args: {},
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -265,6 +271,7 @@ export const NestedDialogs: Story = {
 
 // Different sizes
 export const Sizes: Story = {
+  args: {},
   render: () => (
     <div className='flex gap-4'>
       <Dialog>
@@ -328,6 +335,7 @@ export const Sizes: Story = {
 
 // Complex form dialog
 export const ComplexForm: Story = {
+  args: {},
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
@@ -375,6 +383,7 @@ export const ComplexForm: Story = {
 
 // Loading state
 export const LoadingState: Story = {
+  args: {},
   render: () => {
     const [loading, setLoading] = React.useState(false)
 

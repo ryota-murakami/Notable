@@ -2,7 +2,7 @@
 
 import React, { useCallback, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import type { SearchableNote, SearchResult } from '@/lib/search/types'
+import type { SearchResult } from '@/lib/search/types'
 
 export interface ServerSearchOptions {
   limit?: number
