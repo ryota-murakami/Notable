@@ -28,8 +28,7 @@ export default defineConfig({
   /* More aggressive retries on CI */
   retries: process.env.CI ? 3 : 0,
 
-  /* Use 2 workers in CI for better parallelization */
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 2 : 6,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
@@ -53,55 +52,32 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: process.env.CI
-    ? [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'] },
-        },
-        {
-          name: 'firefox',
-          use: { ...devices['Desktop Firefox'] },
-          // Only run critical paths in Firefox to save CI time
-          testMatch: ['**/app.spec.ts', '**/auth.spec.ts'],
-        },
-      ]
-    : [
-        {
-          name: 'chromium',
-          use: { ...devices['Desktop Chrome'] },
-        },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
 
-        {
-          name: 'firefox',
-          use: { ...devices['Desktop Firefox'] },
-        },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    /* Test against mobile viewports. */
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+    },
 
-        {
-          name: 'webkit',
-          use: { ...devices['Desktop Safari'] },
-        },
-
-        /* Test against mobile viewports. */
-        {
-          name: 'Mobile Chrome',
-          use: { ...devices['Pixel 5'] },
-        },
-        {
-          name: 'Mobile Safari',
-          use: { ...devices['iPhone 12'] },
-        },
-
-        /* Test against branded browsers. */
-        // {
-        //   name: 'Microsoft Edge',
-        //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        // },
-        // {
-        //   name: 'Google Chrome',
-        //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        // },
-      ],
+    /* Test against branded browsers. */
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    // },
+    // {
+    //   name: 'Google Chrome',
+    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    // },
+  ],
 
   /* Run your local dev server before starting the tests */
   webServer: {

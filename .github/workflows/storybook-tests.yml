@@ -1,0 +1,49 @@
+name: Storybook Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Storybook
+        run: pnpm --filter @notable/web run build-storybook --quiet
+
+      - name: Run Storybook Tests
+        run: |
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server packages/web/storybook-static --port 6006 --silent" \
+            "npx wait-on tcp:6006 && pnpm --filter @notable/web run test:storybook:coverage"
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/web/coverage
+          flags: storybook
+          name: storybook-coverage
+
+      - name: Check coverage thresholds
+        run: |
+          cd packages/web
+          npx nyc check-coverage --lines 100 --functions 100 --branches 100 --statements 100
