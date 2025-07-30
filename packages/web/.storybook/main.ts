@@ -1,3 +1,4 @@
+/* eslint-env node */
 import type { StorybookConfig } from '@storybook/nextjs'
 
 import { dirname, join } from 'path'

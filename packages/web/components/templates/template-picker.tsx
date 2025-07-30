@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Image from 'next/image'
 import {
   ChevronRight,
   Clock,
@@ -390,12 +391,13 @@ function TemplateCard({
       className='group relative p-4 rounded-lg border border-border bg-card hover:bg-accent/50 cursor-pointer transition-all duration-200 hover:shadow-md'
     >
       {/* Template Preview/Thumbnail */}
-      <div className='aspect-video mb-3 rounded-md bg-muted/50 border flex items-center justify-center overflow-hidden'>
+      <div className='relative aspect-video mb-3 rounded-md bg-muted/50 border flex items-center justify-center overflow-hidden'>
         {template.thumbnail ? (
-          <img
+          <Image
             src={template.thumbnail}
             alt={template.name}
-            className='w-full h-full object-cover'
+            fill
+            className='object-cover'
           />
         ) : (
           <div className='flex flex-col items-center gap-2 text-muted-foreground'>
