@@ -157,6 +157,7 @@
     "@playwright/test": "^1.50.1",
     "@storybook/addon-coverage": "^2.0.0",
     "@storybook/addon-docs": "^9.0.18",
+    "@storybook/blocks": "^8.6.14",
     "@storybook/experimental-addon-test": "^8.6.14",
     "@storybook/nextjs": "^9.0.18",
     "@storybook/test": "^8.6.14",
