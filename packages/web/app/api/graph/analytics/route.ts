@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       timeframe: (url.searchParams.get('timeframe') as any) || 'all',
       includeDetails: url.searchParams.get('details') === 'true',
       nodeLimit: url.searchParams.get('limit')
-        ? parseInt(url.searchParams.get('limit')!)
+        ? parseInt(url.searchParams.get('limit') || '10')
         : 10,
     }
 
@@ -755,18 +755,20 @@ function groupByTimePeriod(data: any[], timeframe: string, dateField: string) {
       case 'day':
         periodKey = date.toISOString().split('T')[0]
         break
-      case 'week':
+      case 'week': {
         const weekStart = new Date(date)
         weekStart.setDate(date.getDate() - date.getDay())
         periodKey = weekStart.toISOString().split('T')[0]
         break
+      }
       case 'month':
         periodKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         break
-      case 'quarter':
+      case 'quarter': {
         const quarter = Math.floor(date.getMonth() / 3) + 1
         periodKey = `${date.getFullYear()}-Q${quarter}`
         break
+      }
       case 'year':
         periodKey = String(date.getFullYear())
         break
@@ -928,7 +930,7 @@ function generateTemporalInsights(
   return insights
 }
 
-async function detectCommunities(supabase: any, userId: string, body: any) {
+async function detectCommunities(_supabase: any, _userId: string, _body: any) {
   // This would implement community detection algorithms
   // For now, return a placeholder
   return NextResponse.json({
@@ -937,7 +939,7 @@ async function detectCommunities(supabase: any, userId: string, body: any) {
   })
 }
 
-async function findSimilarNotes(supabase: any, userId: string, body: any) {
+async function findSimilarNotes(_supabase: any, _userId: string, _body: any) {
   // This would implement similarity analysis
   // For now, return a placeholder
   return NextResponse.json({

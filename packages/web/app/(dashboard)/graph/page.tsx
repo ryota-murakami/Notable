@@ -8,25 +8,18 @@ import {
   AlertCircle,
   BarChart3,
   BookOpen,
-  Download,
   Eye,
-  Filter,
-  Layers,
   Lightbulb,
   Link as LinkIcon,
   Network,
   Plus,
   RefreshCw,
-  Save,
   Search,
-  Settings,
-  Share,
   Target,
   TrendingUp,
   Users,
   Zap,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -45,28 +38,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 
 import { VisualGraph } from '@/components/graph/visual-graph'
 import {
@@ -91,11 +71,11 @@ export default function GraphPage() {
     selectedNodes,
     selectedLinks,
     hoveredNode,
-    hoveredLink,
+    hoveredLink: _hoveredLink,
     graphMode,
     isFullscreen,
     setHoveredNode,
-    setHoveredLink,
+    setHoveredLink: _setHoveredLink,
     clearSelection,
     selectNode,
     selectLink,
@@ -123,15 +103,15 @@ export default function GraphPage() {
       analysisType: 'overview',
       includeDetails: true,
     })
-  const { views, isLoading: isLoadingViews } = useGraphViews()
+  const { views: _views, isLoading: _isLoadingViews } = useGraphViews()
 
   // Mutations
   const {
     refreshAnalytics,
     createRelationship,
-    updatePosition,
+    updatePosition: _updatePosition,
     autoDiscover,
-    deleteRelationship,
+    deleteRelationship: _deleteRelationship,
   } = useGraphMutations()
 
   // Search functionality
@@ -315,6 +295,13 @@ export default function GraphPage() {
                       key={node.id}
                       className='text-sm py-1 px-2 hover:bg-muted rounded cursor-pointer'
                       onClick={() => selectNode(node.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          selectNode(node.id)
+                        }
+                      }}
+                      role='button'
+                      tabIndex={0}
                     >
                       <div className='font-medium truncate'>{node.title}</div>
                       <div className='text-xs text-muted-foreground'>
@@ -755,10 +742,11 @@ function FiltersPanel({
 
       {/* Max Nodes */}
       <div>
-        <label className='text-sm font-medium mb-2 block'>
+        <label htmlFor='max-nodes' className='text-sm font-medium mb-2 block'>
           Max Nodes: {filters.maxNodes || 500}
         </label>
         <Input
+          id='max-nodes'
           type='number'
           value={filters.maxNodes || 500}
           onChange={(e) =>
@@ -771,8 +759,11 @@ function FiltersPanel({
 
       {/* Sort By */}
       <div>
-        <label className='text-sm font-medium mb-2 block'>Sort By</label>
+        <label htmlFor='sort-by' className='text-sm font-medium mb-2 block'>
+          Sort By
+        </label>
         <Select
+          id='sort-by'
           value={filters.sortBy || 'centrality'}
           onValueChange={(value: any) => onUpdateFilters({ sortBy: value })}
         >
@@ -790,8 +781,11 @@ function FiltersPanel({
 
       {/* Include Isolated */}
       <div className='flex items-center justify-between'>
-        <label className='text-sm font-medium'>Include Isolated Notes</label>
+        <label htmlFor='include-isolated' className='text-sm font-medium'>
+          Include Isolated Notes
+        </label>
         <input
+          id='include-isolated'
           type='checkbox'
           checked={filters.includeIsolated !== false}
           onChange={(e) =>
@@ -803,9 +797,9 @@ function FiltersPanel({
       {/* Relationship Types */}
       {graphData?.analytics?.relationshipTypes && (
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Relationship Types
-          </label>
+          </div>
           <div className='space-y-2 max-h-32 overflow-y-auto'>
             {Object.entries(graphData.analytics.relationshipTypes).map(
               ([type, count]) => (
