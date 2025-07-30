@@ -71,11 +71,10 @@ jobs:
 
       - name: Install Playwright Browsers
         run: |
-          # Use explicit installation with timeout protection
-          timeout 600 npx playwright install --with-deps chromium firefox || {
-            echo "Browser installation timed out or failed, retrying with individual browsers..."
-            timeout 300 npx playwright install chromium || echo "Chromium install failed"
-            timeout 300 npx playwright install firefox || echo "Firefox install failed"
+          # Install only chromium to match optimized test configuration
+          timeout 300 npx playwright install --with-deps chromium || {
+            echo "Chromium installation failed or timed out"
+            exit 1
           }
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 0
