@@ -35,7 +35,7 @@ const defaultValue = [
 const BlockSelectionPlugin = createPlatePlugin({
   key: 'block_selection',
   handlers: {
-    onClick: (editor) => (event) => {
+    onClick: () => (event: MouseEvent) => {
       // Handle block selection logic
       const element = event.target as HTMLElement
       const blockElement = element.closest('[data-slate-node="element"]')
@@ -43,6 +43,7 @@ const BlockSelectionPlugin = createPlatePlugin({
         // Add selection styling
         blockElement.classList.add('block-selected')
       }
+      return false
     },
   },
 })
@@ -78,10 +79,6 @@ export function BlockEditor({
   const editor = usePlateEditor({
     plugins: createBlockEditorPlugins(),
     value,
-    onChange: (newValue) => {
-      setValue(newValue)
-      onChange?.(newValue)
-    },
   })
 
   // Slash command management
@@ -157,6 +154,7 @@ export function BlockEditor({
       // Cmd/Ctrl + Enter: Insert new block below
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
         event.preventDefault()
+        // @ts-ignore - editor types need proper PlateEditor type
         editor.insertNodes({
           type: 'p',
           children: [{ text: '' }],
@@ -171,6 +169,7 @@ export function BlockEditor({
       ) {
         event.preventDefault()
         // Insert block above current selection
+        // @ts-ignore - editor types need proper PlateEditor type
         editor.insertNodes({
           type: 'p',
           children: [{ text: '' }],
@@ -199,7 +198,13 @@ export function BlockEditor({
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={cn('block-editor-container', className)} ref={editorRef}>
-        <Plate editor={editor}>
+        <Plate
+          editor={editor}
+          onChange={(newValue) => {
+            setValue(newValue)
+            onChange?.(newValue)
+          }}
+        >
           <EditorContainer
             className='block-editor-content'
             onMouseEnter={handleMouseEnter}
