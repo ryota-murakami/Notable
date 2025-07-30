@@ -13,8 +13,18 @@ const config: TestRunnerConfig = {
   },
 
   async postVisit(page) {
-    // Basic smoke test - just verify the story renders without crashing
+    // Wait for the story to be fully rendered (not just the root element)
     await page.waitForSelector('#storybook-root', { timeout: 30000 })
+
+    // For theme stories, wait for the actual content to load
+    try {
+      await page.waitForSelector('#storybook-root > *', { timeout: 10000 })
+    } catch {
+      // If no content appears, at least ensure root is visible
+      await page.waitForSelector('#storybook-root:not(:empty)', {
+        timeout: 10000,
+      })
+    }
   },
 }
 

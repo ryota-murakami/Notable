@@ -92,7 +92,18 @@ function ThemeDemo() {
   })
 
   if (!mounted) {
-    return null
+    return (
+      <div className='min-h-screen bg-background p-8 flex items-center justify-center'>
+        <div className='text-center space-y-4'>
+          <h1 className='text-4xl font-bold text-foreground'>
+            Loading Theme Demo...
+          </h1>
+          <p className='text-lg text-muted-foreground'>
+            Initializing theme system
+          </p>
+        </div>
+      </div>
+    )
   }
 
   const currentThemeConfig = themes[theme as ThemeName] || themes.light
