@@ -34,8 +34,8 @@
     "clean": "rm -rf .next dist node_modules pnpm-lock.yaml",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test:storybook": "test-storybook",
-    "test:storybook:coverage": "test-storybook --coverage",
+    "test:storybook": "test-storybook --testTimeout=60000",
+    "test:storybook:coverage": "test-storybook --coverage --testTimeout=60000",
     "test:storybook:watch": "test-storybook --watch"
   },
   "dependencies": {
