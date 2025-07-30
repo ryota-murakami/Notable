@@ -234,7 +234,7 @@ export function useNote(id: string, enabled = true) {
       // In test environment, update mock note
       if (isTest() && id.startsWith('mock-note-')) {
         const updatedNote: Note = {
-          ...note!,
+          ...(note as Note),
           ...data,
           updated_at: new Date().toISOString(),
         }

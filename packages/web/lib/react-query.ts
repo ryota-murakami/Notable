@@ -4,6 +4,7 @@
  */
 
 import { QueryClient } from '@tanstack/react-query'
+import { match } from 'ts-pattern'
 
 // Query key factory for consistent key management
 export const queryKeys = {
@@ -77,32 +78,29 @@ export const createQueryClient = () => {
                 if ('message' in error && typeof error.message === 'string') {
                   errorMessage = error.message
                 } else if ('status' in error) {
-                  switch (error.status) {
-                    case 401:
-                      errorMessage =
-                        'Authentication required. Please sign in again.'
-                      break
-                    case 403:
-                      errorMessage =
-                        'You do not have permission to perform this action.'
-                      break
-                    case 404:
-                      errorMessage = 'The requested resource was not found.'
-                      break
-                    case 429:
-                      errorMessage =
-                        'Too many requests. Please try again later.'
-                      break
-                    case 500:
-                      errorMessage = 'Server error. Please try again later.'
-                      break
-                    case 503:
-                      errorMessage =
+                  errorMessage = match(error.status)
+                    .with(
+                      401,
+                      () => 'Authentication required. Please sign in again.'
+                    )
+                    .with(
+                      403,
+                      () => 'You do not have permission to perform this action.'
+                    )
+                    .with(404, () => 'The requested resource was not found.')
+                    .with(
+                      429,
+                      () => 'Too many requests. Please try again later.'
+                    )
+                    .with(500, () => 'Server error. Please try again later.')
+                    .with(
+                      503,
+                      () =>
                         'Service temporarily unavailable. Please try again later.'
-                      break
-                    default:
-                      errorMessage = `Request failed with status ${error.status}`
-                  }
+                    )
+                    .otherwise(
+                      () => `Request failed with status ${error.status}`
+                    )
                 }
               }
 
