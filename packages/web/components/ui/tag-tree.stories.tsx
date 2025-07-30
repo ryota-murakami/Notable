@@ -342,6 +342,7 @@ const TagTreeMock = ({
                   variant='ghost'
                   size='sm'
                   className='h-5 w-5 p-0 opacity-0 group-hover:opacity-100'
+                  aria-label={`Actions for ${tag.name}`}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MoreHorizontal className='h-3 w-3' />
