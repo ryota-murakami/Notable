@@ -6,8 +6,19 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "noEmit": false
+    "noEmit": false,
+    "types": [],
+    "target": "es2018",
+    "lib": ["es2018", "dom"],
+    "module": "commonjs"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "src/adapters/desktop.ts", "src/adapters/mobile.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/adapters/desktop.ts",
+    "src/adapters/mobile.ts"
+  ]
 }

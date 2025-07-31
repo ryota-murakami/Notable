@@ -2,16 +2,16 @@
 
 import * as React from 'react'
 import {
-  Search,
-  X,
-  Clock,
-  Star,
-  Filter,
   Calendar,
-  Tag,
-  FileText,
-  Loader2,
   ChevronRight,
+  Clock,
+  FileText,
+  Filter,
+  Loader2,
+  Search,
+  Star,
+  Tag,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -42,17 +42,17 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import {
   useAdvancedSearch,
-  useSearchSuggestions,
-  useSearchHistory,
   useSavedSearches,
+  useSearchHistory,
   useSearchKeyboardShortcuts,
+  useSearchSuggestions,
   useTrackSearchClick,
 } from '@/hooks/use-advanced-search'
 import { useTags } from '@/hooks/use-tags'
 import type {
-  SearchResult,
   SearchFilters,
   SearchHistoryItem,
+  SearchResult,
 } from '@/types/search'
 
 interface AdvancedSearchProps {

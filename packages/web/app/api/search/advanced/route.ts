@@ -1,11 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import {
-  parseSearchQuery,
   operatorsToFilters,
-  type SearchResult,
-  type SearchQuery,
+  parseSearchQuery,
   SEARCH_CONSTANTS,
+  type SearchQuery,
+  type SearchResult,
 } from '@/types/search'
 
 export async function POST(request: NextRequest) {
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     Promise.resolve(
       supabase.from('search_history').insert({
         user_id: user.id,
-        query: query,
+        query,
         filters: parsedFilters,
         results_count: searchResults?.length || 0,
       })
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         // Also record analytics
         return supabase.from('search_analytics').insert({
           user_id: user.id,
-          query: query,
+          query,
           query_type: operators.length > 0 ? 'advanced' : 'basic',
           response_time_ms: responseTime,
           results_count: searchResults?.length || 0,

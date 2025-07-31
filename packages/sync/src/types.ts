@@ -24,16 +24,16 @@ export interface BaseNote {
  */
 export interface Note extends BaseNote {
   // CRDT metadata
-  version: number              // Lamport timestamp
-  device_id: string            // Unique device identifier
-  last_modified: string        // ISO timestamp
-  vector_clock: VectorClock    // For conflict resolution
-  
+  version: number // Lamport timestamp
+  device_id: string // Unique device identifier
+  last_modified: string // ISO timestamp
+  vector_clock: VectorClock // For conflict resolution
+
   // Sync metadata
-  synced_at?: string | undefined           // Last successful sync
-  local_changes: boolean       // Has pending local changes
-  deleted: boolean             // Tombstone for deleted notes
-  
+  synced_at?: string | undefined // Last successful sync
+  local_changes: boolean // Has pending local changes
+  deleted: boolean // Tombstone for deleted notes
+
   // Timestamps
   created_at: string
   updated_at: string
@@ -106,17 +106,17 @@ export interface SyncConfig {
   userId: string
   deviceId: string
   deviceInfo: DeviceInfo
-  
+
   // Sync behavior settings
-  syncInterval?: number        // Auto-sync interval in ms (default: 30000)
-  batchSize?: number          // Max changes per sync batch (default: 50)
-  retryAttempts?: number      // Max retry attempts (default: 3)
-  retryDelay?: number         // Initial retry delay in ms (default: 1000)
-  
+  syncInterval?: number // Auto-sync interval in ms (default: 30000)
+  batchSize?: number // Max changes per sync batch (default: 50)
+  retryAttempts?: number // Max retry attempts (default: 3)
+  retryDelay?: number // Initial retry delay in ms (default: 1000)
+
   // Real-time settings
-  enableRealtime?: boolean    // Enable real-time sync (default: true)
-  enablePresence?: boolean    // Enable presence tracking (default: true)
-  presenceHeartbeat?: number  // Presence heartbeat interval in ms (default: 10000)
+  enableRealtime?: boolean // Enable real-time sync (default: true)
+  enablePresence?: boolean // Enable presence tracking (default: true)
+  presenceHeartbeat?: number // Presence heartbeat interval in ms (default: 10000)
 }
 
 /**
@@ -128,19 +128,19 @@ export interface StorageAdapter {
   getNote(id: string): Promise<Note | null>
   saveNote(note: Note): Promise<void>
   deleteNote(id: string): Promise<void>
-  
+
   // Change tracking
   getPendingChanges(): Promise<ChangeSet[]>
   saveChange(change: ChangeSet): Promise<void>
   markChangeApplied(changeId: string): Promise<void>
   clearAppliedChanges(): Promise<void>
-  
+
   // Metadata
   getLastSyncTime(): Promise<string | null>
   setLastSyncTime(timestamp: string): Promise<void>
   getDeviceId(): Promise<string>
   setDeviceId(deviceId: string): Promise<void>
-  
+
   // Cleanup
   vacuum(): Promise<void>
 }
@@ -171,27 +171,38 @@ export interface SyncService {
   // Lifecycle
   initialize(): Promise<void>
   destroy(): Promise<void>
-  
+
   // Core sync operations
   syncUp(): Promise<void>
   syncDown(): Promise<void>
   syncAll(): Promise<void>
-  
+
   // Real-time operations
   subscribeToChanges(callback: (changes: ChangeSet[]) => void): () => void
   broadcastChange(change: ChangeSet): Promise<void>
-  
+
   // Presence management
   trackPresence(): Promise<void>
   untrackPresence(): Promise<void>
-  getOnlineDevices(): Promise<DeviceInfo[]>
-  
+  getOnlineDevices(): DeviceInfo[]
+
   // Status and stats
   getStatus(): SyncStatus
   getStats(): Promise<SyncStats>
-  
+
   // Event handling
-  on(event: 'sync-start' | 'sync-complete' | 'sync-error' | 'status-change' | 'remote-changes' | 'presence-sync' | 'device-join' | 'device-leave', callback: (data?: unknown) => void): void
+  on(
+    event:
+      | 'sync-start'
+      | 'sync-complete'
+      | 'sync-error'
+      | 'status-change'
+      | 'remote-changes'
+      | 'presence-sync'
+      | 'device-join'
+      | 'device-leave',
+    callback: (data?: unknown) => void,
+  ): void
   off(event: string, callback: (data?: unknown) => void): void
 }
 
@@ -201,13 +212,19 @@ export interface SyncService {
 export interface CRDTOperations {
   // Vector clock operations
   incrementClock(vectorClock: VectorClock, deviceId: string): VectorClock
-  compareClock(clock1: VectorClock, clock2: VectorClock): 'before' | 'after' | 'concurrent'
+  compareClock(
+    clock1: VectorClock,
+    clock2: VectorClock,
+  ): 'before' | 'after' | 'concurrent'
   mergeClock(clock1: VectorClock, clock2: VectorClock): VectorClock
-  
+
   // Conflict resolution
   resolveConflict(local: Note, remote: Note): ConflictResult
-  mergeChanges(localChanges: ChangeSet[], remoteChanges: ChangeSet[]): ChangeSet[]
-  
+  mergeChanges(
+    localChanges: ChangeSet[],
+    remoteChanges: ChangeSet[],
+  ): ChangeSet[]
+
   // State operations
   applyChange(note: Note, change: ChangeSet): Note
   createTombstone(note: Note, deviceId: string): Note
