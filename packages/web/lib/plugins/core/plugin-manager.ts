@@ -7,15 +7,15 @@
 
 import { EventEmitter } from 'events'
 import {
-  PluginManifest,
-  PluginInstance,
-  PluginState,
-  PluginContext,
   PluginAPI,
-  PluginPermission,
+  type PluginContext,
+  PluginDisposable,
   PluginError,
   PluginErrorCode,
-  PluginDisposable,
+  type PluginInstance,
+  type PluginManifest,
+  type PluginPermission,
+  PluginState,
 } from '../types/plugin'
 import { PluginAPIFactory } from '../api/plugin-api-factory'
 import { PluginSandbox } from './plugin-sandbox'

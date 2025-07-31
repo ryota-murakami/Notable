@@ -6,20 +6,20 @@
  */
 
 import {
-  PluginAPI,
-  PluginManifest,
-  PluginContext,
-  PluginPermission,
+  type CommandsAPI,
+  type EditorAPI,
+  type EventsAPI,
+  type NetworkAPI,
+  type NotesAPI,
+  type PluginAPI,
   PluginAPIAccess,
-  EditorAPI,
-  NotesAPI,
-  SearchAPI,
-  UIAPI,
-  StorageAPI,
-  NetworkAPI,
-  CommandsAPI,
-  EventsAPI,
-  PluginDisposable,
+  type PluginContext,
+  type PluginDisposable,
+  type PluginManifest,
+  PluginPermission,
+  type SearchAPI,
+  type StorageAPI,
+  type UIAPI,
 } from '../types/plugin'
 
 export class PluginAPIFactory {

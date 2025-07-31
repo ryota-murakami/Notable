@@ -5,13 +5,13 @@
  */
 
 import {
-  PluginManifest,
-  PluginCategory,
-  PluginPermission,
-  PluginAPIAccess,
+  type PluginAPI,
+  type PluginAPIAccess,
+  type PluginCategory,
   PluginContext,
-  PluginAPI,
-  PluginDisposable,
+  type PluginDisposable,
+  type PluginManifest,
+  type PluginPermission,
 } from '../types/plugin'
 
 export class PluginSDK {

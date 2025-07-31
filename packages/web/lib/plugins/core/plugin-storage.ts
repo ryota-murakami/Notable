@@ -6,8 +6,8 @@
  */
 
 import {
-  PluginStorage as IPluginStorage,
-  PluginManifest,
+  type PluginStorage as IPluginStorage,
+  type PluginManifest,
 } from '../types/plugin'
 
 interface StorageData {

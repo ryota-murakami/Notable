@@ -31,36 +31,36 @@ import { Separator } from '../../components/ui/separator'
 import { ScrollArea } from '../../components/ui/scroll-area'
 import { Alert, AlertDescription } from '../../components/ui/alert'
 import {
-  PuzzleIcon,
-  SearchIcon,
-  DownloadIcon,
-  SettingsIcon,
-  TrashIcon,
   AlertTriangleIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  InfoIcon,
-  ExternalLinkIcon,
-  PowerIcon,
-  CodeIcon,
-  ShieldIcon,
-  DatabaseIcon,
-  CommandIcon,
   BrushIcon,
-  ZapIcon,
+  CheckCircleIcon,
+  CodeIcon,
+  CommandIcon,
+  DatabaseIcon,
+  DownloadIcon,
+  ExternalLinkIcon,
   GitBranchIcon,
-  UsersIcon,
-  StarIcon,
+  InfoIcon,
+  PowerIcon,
+  PuzzleIcon,
   RefreshCwIcon,
+  SearchIcon,
+  SettingsIcon,
+  ShieldIcon,
+  StarIcon,
+  TrashIcon,
+  UsersIcon,
+  XCircleIcon,
+  ZapIcon,
 } from 'lucide-react'
 import {
+  PluginAPIAccess,
   PluginCategory,
   PluginPermission,
-  PluginAPIAccess,
 } from '../../lib/plugins'
 import {
-  usePluginSystem,
   type PluginInfo as SystemPluginInfo,
+  usePluginSystem,
 } from '../../lib/plugins/hooks/use-plugin-system'
 
 interface PluginInfo extends SystemPluginInfo {

@@ -5,7 +5,7 @@
  * including state management, plugin operations, and real-time updates.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { notablePluginSystem, type PluginSystemStats } from '../index'
 import { pluginCommandIntegration } from '../integration/plugin-commands'
 

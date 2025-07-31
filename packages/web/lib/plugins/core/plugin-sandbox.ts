@@ -5,7 +5,7 @@
  * with resource limits and security controls.
  */
 
-import { PluginManifest } from '../types/plugin'
+import { type PluginManifest } from '../types/plugin'
 
 export interface ResourceLimits {
   memory: number // MB

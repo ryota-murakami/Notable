@@ -9,12 +9,12 @@
  */
 
 import {
-  PluginManifest,
-  PluginCategory,
-  PluginPermission,
+  type PluginAPI,
   PluginAPIAccess,
-  PluginAPI,
-  PluginContext,
+  PluginCategory,
+  type PluginContext,
+  type PluginManifest,
+  PluginPermission,
 } from '../types/plugin'
 import { PluginSDK, PluginUtils } from '../sdk/plugin-sdk'
 
