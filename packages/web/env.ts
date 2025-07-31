@@ -72,10 +72,12 @@ export const env = createEnv({
           ? `https://${process.env.VERCEL_URL}`
           : 'http://localhost:3000'
       ),
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-    NEXT_PUBLIC_SENTRY_DSN:
+    NEXT_PUBLIC_SUPABASE_URL:
+      isCI || isVercelPreview ? z.string().optional() : z.string().url().min(1),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
       isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    NEXT_PUBLIC_SENTRY_DSN:
+      isCI || isVercelPreview ? z.string().optional() : z.string().url().min(1),
   },
 
   /**
