@@ -28,7 +28,7 @@ test.describe('Deployment Environment Variable Validation', () => {
       // Ensure we're not in CI or Vercel preview mode
       delete process.env.CI
       delete process.env.VERCEL
-      process.env.NODE_ENV = 'production'
+      ;(process.env as any).NODE_ENV = 'production'
 
       // Attempt to build - this should fail
       let buildFailed = false
@@ -68,7 +68,7 @@ test.describe('Deployment Environment Variable Validation', () => {
     try {
       // Set CI environment
       process.env.CI = 'true'
-      process.env.NODE_ENV = 'test'
+      ;(process.env as any).NODE_ENV = 'test'
 
       // Only provide the required public variables
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
