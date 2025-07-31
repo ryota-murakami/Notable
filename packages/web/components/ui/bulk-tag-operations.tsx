@@ -88,7 +88,8 @@ const BulkTagOperations: React.FC<BulkTagOperationsProps> = ({
   }, [open])
 
   // Handle operation type change
-  const handleOperationTypeChange = (type: OperationType) => {
+  const handleOperationTypeChange = (value: string) => {
+    const type = value as OperationType
     setState((prev) => ({ ...prev, type, error: null }))
   }
 

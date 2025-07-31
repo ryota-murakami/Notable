@@ -11,6 +11,11 @@ export type NoteTagUpdate = Database['public']['Tables']['note_tags']['Update']
 
 // Enhanced tag types for UI and business logic
 export interface EnhancedTag extends Tag {
+  // Additional optional fields that may not exist in database
+  description?: string | null
+  updated_at?: string
+  last_used_at?: string | null
+
   // Computed fields
   usage_count?: number
   children?: EnhancedTag[]

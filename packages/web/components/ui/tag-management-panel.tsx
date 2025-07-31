@@ -52,7 +52,7 @@ import {
   useDeleteTag,
   useTagManager,
 } from '@/hooks/use-tags'
-import type { EnhancedTag, TagFormData, DEFAULT_TAG_COLORS } from '@/types/tags'
+import type { EnhancedTag, TagFormData } from '@/types/tags'
 import { DEFAULT_TAG_COLORS } from '@/types/tags'
 
 export interface TagManagementPanelProps {

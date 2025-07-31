@@ -572,7 +572,7 @@ test.describe('Tag System', () => {
 
       // Verify live regions for dynamic updates
       await expect(page.getByRole('status')).toBeVisible() // For status updates
-      await expect(page.getByRole('alert')).toBeInDOM() // For error messages
+      await expect(page.getByRole('alert')).toBeAttached() // For error messages
     })
   })
 })
