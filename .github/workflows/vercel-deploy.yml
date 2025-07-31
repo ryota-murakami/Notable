@@ -56,11 +56,11 @@ jobs:
         run: pnpm add -g vercel@latest
 
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_OIDC_TOKEN }}
         working-directory: ./packages/web
 
       - name: Build Project Artifacts
-        run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_OIDC_TOKEN }}
         working-directory: ./packages/web
         env:
           SKIP_ENV_VALIDATION: '1'
@@ -69,9 +69,9 @@ jobs:
         id: deploy
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} > deployment-url.txt
+            vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_OIDC_TOKEN }} > deployment-url.txt
           else
-            vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} > deployment-url.txt
+            vercel deploy --prebuilt --token=${{ secrets.VERCEL_OIDC_TOKEN }} > deployment-url.txt
           fi
           echo "url=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
         working-directory: ./packages/web
