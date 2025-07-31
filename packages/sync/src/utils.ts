@@ -15,30 +15,33 @@ export function generateDeviceId(): string {
  */
 export function generateDeviceInfo(
   type: 'web' | 'electron' | 'mobile',
-  customName?: string
+  customName?: string,
 ): DeviceInfo {
   const id = generateDeviceId()
   const timestamp = new Date().toISOString()
-  
+
   let name: string
   let userAgent: string | undefined
 
   switch (type) {
     case 'web':
       name = customName || getBrowserName()
-      userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : undefined
+      userAgent =
+        typeof navigator !== 'undefined' ? navigator.userAgent : undefined
       break
-      
+
     case 'electron':
       name = customName || getElectronDeviceName()
-      userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : 'Electron'
+      userAgent =
+        typeof navigator !== 'undefined' ? navigator.userAgent : 'Electron'
       break
-      
+
     case 'mobile':
       name = customName || getMobileDeviceName()
-      userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : 'React Native'
+      userAgent =
+        typeof navigator !== 'undefined' ? navigator.userAgent : 'React Native'
       break
-      
+
     default:
       name = customName || 'Unknown Device'
   }
@@ -62,7 +65,7 @@ function getBrowserName(): string {
   }
 
   const userAgent = navigator.userAgent
-  
+
   if (userAgent.includes('Chrome')) {
     return 'Chrome'
   } else if (userAgent.includes('Firefox')) {
@@ -94,7 +97,7 @@ function getElectronDeviceName(): string {
         return 'Desktop'
     }
   }
-  
+
   return 'Desktop'
 }
 
@@ -107,7 +110,7 @@ function getMobileDeviceName(): string {
   }
 
   const userAgent = navigator.userAgent
-  
+
   if (userAgent.includes('iPhone')) {
     return 'iPhone'
   } else if (userAgent.includes('iPad')) {
@@ -130,17 +133,18 @@ export function isBrowser(): boolean {
  * Check if the current environment is Electron
  */
 export function isElectron(): boolean {
-  return typeof process !== 'undefined' && 
-         process.versions != null && 
-         process.versions.electron != null
+  return (
+    typeof process !== 'undefined' &&
+    process.versions != null &&
+    process.versions.electron != null
+  )
 }
 
 /**
  * Check if the current environment is React Native
  */
 export function isReactNative(): boolean {
-  return typeof navigator !== 'undefined' && 
-         navigator.product === 'ReactNative'
+  return typeof navigator !== 'undefined' && navigator.product === 'ReactNative'
 }
 
 /**
@@ -162,7 +166,7 @@ export function detectPlatform(): 'web' | 'electron' | 'mobile' | 'unknown' {
  * Sleep for a specified number of milliseconds
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
@@ -170,15 +174,15 @@ export function sleep(ms: number): Promise<void> {
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null
-  
+
   return (...args: Parameters<T>) => {
     if (timeout) {
       clearTimeout(timeout)
     }
-    
+
     timeout = setTimeout(() => {
       func(...args)
     }, wait)
@@ -190,15 +194,15 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle = false
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func(...args)
       inThrottle = true
-      setTimeout(() => inThrottle = false, limit)
+      setTimeout(() => (inThrottle = false), limit)
     }
   }
 }
@@ -209,27 +213,27 @@ export function throttle<T extends (...args: any[]) => any>(
 export async function retry<T>(
   fn: () => Promise<T>,
   maxAttempts: number = 3,
-  baseDelay: number = 1000
+  baseDelay: number = 1000,
 ): Promise<T> {
-  let lastError: Error
-  
+  let lastError: Error | undefined
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fn()
     } catch (error) {
       lastError = error as Error
-      
+
       if (attempt === maxAttempts) {
         break
       }
-      
+
       // Exponential backoff with jitter
       const delay = baseDelay * Math.pow(2, attempt - 1) + Math.random() * 1000
       await sleep(delay)
     }
   }
-  
-  throw lastError!
+
+  throw lastError || new Error('Retry failed with unknown error')
 }
 
 /**
@@ -238,12 +242,12 @@ export async function retry<T>(
 export function withTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
-  timeoutMessage: string = 'Operation timed out'
+  timeoutMessage: string = 'Operation timed out',
 ): Promise<T> {
   const timeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs)
   })
-  
+
   return Promise.race([promise, timeoutPromise])
 }
 
@@ -251,7 +255,8 @@ export function withTimeout<T>(
  * Check if a string is a valid UUID
  */
 export function isValidUUID(str: string): boolean {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
   return uuidRegex.test(str)
 }
 

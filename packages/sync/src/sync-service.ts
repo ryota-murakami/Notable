@@ -308,7 +308,7 @@ export class SyncServiceImpl implements SyncService {
         if (Array.isArray(presence)) {
           for (const p of presence) {
             if (p && typeof p === 'object' && 'device_info' in p) {
-              devices.push((p as any).device_info)
+              devices.push((p as UserPresence).device_info)
             }
           }
         }
