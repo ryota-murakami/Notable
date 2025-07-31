@@ -31,14 +31,14 @@ const isWindows = process.platform === 'win32'
 // Set app name from package.json productName
 app.setName('Notable')
 
-const createWindow = () => {
+const createWindow = async () => {
   // Window state management
   const windowState = {
     width: 1200,
     height: 800,
   }
 
-  const iconPath = getIconPath()
+  const iconPath = await getIconPath()
   const windowOptions: Electron.BrowserWindowConstructorOptions = {
     width: windowState.width,
     height: windowState.height,
@@ -71,7 +71,8 @@ const createWindow = () => {
   // Load URL with error handling
   const loadUrlWithFallback = async () => {
     try {
-      await mainWindow!.loadURL(startUrl)
+      if (!mainWindow) throw new Error('Main window is null')
+      await mainWindow.loadURL(startUrl)
       console.log(`[Main] Successfully loaded URL: ${startUrl}`)
     } catch (error) {
       console.error(`[Main] Failed to load URL: ${startUrl}`, error)
@@ -82,7 +83,8 @@ const createWindow = () => {
         console.log(`[Main] Attempting fallback to: ${fallbackUrl}`)
 
         try {
-          await mainWindow!.loadURL(fallbackUrl)
+          if (!mainWindow) throw new Error('Main window is null')
+          await mainWindow.loadURL(fallbackUrl)
           console.log(`[Main] Successfully loaded fallback URL: ${fallbackUrl}`)
 
           // Show a notification that we're running in offline mode
@@ -106,7 +108,8 @@ const createWindow = () => {
           )
 
           // Create a basic error page as last resort
-          await mainWindow!
+          if (!mainWindow) throw new Error('Main window is null')
+          await mainWindow
             .loadFile(path.join(__dirname, 'error-page.html'))
             .catch(() => {
               // Create inline error page if file doesn't exist
@@ -158,9 +161,11 @@ const createWindow = () => {
                 </body>
               </html>
             `
-              mainWindow!.loadURL(
-                `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
-              )
+              if (mainWindow) {
+                mainWindow.loadURL(
+                  `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
+                )
+              }
             })
         }
       }
@@ -197,12 +202,12 @@ const createWindow = () => {
   registerLocalShortcuts(mainWindow)
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Create native menu
   createMenu()
 
   // Create system tray
-  createTray()
+  await createTray()
 
   // Register global shortcuts
   registerGlobalShortcuts()
@@ -254,10 +259,10 @@ const userDataPath = app.getPath('userData')
 const notesPath = path.join(userDataPath, 'notes.json')
 
 // IPC handlers for file operations
-ipcMain.handle('load-notes', () => {
+ipcMain.handle('load-notes', async () => {
   try {
-    if (fs.existsSync(notesPath)) {
-      const data = fs.readFileSync(notesPath, 'utf8')
+    const data = await fs.promises.readFile(notesPath, 'utf8').catch(() => '[]')
+    if (data !== '[]') {
       return JSON.parse(data)
     }
     return []
@@ -267,9 +272,13 @@ ipcMain.handle('load-notes', () => {
   }
 })
 
-ipcMain.handle('save-notes', (_, notes) => {
+ipcMain.handle('save-notes', async (_, notes) => {
   try {
-    fs.writeFileSync(notesPath, JSON.stringify(notes, null, 2), 'utf8')
+    await fs.promises.writeFile(
+      notesPath,
+      JSON.stringify(notes, null, 2),
+      'utf8'
+    )
     return { success: true }
   } catch (error) {
     console.error('Failed to save notes:', error)
@@ -427,7 +436,7 @@ ipcMain.handle('export-note', async (_, noteData, format, _options = {}) => {
     }
 
     // Write the exported content to file
-    fs.writeFileSync(result.filePath, content, 'utf8')
+    await fs.promises.writeFile(result.filePath, content, 'utf8')
 
     return {
       success: true,
@@ -456,7 +465,7 @@ ipcMain.on('menu-export-markdown', (event) => {
 })
 
 // Helper function to get app icon
-function getIconPath(): string | undefined {
+async function getIconPath(): Promise<string | undefined> {
   const iconPath = isMac
     ? path.join(__dirname, '../build/icon.icns')
     : isWindows
@@ -465,7 +474,12 @@ function getIconPath(): string | undefined {
 
   // Check if icon exists, return undefined if not
   try {
-    if (fs.existsSync(iconPath)) {
+    if (
+      await fs.promises
+        .access(iconPath)
+        .then(() => true)
+        .catch(() => false)
+    ) {
       return iconPath
     }
   } catch {
@@ -790,8 +804,8 @@ function createMenu() {
 }
 
 // Create system tray
-function createTray() {
-  const iconPath = getIconPath()
+async function createTray() {
+  const iconPath = await getIconPath()
   if (!iconPath) {
     console.warn('No icon found for system tray, skipping tray creation')
     return

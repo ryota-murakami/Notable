@@ -1,6 +1,9 @@
 import { createEnv } from '@t3-oss/env-nextjs'
 import { z } from 'zod'
 
+// In CI environments, we need to allow builds without all env vars
+const isCI = process.env.CI === 'true'
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -10,34 +13,36 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
-    CI: z.string().optional(),
-    DATABASE_URL: z.string().url().optional(),
-    SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
-    SUPABASE_JWT_SECRET: z.string().optional(),
-    GOOGLE_CLIENT_ID: z.string().optional(),
-    GOOGLE_CLIENT_SECRET: z.string().optional(),
-    NEXTAUTH_SECRET: z.string().optional(),
-    NEXTAUTH_URL: z
-      .preprocess(
-        // This makes Vercel deployments easier
-        (str) => process.env.VERCEL_URL ?? str,
-        // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-        process.env.VERCEL ? z.string() : z.string().url()
-      )
-      .optional(),
-    RESEND_API_KEY: z.string().optional(),
-    EMAIL_FROM: z.string().email().optional(),
-    UPLOADTHING_SECRET: z.string().optional(),
-    UPLOADTHING_APP_ID: z.string().optional(),
-    OPENAI_API_KEY: z.string().optional(),
-    JWT_SECRET: z.string().optional(),
-    SENTRY_DSN: z.string().url().optional(),
-    SENTRY_ORG: z.string().optional(),
-    SENTRY_PROJECT: z.string().optional(),
-    SENTRY_AUTH_TOKEN: z.string().optional(),
-    REDIS_URL: z.string().url().optional(),
-    OTEL_SERVICE_NAME: z.string().optional(),
-    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+    CI: z.string().optional(), // Only CI can be optional
+    DATABASE_URL: isCI ? z.string().optional() : z.string().url().min(1),
+    SUPABASE_SERVICE_ROLE_KEY: isCI ? z.string().optional() : z.string().min(1),
+    SUPABASE_JWT_SECRET: isCI ? z.string().optional() : z.string().min(1),
+    GOOGLE_CLIENT_ID: isCI ? z.string().optional() : z.string().min(1),
+    GOOGLE_CLIENT_SECRET: isCI ? z.string().optional() : z.string().min(1),
+    NEXTAUTH_SECRET: isCI ? z.string().optional() : z.string().min(1),
+    NEXTAUTH_URL: isCI
+      ? z.string().optional()
+      : z.preprocess(
+          // This makes Vercel deployments easier
+          (str) => process.env.VERCEL_URL ?? str,
+          // VERCEL_URL doesn't include `https` so it cant be validated as a URL
+          process.env.VERCEL ? z.string().min(1) : z.string().url()
+        ),
+    RESEND_API_KEY: isCI ? z.string().optional() : z.string().min(1),
+    EMAIL_FROM: isCI ? z.string().optional() : z.string().email(),
+    UPLOADTHING_SECRET: isCI ? z.string().optional() : z.string().min(1),
+    UPLOADTHING_APP_ID: isCI ? z.string().optional() : z.string().min(1),
+    OPENAI_API_KEY: isCI ? z.string().optional() : z.string().min(1),
+    JWT_SECRET: isCI ? z.string().optional() : z.string().min(1),
+    SENTRY_DSN: isCI ? z.string().optional() : z.string().url().min(1),
+    SENTRY_ORG: isCI ? z.string().optional() : z.string().min(1),
+    SENTRY_PROJECT: isCI ? z.string().optional() : z.string().min(1),
+    SENTRY_AUTH_TOKEN: isCI ? z.string().optional() : z.string().min(1),
+    REDIS_URL: isCI ? z.string().optional() : z.string().url().min(1),
+    OTEL_SERVICE_NAME: isCI ? z.string().optional() : z.string().min(1),
+    OTEL_EXPORTER_OTLP_ENDPOINT: isCI
+      ? z.string().optional()
+      : z.string().url().min(1),
   },
 
   /**
@@ -62,11 +67,19 @@ export const env = createEnv({
           ? `https://${process.env.VERCEL_URL}`
           : 'http://localhost:3000'
       ),
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
-    NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
-    NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
-    NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+    NEXT_PUBLIC_SUPABASE_URL: isCI
+      ? z.string().optional()
+      : z.string().url().min(1),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: isCI
+      ? z.string().optional()
+      : z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_KEY: isCI ? z.string().optional() : z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_HOST: isCI
+      ? z.string().optional()
+      : z.string().url().min(1),
+    NEXT_PUBLIC_SENTRY_DSN: isCI
+      ? z.string().optional()
+      : z.string().url().min(1),
   },
 
   /**
@@ -115,13 +128,9 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   },
   /**
-   * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
-   * useful for Docker builds. We check if we're in a browser to avoid client-side errors.
+   * Never skip validation - we handle CI properly with optional schemas
    */
-  skipValidation:
-    typeof window !== 'undefined'
-      ? false // Always validate on client-side
-      : !!process.env.SKIP_ENV_VALIDATION, // Only check on server-side
+  skipValidation: false,
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
    * `SOME_VAR=''` will throw an error.

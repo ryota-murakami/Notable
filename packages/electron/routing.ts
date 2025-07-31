@@ -2,12 +2,14 @@ import { BrowserWindow, ipcMain } from 'electron'
 
 // Main process routing setup
 export function setupRoutingInMainProcess() {
-  console.log('Desktop routing not yet implemented - using web adapter fallback')
+  console.log(
+    'Desktop routing not yet implemented - using web adapter fallback'
+  )
 
   // Set up IPC handlers for routing
   ipcMain.handle(
     'routing:navigate',
-    async (
+    (
       _event,
       routeId: string,
       params?: Record<string, string>,
@@ -17,7 +19,11 @@ export function setupRoutingInMainProcess() {
         // For now, just broadcast to renderer process
         const focusedWindow = BrowserWindow.getFocusedWindow()
         if (focusedWindow) {
-          focusedWindow.webContents.send('routing:navigate', { routeId, params, query })
+          focusedWindow.webContents.send('routing:navigate', {
+            routeId,
+            params,
+            query,
+          })
         }
         return { success: true }
       } catch (error) {
@@ -30,7 +36,7 @@ export function setupRoutingInMainProcess() {
     }
   )
 
-  ipcMain.handle('routing:get-current-route', async () => {
+  ipcMain.handle('routing:get-current-route', () => {
     // For now, return a mock current route
     return { success: true, data: { route: null, params: {}, query: {} } }
   })
@@ -38,7 +44,7 @@ export function setupRoutingInMainProcess() {
   // Handle menu-triggered navigation
   ipcMain.handle(
     'routing:menu-navigate',
-    async (_event, routeId: string, params?: Record<string, string>) => {
+    (_event, routeId: string, params?: Record<string, string>) => {
       const focusedWindow = BrowserWindow.getFocusedWindow()
       if (focusedWindow) {
         focusedWindow.webContents.send('routing:menu-navigation', {
@@ -50,7 +56,7 @@ export function setupRoutingInMainProcess() {
   )
 
   // Handle deep link navigation
-  ipcMain.handle('routing:deep-link', async (_event, url: string) => {
+  ipcMain.handle('routing:deep-link', (_event, url: string) => {
     const focusedWindow = BrowserWindow.getFocusedWindow()
     if (focusedWindow) {
       focusedWindow.webContents.send('routing:deep-link', { url })
