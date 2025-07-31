@@ -22,6 +22,11 @@ import {
 import { KeyboardShortcutsDialog } from '@/components/ui/keyboard-shortcuts-dialog'
 import { useTagManager } from '@/hooks/use-tags'
 import type { SearchableNote } from '@/lib/search/types'
+import {
+  AdvancedSearch,
+  GlobalSearchTrigger,
+} from '@/components/ui/advanced-search'
+import type { SearchResult } from '@/types/search'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
@@ -36,6 +41,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   const commandPalette = useCommandPalette()
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
 
   // Tag management
   const { createTag, getOrCreateTag } = useTagManager()
@@ -123,11 +129,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   }, [theme])
 
   const handleSearch = useCallback(() => {
-    // TODO: Implement search functionality
-    toast({
-      title: 'Search',
-      description: 'Search functionality will be implemented soon.',
-    })
+    setShowAdvancedSearch(true)
   }, [])
 
   const handleSettings = useCallback(() => {
@@ -391,7 +393,9 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       <div className='flex-1 flex flex-col'>
         {/* Header */}
         <header className='border-b px-6 py-3 flex items-center justify-between'>
-          <div className='flex-1' />
+          <div className='flex-1 flex items-center gap-4'>
+            <GlobalSearchTrigger />
+          </div>
           <UserMenu />
         </header>
 
@@ -463,6 +467,16 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       <KeyboardShortcutsDialog
         open={showKeyboardShortcuts}
         onOpenChange={setShowKeyboardShortcuts}
+      />
+
+      {/* Advanced Search Dialog */}
+      <AdvancedSearch
+        open={showAdvancedSearch}
+        onOpenChange={setShowAdvancedSearch}
+        onSelectResult={(result) => {
+          handleNoteSelect(result.id)
+          setShowAdvancedSearch(false)
+        }}
       />
     </div>
   )

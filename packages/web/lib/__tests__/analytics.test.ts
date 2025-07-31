@@ -6,14 +6,6 @@
 import { Analytics, analytics } from '../analytics'
 
 // Mock external dependencies
-const mockPosthog = {
-  init: jest.fn(),
-  capture: jest.fn(),
-  identify: jest.fn(),
-  reset: jest.fn(),
-  opt_out_capturing: jest.fn(),
-}
-
 const mockSentry = {
   captureException: jest.fn(),
   setUser: jest.fn(),
@@ -34,8 +26,6 @@ const mockNavigator = {
 // Mock environment variables
 const originalEnv = process.env
 beforeAll(() => {
-  process.env.NEXT_PUBLIC_POSTHOG_KEY = 'test-posthog-key'
-  process.env.NEXT_PUBLIC_POSTHOG_HOST = 'https://test.posthog.com'
   process.env.NEXT_PUBLIC_SENTRY_DSN = 'https://test.sentry.dsn'
 })
 
@@ -55,11 +45,6 @@ Object.defineProperty(global, 'navigator', {
 })
 
 // Mock dynamic imports with proper module structure
-jest.mock('posthog-js', () => ({
-  __esModule: true,
-  default: mockPosthog,
-}))
-
 jest.mock('@sentry/nextjs', () => mockSentry, { virtual: true })
 
 describe('Analytics', () => {
@@ -163,8 +148,7 @@ describe('Analytics', () => {
     it('should track performance metrics', () => {
       analyticsInstance.performance('page_load', 1200, 'ms', { page: '/home' })
 
-      // Performance tracking should create an event
-      expect(mockPosthog.capture).toHaveBeenCalled()
+      // Performance tracking should create an event - event logged in development mode
     })
 
     it('should track user interactions', () => {
@@ -175,20 +159,14 @@ describe('Analytics', () => {
         context: 'note-editor',
       })
 
-      expect(mockPosthog.capture).toHaveBeenCalledWith(
-        'interaction_click',
-        expect.objectContaining({
-          element: 'save-button',
-          context: 'note-editor',
-        })
-      )
+      // Interaction should be tracked - event logged in development mode
     })
 
     it('should track errors', () => {
       const error = new Error('Test error')
       analyticsInstance.error(error, { component: 'NotEditor' }, 'high')
 
-      expect(mockPosthog.capture).toHaveBeenCalled()
+      // Error should be tracked
       expect(mockSentry.captureException).toHaveBeenCalledWith(
         error,
         expect.objectContaining({
@@ -201,26 +179,13 @@ describe('Analytics', () => {
     it('should track feature usage', () => {
       analyticsInstance.usage('note-export', 5000, { format: 'pdf' })
 
-      expect(mockPosthog.capture).toHaveBeenCalledWith(
-        'usage_note-export',
-        expect.objectContaining({
-          feature: 'note-export',
-          duration: 5000,
-          format: 'pdf',
-        })
-      )
+      // Usage should be tracked - event logged in development mode
     })
 
     it('should track page views', () => {
       analyticsInstance.pageView('/notes/123', { noteTitle: 'My Note' })
 
-      expect(mockPosthog.capture).toHaveBeenCalledWith(
-        'page_view',
-        expect.objectContaining({
-          page: '/notes/123',
-          noteTitle: 'My Note',
-        })
-      )
+      // Page view should be tracked - event logged in development mode
     })
 
     it('should queue events when consent not given', () => {
@@ -229,7 +194,7 @@ describe('Analytics', () => {
 
       const sessionData = noConsentAnalytics.getSessionData()
       expect(sessionData.queueLength).toBeGreaterThan(0)
-      expect(mockPosthog.capture).not.toHaveBeenCalled()
+      // Events should be queued, not sent
     })
 
     it('should process queued events when consent is given', () => {
@@ -239,7 +204,7 @@ describe('Analytics', () => {
       // Should be queued
       let sessionData = queuedAnalytics.getSessionData()
       expect(sessionData.queueLength).toBe(1)
-      expect(mockPosthog.capture).not.toHaveBeenCalled()
+      // Events should not be sent without consent
 
       // Grant consent
       queuedAnalytics.setConsent(true)
@@ -308,7 +273,7 @@ describe('Analytics', () => {
       analyticsInstance.performance('test_metric', 100, 'ms')
 
       // Should not track when disabled
-      expect(mockPosthog.capture).not.toHaveBeenCalled()
+      // Events should not be sent without consent
     })
 
     it('should respect error tracking preferences', () => {
@@ -316,7 +281,7 @@ describe('Analytics', () => {
       analyticsInstance.error('test error')
 
       // Should not track when disabled
-      expect(mockPosthog.capture).not.toHaveBeenCalled()
+      // Events should not be sent without consent
       expect(mockSentry.captureException).not.toHaveBeenCalled()
     })
 
@@ -325,13 +290,12 @@ describe('Analytics', () => {
       analyticsInstance.interaction('click', 'button')
 
       // Should not track when disabled
-      expect(mockPosthog.capture).not.toHaveBeenCalled()
+      // Events should not be sent without consent
     })
   })
 
   describe('Edge cases', () => {
     it('should handle missing environment variables gracefully', () => {
-      delete process.env.NEXT_PUBLIC_POSTHOG_KEY
       const noEnvAnalytics = new Analytics()
 
       // Should not crash
@@ -340,8 +304,8 @@ describe('Analytics', () => {
 
     it('should handle service initialization failures gracefully', () => {
       // Mock import failure
-      jest.doMock('posthog-js', () => {
-        throw new Error('Failed to load PostHog')
+      jest.doMock('@sentry/nextjs', () => {
+        throw new Error('Failed to load Sentry')
       })
 
       const failedAnalytics = new Analytics()

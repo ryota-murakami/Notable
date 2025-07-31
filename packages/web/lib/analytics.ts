@@ -74,7 +74,6 @@ class Analytics {
   private initialized: boolean = false
 
   // External analytics services
-  private posthog?: typeof import('posthog-js').default
   private sentry?: typeof import('@sentry/nextjs')
 
   constructor(config?: Partial<AnalyticsConfig>) {
@@ -90,25 +89,6 @@ class Analytics {
     if (typeof window === 'undefined' || !this.config.enabled) return
 
     try {
-      // Initialize PostHog for product analytics
-      if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-        const posthog = await import('posthog-js')
-        this.posthog = posthog.default
-
-        this.posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-          api_host:
-            process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-          capture_pageview: false, // We'll handle this manually
-          capture_pageleave: true,
-          disable_session_recording: !this.config.userInteractionTracking,
-          respect_dnt: this.config.respectDoNotTrack,
-          autocapture: false, // Privacy-first: only track what we explicitly send
-          session_recording: {
-            maskAllInputs: true,
-          },
-        })
-      }
-
       // Initialize Sentry for error tracking
       if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
         this.sentry = await import('@sentry/nextjs')
@@ -151,7 +131,6 @@ class Analytics {
       this.processQueue()
     } else {
       this.queue = []
-      this.posthog?.opt_out_capturing()
     }
 
     // Store consent in localStorage for persistence
@@ -185,7 +164,6 @@ class Analytics {
 
     if (!this.hasConsent() || !this.config.enabled) return
 
-    this.posthog?.identify(userId, properties)
     this.sentry?.setUser({ id: userId, ...properties })
   }
 
@@ -360,11 +338,6 @@ class Analytics {
       return
     }
 
-    // Send to PostHog
-    if (this.posthog) {
-      this.posthog.capture(event.name, event.properties)
-    }
-
     // Log for development
     if (isDevelopment()) {
       console.log('Analytics event:', event)
@@ -408,8 +381,6 @@ class Analytics {
     if (newConfig.enabled !== undefined) {
       if (newConfig.enabled) {
         this.initializeServices()
-      } else {
-        this.posthog?.opt_out_capturing()
       }
     }
   }
@@ -422,7 +393,6 @@ class Analytics {
     this.userId = undefined
     this.queue = []
 
-    this.posthog?.reset()
     this.sentry?.setUser(null)
   }
 
@@ -454,7 +424,6 @@ class Analytics {
     }
 
     // Request deletion from external services
-    this.posthog?.opt_out_capturing()
     this.sentry?.setUser(null)
   }
 }
