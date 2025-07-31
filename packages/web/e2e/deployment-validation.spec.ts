@@ -115,7 +115,7 @@ test.describe('Deployment Environment Variable Validation', () => {
       // Set Vercel preview environment
       process.env.VERCEL = '1'
       process.env.VERCEL_ENV = 'preview'
-      process.env.NODE_ENV = 'production'
+      ;(process.env as any).NODE_ENV = 'production'
 
       // Only provide the required public variables
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
@@ -162,7 +162,7 @@ test.describe('Deployment Environment Variable Validation', () => {
       // Set Vercel production environment
       process.env.VERCEL = '1'
       process.env.VERCEL_ENV = 'production'
-      process.env.NODE_ENV = 'production'
+      ;(process.env as any).NODE_ENV = 'production'
 
       // Only provide the public variables
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
