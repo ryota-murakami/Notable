@@ -9,7 +9,7 @@ const nextConfig = {
   trailingSlash: false,
   outputFileTracingRoot: path.join(__dirname, '../../'),
   // Transpile workspace packages for proper module resolution
-  transpilePackages: ['@notable/sync', 'msw'],
+  transpilePackages: ['@notable/sync', '@notable/routing', 'msw'],
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],
