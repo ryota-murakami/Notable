@@ -253,7 +253,18 @@ export interface StorageAPI {
 }
 
 export interface NetworkAPI {
-  fetch(url: string, options?: RequestInit): Promise<Response>
+  fetch(
+    url: string,
+    options?: {
+      method?: string
+      headers?: Record<string, string>
+      body?: string | FormData | ArrayBuffer
+      signal?: {
+        aborted: boolean
+        addEventListener: (type: string, listener: () => void) => void
+      }
+    }
+  ): Promise<Response>
 }
 
 export interface CommandsAPI {

@@ -41,11 +41,9 @@ import {
   ExternalLinkIcon,
   GitBranchIcon,
   InfoIcon,
-  PowerIcon,
   PuzzleIcon,
   RefreshCwIcon,
   SearchIcon,
-  SettingsIcon,
   ShieldIcon,
   StarIcon,
   TrashIcon,
@@ -134,8 +132,8 @@ export function PluginManagementPanel({
     isInitialized,
     stats: pluginStats,
     installedPlugins,
-    loading,
-    error,
+    loading: _loading,
+    error: _error,
     enablePlugin,
     disablePlugin,
     installPlugin,
@@ -237,7 +235,7 @@ export function PluginManagementPanel({
   const handleInstallPlugin = async (plugin: PluginInfo) => {
     try {
       // In a real implementation, this would download and install the plugin
-      console.log('Installing plugin:', plugin.id)
+      console.info('Installing plugin:', plugin.id)
 
       // Mock installation - create a basic manifest and code
       const mockManifest = {
@@ -290,22 +288,6 @@ export function PluginManagementPanel({
       plugin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       plugin.description.toLowerCase().includes(searchTerm.toLowerCase())
   )
-
-  const getStateIcon = (state: string, enabled: boolean) => {
-    if (!enabled)
-      return <XCircleIcon className='h-4 w-4 text-muted-foreground' />
-
-    switch (state) {
-      case 'active':
-        return <CheckCircleIcon className='h-4 w-4 text-green-500' />
-      case 'error':
-        return <XCircleIcon className='h-4 w-4 text-red-500' />
-      case 'loading':
-        return <RefreshCwIcon className='h-4 w-4 text-blue-500 animate-spin' />
-      default:
-        return <InfoIcon className='h-4 w-4 text-muted-foreground' />
-    }
-  }
 
   return (
     <Modal open={open} onClose={() => onOpenChange(false)} size='xl'>

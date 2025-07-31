@@ -21,12 +21,10 @@ import {
 } from '@/components/ui/command-palette'
 import { KeyboardShortcutsDialog } from '@/components/ui/keyboard-shortcuts-dialog'
 import { useTagManager } from '@/hooks/use-tags'
-import type { SearchableNote } from '@/lib/search/types'
 import {
   AdvancedSearch,
   GlobalSearchTrigger,
 } from '@/components/ui/advanced-search'
-import type { SearchResult } from '@/types/search'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
@@ -44,7 +42,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
 
   // Tag management
-  const { createTag, getOrCreateTag } = useTagManager()
+  const { getOrCreateTag } = useTagManager()
 
   // Get selected note data
   const selectedNote = selectedNoteId
@@ -416,11 +414,11 @@ export function Shell({ children }: { children?: React.ReactNode }) {
                   }
                   onTitleChange={(title) => {
                     // TODO: Implement title update
-                    console.log('Title changed:', title)
+                    console.info('Title changed:', title)
                   }}
                   onContentChange={(content) => {
                     // TODO: Implement content update
-                    console.log('Content changed:', content)
+                    console.info('Content changed:', content)
                   }}
                 />
               </div>

@@ -45,7 +45,7 @@ export class NotablePluginSystem {
     if (this.initialized) return
 
     try {
-      console.log('🔌 Initializing Notable Plugin System...')
+      console.info('🔌 Initializing Notable Plugin System...')
 
       // Initialize plugin manager
       await this.pluginManager.initialize()
@@ -57,7 +57,7 @@ export class NotablePluginSystem {
       this.setupGlobalCommands()
 
       this.initialized = true
-      console.log('🎉 Notable Plugin System initialized successfully!')
+      console.info('🎉 Notable Plugin System initialized successfully!')
 
       // Show success notification
       this.showSystemNotification(
@@ -127,7 +127,7 @@ export class NotablePluginSystem {
    */
   async executeCommand(command: string, ...args: any[]): Promise<any> {
     // This would integrate with Notable's command system
-    console.log(`Executing plugin command: ${command}`, args)
+    console.info(`Executing plugin command: ${command}`, args)
 
     // For now, just delegate to plugin manager's command system
     // In a real implementation, this would hook into the global command palette
