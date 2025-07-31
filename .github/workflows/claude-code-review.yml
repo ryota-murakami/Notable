@@ -1,0 +1,86 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    # Only run on code changes to avoid unnecessary reviews
+    paths:
+      - 'packages/web/**/*.ts'
+      - 'packages/web/**/*.tsx'
+      - 'packages/web/**/*.js'
+      - 'packages/web/**/*.jsx'
+      - 'packages/electron/**/*.ts'
+      - 'packages/electron/**/*.js'
+      - 'packages/mobile/**/*.ts'
+      - 'packages/mobile/**/*.tsx'
+
+jobs:
+  claude-review:
+    # Skip review for certain conditions to reduce noise
+    if: |
+      !contains(github.event.pull_request.title, '[skip-review]') &&
+      !contains(github.event.pull_request.title, '[WIP]') &&
+      !contains(github.event.pull_request.title, 'chore:') &&
+      github.event.pull_request.changed_files > 0
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@beta
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Use sticky comments to reuse the same comment on subsequent pushes
+          use_sticky_comment: true
+
+          # Direct prompt for automated review
+          direct_prompt: |
+            Please review this pull request for Notable, a premium Notion clone. Focus on:
+
+            **Code Quality & Architecture:**
+            - TypeScript usage and type safety
+            - React best practices and performance
+            - Component design and reusability
+            - Following Notable's established patterns
+
+            **Notable-Specific Concerns:**
+            - Integration with the plugin system
+            - Proper use of shadcn/ui components
+            - Adherence to Notable Design System
+            - Rich text editor (Plate.js) integration
+            - Supabase data patterns
+
+            **Security & Performance:**
+            - Input validation and sanitization
+            - Performance implications for large notes
+            - Proper error handling
+            - Memory leaks or unnecessary re-renders
+
+            **Testing & Documentation:**
+            - Test coverage completeness
+            - No test.skip usage (production-grade tests only)
+            - Clear component documentation
+            - Edge case handling
+
+            **Notable Rules (from CLAUDE.md):**
+            - Never implement real-time collaboration
+            - Use pnpm package manager
+            - Production-grade implementations only
+            - Comprehensive E2E tests without skipping
+
+            Be constructive and provide specific, actionable feedback. If the code looks good, say so! Focus on the most important issues first.
+
+          # Allow Claude to run linting and type checking for better reviews
+          allowed_tools: 'Bash(pnpm run lint),Bash(pnpm run typecheck),Bash(pnpm run test -- --reporter=verbose)'
