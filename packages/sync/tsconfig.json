@@ -12,6 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "types": [],
     "strict": true,
     "jsx": "react-jsx",
     "noEmit": false
