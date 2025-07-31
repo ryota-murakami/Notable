@@ -304,8 +304,12 @@ export function deepEqual(obj1: unknown, obj2: unknown): boolean {
     return obj1 === obj2
   }
 
-  const keys1 = Object.keys(obj1)
-  const keys2 = Object.keys(obj2)
+  // TypeScript guard: ensure objects are non-null and can be indexed
+  const o1 = obj1 as Record<string, unknown>
+  const o2 = obj2 as Record<string, unknown>
+
+  const keys1 = Object.keys(o1)
+  const keys2 = Object.keys(o2)
 
   if (keys1.length !== keys2.length) {
     return false
@@ -316,7 +320,7 @@ export function deepEqual(obj1: unknown, obj2: unknown): boolean {
       return false
     }
 
-    if (!deepEqual(obj1[key], obj2[key])) {
+    if (!deepEqual(o1[key], o2[key])) {
       return false
     }
   }

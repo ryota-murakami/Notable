@@ -227,13 +227,13 @@ export const usePresence = () => {
     }
   }, [syncService, isTracking])
 
-  const refreshDevices = useCallback(async () => {
+  const refreshDevices = useCallback(() => {
     if (!syncService || !isInitialized) {
       return
     }
 
     try {
-      const devices = await syncService.getOnlineDevices()
+      const devices = syncService.getOnlineDevices()
       setOnlineDevices(devices)
     } catch (error) {
       console.error('Failed to get online devices:', error)
