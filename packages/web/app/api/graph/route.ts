@@ -8,7 +8,7 @@ export async function GET(_request: NextRequest) {
 
   // If dev auth bypass is enabled, return mock data for E2E tests
   if (devBypassUser) {
-    console.log('Dev auth bypass detected, returning mock graph data')
+    console.info('Dev auth bypass detected, returning mock graph data')
     return NextResponse.json({
       success: true,
       data: {

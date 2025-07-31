@@ -38,8 +38,8 @@ export const Default: Story = {
   args: {
     isOpen: true,
     position: { x: 100, y: 100 },
-    onClose: () => console.log('Menu closed'),
-    onSelect: (command) => console.log('Selected command:', command),
+    onClose: () => {},
+    onSelect: () => {},
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -63,8 +63,8 @@ export const WithSearch: Story = {
   args: {
     isOpen: true,
     position: { x: 100, y: 100 },
-    onClose: () => console.log('Menu closed'),
-    onSelect: (command) => console.log('Selected command:', command),
+    onClose: () => {},
+    onSelect: () => {},
   },
   play: async ({ canvasElement }) => {
     // Wait for portal to render
@@ -99,8 +99,8 @@ export const EmptySearchResults: Story = {
   args: {
     isOpen: true,
     position: { x: 100, y: 100 },
-    onClose: () => console.log('Menu closed'),
-    onSelect: (command) => console.log('Selected command:', command),
+    onClose: () => {},
+    onSelect: () => {},
   },
   play: async ({ canvasElement }) => {
     // Wait for portal to render
@@ -127,8 +127,8 @@ export const KeyboardNavigation: Story = {
   args: {
     isOpen: true,
     position: { x: 100, y: 100 },
-    onClose: () => console.log('Menu closed'),
-    onSelect: (command) => console.log('Selected command:', command),
+    onClose: () => {},
+    onSelect: () => {},
   },
   play: async ({ canvasElement }) => {
     // Wait for portal to render
@@ -293,8 +293,8 @@ export const AllCommands: Story = {
   args: {
     isOpen: true,
     position: { x: 100, y: 50 },
-    onClose: () => console.log('Menu closed'),
-    onSelect: (command) => console.log('Selected command:', command),
+    onClose: () => {},
+    onSelect: () => {},
   },
   parameters: {
     docs: {
@@ -309,8 +309,8 @@ export const InteractionTest: Story = {
   args: {
     isOpen: true,
     position: { x: 100, y: 100 },
-    onClose: () => console.log('Menu closed'),
-    onSelect: (command) => console.log('Selected command:', command),
+    onClose: () => {},
+    onSelect: () => {},
   },
   play: async ({ canvasElement }) => {
     // Wait for portal to render
