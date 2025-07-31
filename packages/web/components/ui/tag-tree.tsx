@@ -4,10 +4,10 @@ import * as React from 'react'
 import {
   ChevronDown,
   ChevronRight,
-  Hash,
-  Plus,
-  MoreHorizontal,
   Edit,
+  Hash,
+  MoreHorizontal,
+  Plus,
   Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useTagTree, useTagManager } from '@/hooks/use-tags'
+import { useTagManager, useTagTree } from '@/hooks/use-tags'
 import type { EnhancedTag } from '@/types/tags'
 
 export interface TagTreeProps {

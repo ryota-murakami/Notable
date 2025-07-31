@@ -392,8 +392,8 @@ export function useExport(options: UseExportOptions = {}) {
   const previewExport = useCallback(
     async (
       note: Note,
-      format: ExportFormat,
-      options?: Partial<ExportOptions>
+      _format: ExportFormat,
+      _options?: Partial<ExportOptions>
     ) => {
       try {
         // Preview export is not implemented in current export service
@@ -501,7 +501,7 @@ export function useExportHistory(userId: string) {
    * Load export history
    */
   const loadHistory = useCallback(
-    async (limit = 50) => {
+    async (_limit = 50) => {
       try {
         setIsLoading(true)
         setError(null)
@@ -516,13 +516,13 @@ export function useExportHistory(userId: string) {
         setIsLoading(false)
       }
     },
-    [exportService, userId]
+    [userId]
   )
 
   /**
    * Delete export from history
    */
-  const deleteExport = useCallback(async (exportId: string) => {
+  const deleteExport = useCallback(async (_exportId: string) => {
     try {
       // Delete export not implemented in current export service
       throw new Error('Delete export is not yet implemented')

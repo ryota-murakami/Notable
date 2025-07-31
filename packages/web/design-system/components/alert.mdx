@@ -1,0 +1,59 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as AlertStories from './alert.stories'
+
+<Meta of={AlertStories} />
+
+<Title />
+
+<Subtitle>Displays a callout for user attention with consistent styling and semantic variants.</Subtitle>
+
+<Description>
+  The Alert component is used to display important messages to users. It supports multiple variants for different types
+  of messages and can include icons and detailed descriptions.
+</Description>
+
+## Usage
+
+```tsx
+import { Alert, AlertTitle, AlertDescription } from '@notable/web/design-system/components'
+import { AlertCircle } from 'lucide-react'
+
+;<Alert variant='destructive'>
+  <AlertCircle className='h-4 w-4' />
+  <AlertTitle>Error</AlertTitle>
+  <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+</Alert>
+```
+
+## Examples
+
+<Primary />
+
+## Variants
+
+The Alert component supports the following variants:
+
+- **default**: Standard alert for general information
+- **destructive**: For errors and critical warnings
+- **success**: For successful operations
+- **warning**: For warnings and cautions
+- **info**: For informational messages
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Best Practices
+
+1. **Use semantic variants**: Choose the appropriate variant based on the message type
+2. **Include icons**: Add relevant icons to improve visual communication
+3. **Keep it concise**: Alert messages should be brief and actionable
+4. **Provide context**: Use AlertTitle for the main message and AlertDescription for details
+
+## Accessibility
+
+- Alerts are announced to screen readers
+- Uses semantic HTML with appropriate ARIA attributes
+- Color is not the only indicator of alert type (icons provide additional context)

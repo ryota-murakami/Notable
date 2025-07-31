@@ -1,0 +1,87 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as BadgeStories from './badge.stories'
+
+<Meta of={BadgeStories} />
+
+<Title />
+
+<Subtitle>A compact label component for displaying status, categories, or counts.</Subtitle>
+
+<Description>
+  Badges are used to highlight important information in a compact format. They're perfect for displaying status
+  indicators, labels, notification counts, and tags.
+</Description>
+
+## Usage
+
+```tsx
+import { Badge } from '@notable/web/design-system/components'
+
+// Basic usage
+<Badge>New</Badge>
+
+// With variant
+<Badge variant="secondary">In Progress</Badge>
+
+// With custom styling
+<Badge className="bg-blue-100 text-blue-800">Custom</Badge>
+```
+
+## Examples
+
+<Primary />
+
+## Variants
+
+Available badge variants:
+
+- **default**: Primary badge style
+- **secondary**: Subtle, secondary style
+- **destructive**: For errors or warnings
+- **outline**: Border-only style
+- **success**: For positive states
+- **warning**: For cautionary information
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Use Cases
+
+### Status Indicators
+
+```tsx
+<Badge variant="success">Active</Badge>
+<Badge variant="destructive">Expired</Badge>
+<Badge variant="warning">Pending</Badge>
+```
+
+### Notification Counts
+
+```tsx
+<Badge>99+</Badge>
+<Badge variant="destructive">3</Badge>
+```
+
+### Tags and Labels
+
+```tsx
+<Badge variant="outline">TypeScript</Badge>
+<Badge variant="secondary">Draft</Badge>
+```
+
+## Best Practices
+
+1. **Keep text short**: Badges should contain 1-2 words maximum
+2. **Use semantic variants**: Match the variant to the content meaning
+3. **Consistent sizing**: Badges should maintain consistent height across your application
+4. **Avoid overuse**: Too many badges can clutter the interface
+
+## Accessibility
+
+- Uses semantic HTML
+- Supports keyboard navigation when interactive
+- Color contrast meets WCAG guidelines
+- Screen reader friendly

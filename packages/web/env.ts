@@ -138,7 +138,7 @@ export function getConfig(): EnvironmentConfig {
 }
 
 // Helper function for backwards compatibility
-export function validateEnvironment(isServer = false): void {
+export function validateEnvironment(_isServer = false): void {
   // t3-env automatically validates on import, so this is a no-op
   // kept for backwards compatibility
 }

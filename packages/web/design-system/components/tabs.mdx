@@ -1,0 +1,158 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as TabsStories from './tabs.stories'
+
+<Meta of={TabsStories} />
+
+<Title />
+
+<Subtitle>A set of layered sections of content, known as tab panels, that display one panel at a time.</Subtitle>
+
+<Description>
+  Tabs organize content into multiple sections and allow users to navigate between them. Each tab panel contains
+  independent content, and only one panel is visible at a time.
+</Description>
+
+## Usage
+
+```tsx
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@notable/web/design-system/components'
+
+;<Tabs defaultValue='account' className='w-[400px]'>
+  <TabsList>
+    <TabsTrigger value='account'>Account</TabsTrigger>
+    <TabsTrigger value='password'>Password</TabsTrigger>
+    <TabsTrigger value='team'>Team</TabsTrigger>
+  </TabsList>
+  <TabsContent value='account'>
+    <p>Make changes to your account here.</p>
+  </TabsContent>
+  <TabsContent value='password'>
+    <p>Change your password here.</p>
+  </TabsContent>
+  <TabsContent value='team'>
+    <p>Manage your team members here.</p>
+  </TabsContent>
+</Tabs>
+```
+
+## Examples
+
+<Primary />
+
+## Component Structure
+
+- **Tabs**: Root component that manages state
+- **TabsList**: Container for tab triggers
+- **TabsTrigger**: Individual tab buttons
+- **TabsContent**: Content panels for each tab
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### Controlled Tabs
+
+```tsx
+const [activeTab, setActiveTab] = useState("overview")
+
+<Tabs value={activeTab} onValueChange={setActiveTab}>
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="analytics">Analytics</TabsTrigger>
+    <TabsTrigger value="reports">Reports</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">
+    {/* Overview content */}
+  </TabsContent>
+  <TabsContent value="analytics">
+    {/* Analytics content */}
+  </TabsContent>
+  <TabsContent value="reports">
+    {/* Reports content */}
+  </TabsContent>
+</Tabs>
+```
+
+### With Icons
+
+```tsx
+<Tabs defaultValue='files'>
+  <TabsList>
+    <TabsTrigger value='files' className='flex items-center gap-2'>
+      <FileIcon className='h-4 w-4' />
+      Files
+    </TabsTrigger>
+    <TabsTrigger value='settings' className='flex items-center gap-2'>
+      <SettingsIcon className='h-4 w-4' />
+      Settings
+    </TabsTrigger>
+    <TabsTrigger value='users' className='flex items-center gap-2'>
+      <UsersIcon className='h-4 w-4' />
+      Users
+    </TabsTrigger>
+  </TabsList>
+  {/* Tab contents */}
+</Tabs>
+```
+
+### Vertical Tabs
+
+```tsx
+<Tabs defaultValue='general' orientation='vertical' className='flex gap-4'>
+  <TabsList className='flex-col h-auto'>
+    <TabsTrigger value='general'>General</TabsTrigger>
+    <TabsTrigger value='security'>Security</TabsTrigger>
+    <TabsTrigger value='notifications'>Notifications</TabsTrigger>
+    <TabsTrigger value='billing'>Billing</TabsTrigger>
+  </TabsList>
+  <div className='flex-1'>
+    <TabsContent value='general'>{/* General settings */}</TabsContent>
+    {/* Other tab contents */}
+  </div>
+</Tabs>
+```
+
+### With Badges
+
+```tsx
+<Tabs defaultValue='all'>
+  <TabsList>
+    <TabsTrigger value='all'>
+      All
+      <Badge className='ml-2' variant='secondary'>
+        24
+      </Badge>
+    </TabsTrigger>
+    <TabsTrigger value='unread'>
+      Unread
+      <Badge className='ml-2' variant='destructive'>
+        3
+      </Badge>
+    </TabsTrigger>
+    <TabsTrigger value='archived'>Archived</TabsTrigger>
+  </TabsList>
+  {/* Tab contents */}
+</Tabs>
+```
+
+## Best Practices
+
+1. **Clear labels**: Use concise, descriptive labels for tabs
+2. **Logical order**: Arrange tabs in a logical sequence
+3. **Limit number**: Avoid too many tabs (5-7 maximum recommended)
+4. **Consistent content**: Each tab should contain related content
+5. **Visual feedback**: Clearly indicate the active tab
+6. **Responsive design**: Consider dropdown or accordion on mobile
+
+## Accessibility
+
+- Full keyboard navigation (Arrow keys, Tab, Enter)
+- ARIA roles and properties
+- Focus management
+- Screen reader support
+- Proper heading hierarchy within tab panels
+- Support for both horizontal and vertical orientations

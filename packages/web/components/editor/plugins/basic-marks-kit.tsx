@@ -1,43 +1,95 @@
 'use client'
 
-// TODO: Fix Plate.js imports - need to update to correct export names
-// import {
-//   BoldPlugin,
-//   CodePlugin,
-//   HighlightPlugin,
-//   ItalicPlugin,
-//   KbdPlugin,
-//   StrikethroughPlugin,
-//   SubscriptPlugin,
-//   SuperscriptPlugin,
-//   UnderlinePlugin,
-// } from '@platejs/basic-nodes'
+import { createPlatePlugin } from 'platejs/react'
 
 import { CodeLeaf } from '@/components/ui/code-node'
 import { HighlightLeaf } from '@/components/ui/highlight-node'
 import { KbdLeaf } from '@/components/ui/kbd-node'
 
-// TODO: Re-enable mark plugins when imports are fixed
+// Text Mark Plugins with proper v49 configuration
+const BoldPlugin = createPlatePlugin({
+  key: 'bold',
+  node: {
+    isLeaf: true,
+    type: 'bold',
+  },
+})
+
+const ItalicPlugin = createPlatePlugin({
+  key: 'italic',
+  node: {
+    isLeaf: true,
+    type: 'italic',
+  },
+})
+
+const UnderlinePlugin = createPlatePlugin({
+  key: 'underline',
+  node: {
+    isLeaf: true,
+    type: 'underline',
+  },
+})
+
+const CodePlugin = createPlatePlugin({
+  key: 'code',
+  node: {
+    isLeaf: true,
+    type: 'code',
+    component: CodeLeaf,
+  },
+})
+
+const StrikethroughPlugin = createPlatePlugin({
+  key: 'strikethrough',
+  node: {
+    isLeaf: true,
+    type: 'strikethrough',
+  },
+})
+
+const SubscriptPlugin = createPlatePlugin({
+  key: 'subscript',
+  node: {
+    isLeaf: true,
+    type: 'subscript',
+  },
+})
+
+const SuperscriptPlugin = createPlatePlugin({
+  key: 'superscript',
+  node: {
+    isLeaf: true,
+    type: 'superscript',
+  },
+})
+
+const HighlightPlugin = createPlatePlugin({
+  key: 'highlight',
+  node: {
+    isLeaf: true,
+    type: 'highlight',
+    component: HighlightLeaf,
+  },
+})
+
+const KbdPlugin = createPlatePlugin({
+  key: 'kbd',
+  node: {
+    isLeaf: true,
+    type: 'kbd',
+    component: KbdLeaf,
+  },
+})
+
 export const BasicMarksKit = [
-  // BoldPlugin,
-  // ItalicPlugin,
-  // UnderlinePlugin,
-  // CodePlugin.configure({
-  //   node: { component: CodeLeaf },
-  //   shortcuts: { toggle: { keys: 'mod+e' } },
-  // }),
-  // StrikethroughPlugin.configure({
-  //   shortcuts: { toggle: { keys: 'mod+shift+x' } },
-  // }),
-  // SubscriptPlugin.configure({
-  //   shortcuts: { toggle: { keys: 'mod+comma' } },
-  // }),
-  // SuperscriptPlugin.configure({
-  //   shortcuts: { toggle: { keys: 'mod+period' } },
-  // }),
-  // HighlightPlugin.configure({
-  //   node: { component: HighlightLeaf },
-  //   shortcuts: { toggle: { keys: 'mod+shift+h' } },
-  // }),
-  // KbdPlugin.withComponent(KbdLeaf),
+  BoldPlugin,
+  ItalicPlugin,
+  UnderlinePlugin,
+  CodePlugin,
+  StrikethroughPlugin,
+  SubscriptPlugin,
+  SuperscriptPlugin,
+  HighlightPlugin,
+  KbdPlugin,
 ]

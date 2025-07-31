@@ -1,0 +1,91 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title='Design System/Introduction' />
+
+# Notable Design System
+
+Welcome to the Notable Design System documentation. This design system provides a comprehensive set of components,
+design tokens, and guidelines for building consistent and beautiful user interfaces across the Notable application.
+
+## Vision
+
+The Notable Design System is built with the following principles in mind:
+
+- **Minimalist**: Clean, distraction-free interface
+- **Consistent**: Unified design language across platforms
+- **Accessible**: WCAG 2.1 AA compliance
+- **Responsive**: Adaptive layouts for all screen sizes
+
+## Getting Started
+
+The design system is organized into several key areas:
+
+### 1. Design Tokens
+
+Design tokens are the visual design atoms of the design system — specifically, they are named entities that store visual
+design attributes.
+
+- **Colors**: Semantic color palette with support for light and dark themes
+- **Typography**: Type scale and font families
+- **Spacing**: Consistent spacing scale
+- **Effects**: Shadows, borders, and other visual effects
+- **Motion**: Animation timing and easing functions
+
+### 2. Components
+
+Our component library includes:
+
+- **Basic Components**: Button, Badge, Input, Textarea, etc.
+- **Layout Components**: Card, Modal, etc.
+- **Interactive Components**: Toggle, Slider, Dropdown, Tooltip
+- **Complex Components**: Command Palette, Editor components
+
+### 3. Themes
+
+The design system supports multiple themes:
+
+- **Light Theme**: Default theme optimized for daylight viewing
+- **Dark Theme**: Eye-friendly theme for low-light environments
+- **System Theme**: Automatically switches based on OS preference
+
+## Usage
+
+### Importing Components
+
+```tsx
+import { Button, Card, Badge } from '@notable/web/design-system/components'
+```
+
+### Using Design Tokens
+
+```tsx
+import { colors, spacing, typography } from '@notable/web/design-system/tokens'
+```
+
+### Theme Provider
+
+Wrap your application with the ThemeProvider to enable theme switching:
+
+```tsx
+import { ThemeProvider } from '@notable/web/design-system/theme'
+
+function App() {
+  return <ThemeProvider defaultTheme='system'>{/* Your app content */}</ThemeProvider>
+}
+```
+
+## Contributing
+
+When contributing to the design system:
+
+1. Follow the existing patterns and conventions
+2. Ensure components are accessible
+3. Add stories for new components
+4. Document props and usage examples
+5. Test across different themes
+
+## Resources
+
+- [Component Examples](/story/design-system-components--docs)
+- [Design Tokens](/story/design-system-tokens--docs)
+- [Theme Customization](/story/design-system-theme--docs)

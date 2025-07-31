@@ -1,0 +1,65 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as PopoverStories from './popover.stories'
+
+<Meta of={PopoverStories} />
+
+<Title />
+
+<Subtitle>A floating overlay that displays additional content when triggered.</Subtitle>
+
+<Description>
+  The Popover component displays rich content in a portal, triggered by a button click. Unlike tooltips, popovers can
+  contain interactive content and remain open until explicitly closed.
+</Description>
+
+## Usage
+
+```tsx
+import { Popover, PopoverContent, PopoverTrigger } from '@notable/web/design-system/components'
+
+;<Popover>
+  <PopoverTrigger asChild>
+    <Button>Open popover</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    <div className='space-y-2'>
+      <h4 className='font-medium'>Popover Title</h4>
+      <p className='text-sm text-muted-foreground'>This is the popover content with interactive elements.</p>
+    </div>
+  </PopoverContent>
+</Popover>
+```
+
+## Examples
+
+<Primary />
+
+## Component Structure
+
+- **Popover**: Root component that manages state
+- **PopoverTrigger**: Element that opens the popover
+- **PopoverContent**: The popover content container
+- **PopoverAnchor**: Optional custom anchor point
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Best Practices
+
+1. **Clear triggers**: Make it obvious what opens the popover
+2. **Focus management**: Handle focus properly when opening/closing
+3. **Mobile friendly**: Ensure popovers work well on touch devices
+4. **Dismissal**: Provide clear ways to close (click outside, escape key)
+5. **Positioning**: Ensure content doesn't overflow viewport
+
+## Accessibility
+
+- Click outside to close
+- Escape key to close
+- Focus trap management
+- ARIA attributes
+- Keyboard navigation within content
+- Screen reader announcements

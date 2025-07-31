@@ -7,6 +7,7 @@ module.exports = {
     '**/*.config.js',
     '**/__tests__/**',
     '**/__mocks__/**',
+    'storybook-static/**',
   ],
   overrides: [
     {

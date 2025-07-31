@@ -39,6 +39,7 @@ export interface Database {
           name: string
           color: string
           user_id: string
+          parent_id: string | null
           created_at: string
         }
         Insert: {
@@ -46,6 +47,7 @@ export interface Database {
           name: string
           color?: string
           user_id: string
+          parent_id?: string | null
           created_at?: string
         }
         Update: {
@@ -53,6 +55,7 @@ export interface Database {
           name?: string
           color?: string
           user_id?: string
+          parent_id?: string | null
           created_at?: string
         }
       }

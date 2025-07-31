@@ -1,0 +1,62 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as LabelStories from './label.stories'
+
+<Meta of={LabelStories} />
+
+<Title />
+
+<Subtitle>Accessible label component for form controls.</Subtitle>
+
+<Description>
+  The Label component provides accessible text labels for form inputs. It ensures proper associations between labels and
+  form controls for better usability and accessibility.
+</Description>
+
+## Usage
+
+```tsx
+import { Label } from '@notable/web/design-system/components'
+import { Input } from '@notable/web/design-system/components'
+
+// Basic usage
+<div className="space-y-2">
+  <Label htmlFor="email">Email</Label>
+  <Input id="email" type="email" placeholder="Enter your email" />
+</div>
+
+// With required indicator
+<Label htmlFor="name">
+  Name <span className="text-red-500">*</span>
+</Label>
+
+// Disabled state
+<Label htmlFor="disabled" className="opacity-50">
+  Disabled Field
+</Label>
+```
+
+## Examples
+
+<Primary />
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Best Practices
+
+1. **Always use htmlFor**: Connect labels to their inputs
+2. **Clear text**: Use concise, descriptive label text
+3. **Required fields**: Clearly indicate required fields
+4. **Consistent placement**: Place labels consistently above or beside inputs
+5. **Accessibility**: Ensure screen readers can associate labels with inputs
+
+## Accessibility
+
+- Proper for/id association
+- Screen reader support
+- Click label to focus input
+- Clear visual hierarchy
+- Support for ARIA attributes when needed

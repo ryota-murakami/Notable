@@ -1,0 +1,433 @@
+import { Meta, ArgTypes, Canvas, Story } from '@storybook/blocks'
+import { Spinner, Dots, Pulse, Bars, Skeleton, Progress, LoadingOverlay, CircularProgress } from './loading'
+import * as LoadingStories from './loading.stories'
+
+<Meta of={LoadingStories} />
+
+# Loading
+
+Loading components provide visual feedback during asynchronous operations. They come in various styles to suit different
+contexts and loading scenarios.
+
+## Components Overview
+
+- **Spinner**: Classic rotating spinner
+- **Dots**: Animated bouncing dots
+- **Pulse**: Pulsing circle effect
+- **Bars**: Animated vertical bars
+- **Skeleton**: Content placeholder
+- **Progress**: Linear progress bar
+- **CircularProgress**: Circular progress indicator
+- **LoadingOverlay**: Full overlay with loading state
+
+## Spinner
+
+The classic rotating spinner for general loading states.
+
+<Canvas of={LoadingStories.SpinnerDefault} />
+
+### Props
+
+<ArgTypes of={Spinner} />
+
+### Sizes
+
+<Canvas of={LoadingStories.SpinnerSizes} />
+
+```tsx
+<Spinner size="sm" />
+<Spinner size="md" />
+<Spinner size="lg" />
+<Spinner size="xl" />
+```
+
+### Colors
+
+<Canvas of={LoadingStories.SpinnerColors} />
+
+```tsx
+<Spinner color="primary" />
+<Spinner color="secondary" />
+<Spinner color="white" />
+```
+
+## Dots
+
+Bouncing dots for a playful loading animation.
+
+<Canvas of={LoadingStories.DotsDefault} />
+
+### Sizes
+
+<Canvas of={LoadingStories.DotsSizes} />
+
+```tsx
+<Dots size="sm" />
+<Dots size="md" />
+<Dots size="lg" />
+```
+
+## Pulse
+
+Pulsing circles for subtle loading feedback.
+
+<Canvas of={LoadingStories.PulseDefault} />
+
+### Sizes
+
+<Canvas of={LoadingStories.PulseSizes} />
+
+```tsx
+<Pulse size="sm" />
+<Pulse size="md" />
+<Pulse size="lg" />
+<Pulse size="xl" />
+```
+
+## Bars
+
+Animated vertical bars for a unique loading style.
+
+<Canvas of={LoadingStories.BarsDefault} />
+
+### Sizes
+
+<Canvas of={LoadingStories.BarsSizes} />
+
+```tsx
+<Bars size="sm" />
+<Bars size="md" />
+<Bars size="lg" />
+```
+
+## Skeleton
+
+Content placeholders that show the structure of content while loading.
+
+<Canvas of={LoadingStories.SkeletonDefault} />
+
+### Variants
+
+<Canvas of={LoadingStories.SkeletonVariants} />
+
+```tsx
+// Text skeleton
+<Skeleton variant="text" />
+
+// Circular skeleton (avatar)
+<Skeleton variant="circular" width={40} height={40} />
+
+// Rectangular skeleton (image)
+<Skeleton variant="rectangular" width={200} height={100} />
+
+// Rounded skeleton (button)
+<Skeleton variant="rounded" width={200} height={40} />
+```
+
+### Animations
+
+<Canvas of={LoadingStories.SkeletonAnimations} />
+
+```tsx
+<Skeleton animation="pulse" />
+<Skeleton animation="wave" />
+<Skeleton animation="none" />
+```
+
+### Card Example
+
+<Canvas of={LoadingStories.SkeletonCardExample} />
+
+```tsx
+<Card className='w-[300px]'>
+  <CardHeader>
+    <div className='flex items-center gap-3'>
+      <Skeleton variant='circular' width={40} height={40} />
+      <div className='space-y-2 flex-1'>
+        <Skeleton variant='text' width='60%' />
+        <Skeleton variant='text' width='40%' />
+      </div>
+    </div>
+  </CardHeader>
+  <CardContent>
+    <Skeleton variant='rounded' height={120} />
+    <Skeleton variant='text' />
+    <Skeleton variant='text' />
+    <Skeleton variant='text' width='80%' />
+  </CardContent>
+</Card>
+```
+
+## Progress
+
+Linear progress bars for determinate loading states.
+
+<Canvas of={LoadingStories.ProgressDefault} />
+
+### Props
+
+<ArgTypes of={Progress} />
+
+### Sizes
+
+<Canvas of={LoadingStories.ProgressSizes} />
+
+```tsx
+<Progress value={50} size="sm" />
+<Progress value={50} size="md" />
+<Progress value={50} size="lg" />
+```
+
+### Colors
+
+<Canvas of={LoadingStories.ProgressColors} />
+
+```tsx
+<Progress value={60} color="primary" />
+<Progress value={60} color="secondary" />
+<Progress value={60} color="success" />
+<Progress value={60} color="warning" />
+<Progress value={60} color="error" />
+```
+
+### With Label
+
+<Canvas of={LoadingStories.ProgressWithLabel} />
+
+```tsx
+<Progress value={75} showLabel />
+```
+
+## Circular Progress
+
+Circular progress indicators for compact spaces.
+
+<Canvas of={LoadingStories.CircularProgressDefault} />
+
+### Props
+
+<ArgTypes of={CircularProgress} />
+
+### Sizes
+
+<Canvas of={LoadingStories.CircularProgressSizes} />
+
+```tsx
+<CircularProgress value={60} size={60} />
+<CircularProgress value={60} size={80} />
+<CircularProgress value={60} size={120} />
+```
+
+### Colors
+
+<Canvas of={LoadingStories.CircularProgressColors} />
+
+```tsx
+<CircularProgress value={75} color="primary" />
+<CircularProgress value={75} color="secondary" />
+<CircularProgress value={75} color="success" />
+<CircularProgress value={75} color="warning" />
+<CircularProgress value={75} color="error" />
+```
+
+## Loading Overlay
+
+Full overlay with loading indicator for blocking operations.
+
+<Canvas of={LoadingStories.LoadingOverlayExample} />
+
+### Props
+
+<ArgTypes of={LoadingOverlay} />
+
+### Different Spinners
+
+<Canvas of={LoadingStories.LoadingOverlaySpinners} />
+
+```tsx
+<LoadingOverlay visible={true} spinner="spinner" />
+<LoadingOverlay visible={true} spinner="dots" />
+<LoadingOverlay visible={true} spinner="pulse" />
+<LoadingOverlay visible={true} spinner="bars" />
+```
+
+### With Message
+
+```tsx
+<LoadingOverlay visible={loading} spinner='spinner'>
+  <p className='text-sm text-muted-foreground'>Loading content...</p>
+</LoadingOverlay>
+```
+
+## Usage Guidelines
+
+### When to Use
+
+- **Spinner**: General purpose loading, buttons, small areas
+- **Dots**: Playful contexts, chat interfaces, typing indicators
+- **Pulse**: Subtle loading, background operations
+- **Bars**: Music/audio apps, unique visual style
+- **Skeleton**: Content loading, preserving layout
+- **Progress**: File uploads, multi-step processes
+- **Circular Progress**: Dashboards, stats, compact areas
+- **Loading Overlay**: Modal operations, form submissions
+
+### Best Practices
+
+1. **Choose Appropriately**: Match loading style to context
+2. **Provide Feedback**: Always show loading state for async operations
+3. **Show Progress**: Use progress bars when percentage is known
+4. **Preserve Layout**: Use skeletons to prevent layout shift
+5. **Accessibility**: Include proper ARIA labels
+
+### Performance
+
+- Use CSS animations for better performance
+- Lazy load heavy loading components
+- Consider using skeletons for perceived performance
+- Avoid too many simultaneous animations
+
+## Examples
+
+### Button with Loading
+
+```tsx
+<Button loading disabled>
+  {loading ? <Spinner size='sm' color='white' /> : 'Submit'}
+</Button>
+```
+
+### Form Submission
+
+<Canvas of={LoadingStories.RealWorldExample} />
+
+```tsx
+function FormExample() {
+  const [loading, setLoading] = useState(false)
+  const [progress, setProgress] = useState(0)
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    // Simulate progress
+    for (let i = 0; i <= 100; i += 10) {
+      setProgress(i)
+      await sleep(300)
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Card>
+      <CardContent>
+        {/* Form fields */}
+        {loading && <Progress value={progress} showLabel />}
+        <Button onClick={handleSubmit} disabled={loading}>
+          Submit
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+```
+
+### Data Table Loading
+
+```tsx
+{
+  isLoading ? (
+    <div className='space-y-3'>
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className='flex gap-4'>
+          <Skeleton variant='text' width={100} />
+          <Skeleton variant='text' width={200} />
+          <Skeleton variant='text' width={150} />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <DataTable data={data} />
+  )
+}
+```
+
+### Image Loading
+
+```tsx
+function ImageWithSkeleton({ src, alt }) {
+  const [loaded, setLoaded] = useState(false)
+
+  return (
+    <div className='relative'>
+      {!loaded && <Skeleton variant='rectangular' width={300} height={200} />}
+      <img src={src} alt={alt} onLoad={() => setLoaded(true)} className={loaded ? 'block' : 'hidden'} />
+    </div>
+  )
+}
+```
+
+### Dashboard Widget
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Revenue</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {loading ? (
+      <div className='flex items-center justify-center py-8'>
+        <CircularProgress value={progress} />
+      </div>
+    ) : (
+      <Chart data={revenueData} />
+    )}
+  </CardContent>
+</Card>
+```
+
+## Accessibility
+
+- All loading components include appropriate ARIA attributes
+- Screen readers announce loading states
+- Progress changes are communicated to assistive technology
+- Loading overlays trap focus appropriately
+- Animations respect `prefers-reduced-motion`
+
+## Animation Performance
+
+### CSS vs JavaScript
+
+Our loading components use CSS animations for better performance:
+
+```css
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+```
+
+### Reducing Motion
+
+Components respect user preferences:
+
+```tsx
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none;
+  }
+}
+```
+
+## Related Components
+
+- [Button](/?path=/docs/components-button--docs) - Buttons with loading states
+- [Card](/?path=/docs/components-card--docs) - Cards with skeleton loading
+- [Table](/?path=/docs/components-table--docs) - Tables with loading states
+- [Image](/?path=/docs/components-image--docs) - Images with loading placeholders

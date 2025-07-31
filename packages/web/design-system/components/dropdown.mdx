@@ -1,0 +1,436 @@
+import { Meta, ArgTypes, Canvas, Story } from '@storybook/blocks'
+import { Dropdown, SearchableDropdown, MultiSelectDropdown, CreatableDropdown } from './dropdown'
+import * as DropdownStories from './dropdown.stories'
+
+<Meta of={DropdownStories} />
+
+# Dropdown
+
+Dropdown components provide a flexible way to select options from a list. They support single and multiple selection,
+search functionality, custom creation, and various styling options.
+
+<Canvas of={DropdownStories.Default} />
+
+## Props
+
+<ArgTypes of={Dropdown} />
+
+## Basic Usage
+
+```tsx
+import { Dropdown } from '@/components/ui/dropdown'
+
+const options = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+  { label: 'Cherry', value: 'cherry' }
+]
+
+<Dropdown
+  options={options}
+  placeholder="Select a fruit..."
+  onValueChange={(value) => console.log(value)}
+/>
+```
+
+## Variants
+
+### Default
+
+Standard dropdown with border styling.
+
+<Canvas of={DropdownStories.Default} />
+
+```tsx
+<Dropdown variant='default' options={options} />
+```
+
+### Filled
+
+Filled background for better visibility.
+
+<Canvas of={DropdownStories.Variants} />
+
+```tsx
+<Dropdown variant='filled' options={options} />
+```
+
+### Outlined
+
+Prominent border styling.
+
+```tsx
+<Dropdown variant='outlined' options={options} />
+```
+
+## Sizes
+
+<Canvas of={DropdownStories.Sizes} />
+
+```tsx
+<Dropdown size="sm" options={options} />
+<Dropdown size="md" options={options} />
+<Dropdown size="lg" options={options} />
+```
+
+## Features
+
+### With Icons
+
+Add icons to options for better visual recognition.
+
+<Canvas of={DropdownStories.WithIcons} />
+
+```tsx
+const iconOptions = [
+  { label: 'Home', value: 'home', icon: <Home className="h-4 w-4" /> },
+  { label: 'User', value: 'user', icon: <User className="h-4 w-4" /> },
+  { label: 'Settings', value: 'settings', icon: <Settings className="h-4 w-4" /> }
+]
+
+<Dropdown options={iconOptions} />
+```
+
+### With Descriptions
+
+Include descriptions for additional context.
+
+<Canvas of={DropdownStories.WithDescriptions} />
+
+```tsx
+const detailedOptions = [
+  {
+    label: 'John Doe',
+    value: 'john',
+    description: 'john.doe@example.com',
+    icon: <Mail className="h-4 w-4" />
+  }
+]
+
+<Dropdown options={detailedOptions} />
+```
+
+### Searchable
+
+Enable search to filter through options.
+
+<Canvas of={DropdownStories.Searchable} />
+
+```tsx
+<Dropdown options={options} searchable searchPlaceholder='Search fruits...' />
+```
+
+### Multiple Selection
+
+Allow selecting multiple options.
+
+<Canvas of={DropdownStories.MultiSelect} />
+
+```tsx
+<Dropdown options={options} multiple clearable placeholder='Select fruits...' />
+```
+
+### Creatable
+
+Allow users to create new options.
+
+<Canvas of={DropdownStories.Creatable} />
+
+```tsx
+<Dropdown options={options} creatable searchable onCreateOption={(value) => console.log('Creating:', value)} />
+```
+
+### Clearable
+
+Add a clear button to reset selection.
+
+<Canvas of={DropdownStories.WithClearButton} />
+
+```tsx
+<Dropdown options={options} clearable defaultValue='apple' />
+```
+
+## States
+
+<Canvas of={DropdownStories.States} />
+
+### Disabled
+
+```tsx
+<Dropdown options={options} disabled />
+```
+
+### Loading
+
+```tsx
+<Dropdown options={options} loading />
+```
+
+### Error
+
+```tsx
+<Dropdown options={options} error='Please select an option' />
+```
+
+### Success
+
+```tsx
+<Dropdown options={options} success />
+```
+
+## With Labels and Helpers
+
+<Canvas of={DropdownStories.WithLabel} />
+
+```tsx
+<Dropdown options={options} label='Favorite Fruit' helper='Choose your favorite fruit from the list' />
+```
+
+## Specialized Dropdowns
+
+### SearchableDropdown
+
+Pre-configured for search functionality.
+
+<Canvas of={DropdownStories.SearchableDropdownExample} />
+
+```tsx
+<SearchableDropdown options={options} placeholder='Search people...' label='Select Person' />
+```
+
+### MultiSelectDropdown
+
+Pre-configured for multiple selection.
+
+<Canvas of={DropdownStories.MultiSelectDropdownExample} />
+
+```tsx
+<MultiSelectDropdown options={options} placeholder='Select multiple items...' label='Select Items' />
+```
+
+### CreatableDropdown
+
+Pre-configured for creating new options.
+
+<Canvas of={DropdownStories.CreatableDropdownExample} />
+
+```tsx
+<CreatableDropdown
+  options={options}
+  placeholder='Select or create...'
+  label='Fruit Selection'
+  onCreateOption={(value) => console.log('Creating:', value)}
+/>
+```
+
+## Advanced Features
+
+### Long Lists
+
+Efficiently handle large datasets with virtualization.
+
+<Canvas of={DropdownStories.LongList} />
+
+```tsx
+const manyOptions = Array.from({ length: 50 }, (_, i) => ({
+  label: `Option ${i + 1}`,
+  value: `option-${i + 1}`
+}))
+
+<Dropdown
+  options={manyOptions}
+  searchable
+  maxHeight={300}
+/>
+```
+
+### Grouped Options
+
+Organize options into logical groups.
+
+<Canvas of={DropdownStories.GroupedOptions} />
+
+```tsx
+const groupedOptions = [
+  { label: 'Apple', value: 'apple', group: 'Fruits' },
+  { label: 'Banana', value: 'banana', group: 'Fruits' },
+  { label: 'Carrot', value: 'carrot', group: 'Vegetables' },
+  { label: 'Broccoli', value: 'broccoli', group: 'Vegetables' }
+]
+
+<Dropdown options={groupedOptions} />
+```
+
+## Usage Guidelines
+
+### When to Use
+
+- **Single Selection**: When users need to pick one option from many
+- **Multiple Selection**: For selecting multiple related items
+- **Limited Space**: When space is constrained compared to radio/checkbox groups
+- **Dynamic Options**: When options change based on context
+- **Search Required**: When there are many options to filter through
+
+### Best Practices
+
+1. **Clear Labels**: Use descriptive option labels
+2. **Logical Order**: Sort options alphabetically or by relevance
+3. **Search Threshold**: Enable search for 10+ options
+4. **Default Values**: Provide sensible defaults when applicable
+5. **Loading States**: Show loading state for async options
+6. **Error Handling**: Provide clear error messages
+
+### Accessibility
+
+- Full keyboard navigation support
+- ARIA attributes for screen readers
+- Focus management and indicators
+- Announced changes for dynamic content
+- Support for high contrast modes
+
+## Keyboard Navigation
+
+- `Tab` - Focus dropdown
+- `Space/Enter` - Open dropdown
+- `Arrow Up/Down` - Navigate options
+- `Enter` - Select option
+- `Escape` - Close dropdown
+- `Home/End` - Jump to first/last option
+- Type to search (when searchable)
+
+## Examples
+
+### Country Selector
+
+```tsx
+<Dropdown
+  options={countries}
+  searchable
+  placeholder='Select your country...'
+  label='Country'
+  helper='Choose your country of residence'
+  icon={<Globe className='h-4 w-4' />}
+/>
+```
+
+### Tag Selector
+
+```tsx
+<MultiSelectDropdown
+  options={availableTags}
+  placeholder='Add tags...'
+  label='Tags'
+  maxTags={5}
+  clearable
+  onValueChange={(tags) => updateNoteTags(tags)}
+/>
+```
+
+### Status Dropdown
+
+```tsx
+const statusOptions = [
+  {
+    label: 'Active',
+    value: 'active',
+    icon: <Circle className="h-3 w-3 fill-green-500" />
+  },
+  {
+    label: 'Inactive',
+    value: 'inactive',
+    icon: <Circle className="h-3 w-3 fill-gray-500" />
+  },
+  {
+    label: 'Pending',
+    value: 'pending',
+    icon: <Circle className="h-3 w-3 fill-yellow-500" />
+  }
+]
+
+<Dropdown
+  options={statusOptions}
+  defaultValue="active"
+  label="Status"
+/>
+```
+
+### Assignee Picker
+
+```tsx
+<SearchableDropdown
+  options={teamMembers}
+  placeholder='Assign to...'
+  label='Assignee'
+  helper='Select team member to assign this task'
+  loading={isLoadingMembers}
+  onValueChange={(memberId) => assignTask(memberId)}
+/>
+```
+
+## Form Integration
+
+### With React Hook Form
+
+```tsx
+<Controller
+  name='category'
+  control={control}
+  rules={{ required: 'Please select a category' }}
+  render={({ field, fieldState }) => (
+    <Dropdown
+      options={categories}
+      value={field.value}
+      onValueChange={field.onChange}
+      error={fieldState.error?.message}
+      label='Category'
+    />
+  )}
+/>
+```
+
+### Controlled Component
+
+```tsx
+function ControlledExample() {
+  const [selected, setSelected] = useState('')
+
+  return <Dropdown options={options} value={selected} onValueChange={setSelected} placeholder='Controlled dropdown' />
+}
+```
+
+## Performance Optimization
+
+### Virtualization
+
+For large lists, virtualization is automatically enabled:
+
+```tsx
+<Dropdown options={thousandsOfOptions} virtualized maxHeight={400} searchable />
+```
+
+### Async Loading
+
+Load options dynamically:
+
+```tsx
+function AsyncDropdown() {
+  const [options, setOptions] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const loadOptions = async (search: string) => {
+    setLoading(true)
+    const results = await fetchOptions(search)
+    setOptions(results)
+    setLoading(false)
+  }
+
+  return <Dropdown options={options} loading={loading} searchable onSearch={loadOptions} />
+}
+```
+
+## Related Components
+
+- [Select](/?path=/docs/components-select--docs) - Native select element
+- [Combobox](/?path=/docs/components-combobox--docs) - Text input with dropdown
+- [Menu](/?path=/docs/components-menu--docs) - Action menus
+- [Autocomplete](/?path=/docs/components-autocomplete--docs) - Type-ahead suggestions

@@ -1,0 +1,244 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title='Design System/Tokens' />
+
+# Design Tokens
+
+Design tokens are the core visual properties that define the Notable Design System. They ensure consistency across all
+components and make theming possible.
+
+## Color Tokens
+
+Our color system is semantic and supports both light and dark themes.
+
+### Base Colors
+
+<div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+    gap: '1rem',
+    marginTop: '2rem',
+  }}
+>
+  <div style={{ padding: '1rem', border: '1px solid #e5e5e5', borderRadius: '8px' }}>
+    <div
+      style={{ width: '100%', height: '60px', backgroundColor: '#3b82f6', borderRadius: '4px', marginBottom: '0.5rem' }}
+    ></div>
+    <p>
+      <strong>Primary</strong>
+    </p>
+    <code>#3b82f6</code>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid #e5e5e5', borderRadius: '8px' }}>
+    <div
+      style={{ width: '100%', height: '60px', backgroundColor: '#10b981', borderRadius: '4px', marginBottom: '0.5rem' }}
+    ></div>
+    <p>
+      <strong>Success</strong>
+    </p>
+    <code>#10b981</code>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid #e5e5e5', borderRadius: '8px' }}>
+    <div
+      style={{ width: '100%', height: '60px', backgroundColor: '#f59e0b', borderRadius: '4px', marginBottom: '0.5rem' }}
+    ></div>
+    <p>
+      <strong>Warning</strong>
+    </p>
+    <code>#f59e0b</code>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid #e5e5e5', borderRadius: '8px' }}>
+    <div
+      style={{ width: '100%', height: '60px', backgroundColor: '#ef4444', borderRadius: '4px', marginBottom: '0.5rem' }}
+    ></div>
+    <p>
+      <strong>Error</strong>
+    </p>
+    <code>#ef4444</code>
+  </div>
+</div>
+
+### Semantic Colors
+
+- **Background**: Main background color
+- **Foreground**: Main text color
+- **Muted**: Muted backgrounds and borders
+- **Accent**: Accent colors for highlights
+
+## Typography
+
+Our typography scale is based on a modular scale for consistency.
+
+### Font Families
+
+- **Sans**: System font stack for UI
+- **Mono**: Monospace font for code
+
+### Font Sizes
+
+<div style={{ marginTop: '2rem' }}>
+  <p style={{ fontSize: '3rem', margin: '0.5rem 0' }}>Display (3rem)</p>
+  <p style={{ fontSize: '2.25rem', margin: '0.5rem 0' }}>Heading 1 (2.25rem)</p>
+  <p style={{ fontSize: '1.875rem', margin: '0.5rem 0' }}>Heading 2 (1.875rem)</p>
+  <p style={{ fontSize: '1.5rem', margin: '0.5rem 0' }}>Heading 3 (1.5rem)</p>
+  <p style={{ fontSize: '1.25rem', margin: '0.5rem 0' }}>Heading 4 (1.25rem)</p>
+  <p style={{ fontSize: '1.125rem', margin: '0.5rem 0' }}>Heading 5 (1.125rem)</p>
+  <p style={{ fontSize: '1rem', margin: '0.5rem 0' }}>Body (1rem)</p>
+  <p style={{ fontSize: '0.875rem', margin: '0.5rem 0' }}>Small (0.875rem)</p>
+  <p style={{ fontSize: '0.75rem', margin: '0.5rem 0' }}>Caption (0.75rem)</p>
+</div>
+
+## Spacing
+
+Consistent spacing creates visual rhythm and hierarchy.
+
+### Spacing Scale
+
+<div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginTop: '2rem' }}>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '4px', height: '4px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>1 (4px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '8px', height: '8px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>2 (8px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '12px', height: '12px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>3 (12px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '16px', height: '16px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>4 (16px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '20px', height: '20px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>5 (20px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '24px', height: '24px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>6 (24px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '32px', height: '32px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>8 (32px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '40px', height: '40px', backgroundColor: '#3b82f6' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>10 (40px)</p>
+  </div>
+</div>
+
+## Effects
+
+### Shadows
+
+<div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+    gap: '2rem',
+    marginTop: '2rem',
+  }}
+>
+  <div>
+    <div
+      style={{
+        padding: '2rem',
+        backgroundColor: 'white',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+      }}
+    >
+      <p>Small Shadow</p>
+    </div>
+  </div>
+  <div>
+    <div
+      style={{
+        padding: '2rem',
+        backgroundColor: 'white',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+      }}
+    >
+      <p>Medium Shadow</p>
+    </div>
+  </div>
+  <div>
+    <div
+      style={{
+        padding: '2rem',
+        backgroundColor: 'white',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+      }}
+    >
+      <p>Large Shadow</p>
+    </div>
+  </div>
+</div>
+
+### Border Radius
+
+<div style={{ display: 'flex', gap: '2rem', marginTop: '2rem' }}>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '80px', height: '80px', backgroundColor: '#e5e5e5', borderRadius: '2px' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>Small (2px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '80px', height: '80px', backgroundColor: '#e5e5e5', borderRadius: '4px' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>Default (4px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '80px', height: '80px', backgroundColor: '#e5e5e5', borderRadius: '8px' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>Medium (8px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '80px', height: '80px', backgroundColor: '#e5e5e5', borderRadius: '12px' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>Large (12px)</p>
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <div style={{ width: '80px', height: '80px', backgroundColor: '#e5e5e5', borderRadius: '50%' }}></div>
+    <p style={{ marginTop: '0.5rem' }}>Full (50%)</p>
+  </div>
+</div>
+
+## Motion
+
+Consistent motion creates a cohesive experience.
+
+### Duration
+
+- **Fast**: 150ms - Micro interactions
+- **Normal**: 250ms - Standard transitions
+- **Slow**: 350ms - Complex animations
+
+### Easing
+
+- **Ease In Out**: Default easing for most animations
+- **Ease Out**: For elements entering the screen
+- **Ease In**: For elements leaving the screen
+- **Spring**: For playful, bouncy animations
+
+## Usage in Code
+
+```tsx
+import { colors, spacing, typography, effects, motion } from '@notable/web/design-system/tokens'
+
+// Using color tokens
+const primaryColor = colors.brand[500]
+
+// Using spacing tokens
+const margin = spacing[4] // 16px
+
+// Using typography tokens
+const fontSize = typography.fontSize.body
+
+// Using effect tokens
+const shadow = effects.shadow.md
+
+// Using motion tokens
+const transition = `all ${motion.duration.normal} ${motion.easing.easeInOut}`
+```

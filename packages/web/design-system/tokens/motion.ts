@@ -141,6 +141,16 @@ export const motion = {
       },
     },
 
+    // Wave loading animation
+    wave: {
+      '0%': {
+        transform: 'translateX(-100%)',
+      },
+      '100%': {
+        transform: 'translateX(100%)',
+      },
+    },
+
     // Accordion animations
     accordionDown: {
       from: { height: '0' },
@@ -177,6 +187,7 @@ export const motion = {
 
     // Loading animations
     shimmer: 'shimmer 2s linear infinite',
+    wave: 'wave 1.5s ease-in-out infinite',
 
     // Accordion animations
     accordionDown: 'accordionDown 200ms ease-out',

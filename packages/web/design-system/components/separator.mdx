@@ -1,0 +1,79 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as SeparatorStories from './separator.stories'
+
+<Meta of={SeparatorStories} />
+
+<Title />
+
+<Subtitle>A visual divider to separate content sections.</Subtitle>
+
+<Description>
+  The Separator component creates a visual boundary between different sections of content. It can be oriented
+  horizontally or vertically and styled to match your design system.
+</Description>
+
+## Usage
+
+```tsx
+import { Separator } from '@notable/web/design-system/components'
+
+// Horizontal separator (default)
+<Separator />
+
+// Vertical separator
+<Separator orientation="vertical" className="h-[20px]" />
+
+// With custom styling
+<Separator className="my-4 bg-blue-200" />
+```
+
+## Examples
+
+<Primary />
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### In Lists
+
+```tsx
+<div>
+  {items.map((item, index) => (
+    <React.Fragment key={item.id}>
+      <div className='py-4'>{item.content}</div>
+      {index < items.length - 1 && <Separator />}
+    </React.Fragment>
+  ))}
+</div>
+```
+
+### In Navigation
+
+```tsx
+<nav className='flex items-center space-x-4'>
+  <a href='/'>Home</a>
+  <Separator orientation='vertical' className='h-4' />
+  <a href='/about'>About</a>
+  <Separator orientation='vertical' className='h-4' />
+  <a href='/contact'>Contact</a>
+</nav>
+```
+
+## Best Practices
+
+1. **Semantic use**: Use for visual separation, not spacing
+2. **Consistent spacing**: Maintain consistent margins around separators
+3. **Subtle styling**: Keep separators subtle to avoid visual clutter
+4. **Accessibility**: Decorative separators should have role="separator"
+
+## Accessibility
+
+- Proper ARIA role
+- Decorative by default
+- Screen readers ignore decorative separators
+- Can be made semantic when needed

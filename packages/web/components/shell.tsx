@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotes } from '@/hooks/use-notes'
 import { useRouting } from '@/hooks/use-routing'
@@ -185,7 +185,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   }, [selectedNoteId])
 
   const handleCreateTag = useCallback(async () => {
-    const tagName = prompt('Enter tag name:')
+    const tagName = window.prompt('Enter tag name:')
     if (!tagName || !tagName.trim()) return
 
     try {

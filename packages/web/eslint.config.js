@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook'
+
 import nextConfig from '../configs/eslint-config/next.js'
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -48,11 +51,15 @@ export default [
         HTMLHeadingElement: 'readonly',
         HTMLParagraphElement: 'readonly',
         HTMLStyleElement: 'readonly',
+        HTMLPreElement: 'readonly',
+        HTMLSpanElement: 'readonly',
+        HTMLSelectElement: 'readonly',
         Element: 'readonly',
         Node: 'readonly',
         Event: 'readonly',
         MouseEvent: 'readonly',
         KeyboardEvent: 'readonly',
+        CanvasRenderingContext2D: 'readonly',
 
         // Node.js globals
         setTimeout: 'readonly',
@@ -119,8 +126,7 @@ export default [
       'require-await': 'warn',
       'no-duplicate-imports': 'warn',
     },
-  },
-  // Jest test files configuration
+  }, // Jest test files configuration
   {
     files: [
       '__tests__/**/*.{ts,tsx,js,jsx}',
@@ -169,8 +175,7 @@ export default [
         },
       ],
     },
-  },
-  // Vitest test files configuration
+  }, // Vitest test files configuration
   {
     files: [
       '**/*.{test,spec}.{ts,tsx,js,jsx}',
@@ -189,7 +194,7 @@ export default [
         afterAll: 'readonly',
         test: 'readonly',
         suite: 'readonly',
-        
+
         // Browser/Node globals for tests
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
@@ -211,8 +216,7 @@ export default [
         },
       ],
     },
-  },
-  // Script files configuration - allow console statements for deployment/operational scripts
+  }, // Script files configuration - allow console statements for deployment/operational scripts
   {
     files: ['scripts/**/*.{ts,tsx,js,jsx}', '**/scripts/**/*.{ts,tsx,js,jsx}'],
     rules: {
@@ -228,8 +232,7 @@ export default [
         },
       ],
     },
-  },
-  // Service Worker and public files configuration
+  }, // Service Worker and public files configuration
   {
     files: [
       'public/**/*.{js,ts}',
@@ -249,8 +252,7 @@ export default [
       ],
       'no-unused-expressions': 'off', // For Service Worker event listeners
     },
-  },
-  // Library/utility files configuration - allow some warnings for async patterns
+  }, // Library/utility files configuration - allow some warnings for async patterns
   {
     files: [
       'lib/search/**/*.{ts,tsx,js,jsx}',
@@ -271,8 +273,7 @@ export default [
       'no-return-await': 'off', // Allow return await for consistency
       '@typescript-eslint/consistent-type-imports': 'off', // Allow dynamic imports
     },
-  },
-  // Jest setup and hook files configuration
+  }, // Jest setup and hook files configuration
   {
     files: ['jest.setup.js', 'hooks/**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
@@ -310,4 +311,5 @@ export default [
       'require-await': 'off', // Allow async hooks without await
     },
   },
+  ...storybook.configs['flat/recommended'],
 ]

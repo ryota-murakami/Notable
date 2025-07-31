@@ -1,0 +1,112 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as CheckboxStories from './checkbox.stories'
+
+<Meta of={CheckboxStories} />
+
+<Title />
+
+<Subtitle>A control that allows users to toggle between checked and unchecked states.</Subtitle>
+
+<Description>
+  The Checkbox component provides a way for users to make binary choices. It supports controlled and uncontrolled modes,
+  disabled states, and custom styling.
+</Description>
+
+## Usage
+
+```tsx
+import { Checkbox } from '@notable/web/design-system/components'
+import { Label } from '@notable/web/design-system/components'
+
+// Basic usage
+<Checkbox id="terms" />
+<Label htmlFor="terms">Accept terms and conditions</Label>
+
+// Controlled component
+const [checked, setChecked] = useState(false)
+
+<Checkbox
+  checked={checked}
+  onCheckedChange={setChecked}
+/>
+```
+
+## Examples
+
+<Primary />
+
+## States
+
+The Checkbox component supports three states:
+
+- **Unchecked**: Default state
+- **Checked**: Selected state
+- **Indeterminate**: Partial selection (useful for parent checkboxes)
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### With Label
+
+```tsx
+<div className='flex items-center space-x-2'>
+  <Checkbox id='marketing' />
+  <Label htmlFor='marketing'>Send me marketing emails</Label>
+</div>
+```
+
+### Form Integration
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <div className='space-y-4'>
+    <div className='flex items-center space-x-2'>
+      <Checkbox id='terms' required />
+      <Label htmlFor='terms'>I agree to the terms</Label>
+    </div>
+    <button type='submit'>Submit</button>
+  </div>
+</form>
+```
+
+### Group Selection
+
+```tsx
+const [selectedItems, setSelectedItems] = useState([])
+
+{
+  items.map((item) => (
+    <Checkbox
+      key={item.id}
+      checked={selectedItems.includes(item.id)}
+      onCheckedChange={(checked) => {
+        if (checked) {
+          setSelectedItems([...selectedItems, item.id])
+        } else {
+          setSelectedItems(selectedItems.filter((id) => id !== item.id))
+        }
+      }}
+    />
+  ))
+}
+```
+
+## Best Practices
+
+1. **Always use labels**: Checkboxes should have associated labels for accessibility
+2. **Provide feedback**: Show clear visual feedback for state changes
+3. **Group related options**: Use fieldsets to group related checkboxes
+4. **Consider touch targets**: Ensure adequate click/tap area on mobile
+
+## Accessibility
+
+- Full keyboard support (Space to toggle)
+- ARIA attributes for screen readers
+- Proper labeling with `htmlFor` attribute
+- Focus indicators for keyboard navigation
+- Supports form validation

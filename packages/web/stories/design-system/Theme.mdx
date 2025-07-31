@@ -1,0 +1,242 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title='Design System/Theme' />
+
+# Theme System
+
+The Notable Design System includes a powerful theming system that supports light and dark modes, as well as custom theme
+creation.
+
+## How It Works
+
+The theme system is built on CSS custom properties (CSS variables) that can be dynamically updated. This allows for:
+
+- Instant theme switching without page reload
+- User preference persistence
+- System theme detection
+- Custom theme creation
+
+## Available Themes
+
+Notable includes 8 carefully crafted themes to suit different preferences and accessibility needs:
+
+### Standard Themes
+
+#### Light Theme (Default)
+
+The light theme is optimized for daylight viewing with high contrast and readability.
+
+#### Dark Theme
+
+The dark theme provides a comfortable viewing experience in low-light environments.
+
+### Special Themes
+
+#### Midnight Theme
+
+A deep blue dark theme with excellent contrast, perfect for late-night coding sessions.
+
+#### Sunset Theme
+
+A warm, cozy theme inspired by golden hour with orange and amber tones.
+
+#### Forest Theme
+
+A natural green theme inspired by deep forests, easy on the eyes for extended use.
+
+#### Ocean Theme
+
+A cool blue theme inspired by deep waters, calming and focused.
+
+### Accessibility Themes
+
+#### High Contrast Light
+
+Maximum contrast light theme designed for users with visual impairments.
+
+#### High Contrast Dark
+
+Maximum contrast dark theme with pure black background and white text.
+
+### Theme Colors
+
+All themes use the OKLCH color space for perceptually uniform colors:
+
+```css
+/* Example: Light theme colors */
+[data-theme='light'] {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.646 0.222 41.116);
+  /* ... more tokens */
+}
+```
+
+## Using the Theme Provider
+
+Wrap your application with the `ThemeProvider` component:
+
+```tsx
+import { ThemeProvider } from '@notable/web/design-system/theme'
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme='system' storageKey='notable-theme'>
+      {/* Your app content */}
+    </ThemeProvider>
+  )
+}
+```
+
+### Props
+
+- `defaultTheme`: Initial theme (`"light"`, `"dark"`, `"midnight"`, `"sunset"`, `"forest"`, `"ocean"`,
+  `"highContrastLight"`, `"highContrastDark"`, or `"system"`)
+- `storageKey`: LocalStorage key for persisting user preference
+- `attribute`: HTML attribute to set on root element (default: `"data-theme"`)
+
+## Theme Switching
+
+You can switch themes programmatically using the `useTheme` hook:
+
+```tsx
+import { useTheme } from '@notable/web/design-system/theme'
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+
+  return <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>Toggle theme</button>
+}
+```
+
+## Creating Custom Themes
+
+You can create custom themes by defining your own CSS variables:
+
+```css
+[data-theme='custom'] {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --primary: 346.8 77.2% 49.8%;
+  --primary-foreground: 355.7 100% 97.3%;
+  /* Define all required tokens */
+}
+```
+
+### Required Tokens
+
+When creating a custom theme, you must define all these tokens:
+
+#### Colors
+
+- `--background`: Main background color
+- `--foreground`: Main text color
+- `--card`: Card background color
+- `--card-foreground`: Card text color
+- `--popover`: Popover background color
+- `--popover-foreground`: Popover text color
+- `--primary`: Primary brand color
+- `--primary-foreground`: Primary text color
+- `--secondary`: Secondary color
+- `--secondary-foreground`: Secondary text color
+- `--muted`: Muted backgrounds
+- `--muted-foreground`: Muted text
+- `--accent`: Accent color
+- `--accent-foreground`: Accent text color
+- `--destructive`: Error/danger color
+- `--destructive-foreground`: Error text color
+- `--border`: Border color
+- `--input`: Input border color
+- `--ring`: Focus ring color
+
+#### Semantic Colors
+
+- `--success`: Success state color
+- `--warning`: Warning state color
+- `--error`: Error state color
+- `--info`: Information state color
+
+## Theme-Aware Components
+
+All design system components automatically adapt to the current theme:
+
+```tsx
+import { Button, Card, Badge } from '@notable/web/design-system/components'
+
+// These components will automatically use theme colors
+<Button variant="primary">Themed Button</Button>
+<Card variant="elevated">Themed Card</Card>
+<Badge variant="success">Themed Badge</Badge>
+```
+
+## Best Practices
+
+1. **Use Semantic Colors**: Always use semantic color tokens instead of hard-coded colors
+2. **Test Both Themes**: Ensure your components look good in both light and dark themes
+3. **Respect User Preference**: Default to system theme to match user's OS preference
+4. **Provide Theme Toggle**: Give users control over their viewing experience
+5. **Consider Contrast**: Ensure sufficient contrast ratios for accessibility
+
+## Advanced Usage
+
+### Theme Detection
+
+```tsx
+import { useTheme } from '@notable/web/design-system/theme'
+
+function ThemeAwareComponent() {
+  const { theme, systemTheme } = useTheme()
+
+  const actualTheme = theme === 'system' ? systemTheme : theme
+
+  return <div>Current theme: {actualTheme}</div>
+}
+```
+
+### Custom Theme Switching Animation
+
+```tsx
+import { motion } from 'framer-motion'
+import { useTheme } from '@notable/web/design-system/theme'
+
+function AnimatedThemeSwitch() {
+  const { theme, setTheme } = useTheme()
+
+  return (
+    <motion.button
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+    >
+      {theme === 'light' ? '🌙' : '☀️'}
+    </motion.button>
+  )
+}
+```
+
+### Theme-Based Styling
+
+```tsx
+import { useTheme } from '@notable/web/design-system/theme'
+import { cn } from '@notable/web/lib/utils'
+
+function ThemedComponent() {
+  const { theme } = useTheme()
+
+  return (
+    <div className={cn('p-4 rounded-lg', theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100')}>
+      Theme-specific styling
+    </div>
+  )
+}
+```
+
+## Storybook Theme Switcher
+
+In Storybook, you can switch themes using the toolbar:
+
+1. Look for the theme switcher in the toolbar (circle icon)
+2. Select Light, Dark, or System theme
+3. All components will update instantly
+
+The theme preference is saved per story, so you can test different components in different themes.

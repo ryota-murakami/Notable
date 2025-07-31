@@ -71,11 +71,10 @@ jobs:
 
       - name: Install Playwright Browsers
         run: |
-          # Use explicit installation with timeout protection
-          timeout 600 npx playwright install --with-deps chromium firefox || {
-            echo "Browser installation timed out or failed, retrying with individual browsers..."
-            timeout 300 npx playwright install chromium || echo "Chromium install failed"
-            timeout 300 npx playwright install firefox || echo "Firefox install failed"
+          # Install only chromium to match optimized test configuration
+          timeout 300 npx playwright install --with-deps chromium || {
+            echo "Chromium installation failed or timed out"
+            exit 1
           }
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 0
@@ -90,10 +89,15 @@ jobs:
       - name: Build workspace dependencies
         run: pnpm build --filter=@notable/sync --filter=@notable/routing
 
+      - name: Clear Next.js cache
+        run: |
+          cd packages/web
+          rm -rf .next .turbo
+
       - name: Run E2E Tests
         run: |
           cd packages/web
-          pnpm run e2e
+          DEBUG=pw:webserver pnpm run e2e
         env:
           CI: true
           PLAYWRIGHT_BROWSERS_PATH: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
@@ -102,6 +106,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key'
           NEXT_PUBLIC_APP_URL: 'http://localhost:4378'
           NODE_ENV: 'test'
+          DEBUG: 'pw:webserver'
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

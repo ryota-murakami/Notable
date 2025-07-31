@@ -1,0 +1,144 @@
+import { Meta, Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/blocks'
+import * as TooltipStories from './tooltip.stories'
+
+<Meta of={TooltipStories} />
+
+<Title />
+
+<Subtitle>A popup that displays information when hovering over an element.</Subtitle>
+
+<Description>
+  Tooltips provide contextual information about an element when a user hovers over or focuses on it. They're perfect for
+  showing helpful hints, full text for truncated content, or additional context without cluttering the interface.
+</Description>
+
+## Usage
+
+```tsx
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@notable/web/design-system/components'
+
+// Wrap your app with TooltipProvider
+;<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant='outline'>Hover me</Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>This is a helpful tooltip</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
+## Examples
+
+<Primary />
+
+## Component Structure
+
+- **TooltipProvider**: Provides context for all tooltips (wrap your app)
+- **Tooltip**: Individual tooltip instance
+- **TooltipTrigger**: Element that triggers the tooltip
+- **TooltipContent**: The tooltip content container
+
+<Stories />
+
+## API Reference
+
+<Controls />
+
+## Common Patterns
+
+### Icon Buttons
+
+```tsx
+<Tooltip>
+  <TooltipTrigger asChild>
+    <Button variant='ghost' size='icon'>
+      <HelpCircle className='h-4 w-4' />
+    </Button>
+  </TooltipTrigger>
+  <TooltipContent>
+    <p>Get help</p>
+  </TooltipContent>
+</Tooltip>
+```
+
+### Truncated Text
+
+```tsx
+<Tooltip>
+  <TooltipTrigger asChild>
+    <p className='truncate max-w-[200px]'>This is a very long text that will be truncated</p>
+  </TooltipTrigger>
+  <TooltipContent>
+    <p>This is a very long text that will be truncated</p>
+  </TooltipContent>
+</Tooltip>
+```
+
+### With Keyboard Shortcut
+
+```tsx
+<Tooltip>
+  <TooltipTrigger asChild>
+    <Button>Save</Button>
+  </TooltipTrigger>
+  <TooltipContent>
+    <p>Save document</p>
+    <kbd className='ml-2 text-xs'>⌘S</kbd>
+  </TooltipContent>
+</Tooltip>
+```
+
+### Delayed Show
+
+```tsx
+<TooltipProvider delayDuration={800}>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button>Delayed tooltip</Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>This appears after 800ms</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
+### With Side and Align
+
+```tsx
+<Tooltip>
+  <TooltipTrigger asChild>
+    <Button>Custom position</Button>
+  </TooltipTrigger>
+  <TooltipContent side='bottom' align='start'>
+    <p>Bottom-aligned tooltip</p>
+  </TooltipContent>
+</Tooltip>
+```
+
+## Best Practices
+
+1. **Keep it concise**: Tooltips should contain brief, helpful information
+2. **No essential info**: Don't put critical information only in tooltips
+3. **Consistent timing**: Use consistent delay across your app
+4. **Avoid on mobile**: Consider alternatives for touch devices
+5. **Keyboard accessible**: Ensure tooltips show on focus, not just hover
+6. **Plain text preferred**: Avoid complex content or interactions in tooltips
+
+## Positioning
+
+Tooltips can be positioned on four sides with three alignment options:
+
+**Sides**: `top`, `right`, `bottom`, `left` **Alignments**: `start`, `center`, `end`
+
+## Accessibility
+
+- Shows on both hover and focus
+- Dismissible with Escape key
+- Screen reader accessible
+- Proper ARIA attributes
+- Keyboard navigation support
+- Respects prefers-reduced-motion

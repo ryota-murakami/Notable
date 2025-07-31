@@ -1,0 +1,55 @@
+# Ignore all node_modules
+**/node_modules
+**/.turbo
+**/.next
+**/.vite
+**/dist
+**/build
+**/coverage
+**/playwright-report
+**/test-results
+**/storybook-static
+
+# Development files
+**/*.log
+**/.DS_Store
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
+# Test files
+**/e2e
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/vitest.config.ts
+**/playwright.config.ts
+**/.storybook
+
+# Documentation
+/docs
+*.md
+
+# Scripts and configs at root
+/scripts
+/test-results
+/push.log
+/types
+
+# Other packages (only deploy web)
+/packages/electron
+/packages/mobile
+/packages/sync
+/packages/routing
+
+# Git
+.git
+.gitignore
+
+# Misc
+.vscode
+.idea
+*.tsbuildinfo

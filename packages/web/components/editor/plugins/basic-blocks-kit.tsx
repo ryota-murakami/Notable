@@ -1,16 +1,6 @@
 'use client'
 
-// TODO: Fix Plate.js imports - need to update to correct export names
-// import {
-//   BlockquotePlugin,
-//   H1Plugin,
-//   H2Plugin,
-//   H3Plugin,
-//   H4Plugin,
-//   H5Plugin,
-//   H6Plugin,
-//   HorizontalRulePlugin,
-// } from '@platejs/basic-nodes'
+import { createPlatePlugin } from 'platejs/react'
 import { ParagraphPlugin } from 'platejs/react'
 
 import { BlockquoteElement } from '@/components/ui/blockquote-node'
@@ -25,67 +15,88 @@ import {
 import { HrElement } from '@/components/ui/hr-node'
 import { ParagraphElement } from '@/components/ui/paragraph-node'
 
-// TODO: Fix Plate.js plugin configurations once correct imports are resolved
+// Core Block Plugins with proper v49 configuration
+const H1Plugin = createPlatePlugin({
+  key: 'h1',
+  node: {
+    isElement: true,
+    type: 'h1',
+    component: H1Element,
+  },
+})
+
+const H2Plugin = createPlatePlugin({
+  key: 'h2',
+  node: {
+    isElement: true,
+    type: 'h2',
+    component: H2Element,
+  },
+})
+
+const H3Plugin = createPlatePlugin({
+  key: 'h3',
+  node: {
+    isElement: true,
+    type: 'h3',
+    component: H3Element,
+  },
+})
+
+const H4Plugin = createPlatePlugin({
+  key: 'h4',
+  node: {
+    isElement: true,
+    type: 'h4',
+    component: H4Element,
+  },
+})
+
+const H5Plugin = createPlatePlugin({
+  key: 'h5',
+  node: {
+    isElement: true,
+    type: 'h5',
+    component: H5Element,
+  },
+})
+
+const H6Plugin = createPlatePlugin({
+  key: 'h6',
+  node: {
+    isElement: true,
+    type: 'h6',
+    component: H6Element,
+  },
+})
+
+const BlockquotePlugin = createPlatePlugin({
+  key: 'blockquote',
+  node: {
+    isElement: true,
+    type: 'blockquote',
+    component: BlockquoteElement,
+  },
+})
+
+const HorizontalRulePlugin = createPlatePlugin({
+  key: 'hr',
+  node: {
+    isElement: true,
+    type: 'hr',
+    component: HrElement,
+    isVoid: true, // HR elements don't have children
+  },
+})
+
 export const BasicBlocksKit = [
   ParagraphPlugin.withComponent(ParagraphElement),
-  // TODO: Re-enable heading plugins when imports are fixed
-  // H1Plugin.configure({
-  //   node: {
-  //     component: H1Element,
-  //   },
-  //   rules: {
-  //     break: { empty: 'reset' },
-  //   },
-  //   shortcuts: { toggle: { keys: 'mod+alt+1' } },
-  // }),
-  // H2Plugin.configure({
-  //   node: {
-  //     component: H2Element,
-  //   },
-  //   rules: {
-  //     break: { empty: 'reset' },
-  //   },
-  //   shortcuts: { toggle: { keys: 'mod+alt+2' } },
-  // }),
-  // H3Plugin.configure({
-  //   node: {
-  //     component: H3Element,
-  //   },
-  //   rules: {
-  //     break: { empty: 'reset' },
-  //   },
-  //   shortcuts: { toggle: { keys: 'mod+alt+3' } },
-  // }),
-  // H4Plugin.configure({
-  //   node: {
-  //     component: H4Element,
-  //   },
-  //   rules: {
-  //     break: { empty: 'reset' },
-  //   },
-  //   shortcuts: { toggle: { keys: 'mod+alt+4' } },
-  // }),
-  // H5Plugin.configure({
-  //   node: {
-  //     component: H5Element,
-  //   },
-  //   rules: {
-  //     break: { empty: 'reset' },
-  //   },
-  //   shortcuts: { toggle: { keys: 'mod+alt+5' } },
-  // }),
-  // H6Plugin.configure({
-  //   node: {
-  //     component: H6Element,
-  //   },
-  //   rules: {
-  //     break: { empty: 'reset' },
-  //   },
-  //   shortcuts: { toggle: { keys: 'mod+alt+6' } },
-  // }),
-  // BlockquotePlugin.configure({
-  //   node: { component: BlockquoteElement },
-  //   shortcuts: { toggle: { keys: 'mod+shift+period' } },
-  // }),
-  // HorizontalRulePlugin.withComponent(HrElement),
+  H1Plugin,
+  H2Plugin,
+  H3Plugin,
+  H4Plugin,
+  H5Plugin,
+  H6Plugin,
+  BlockquotePlugin,
+  HorizontalRulePlugin,
 ]
