@@ -87,7 +87,7 @@ export async function triggerMenuItem(
 /**
  * Get all windows
  */
-export function getAllWindows(app: ElectronApplication): Promise<Page[]> {
+export async function getAllWindows(app: ElectronApplication): Promise<Page[]> {
   return app.windows()
 }
 
@@ -113,11 +113,14 @@ export function sendIPCMessage<T>(
 ): Promise<T> {
   return page.evaluate(
     ({ channel, args }) => {
-      return (
-        window as unknown as {
-          electronAPI: Record<string, (...args: unknown[]) => Promise<unknown>>
-        }
-      ).electronAPI[channel](...args) as T
+      const win = window as unknown as {
+        electronAPI: Record<string, (...args: unknown[]) => Promise<unknown>>
+      }
+      const fn = win.electronAPI[channel]
+      if (!fn) {
+        throw new Error(`electronAPI.${channel} is not a function`)
+      }
+      return fn(...args) as T
     },
     { channel, args }
   )
@@ -343,7 +346,6 @@ export function cleanupTempFiles(filePaths: string[]): void {
   filePaths.forEach((filePath) => {
     try {
       if (fs.existsSync(filePath)) {
-         
         fs.unlinkSync(filePath) // eslint-disable-line no-sync
       }
     } catch (error) {

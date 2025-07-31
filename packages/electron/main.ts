@@ -202,12 +202,12 @@ const createWindow = async () => {
   registerLocalShortcuts(mainWindow)
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Create native menu
   createMenu()
 
   // Create system tray
-  createTray()
+  await createTray()
 
   // Register global shortcuts
   registerGlobalShortcuts()
@@ -804,8 +804,8 @@ function createMenu() {
 }
 
 // Create system tray
-function createTray() {
-  const iconPath = getIconPath()
+async function createTray() {
+  const iconPath = await getIconPath()
   if (!iconPath) {
     console.warn('No icon found for system tray, skipping tray creation')
     return
