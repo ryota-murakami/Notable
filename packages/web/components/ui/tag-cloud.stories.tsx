@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import { TagCloud, TagCloudWithAnalytics } from './tag-cloud'
 import type { EnhancedTag } from '@/types/tags'
 
@@ -357,7 +357,7 @@ export const WithClickHandler: Story = {
     interactive: true,
     showCounts: true,
     onTagClick: (tag) => {
-      alert(`Clicked on tag: ${tag.name} (used ${tag.usage_count} times)`)
+      console.log(`Clicked on tag: ${tag.name} (used ${tag.usage_count} times)`)
     },
   },
 }

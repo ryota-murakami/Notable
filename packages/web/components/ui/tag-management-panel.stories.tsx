@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs'
 import * as React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TagManagementPanel } from './tag-management-panel'
@@ -113,7 +113,7 @@ const mockTags = [
 // Mock the API endpoints
 if (typeof window !== 'undefined') {
   // @ts-ignore
-  window.fetch = async (url: string, options?: RequestInit) => {
+  window.fetch = async (url: string, options?: any) => {
     await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate network delay
 
     if (url.includes('/api/tags')) {
@@ -237,7 +237,7 @@ export const WithManyTags: Story = {
     React.useEffect(() => {
       const originalFetch = window.fetch
       // @ts-ignore
-      window.fetch = async (url: string, options?: RequestInit) => {
+      window.fetch = async (url: string, options?: any) => {
         await new Promise((resolve) => setTimeout(resolve, 300))
 
         if (url.includes('/api/tags')) {
@@ -282,7 +282,7 @@ export const EmptyState: Story = {
     React.useEffect(() => {
       const originalFetch = window.fetch
       // @ts-ignore
-      window.fetch = async (url: string, options?: RequestInit) => {
+      window.fetch = async (url: string, options?: any) => {
         await new Promise((resolve) => setTimeout(resolve, 300))
 
         if (url.includes('/api/tags')) {
@@ -327,7 +327,7 @@ export const LoadingState: Story = {
     React.useEffect(() => {
       const originalFetch = window.fetch
       // @ts-ignore
-      window.fetch = async (url: string, options?: RequestInit) => {
+      window.fetch = async (url: string, options?: any) => {
         await new Promise((resolve) => setTimeout(resolve, 10000)) // Very slow
 
         if (url.includes('/api/tags')) {
