@@ -172,7 +172,7 @@ export function sleep(ms: number): Promise<void> {
 /**
  * Debounce function to limit rapid consecutive calls
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number,
 ): (...args: Parameters<T>) => void {
@@ -192,7 +192,7 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * Throttle function to limit function calls to once per specified time period
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number,
 ): (...args: Parameters<T>) => void {
@@ -264,15 +264,16 @@ export function isValidUUID(str: string): boolean {
  * Sanitize text content for safe storage
  */
 export function sanitizeText(text: string): string {
+  // Remove control characters by keeping only printable characters
   return text
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+    .replace(/[^\u0020-\u007E\u00A0-\uFFFF]/g, '') // Keep printable ASCII + extended Unicode
     .trim()
 }
 
 /**
  * Calculate the size of an object in bytes (approximate)
  */
-export function getObjectSize(obj: any): number {
+export function getObjectSize(obj: unknown): number {
   return new Blob([JSON.stringify(obj)]).size
 }
 
@@ -286,7 +287,7 @@ export function deepClone<T>(obj: T): T {
 /**
  * Check if two objects are deeply equal
  */
-export function deepEqual(obj1: any, obj2: any): boolean {
+export function deepEqual(obj1: unknown, obj2: unknown): boolean {
   if (obj1 === obj2) {
     return true
   }
