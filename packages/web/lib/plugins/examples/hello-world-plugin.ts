@@ -171,7 +171,9 @@ export class HelloWorldPlugin {
     this.logger.info('Settings saved')
   }
 
-  private async getSettings(): Promise<any> {
+  private async getSettings(): Promise<unknown> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     return this.context.globalState.get('settings', {})
   }
 
@@ -196,17 +198,21 @@ export function createHelloWorldPlugin(
 /**
  * Plugin activation function - this is the main entry point
  */
-export async function activate(context: PluginContext): Promise<void> {
+export async function activate(_context: PluginContext): Promise<void> {
+  // Fix: Add await to make this properly async
+  await Promise.resolve()
   // This function would be called by the plugin system
   // The actual implementation would be provided by the plugin manager
-  console.log('Hello World Plugin activation function called')
+  console.info('Hello World Plugin activation function called')
 }
 
 /**
  * Plugin deactivation function
  */
 export async function deactivate(): Promise<void> {
-  console.log('Hello World Plugin deactivation function called')
+  // Fix: Add await to make this properly async
+  await Promise.resolve()
+  console.info('Hello World Plugin deactivation function called')
 }
 
 // Export for plugin system

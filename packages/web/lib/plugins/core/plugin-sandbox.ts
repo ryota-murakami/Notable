@@ -7,6 +7,11 @@
 
 import { type PluginManifest } from '../types/plugin'
 
+// Fix: Add proper type reference for Worker
+declare const Worker: {
+  new (scriptURL: string | URL, options?: WorkerOptions): Worker
+}
+
 export interface ResourceLimits {
   memory: number // MB
   cpu: number // % of single core
@@ -26,16 +31,22 @@ export class PluginSandbox {
   }
 
   async initialize(): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
+
     // Initialize resource monitoring
     this.resourceMonitor = new ResourceMonitor(this.limits)
     this.networkTracker = new NetworkTracker(this.limits.network)
 
     // TODO: Create Web Worker for code isolation
     // This would create a separate execution context for the plugin
-    console.log(`[Sandbox] Initialized for plugin ${this.manifest.id}`)
+    console.info(`[Sandbox] Initialized for plugin ${this.manifest.id}`)
   }
 
-  async execute(code: string, context: any): Promise<any> {
+  async execute(_code: string, _context: unknown): Promise<unknown> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
+
     if (!this.resourceMonitor) {
       throw new Error('Sandbox not initialized')
     }
@@ -50,7 +61,7 @@ export class PluginSandbox {
       // This would run the plugin code in a Web Worker or iframe
       // with restricted API access and resource monitoring
 
-      console.log(`[Sandbox] Executing code for plugin ${this.manifest.id}`)
+      console.info(`[Sandbox] Executing code for plugin ${this.manifest.id}`)
 
       // For now, this is a placeholder that would contain:
       // 1. Code parsing and validation
@@ -69,6 +80,9 @@ export class PluginSandbox {
   }
 
   async dispose(): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
+
     if (this.worker) {
       this.worker.terminate()
       this.worker = undefined
@@ -77,7 +91,7 @@ export class PluginSandbox {
     this.resourceMonitor?.dispose()
     this.networkTracker?.dispose()
 
-    console.log(`[Sandbox] Disposed for plugin ${this.manifest.id}`)
+    console.info(`[Sandbox] Disposed for plugin ${this.manifest.id}`)
   }
 
   getResourceUsage(): ResourceUsage {

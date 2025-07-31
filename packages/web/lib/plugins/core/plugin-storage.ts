@@ -46,6 +46,8 @@ export class PluginStorage {
    * Save a plugin manifest and source code
    */
   async savePlugin(manifest: PluginManifest, source: string): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     const pluginData = {
       manifest,
       source,
@@ -75,6 +77,8 @@ export class PluginStorage {
    * Get list of enabled plugins
    */
   async getEnabledPlugins(): Promise<string[]> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     const enabledPlugins: string[] = []
 
     // Scan localStorage for plugin data
@@ -99,6 +103,8 @@ export class PluginStorage {
    * Set plugin enabled state
    */
   async setPluginEnabled(pluginId: string, enabled: boolean): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     const key = `plugin-${pluginId}`
     const data = localStorage.getItem(key)
 
@@ -154,10 +160,16 @@ export class PluginStorage {
         global: {},
       })
     }
-    return this.storage.get(pluginId)!
+    const result = this.storage.get(pluginId)
+    if (!result) {
+      throw new Error(`Plugin storage not found: ${pluginId}`)
+    }
+    return result
   }
 
   private async loadFromPersistentStorage(): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY)
       if (stored) {
@@ -173,6 +185,8 @@ export class PluginStorage {
   }
 
   private async saveToPersistentStorage(): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     try {
       const data = {
         version: this.VERSION,

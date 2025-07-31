@@ -5,6 +5,12 @@
  * with Notable's functionality while maintaining security and stability.
  */
 
+// Fix: Add proper type reference for RequestInit
+declare const fetch: (
+  input: string | URL,
+  init?: RequestInit
+) => Promise<Response>
+
 import {
   type CommandsAPI,
   type EditorAPI,

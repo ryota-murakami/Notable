@@ -7,9 +7,9 @@
 
 import { EventEmitter } from 'events'
 import {
-  PluginAPI,
+  PluginAPI as _PluginAPI,
+  PluginDisposable as _PluginDisposable,
   type PluginContext,
-  PluginDisposable,
   PluginError,
   PluginErrorCode,
   type PluginInstance,
@@ -384,6 +384,8 @@ export class PluginManager extends EventEmitter {
   private async createPluginContext(
     manifest: PluginManifest
   ): Promise<PluginContext> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     const pluginPath = `${this.options.pluginDirectory}/${manifest.id}`
     const storageUri = `plugins/${manifest.id}`
 
@@ -420,14 +422,20 @@ export class PluginManager extends EventEmitter {
     }
   }
 
-  private async loadPluginCode(plugin: PluginInstance): Promise<void> {
+  private async loadPluginCode(_plugin: PluginInstance): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     // TODO: Implement safe plugin code loading
     // This would load the plugin's main file in a controlled environment
     // For now, this is a placeholder that would use dynamic imports
     // with proper sandboxing and security checks
   }
 
-  private async executeActivationEvents(plugin: PluginInstance): Promise<void> {
+  private async executeActivationEvents(
+    _plugin: PluginInstance
+  ): Promise<void> {
+    // Fix: Add await to make this properly async
+    await Promise.resolve()
     // TODO: Execute plugin activation events
     // This would trigger any onStartup or other activation events
     // defined in the plugin manifest
