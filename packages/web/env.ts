@@ -15,12 +15,12 @@ export const env = createEnv({
       .default('development'),
     CI: z.string().optional(), // Only CI can be optional
     DATABASE_URL: isCI ? z.string().optional() : z.string().url().min(1),
-    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-    SUPABASE_JWT_SECRET: z.string().min(1),
-    GOOGLE_CLIENT_ID: z.string().min(1),
-    GOOGLE_CLIENT_SECRET: z.string().min(1),
-    RESEND_API_KEY: z.string().min(1),
-    EMAIL_FROM: z.string().email(),
+    SUPABASE_SERVICE_ROLE_KEY: isCI ? z.string().optional() : z.string().min(1),
+    SUPABASE_JWT_SECRET: isCI ? z.string().optional() : z.string().min(1),
+    GOOGLE_CLIENT_ID: isCI ? z.string().optional() : z.string().min(1),
+    GOOGLE_CLIENT_SECRET: isCI ? z.string().optional() : z.string().min(1),
+    RESEND_API_KEY: isCI ? z.string().optional() : z.string().min(1),
+    EMAIL_FROM: isCI ? z.string().optional() : z.string().email(),
     UPLOADTHING_SECRET: isCI ? z.string().optional() : z.string().min(1),
     UPLOADTHING_APP_ID: isCI ? z.string().optional() : z.string().min(1),
     OPENAI_API_KEY: isCI ? z.string().optional() : z.string().min(1),
@@ -56,7 +56,7 @@ export const env = createEnv({
       ),
     NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-    NEXT_PUBLIC_SENTRY_DSN: z.string().min(1),
+    NEXT_PUBLIC_SENTRY_DSN: isCI ? z.string().optional() : z.string().min(1),
   },
 
   /**
