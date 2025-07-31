@@ -20,12 +20,14 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: isCI ? z.string().optional() : z.string().min(1),
     GOOGLE_CLIENT_SECRET: isCI ? z.string().optional() : z.string().min(1),
     NEXTAUTH_SECRET: isCI ? z.string().optional() : z.string().min(1),
-    NEXTAUTH_URL: z.preprocess(
-      // This makes Vercel deployments easier
-      (str) => process.env.VERCEL_URL ?? str,
-      // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-      process.env.VERCEL ? z.string().min(1) : z.string().url()
-    ),
+    NEXTAUTH_URL: isCI
+      ? z.string().optional()
+      : z.preprocess(
+          // This makes Vercel deployments easier
+          (str) => process.env.VERCEL_URL ?? str,
+          // VERCEL_URL doesn't include `https` so it cant be validated as a URL
+          process.env.VERCEL ? z.string().min(1) : z.string().url()
+        ),
     RESEND_API_KEY: isCI ? z.string().optional() : z.string().min(1),
     EMAIL_FROM: isCI ? z.string().optional() : z.string().email(),
     UPLOADTHING_SECRET: isCI ? z.string().optional() : z.string().min(1),
