@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from './theme-provider'
 import { SyncProviderWrapper } from './sync-provider-wrapper'
 import { RoutingProvider } from './routing-provider'
+import { PluginSystemProvider } from './plugin-system-provider'
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -33,7 +34,9 @@ export function Providers({ children }: ProvidersProps) {
         disableTransitionOnChange
       >
         <RoutingProvider>
-          <SyncProviderWrapper>{children}</SyncProviderWrapper>
+          <PluginSystemProvider>
+            <SyncProviderWrapper>{children}</SyncProviderWrapper>
+          </PluginSystemProvider>
         </RoutingProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
