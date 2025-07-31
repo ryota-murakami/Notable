@@ -2,3 +2,4 @@
 
 *storybook.log
 storybook-static
+.env*.local
