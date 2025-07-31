@@ -68,14 +68,14 @@ export async function POST(request: NextRequest) {
     const responseTime = Date.now() - startTime
 
     // Record search in history (fire and forget)
-    supabase
-      .from('search_history')
-      .insert({
+    Promise.resolve(
+      supabase.from('search_history').insert({
         user_id: user.id,
         query: query,
         filters: parsedFilters,
         results_count: searchResults?.length || 0,
       })
+    )
       .then(() => {
         // Also record analytics
         return supabase.from('search_analytics').insert({
@@ -86,7 +86,9 @@ export async function POST(request: NextRequest) {
           results_count: searchResults?.length || 0,
         })
       })
-      .catch((err) => console.error('Failed to record search history:', err))
+      .catch((err: any) =>
+        console.error('Failed to record search history:', err)
+      )
 
     // Get total count for pagination
     const { count: totalCount } = await supabase

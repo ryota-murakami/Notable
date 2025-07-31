@@ -394,7 +394,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         {/* Header */}
         <header className='border-b px-6 py-3 flex items-center justify-between'>
           <div className='flex-1 flex items-center gap-4'>
-            <GlobalSearchTrigger onSearch={handleSearch} className='max-w-sm' />
+            <GlobalSearchTrigger />
           </div>
           <UserMenu />
         </header>
@@ -474,7 +474,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         open={showAdvancedSearch}
         onOpenChange={setShowAdvancedSearch}
         onSelectResult={(result) => {
-          handleNoteSelect(result.note.id)
+          handleNoteSelect(result.id)
           setShowAdvancedSearch(false)
         }}
       />

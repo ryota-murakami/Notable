@@ -49,7 +49,11 @@ import {
   useTrackSearchClick,
 } from '@/hooks/use-advanced-search'
 import { useTags } from '@/hooks/use-tags'
-import type { SearchResult, SearchFilters } from '@/types/search'
+import type {
+  SearchResult,
+  SearchFilters,
+  SearchHistoryItem,
+} from '@/types/search'
 
 interface AdvancedSearchProps {
   open: boolean
@@ -217,7 +221,9 @@ export function AdvancedSearch({
                               ? new Date(filters.dateFrom)
                               : undefined
                           }
-                          onSelect={(date) => setDateFilter('from', date)}
+                          onSelect={(date: Date | undefined) =>
+                            setDateFilter('from', date)
+                          }
                           initialFocus
                         />
                       </div>
@@ -231,7 +237,9 @@ export function AdvancedSearch({
                               ? new Date(filters.dateTo)
                               : undefined
                           }
-                          onSelect={(date) => setDateFilter('to', date)}
+                          onSelect={(date: Date | undefined) =>
+                            setDateFilter('to', date)
+                          }
                         />
                       </div>
                     </div>
@@ -270,7 +278,7 @@ export function AdvancedSearch({
                   <div className='text-sm text-muted-foreground'>
                     {totalCount} results found
                   </div>
-                  {results.map((result, index) => (
+                  {results.map((result: SearchResult, index: number) => (
                     <SearchResultItem
                       key={result.id}
                       result={result}
@@ -341,18 +349,20 @@ export function AdvancedSearch({
                         Recent Searches
                       </h3>
                       <div className='space-y-1'>
-                        {searchHistory.slice(0, 5).map((item) => (
-                          <button
-                            key={item.id}
-                            className='w-full text-left p-2 hover:bg-accent rounded-md'
-                            onClick={() => {
-                              setQuery(item.query)
-                              setFilters(item.filters)
-                            }}
-                          >
-                            <span className='text-sm'>{item.query}</span>
-                          </button>
-                        ))}
+                        {searchHistory
+                          .slice(0, 5)
+                          .map((item: SearchHistoryItem) => (
+                            <button
+                              key={item.id}
+                              className='w-full text-left p-2 hover:bg-accent rounded-md'
+                              onClick={() => {
+                                setQuery(item.query)
+                                setFilters(item.filters)
+                              }}
+                            >
+                              <span className='text-sm'>{item.query}</span>
+                            </button>
+                          ))}
                       </div>
                     </div>
                   )}

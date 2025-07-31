@@ -7,8 +7,8 @@ import type {
   SearchSuggestion,
   SearchFilters,
   SavedSearch,
-  SEARCH_CONSTANTS,
 } from '@/types/search'
+import { SEARCH_CONSTANTS } from '@/types/search'
 
 // Search for notes
 export function useAdvancedSearch(initialQuery: string = '') {
