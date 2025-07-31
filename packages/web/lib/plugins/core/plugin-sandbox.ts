@@ -8,9 +8,25 @@
 import { type PluginManifest } from '../types/plugin'
 
 // Fix: Add proper type reference for Worker
-declare const Worker: {
-  new (scriptURL: string | URL, options?: WorkerOptions): Worker
+interface WorkerOptions {
+  type?: 'classic' | 'module'
+  credentials?: 'omit' | 'same-origin' | 'include'
+  name?: string
 }
+
+interface WorkerInterface {
+  postMessage(message: any): void
+  terminate(): void
+  onmessage?: (event: { data: any }) => void
+  onerror?: (event: { message: string; error?: Error }) => void
+}
+
+interface WorkerConstructor {
+  new (scriptURL: string | URL, options?: WorkerOptions): WorkerInterface
+  prototype: WorkerInterface
+}
+
+declare const Worker: WorkerConstructor
 
 export interface ResourceLimits {
   memory: number // MB
@@ -21,7 +37,7 @@ export interface ResourceLimits {
 export class PluginSandbox {
   private manifest: PluginManifest
   private limits: ResourceLimits
-  private worker?: Worker
+  private worker?: WorkerInterface
   private resourceMonitor?: ResourceMonitor
   private networkTracker?: NetworkTracker
 

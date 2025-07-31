@@ -10,7 +10,10 @@ interface FetchInit {
   method?: string
   headers?: Record<string, string>
   body?: string | FormData | ArrayBuffer
-  signal?: AbortSignal
+  signal?: {
+    aborted: boolean
+    addEventListener: (type: string, listener: () => void) => void
+  }
 }
 
 declare const fetch: (
