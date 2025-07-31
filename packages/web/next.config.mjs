@@ -7,10 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const nextConfig = {
   // output: 'export', // Temporarily disabled for development - middleware is needed
   trailingSlash: false,
-  experimental: {
-    // pnpm virtual-store-dir is outside the app directory
-    outputFileTracingRoot: path.join(__dirname, '../../'),
-  },
+  outputFileTracingRoot: path.join(__dirname, '../../'),
   // Transpile workspace packages for proper module resolution
   transpilePackages: ['@notable/sync', 'msw'],
   images: {
