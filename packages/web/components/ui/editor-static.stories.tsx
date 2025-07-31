@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { EditorStatic } from './editor-static'
 import * as React from 'react'
+import { usePlateEditor } from 'platejs/react'
+import { BasicNodesKit } from '@/components/editor/plugins/basic-nodes-kit'
 
 const meta: Meta<typeof EditorStatic> = {
   title: 'Components/UI/EditorStatic',
@@ -35,6 +37,19 @@ export default meta
 type Story = StoryObj<typeof EditorStatic>
 
 // Sample formatted content
+// Wrapper component to provide editor
+const EditorWrapper = ({ children, ...props }: any) => {
+  const editor = usePlateEditor({
+    plugins: [...BasicNodesKit],
+  })
+
+  return (
+    <EditorStatic {...props} editor={editor}>
+      {children}
+    </EditorStatic>
+  )
+}
+
 const sampleValue = [
   {
     type: 'h1',
@@ -102,10 +117,10 @@ const codeExample = [
   },
 ]
 
-// Note: EditorStatic requires PlateStatic configuration to render properly
+// Note: EditorWrapper requires PlateStatic configuration to render properly
 const StaticEditorNote = () => (
   <div className='text-sm text-muted-foreground mb-4 p-4 border rounded-md bg-muted/50'>
-    <strong>Note:</strong> The EditorStatic component requires proper Plate
+    <strong>Note:</strong> The EditorWrapper component requires proper Plate
     configuration to render content. These stories demonstrate the visual
     styling and layout variants. In a real application, you would pass
     serialized editor content as the value prop.
@@ -117,7 +132,7 @@ export const Default: Story = {
     <>
       <StaticEditorNote />
       <div className='border rounded-md p-6'>
-        <EditorStatic variant='default' value={sampleValue} />
+        <EditorWrapper variant='default' value={sampleValue} />
       </div>
     </>
   ),
@@ -131,14 +146,14 @@ export const Variants: Story = {
         <div>
           <h3 className='text-sm font-semibold mb-2'>Default Variant</h3>
           <div className='border rounded-md'>
-            <EditorStatic variant='default' value={sampleValue} />
+            <EditorWrapper variant='default' value={sampleValue} />
           </div>
         </div>
 
         <div>
           <h3 className='text-sm font-semibold mb-2'>AI Variant</h3>
           <div className='border rounded-md p-4'>
-            <EditorStatic
+            <EditorWrapper
               variant='ai'
               value={[
                 {
@@ -157,7 +172,7 @@ export const Variants: Story = {
         <div>
           <h3 className='text-sm font-semibold mb-2'>AI Chat Variant</h3>
           <div className='border rounded-md bg-muted/20'>
-            <EditorStatic
+            <EditorWrapper
               variant='aiChat'
               value={[
                 {
@@ -176,7 +191,7 @@ export const Variants: Story = {
         <div>
           <h3 className='text-sm font-semibold mb-2'>Select Variant</h3>
           <div className='border rounded-md'>
-            <EditorStatic
+            <EditorWrapper
               variant='select'
               value={[
                 {
@@ -256,7 +271,7 @@ export const LongFormContent: Story = {
     <>
       <StaticEditorNote />
       <div className='border rounded-md'>
-        <EditorStatic
+        <EditorWrapper
           variant='fullWidth'
           value={[
             {
@@ -306,7 +321,7 @@ export const ResponsiveDisplay: Story = {
         <div>
           <h3 className='text-sm font-semibold mb-2'>Mobile View</h3>
           <div className='max-w-sm mx-auto border rounded-md'>
-            <EditorStatic
+            <EditorWrapper
               variant='none'
               className='p-4 text-sm'
               value={[
@@ -326,7 +341,7 @@ export const ResponsiveDisplay: Story = {
         <div>
           <h3 className='text-sm font-semibold mb-2'>Desktop View</h3>
           <div className='border rounded-md'>
-            <EditorStatic
+            <EditorWrapper
               variant='default'
               value={[
                 {
@@ -387,7 +402,7 @@ export const DisabledState: Story = {
     <>
       <StaticEditorNote />
       <div className='border rounded-md opacity-50 cursor-not-allowed'>
-        <EditorStatic
+        <EditorWrapper
           variant='default'
           className='pointer-events-none'
           value={[

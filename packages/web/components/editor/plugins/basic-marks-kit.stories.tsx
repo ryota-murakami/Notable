@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { PlateEditor } from '@platejs/react'
+import { Plate, usePlateEditor } from 'platejs/react'
 import { BasicMarksKit } from './basic-marks-kit'
+import { Editor, EditorContainer } from '@/components/ui/editor'
 
 const meta: Meta = {
   title: 'Components/Editor/Plugins/BasicMarksKit',
@@ -76,13 +77,18 @@ function MarksDemo() {
     },
   ]
 
+  const editor = usePlateEditor({
+    plugins: BasicMarksKit,
+    value: initialValue,
+  })
+
   return (
     <div className='prose dark:prose-invert max-w-none'>
-      <PlateEditor
-        initialValue={initialValue}
-        plugins={BasicMarksKit}
-        readOnly
-      />
+      <Plate editor={editor}>
+        <EditorContainer>
+          <Editor variant='demo' readOnly />
+        </EditorContainer>
+      </Plate>
     </div>
   )
 }
@@ -114,9 +120,18 @@ export const BoldAndItalic: Story = {
       },
     ]
 
+    const editor = usePlateEditor({
+      plugins: BasicMarksKit,
+      value,
+    })
+
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <PlateEditor initialValue={value} plugins={BasicMarksKit} readOnly />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },
@@ -149,9 +164,18 @@ export const CodeAndKeyboard: Story = {
       },
     ]
 
+    const editor = usePlateEditor({
+      plugins: BasicMarksKit,
+      value,
+    })
+
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <PlateEditor initialValue={value} plugins={BasicMarksKit} readOnly />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },
@@ -184,9 +208,18 @@ export const EditingMarks: Story = {
       },
     ]
 
+    const editor = usePlateEditor({
+      plugins: BasicMarksKit,
+      value,
+    })
+
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <PlateEditor initialValue={value} plugins={BasicMarksKit} readOnly />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },
@@ -218,9 +251,18 @@ export const CombinedMarks: Story = {
       },
     ]
 
+    const editor = usePlateEditor({
+      plugins: BasicMarksKit,
+      value,
+    })
+
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <PlateEditor initialValue={value} plugins={BasicMarksKit} readOnly />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },
@@ -261,13 +303,18 @@ export const RealWorldExample: Story = {
       },
     ]
 
+    const editor = usePlateEditor({
+      plugins: BasicMarksKit,
+      value,
+    })
+
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <PlateEditor
-          initialValue={value}
-          plugins={[...BasicMarksKit]}
-          readOnly
-        />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },

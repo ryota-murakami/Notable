@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Plate, usePlateEditor } from 'platejs/react'
 import { BasicBlocksKit } from './basic-blocks-kit'
+import { Editor, EditorContainer } from '@/components/ui/editor'
 
 const meta: Meta = {
   title: 'Components/Editor/Plugins/BasicBlocksKit',
@@ -69,7 +70,11 @@ function EditorDemo() {
 
   return (
     <div className='prose dark:prose-invert max-w-none'>
-      <Plate editor={editor} />
+      <Plate editor={editor}>
+        <EditorContainer>
+          <Editor variant='demo' readOnly />
+        </EditorContainer>
+      </Plate>
     </div>
   )
 }
@@ -95,7 +100,11 @@ export const HeadingsOnly: Story = {
 
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <Plate editor={editor} />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },
@@ -144,7 +153,11 @@ export const ParagraphsAndBlockquotes: Story = {
 
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <Plate editor={editor} />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },
@@ -210,7 +223,11 @@ export const DocumentStructure: Story = {
 
     return (
       <div className='prose dark:prose-invert max-w-none'>
-        <Plate editor={editor} />
+        <Plate editor={editor}>
+          <EditorContainer>
+            <Editor variant='demo' readOnly />
+          </EditorContainer>
+        </Plate>
       </div>
     )
   },
@@ -234,7 +251,11 @@ export const EmptyBlocks: Story = {
           Empty blocks (click in the editor to see placeholders):
         </p>
         <div className='prose dark:prose-invert max-w-none'>
-          <Plate editor={editor} placeholder='Start typing...' />
+          <Plate editor={editor}>
+            <EditorContainer>
+              <Editor variant='demo' placeholder='Start typing...' />
+            </EditorContainer>
+          </Plate>
         </div>
       </div>
     )

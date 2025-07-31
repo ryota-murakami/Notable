@@ -110,7 +110,7 @@ function ControlledCheckbox() {
         <Checkbox
           id='controlled'
           checked={checked}
-          onCheckedChange={setChecked}
+          onCheckedChange={(checked) => setChecked(checked === true)}
         />
         <Label htmlFor='controlled'>
           Controlled checkbox (checked: {checked.toString()})

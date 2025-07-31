@@ -262,7 +262,7 @@ export const InfoPopover: Story = {
       <span className='text-sm'>Hover for more info</span>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant='ghost' size='xs' className='h-5 w-5 p-0'>
+          <Button variant='ghost' size='icon' className='h-5 w-5 p-0'>
             <Info className='h-4 w-4' />
           </Button>
         </PopoverTrigger>

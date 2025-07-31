@@ -46,10 +46,6 @@ const meta: Meta<typeof Toggle> = {
       control: 'boolean',
       description: 'The controlled pressed state',
     },
-    defaultPressed: {
-      control: 'boolean',
-      description: 'The default pressed state when uncontrolled',
-    },
   },
 }
 
@@ -122,7 +118,7 @@ export const Disabled: Story = {
   render: () => (
     <div className='flex gap-4'>
       <Toggle disabled>Disabled Off</Toggle>
-      <Toggle disabled defaultPressed>
+      <Toggle disabled pressed>
         Disabled On
       </Toggle>
     </div>
@@ -132,11 +128,11 @@ export const Disabled: Story = {
 export const DefaultPressed: Story = {
   render: () => (
     <div className='flex gap-4'>
-      <Toggle defaultPressed>
+      <Toggle pressed>
         <Bold className='h-4 w-4' />
         Bold
       </Toggle>
-      <Toggle defaultPressed variant='outline'>
+      <Toggle pressed variant='outline'>
         <Italic className='h-4 w-4' />
         Italic
       </Toggle>

@@ -25,18 +25,6 @@ const meta: Meta<typeof Select> = {
     },
   },
   argTypes: {
-    disabled: {
-      control: 'boolean',
-      description: 'Whether the select is disabled',
-    },
-    required: {
-      control: 'boolean',
-      description: 'Whether the select is required',
-    },
-    defaultValue: {
-      control: 'text',
-      description: 'The default selected value',
-    },
     value: {
       control: 'text',
       description: 'The controlled selected value',
@@ -99,7 +87,7 @@ export const WithGroups: Story = {
 
 export const WithDefaultValue: Story = {
   render: () => (
-    <Select defaultValue='medium'>
+    <Select>
       <SelectTrigger className='w-[180px]'>
         <SelectValue />
       </SelectTrigger>
@@ -116,7 +104,7 @@ export const WithDefaultValue: Story = {
 export const Disabled: Story = {
   render: () => (
     <div className='flex gap-4'>
-      <Select disabled>
+      <Select>
         <SelectTrigger className='w-[180px]'>
           <SelectValue placeholder='Disabled' />
         </SelectTrigger>
@@ -125,7 +113,7 @@ export const Disabled: Story = {
           <SelectItem value='option2'>Option 2</SelectItem>
         </SelectContent>
       </Select>
-      <Select defaultValue='selected' disabled>
+      <Select>
         <SelectTrigger className='w-[180px]'>
           <SelectValue />
         </SelectTrigger>
@@ -195,7 +183,7 @@ export const InForm: Story = {
         <label htmlFor='country' className='text-sm font-medium'>
           Country
         </label>
-        <Select name='country' required>
+        <Select>
           <SelectTrigger id='country'>
             <SelectValue placeholder='Select your country' />
           </SelectTrigger>
@@ -214,7 +202,7 @@ export const InForm: Story = {
         <label htmlFor='language' className='text-sm font-medium'>
           Preferred Language
         </label>
-        <Select name='language' defaultValue='en'>
+        <Select>
           <SelectTrigger id='language'>
             <SelectValue />
           </SelectTrigger>

@@ -17,26 +17,13 @@ const meta: Meta<typeof RadioGroup> = {
     },
   },
   argTypes: {
-    disabled: {
-      control: 'boolean',
-      description: 'Whether the radio group is disabled',
-    },
-    required: {
-      control: 'boolean',
-      description: 'Whether the radio group is required',
-    },
-    orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-      description: 'The orientation of the radio group',
-    },
-    defaultValue: {
-      control: 'text',
-      description: 'The default selected value',
-    },
     value: {
       control: 'text',
-      description: 'The controlled selected value',
+      description: 'The controlled value of the radio group',
+    },
+    onValueChange: {
+      action: 'onValueChange',
+      description: 'Event handler called when the value changes',
     },
   },
 }
@@ -78,11 +65,7 @@ export const Default: Story = {
 
 export const Horizontal: Story = {
   render: () => (
-    <RadioGroup
-      defaultValue='card'
-      orientation='horizontal'
-      className='flex gap-4'
-    >
+    <RadioGroup defaultValue='card' className='flex gap-4'>
       <div className='flex items-center space-x-2'>
         <RadioGroupItem value='card' id='card' />
         <Label htmlFor='card'>Card</Label>
@@ -101,7 +84,7 @@ export const Horizontal: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <RadioGroup defaultValue='option-one' disabled>
+    <RadioGroup defaultValue='option-one'>
       <div className='flex items-center space-x-2'>
         <RadioGroupItem value='option-one' id='disabled-one' />
         <Label htmlFor='disabled-one' className='text-muted-foreground'>
@@ -193,7 +176,7 @@ export const InForm: Story = {
     <form className='space-y-6' onSubmit={(e) => e.preventDefault()}>
       <div className='space-y-3'>
         <Label className='text-base font-medium'>Shipping Method</Label>
-        <RadioGroup defaultValue='standard' name='shipping'>
+        <RadioGroup defaultValue='standard'>
           <div className='flex items-center space-x-2'>
             <RadioGroupItem value='standard' id='standard' />
             <Label htmlFor='standard'>Standard (5-7 days)</Label>
@@ -225,7 +208,7 @@ export const Required: Story = {
         <Label className='text-base font-medium'>
           Terms Agreement <span className='text-destructive'>*</span>
         </Label>
-        <RadioGroup required name='terms'>
+        <RadioGroup>
           <div className='flex items-center space-x-2'>
             <RadioGroupItem value='agree' id='agree' />
             <Label htmlFor='agree'>I agree to the terms</Label>

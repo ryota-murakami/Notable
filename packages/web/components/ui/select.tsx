@@ -115,4 +115,29 @@ const SelectItem: React.FC<SelectItemProps> = ({
   )
 }
 
-export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue }
+const SelectGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <div className='px-1 py-1.5'>{children}</div>
+}
+
+const SelectLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className='py-1.5 pl-8 pr-2 text-sm font-semibold text-muted-foreground'>
+      {children}
+    </div>
+  )
+}
+
+const SelectSeparator: React.FC = () => {
+  return <div className='-mx-1 my-1 h-px bg-muted' />
+}
+
+export {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
+}

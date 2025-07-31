@@ -42,10 +42,6 @@ const meta: Meta<typeof Button> = {
       options: ['default', 'sm', 'lg', 'icon'],
       description: 'The size of the button',
     },
-    asChild: {
-      control: 'boolean',
-      description: 'Whether to render as a child component',
-    },
     disabled: {
       control: 'boolean',
       description: 'Whether the button is disabled',
@@ -172,12 +168,15 @@ export const Disabled: Story = {
 export const AsChild: Story = {
   render: () => (
     <div className='flex gap-4'>
-      <Button asChild>
-        <a href='#'>Link as Button</a>
-      </Button>
-      <Button variant='outline' asChild>
-        <span>Span as Button</span>
-      </Button>
+      <a
+        href='#'
+        className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2'
+      >
+        Link as Button
+      </a>
+      <span className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 cursor-pointer'>
+        Span as Button
+      </span>
     </div>
   ),
 }
@@ -305,15 +304,9 @@ export const ComplexExample: Story = {
         <div>
           <h3 className='mb-4 text-lg font-semibold'>Navigation</h3>
           <div className='flex gap-2'>
-            <Button variant='link' asChild>
-              <a href='#'>Documentation</a>
-            </Button>
-            <Button variant='link' asChild>
-              <a href='#'>API Reference</a>
-            </Button>
-            <Button variant='link' asChild>
-              <a href='#'>Examples</a>
-            </Button>
+            <Button variant='link'>Documentation</Button>
+            <Button variant='link'>API Reference</Button>
+            <Button variant='link'>Examples</Button>
           </div>
         </div>
       </div>
