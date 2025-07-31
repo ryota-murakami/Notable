@@ -18,81 +18,71 @@ test.describe('Template System E2E Tests', () => {
     })
   })
 
-  test('should open template picker from rich text editor', async ({
+  test('should open template picker when clicking New Note', async ({
     page,
   }) => {
-    // Navigate to a note or create a new one
-    await page.click('[data-testid="new-note-button"]')
-    await page.waitForSelector('[data-testid="rich-text-editor"]')
-
-    // Click the "New from Template" button
-    await page.click('button:has-text("New from Template")')
+    // Click the "New Note" button - should open template picker
+    await page.click('button:has-text("New Note")')
 
     // Verify template picker dialog opens
     await expect(
-      page.locator('dialog:has-text("Choose a Template")')
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
 
     // Verify categories are loaded
-    await expect(page.locator('text=Categories')).toBeVisible()
+    await expect(page.locator('text=CATEGORIES')).toBeVisible()
     await expect(page.locator('button:has-text("All Templates")')).toBeVisible()
   })
 
   test('should display built-in templates in categories', async ({ page }) => {
-    await page.click('[data-testid="new-note-button"]')
-    await page.waitForSelector('[data-testid="rich-text-editor"]')
-    await page.click('button:has-text("New from Template")')
+    // Click New Note to open template picker
+    await page.click('button:has-text("New Note")')
 
     // Wait for templates to load
-    await page.waitForSelector('[data-testid="template-card"]')
+    await page.waitForSelector('[role="button"]:has-text("Daily")')
 
     // Verify built-in templates are displayed
-    await expect(page.locator('text=Standard Meeting Notes')).toBeVisible()
+    await expect(page.locator('text=Daily Standup')).toBeVisible()
     await expect(page.locator('text=Daily Journal')).toBeVisible()
-    await expect(page.locator('text=Project Charter')).toBeVisible()
+    await expect(page.locator('text=Project Kickoff')).toBeVisible()
 
     // Verify template cards have proper metadata
-    const templateCard = page.locator('[data-testid="template-card"]').first()
-    await expect(
-      templateCard.locator('.badge:has-text("Built-in")')
-    ).toBeVisible()
+    await expect(page.locator('text=Built-in').first()).toBeVisible()
   })
 
   test('should filter templates by category', async ({ page }) => {
-    await page.click('[data-testid="new-note-button"]')
-    await page.waitForSelector('[data-testid="rich-text-editor"]')
-    await page.click('button:has-text("New from Template")')
+    // Click New Note to open template picker
+    await page.click('button:has-text("New Note")')
 
     // Wait for templates to load
-    await page.waitForSelector('[data-testid="template-card"]')
+    await page.waitForSelector('[role="button"]:has-text("Daily")')
 
     // Count total templates initially
     const allTemplatesCount = await page
-      .locator('[data-testid="template-card"]')
+      .locator('[role="button"]:has(.text-sm.font-medium)')
       .count()
     expect(allTemplatesCount).toBeGreaterThan(0)
 
     // Click on meeting category
-    await page.click('button:has-text("meeting")')
+    await page.click('button:has-text("Meeting Notes")')
     await page.waitForTimeout(500) // Wait for filter to apply
 
     // Verify only meeting templates are shown
     const meetingTemplatesCount = await page
-      .locator('[data-testid="template-card"]')
+      .locator('[role="button"]:has(.text-sm.font-medium)')
       .count()
     expect(meetingTemplatesCount).toBeLessThanOrEqual(allTemplatesCount)
 
     // Verify meeting templates are displayed
-    await expect(page.locator('text=Standard Meeting Notes')).toBeVisible()
+    await expect(page.locator('text=Daily Standup')).toBeVisible()
   })
 
   test('should search templates', async ({ page }) => {
-    await page.click('[data-testid="new-note-button"]')
-    await page.waitForSelector('[data-testid="rich-text-editor"]')
-    await page.click('button:has-text("New from Template")')
+    // Click New Note to open template picker
+    await page.click('button:has-text("New Note")')
 
     // Wait for templates to load
-    await page.waitForSelector('[data-testid="template-card"]')
+    await page.waitForSelector('[role="button"]:has-text("Daily")')
 
     // Search for "journal" templates
     await page.fill('input[placeholder*="Search templates"]', 'journal')
@@ -103,77 +93,61 @@ test.describe('Template System E2E Tests', () => {
 
     // Verify non-matching templates are hidden
     const visibleCards = await page
-      .locator('[data-testid="template-card"]:visible')
+      .locator('[role="button"]:has(.text-sm.font-medium):visible')
       .count()
     expect(visibleCards).toBeLessThanOrEqual(2) // Should show only journal-related templates
   })
 
-  test('should create note from template without variables', async ({
-    page,
-  }) => {
-    await page.click('[data-testid="new-note-button"]')
-    await page.waitForSelector('[data-testid="rich-text-editor"]')
-    await page.click('button:has-text("New from Template")')
+  test('should create note from template with variables', async ({ page }) => {
+    // Click New Note to open template picker
+    await page.click('button:has-text("New Note")')
 
     // Wait for templates to load and select a simple template
     await page.waitForSelector('[data-testid="template-card"]')
 
-    // Create a simple template without variables for testing
-    await page.click(
-      '[data-testid="template-card"]:has-text("Project Charter")'
-    )
+    // Select a template with variables
+    await page.click('[role="button"]:has-text("Project Kickoff")')
 
     // Should open variable form
     await expect(
-      page.locator('dialog:has-text("Create from Template")')
+      page.locator('[role="dialog"]:has-text("Create from Template")')
     ).toBeVisible()
 
     // Fill required fields
-    await page.fill(
-      'input[placeholder*="Enter note title"]',
-      'My Test Project Charter'
-    )
-    await page.fill(
-      'textarea[name="project_summary"]',
-      'This is a test project summary'
-    )
-    await page.fill('input[name="project_manager"]', 'John Doe')
+    await page.fill('input[id="title"]', 'My Test Project')
+    await page.fill('input[name="project_name"]', 'Test Project')
+    await page.fill('input[name="project_lead"]', 'John Doe')
     await page.fill('input[name="start_date"]', '2024-01-01')
+    await page.fill('input[name="end_date"]', '2024-12-31')
+    await page.fill(
+      'textarea[name="project_description"]',
+      'This is a test project'
+    )
 
     // Submit the form
     await page.click('button:has-text("Create Note")')
 
-    // Verify the note was created with processed content
-    await expect(
-      page.locator('input[placeholder="Untitled Note"]')
-    ).toHaveValue('My Test Project Charter')
+    // Verify redirect to the new note
+    await page.waitForURL(/\/notes\/\w+/)
 
     // Verify template content was processed
-    await expect(page.locator('.slate-editor')).toContainText(
-      'Project Charter: My Test Project Charter'
-    )
-    await expect(page.locator('.slate-editor')).toContainText(
-      'This is a test project summary'
-    )
-    await expect(page.locator('.slate-editor')).toContainText('John Doe')
+    await expect(page.locator('text=Project: Test Project')).toBeVisible()
+    await expect(page.locator('text=John Doe')).toBeVisible()
+    await expect(page.locator('text=This is a test project')).toBeVisible()
   })
 
   test('should create note from daily journal template with all variables', async ({
     page,
   }) => {
-    await page.click('[data-testid="new-note-button"]')
-    await page.waitForSelector('[data-testid="rich-text-editor"]')
-    await page.click('button:has-text("New from Template")')
+    // Click New Note to open template picker
+    await page.click('button:has-text("New Note")')
 
     // Wait for templates and select daily journal
-    await page.waitForSelector('[data-testid="template-card"]')
-    await page.click('[data-testid="template-card"]:has-text("Daily Journal")')
+    await page.waitForSelector('[role="button"]:has-text("Daily")')
+    await page.click('[role="button"]:has-text("Daily Journal")')
 
     // Fill the variable form
-    await page.fill(
-      'input[placeholder*="Enter note title"]',
-      'My Daily Journal - January 15, 2024'
-    )
+    await page.fill('input[id="title"]', 'My Daily Journal - January 15, 2024')
 
     // Fill required gratitude fields
     await page.fill('input[name="gratitude_1"]', 'Good health')
@@ -181,42 +155,33 @@ test.describe('Template System E2E Tests', () => {
     await page.fill('input[name="gratitude_3"]', 'Meaningful work')
 
     // Fill optional fields
-    await page.fill('input[name="weather"]', 'Sunny and warm')
     await page.fill('input[name="mood"]', '8')
-    await page.fill('input[name="energy_level"]', '7')
+    await page.fill('input[name="energy"]', '7')
+    await page.fill('textarea[name="highlights"]', 'Had a great day!')
 
     // Submit the form
     await page.click('button:has-text("Create Note")')
 
-    // Verify the note was created with processed template content
-    await expect(
-      page.locator('input[placeholder="Untitled Note"]')
-    ).toHaveValue('My Daily Journal - January 15, 2024')
+    // Verify redirect to the new note
+    await page.waitForURL(/\/notes\/\w+/)
 
     // Verify template variables were processed correctly
-    await expect(page.locator('.slate-editor')).toContainText(
-      "Today's Overview"
-    )
-    await expect(page.locator('.slate-editor')).toContainText('Good health')
-    await expect(page.locator('.slate-editor')).toContainText(
-      'Supportive family'
-    )
-    await expect(page.locator('.slate-editor')).toContainText('Meaningful work')
-    await expect(page.locator('.slate-editor')).toContainText('Sunny and warm')
-    await expect(page.locator('.slate-editor')).toContainText('8/10 ✨')
-    await expect(page.locator('.slate-editor')).toContainText('7/10 ⚡')
+    await expect(page.locator('text=Journal Entry')).toBeVisible()
+    await expect(page.locator('text=Good health')).toBeVisible()
+    await expect(page.locator('text=Supportive family')).toBeVisible()
+    await expect(page.locator('text=Meaningful work')).toBeVisible()
+    await expect(page.locator('text=Had a great day!')).toBeVisible()
   })
 
   test('should validate required template variables', async ({ page }) => {
-    await page.click('[data-testid="new-note-button"]')
-    await page.waitForSelector('[data-testid="rich-text-editor"]')
-    await page.click('button:has-text("New from Template")')
+    // Click New Note to open template picker
+    await page.click('button:has-text("New Note")')
 
-    await page.waitForSelector('[data-testid="template-card"]')
-    await page.click('[data-testid="template-card"]:has-text("Daily Journal")')
+    await page.waitForSelector('[role="button"]:has-text("Daily")')
+    await page.click('[role="button"]:has-text("Daily Journal")')
 
     // Try to submit without filling required fields
-    await page.fill('input[placeholder*="Enter note title"]', 'Test Journal')
+    await page.fill('input[id="title"]', 'Test Journal')
     // Intentionally leave gratitude fields empty
 
     await page.click('button:has-text("Create Note")')
@@ -228,7 +193,7 @@ test.describe('Template System E2E Tests', () => {
 
     // Verify form doesn't submit
     await expect(
-      page.locator('dialog:has-text("Create from Template")')
+      page.locator('[role="dialog"]:has-text("Create from Template")')
     ).toBeVisible()
   })
 

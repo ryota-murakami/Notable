@@ -448,10 +448,713 @@ ORDER BY t.usage_count DESC;
 GRANT SELECT ON popular_templates TO authenticated;
 GRANT SELECT ON template_analytics TO authenticated;
 
+-- ==========================================
+-- 9. BUILT-IN TEMPLATES
+-- ==========================================
+
+-- Insert built-in templates
+-- Meeting Notes Templates
+INSERT INTO templates (name, description, category, content, is_public, is_system, version) VALUES
+('Daily Standup', 'Quick template for daily standup meetings', 'meeting', 
+jsonb_build_object('content', '# Daily Standup - {{date}}
+
+## Team Members Present
+{{#each attendees}}
+- {{this}}
+{{/each}}
+
+## Updates
+
+### {{user_name}}
+**Yesterday:**
+- {{yesterday_tasks}}
+
+**Today:**
+- {{today_tasks}}
+
+**Blockers:**
+- {{blockers}}
+
+## Action Items
+- [ ] {{action_item_1}}
+- [ ] {{action_item_2}}
+
+## Notes
+{{additional_notes}}'), 
+true, true, 1),
+
+('Weekly Team Meeting', 'Comprehensive weekly team meeting template', 'meeting',
+jsonb_build_object('content', '# Weekly Team Meeting - {{meeting_date}}
+
+## Attendees
+{{#each attendees}}
+- {{name}} {{#if role}}({{role}}){{/if}}
+{{/each}}
+
+## Agenda
+1. {{agenda_item_1}}
+2. {{agenda_item_2}}
+3. {{agenda_item_3}}
+
+## Review Last Week
+### Accomplishments
+- {{last_week_accomplishment_1}}
+- {{last_week_accomplishment_2}}
+
+### Challenges
+- {{last_week_challenge_1}}
+
+## This Week Focus
+### Goals
+1. {{this_week_goal_1}}
+2. {{this_week_goal_2}}
+
+### Key Decisions
+- {{decision_1}}
+
+## Action Items
+| Task | Owner | Due Date |
+|------|-------|----------|
+| {{task_1}} | {{owner_1}} | {{due_date_1}} |
+| {{task_2}} | {{owner_2}} | {{due_date_2}} |
+
+## Notes
+{{meeting_notes}}'),
+true, true, 1),
+
+('1:1 Meeting', 'One-on-one meeting template', 'meeting',
+jsonb_build_object('content', '# 1:1 Meeting - {{participant_name}}
+**Date:** {{meeting_date}}
+
+## Check-in
+How are you feeling today? {{mood_scale}}
+
+## Discussion Topics
+### From {{participant_name}}
+1. {{their_topic_1}}
+2. {{their_topic_2}}
+
+### From Manager
+1. {{manager_topic_1}}
+2. {{manager_topic_2}}
+
+## Career Development
+### Current Goals
+- {{current_goal}}
+
+### Progress Update
+{{progress_notes}}
+
+### Support Needed
+- {{support_needed}}
+
+## Feedback
+### What''s Working Well
+- {{positive_feedback}}
+
+### Areas for Growth
+- {{growth_area}}
+
+## Action Items
+- [ ] {{action_item_1}}
+- [ ] {{action_item_2}}
+
+## Next Meeting Focus
+{{next_meeting_topic}}'),
+true, true, 1),
+
+-- Project Management Templates
+('Project Kickoff', 'Template for starting a new project', 'project',
+jsonb_build_object('content', '# Project: {{project_name}}
+
+## Project Overview
+**Start Date:** {{start_date}}  
+**Target Completion:** {{end_date}}  
+**Project Lead:** {{project_lead}}
+
+## Project Description
+{{project_description}}
+
+## Objectives & Success Criteria
+1. {{objective_1}}
+   - Success Metric: {{metric_1}}
+2. {{objective_2}}
+   - Success Metric: {{metric_2}}
+
+## Stakeholders
+| Name | Role | Responsibility |
+|------|------|----------------|
+| {{stakeholder_1}} | {{role_1}} | {{responsibility_1}} |
+| {{stakeholder_2}} | {{role_2}} | {{responsibility_2}} |
+
+## Scope
+### In Scope
+- {{in_scope_1}}
+- {{in_scope_2}}
+
+### Out of Scope
+- {{out_scope_1}}
+
+## Timeline & Milestones
+| Milestone | Date | Description |
+|-----------|------|-------------|
+| {{milestone_1}} | {{date_1}} | {{description_1}} |
+| {{milestone_2}} | {{date_2}} | {{description_2}} |
+
+## Risks & Mitigation
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|---------|------------|
+| {{risk_1}} | {{prob_1}} | {{impact_1}} | {{mitigation_1}} |
+
+## Resources Needed
+- {{resource_1}}
+- {{resource_2}}
+
+## Communication Plan
+{{communication_plan}}'),
+true, true, 1),
+
+('Sprint Planning', 'Agile sprint planning template', 'project',
+jsonb_build_object('content', '# Sprint {{sprint_number}} Planning
+
+**Sprint Duration:** {{start_date}} - {{end_date}}  
+**Sprint Goal:** {{sprint_goal}}
+
+## Team Capacity
+| Team Member | Available Days | Story Points |
+|-------------|----------------|--------------|
+| {{member_1}} | {{days_1}} | {{points_1}} |
+| {{member_2}} | {{days_2}} | {{points_2}} |
+
+**Total Capacity:** {{total_points}} story points
+
+## Sprint Backlog
+### User Stories
+{{#each stories}}
+#### {{title}}
+- **Story Points:** {{points}}
+- **Assignee:** {{assignee}}
+- **Acceptance Criteria:**
+  - {{criteria_1}}
+  - {{criteria_2}}
+{{/each}}
+
+## Dependencies
+- {{dependency_1}}
+- {{dependency_2}}
+
+## Definition of Done
+- [ ] Code reviewed
+- [ ] Tests written and passing
+- [ ] Documentation updated
+- [ ] {{custom_dod}}
+
+## Notes
+{{sprint_notes}}'),
+true, true, 1),
+
+-- Personal Templates
+('Daily Journal', 'Personal daily reflection template', 'personal',
+jsonb_build_object('content', '# Journal Entry - {{date}}
+
+## Gratitude
+Today I''m grateful for:
+1. {{gratitude_1}}
+2. {{gratitude_2}}
+3. {{gratitude_3}}
+
+## Mood & Energy
+**Mood:** {{mood}} /10  
+**Energy:** {{energy}} /10
+
+## Today''s Highlights
+{{highlights}}
+
+## Challenges Faced
+{{challenges}}
+
+## Lessons Learned
+{{lessons}}
+
+## Tomorrow''s Priorities
+1. {{priority_1}}
+2. {{priority_2}}
+3. {{priority_3}}
+
+## Personal Reflection
+{{reflection}}'),
+true, true, 1),
+
+('Goal Setting', 'SMART goal planning template', 'personal',
+jsonb_build_object('content', '# Goal: {{goal_title}}
+
+## SMART Goal Definition
+**Specific:** {{specific_description}}  
+**Measurable:** {{measurable_criteria}}  
+**Achievable:** {{achievable_plan}}  
+**Relevant:** {{relevant_reason}}  
+**Time-bound:** {{deadline}}
+
+## Why This Goal Matters
+{{motivation}}
+
+## Action Plan
+### Milestones
+1. **{{milestone_1}}** - By {{date_1}}
+2. **{{milestone_2}}** - By {{date_2}}
+3. **{{milestone_3}}** - By {{date_3}}
+
+### Daily Actions
+- {{daily_action_1}}
+- {{daily_action_2}}
+
+### Weekly Reviews
+- [ ] Week 1: {{week_1_focus}}
+- [ ] Week 2: {{week_2_focus}}
+- [ ] Week 3: {{week_3_focus}}
+- [ ] Week 4: {{week_4_focus}}
+
+## Potential Obstacles
+| Obstacle | Solution |
+|----------|----------|
+| {{obstacle_1}} | {{solution_1}} |
+| {{obstacle_2}} | {{solution_2}} |
+
+## Resources & Support
+- {{resource_1}}
+- {{support_person}}
+
+## Progress Tracking
+{{progress_method}}'),
+true, true, 1),
+
+-- Documentation Templates
+('Technical Documentation', 'Template for technical documentation', 'documentation',
+jsonb_build_object('content', '# {{document_title}}
+
+**Version:** {{version}}  
+**Last Updated:** {{update_date}}  
+**Author:** {{author}}
+
+## Overview
+{{overview}}
+
+## Prerequisites
+- {{prerequisite_1}}
+- {{prerequisite_2}}
+
+## Architecture
+{{architecture_description}}
+
+## Installation
+```bash
+{{installation_commands}}
+```
+
+## Configuration
+```{{config_language}}
+{{configuration_example}}
+```
+
+## API Reference
+### {{endpoint_name}}
+**Method:** {{http_method}}  
+**Endpoint:** `{{endpoint_url}}`
+
+**Parameters:**
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| {{param_1}} | {{type_1}} | {{required_1}} | {{desc_1}} |
+
+**Response:**
+```json
+{{response_example}}
+```
+
+## Examples
+### Example 1: {{example_title}}
+{{example_description}}
+
+```{{code_language}}
+{{code_example}}
+```
+
+## Troubleshooting
+### Issue: {{issue_1}}
+**Solution:** {{solution_1}}
+
+## FAQ
+**Q:** {{question_1}}  
+**A:** {{answer_1}}
+
+## References
+- [{{reference_1}}]({{url_1}})
+- [{{reference_2}}]({{url_2}})'),
+true, true, 1),
+
+('API Documentation', 'RESTful API documentation template', 'documentation',
+jsonb_build_object('content', '# {{api_name}} API Documentation
+
+**Base URL:** `{{base_url}}`  
+**Version:** {{api_version}}  
+**Authentication:** {{auth_type}}
+
+## Authentication
+{{auth_description}}
+
+### Example Request
+```http
+{{auth_example}}
+```
+
+## Endpoints
+
+### {{resource_name}}
+
+#### List {{resource_plural}}
+`GET /{{resource_path}}`
+
+**Query Parameters:**
+- `{{param_1}}` ({{type_1}}): {{desc_1}}
+- `{{param_2}}` ({{type_2}}): {{desc_2}}
+
+**Response:**
+```json
+{
+  "data": [
+    {{response_item}}
+  ],
+  "pagination": {{pagination_info}}
+}
+```
+
+#### Get {{resource_singular}}
+`GET /{{resource_path}}/{{id_param}}`
+
+#### Create {{resource_singular}}
+`POST /{{resource_path}}`
+
+**Request Body:**
+```json
+{{create_request_body}}
+```
+
+#### Update {{resource_singular}}
+`PUT /{{resource_path}}/{{id_param}}`
+
+#### Delete {{resource_singular}}
+`DELETE /{{resource_path}}/{{id_param}}`
+
+## Error Responses
+| Code | Description |
+|------|-------------|
+| 400 | {{error_400}} |
+| 401 | {{error_401}} |
+| 404 | {{error_404}} |
+| 500 | {{error_500}} |
+
+## Rate Limiting
+{{rate_limit_info}}
+
+## Webhooks
+{{webhook_info}}'),
+true, true, 1),
+
+-- Task Management Templates
+('Weekly Planning', 'Weekly task planning and review', 'task',
+jsonb_build_object('content', '# Week of {{week_start_date}}
+
+## Weekly Goals
+1. {{goal_1}}
+2. {{goal_2}}
+3. {{goal_3}}
+
+## Priority Matrix
+### Urgent & Important
+- [ ] {{urgent_important_1}}
+- [ ] {{urgent_important_2}}
+
+### Not Urgent & Important
+- [ ] {{not_urgent_important_1}}
+- [ ] {{not_urgent_important_2}}
+
+### Urgent & Not Important
+- [ ] {{urgent_not_important_1}}
+
+### Not Urgent & Not Important
+- [ ] {{not_urgent_not_important_1}}
+
+## Daily Breakdown
+### Monday
+- [ ] {{monday_task_1}}
+- [ ] {{monday_task_2}}
+
+### Tuesday
+- [ ] {{tuesday_task_1}}
+- [ ] {{tuesday_task_2}}
+
+### Wednesday
+- [ ] {{wednesday_task_1}}
+- [ ] {{wednesday_task_2}}
+
+### Thursday
+- [ ] {{thursday_task_1}}
+- [ ] {{thursday_task_2}}
+
+### Friday
+- [ ] {{friday_task_1}}
+- [ ] {{friday_task_2}}
+
+## Time Blocks
+{{time_blocking_schedule}}
+
+## Weekly Review
+**Completed:** {{completed_count}}/{{total_count}} tasks  
+**Key Achievement:** {{key_achievement}}  
+**Lesson Learned:** {{lesson_learned}}'),
+true, true, 1),
+
+-- Review & Feedback Templates
+('Performance Review', 'Employee performance review template', 'review',
+jsonb_build_object('content', '# Performance Review - {{employee_name}}
+
+**Review Period:** {{start_date}} to {{end_date}}  
+**Reviewer:** {{reviewer_name}}  
+**Date:** {{review_date}}
+
+## Overall Rating: {{overall_rating}}/5
+
+## Core Competencies
+### Technical Skills: {{technical_rating}}/5
+{{technical_comments}}
+
+### Communication: {{communication_rating}}/5
+{{communication_comments}}
+
+### Teamwork: {{teamwork_rating}}/5
+{{teamwork_comments}}
+
+### Problem Solving: {{problem_solving_rating}}/5
+{{problem_solving_comments}}
+
+### Leadership: {{leadership_rating}}/5
+{{leadership_comments}}
+
+## Key Achievements
+1. {{achievement_1}}
+2. {{achievement_2}}
+3. {{achievement_3}}
+
+## Areas for Improvement
+1. {{improvement_1}}
+   - Action Plan: {{action_1}}
+2. {{improvement_2}}
+   - Action Plan: {{action_2}}
+
+## Goals for Next Period
+1. {{next_goal_1}}
+2. {{next_goal_2}}
+3. {{next_goal_3}}
+
+## Career Development
+### Current Career Path
+{{career_path}}
+
+### Development Opportunities
+- {{opportunity_1}}
+- {{opportunity_2}}
+
+## Manager Comments
+{{manager_comments}}
+
+## Employee Comments
+{{employee_comments}}'),
+true, true, 1),
+
+('Sprint Retrospective', 'Agile sprint retrospective template', 'review',
+jsonb_build_object('content', '# Sprint {{sprint_number}} Retrospective
+
+**Date:** {{retro_date}}  
+**Facilitator:** {{facilitator}}
+
+## Sprint Summary
+**Sprint Goal:** {{sprint_goal}}  
+**Goal Achieved:** {{goal_achieved}}
+
+## Team Mood
+{{team_mood_summary}}
+
+## What Went Well 🎉
+- {{went_well_1}}
+- {{went_well_2}}
+- {{went_well_3}}
+
+## What Could Be Improved 🔧
+- {{improve_1}}
+- {{improve_2}}
+- {{improve_3}}
+
+## What Puzzled Us 🤔
+- {{puzzled_1}}
+- {{puzzled_2}}
+
+## Action Items
+| Action | Owner | Due Date |
+|--------|-------|----------|
+| {{action_1}} | {{owner_1}} | {{due_1}} |
+| {{action_2}} | {{owner_2}} | {{due_2}} |
+| {{action_3}} | {{owner_3}} | {{due_3}} |
+
+## Metrics
+- **Velocity:** {{velocity}} story points
+- **Commitment vs Completed:** {{committed}}/{{completed}}
+- **Defects Found:** {{defect_count}}
+
+## Team Appreciation
+{{appreciation_notes}}
+
+## Next Sprint Focus
+{{next_sprint_focus}}'),
+true, true, 1),
+
+-- Creative Work Templates
+('Brainstorming Session', 'Creative brainstorming template', 'creative',
+jsonb_build_object('content', '# Brainstorming: {{topic}}
+
+**Date:** {{session_date}}  
+**Participants:** {{participants}}
+
+## Problem Statement
+{{problem_statement}}
+
+## Goals
+- {{goal_1}}
+- {{goal_2}}
+
+## Ideas Generated
+### Category 1: {{category_1}}
+1. {{idea_1_1}}
+   - Pros: {{pros_1_1}}
+   - Cons: {{cons_1_1}}
+2. {{idea_1_2}}
+   - Pros: {{pros_1_2}}
+   - Cons: {{cons_1_2}}
+
+### Category 2: {{category_2}}
+1. {{idea_2_1}}
+   - Pros: {{pros_2_1}}
+   - Cons: {{cons_2_1}}
+
+## Wild Ideas 🚀
+- {{wild_idea_1}}
+- {{wild_idea_2}}
+
+## Mind Map
+```
+{{topic}}
+├── {{branch_1}}
+│   ├── {{sub_1_1}}
+│   └── {{sub_1_2}}
+├── {{branch_2}}
+│   └── {{sub_2_1}}
+└── {{branch_3}}
+    └── {{sub_3_1}}
+```
+
+## Top 3 Ideas to Explore
+1. **{{top_idea_1}}**
+   - Next Steps: {{next_steps_1}}
+2. **{{top_idea_2}}**
+   - Next Steps: {{next_steps_2}}
+3. **{{top_idea_3}}**
+   - Next Steps: {{next_steps_3}}
+
+## Resources Needed
+- {{resource_1}}
+- {{resource_2}}
+
+## Follow-up Actions
+- [ ] {{followup_1}}
+- [ ] {{followup_2}}'),
+true, true, 1),
+
+-- General Templates
+('Meeting Minutes', 'General meeting minutes template', 'general',
+jsonb_build_object('content', '# Meeting Minutes
+
+**Meeting Title:** {{meeting_title}}  
+**Date:** {{meeting_date}}  
+**Time:** {{start_time}} - {{end_time}}  
+**Location:** {{location}}
+
+## Attendees
+### Present
+{{#each attendees_present}}
+- {{this}}
+{{/each}}
+
+### Absent
+{{#each attendees_absent}}
+- {{this}}
+{{/each}}
+
+## Agenda Items
+
+### 1. {{agenda_item_1}}
+**Discussion:** {{discussion_1}}  
+**Decision:** {{decision_1}}
+
+### 2. {{agenda_item_2}}
+**Discussion:** {{discussion_2}}  
+**Decision:** {{decision_2}}
+
+## Action Items
+| Item | Responsible | Due Date |
+|------|-------------|----------|
+| {{action_1}} | {{responsible_1}} | {{due_1}} |
+| {{action_2}} | {{responsible_2}} | {{due_2}} |
+
+## Key Decisions
+1. {{key_decision_1}}
+2. {{key_decision_2}}
+
+## Next Meeting
+**Date:** {{next_meeting_date}}  
+**Agenda:** {{next_meeting_agenda}}
+
+## Additional Notes
+{{additional_notes}}'),
+true, true, 1),
+
+('Quick Note', 'Simple quick note template', 'general',
+jsonb_build_object('content', '# {{note_title}}
+
+**Date:** {{date}}  
+**Tags:** {{tags}}
+
+## Key Points
+- {{point_1}}
+- {{point_2}}
+- {{point_3}}
+
+## Details
+{{note_content}}
+
+## Action Items
+- [ ] {{action_1}}
+- [ ] {{action_2}}
+
+## References
+- {{reference_1}}
+- {{reference_2}}'),
+true, true, 1)
+ON CONFLICT (name, category) DO NOTHING;
+
 -- Log completion
 DO $$
 BEGIN
     RAISE NOTICE 'Template system migration completed successfully!';
     RAISE NOTICE 'Features: Template creation, variables, usage tracking, ratings, categories';
     RAISE NOTICE 'Built-in categories: meeting, project, personal, documentation, task, review, creative, general';
+    RAISE NOTICE 'Built-in templates: 15 templates across all categories';
 END $$;

@@ -25,6 +25,10 @@ import {
   AdvancedSearch,
   GlobalSearchTrigger,
 } from '@/components/ui/advanced-search'
+import { TemplatePicker } from '@/components/templates/template-picker'
+import { TemplateVariableForm } from '@/components/templates/template-variable-form'
+import { useTemplateActions } from '@/hooks/use-templates'
+import type { Template } from '@/types/templates'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
@@ -41,6 +45,14 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
 
+  // Template state
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
+    null
+  )
+  const [showVariableForm, setShowVariableForm] = useState(false)
+  const templateActions = useTemplateActions()
+
   // Tag management
   const { getOrCreateTag } = useTagManager()
 
@@ -51,24 +63,9 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
   // Command handlers
   const handleNewNote = useCallback(async () => {
-    try {
-      const newNote = await createNote({
-        title: 'Untitled',
-        content: '',
-      })
-      if (newNote) {
-        setSelectedNoteId(newNote.id)
-        router.push(`/notes/${newNote.id}`)
-      }
-    } catch (error) {
-      console.error('Failed to create note:', error)
-      toast({
-        title: 'Error creating note',
-        description: 'There was an error creating your note. Please try again.',
-        variant: 'destructive',
-      })
-    }
-  }, [createNote, router])
+    // Show template picker instead of creating note directly
+    setShowTemplatePicker(true)
+  }, [])
 
   const handleDeleteCurrentNote = useCallback(async () => {
     if (!selectedNoteId) return
@@ -310,6 +307,80 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     [router]
   )
 
+  // Template handlers
+  const handleCreateNoteFromTemplate = useCallback(
+    async (title: string, variables: Record<string, any>) => {
+      if (!selectedTemplate) return
+
+      try {
+        const result = await templateActions.useTemplate(
+          selectedTemplate.id,
+          title,
+          variables
+        )
+        if (result && result.noteId) {
+          setSelectedNoteId(result.noteId)
+          router.push(`/notes/${result.noteId}`)
+          setShowVariableForm(false)
+          setSelectedTemplate(null)
+          toast({
+            title: 'Note created',
+            description: 'Your note has been created from the template.',
+          })
+        }
+      } catch (error) {
+        console.error('Failed to create note from template:', error)
+        toast({
+          title: 'Error creating note',
+          description:
+            'There was an error creating your note from the template.',
+          variant: 'destructive',
+        })
+      }
+    },
+    [selectedTemplate, templateActions, router]
+  )
+
+  const handleTemplateSelect = useCallback(
+    (template: Template) => {
+      setSelectedTemplate(template)
+      setShowTemplatePicker(false)
+
+      // If template has variables, show the variable form
+      if (template.variables && template.variables.length > 0) {
+        setShowVariableForm(true)
+      } else {
+        // Create note directly with template content without variables
+        // We need to set the template first, then create the note
+        Promise.resolve().then(() => {
+          handleCreateNoteFromTemplate(template.name, {})
+        })
+      }
+    },
+    [handleCreateNoteFromTemplate]
+  )
+
+  const handleCreateBlankNote = useCallback(async () => {
+    setShowTemplatePicker(false)
+    try {
+      const newNote = await createNote({
+        title: 'Untitled',
+        content: '',
+      })
+      if (newNote) {
+        setSelectedNoteId(newNote.id)
+        router.push(`/notes/${newNote.id}`)
+      }
+    } catch (error) {
+      console.error('Failed to create note:', error)
+      toast({
+        title: 'Error creating note',
+        description: 'There was an error creating your note. Please try again.',
+        variant: 'destructive',
+      })
+    }
+  }, [createNote, router])
+
   if (shouldShowLoading) {
     return (
       <div className='flex h-screen bg-background' data-testid='app-shell'>
@@ -475,6 +546,22 @@ export function Shell({ children }: { children?: React.ReactNode }) {
           handleNoteSelect(result.id)
           setShowAdvancedSearch(false)
         }}
+      />
+
+      {/* Template Picker Dialog */}
+      <TemplatePicker
+        open={showTemplatePicker}
+        onOpenChange={setShowTemplatePicker}
+        onTemplateSelect={handleTemplateSelect}
+        onCreateBlank={handleCreateBlankNote}
+      />
+
+      {/* Template Variable Form Dialog */}
+      <TemplateVariableForm
+        open={showVariableForm}
+        onOpenChange={setShowVariableForm}
+        template={selectedTemplate}
+        onSubmit={handleCreateNoteFromTemplate}
       />
     </div>
   )
