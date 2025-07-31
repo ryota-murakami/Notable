@@ -1,24 +1,25 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
+  DropdownMenuPortal,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-  DropdownMenuShortcut,
-  DropdownMenuGroup,
+  DropdownMenuTrigger,
 } from './dropdown-menu'
 import { expect, userEvent, within } from '@storybook/test'
 import { Button } from './button'
 import {
+  ChevronDown,
   Cloud,
   CreditCard,
   Github,
@@ -27,14 +28,13 @@ import {
   LogOut,
   Mail,
   MessageSquare,
+  MoreHorizontal,
   Plus,
   PlusCircle,
   Settings,
   User,
   UserPlus,
   Users,
-  ChevronDown,
-  MoreHorizontal,
 } from 'lucide-react'
 import * as React from 'react'
 

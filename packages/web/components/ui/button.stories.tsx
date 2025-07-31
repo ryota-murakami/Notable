@@ -286,7 +286,7 @@ export const ComplexExample: Story = {
             className='flex gap-2'
             onSubmit={(e) => {
               e.preventDefault()
-              alert('Form submitted!')
+              console.info('Form submitted!')
             }}
           >
             <Button type='submit'>Submit</Button>

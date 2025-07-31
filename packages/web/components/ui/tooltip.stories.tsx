@@ -9,15 +9,15 @@ import { expect, userEvent, within } from '@storybook/test'
 import { Button } from './button'
 import {
   Bold,
-  Italic,
-  Underline,
-  Info,
-  HelpCircle,
-  Settings,
-  User,
   Copy,
   Download,
+  HelpCircle,
+  Info,
+  Italic,
+  Settings,
   Share2,
+  Underline,
+  User,
 } from 'lucide-react'
 import * as React from 'react'
 

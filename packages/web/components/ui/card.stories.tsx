@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
   Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
   CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from './card'
 import { expect, within } from '@storybook/test'
 import { Button } from './button'

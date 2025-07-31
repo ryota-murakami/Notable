@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
   EditorCanvas,
-  NotableEditorCanvas,
+  EditorFAB,
   EditorStatusBar,
   EditorTitle,
-  EditorFAB,
+  NotableEditorCanvas,
   useEditorCanvas,
 } from './editor-canvas'
 import { expect, userEvent, within } from '@storybook/test'
 import { Button } from '../../design-system/components/button'
-import { Bold, Italic, Underline, Plus, Save, Settings } from 'lucide-react'
+import { Bold, Italic, Plus, Save, Settings, Underline } from 'lucide-react'
 import * as React from 'react'
 
 const meta: Meta<typeof EditorCanvas> = {
@@ -271,7 +271,7 @@ export const WithFloatingActionButton: Story = {
       <EditorCanvas>
         <SampleContent />
       </EditorCanvas>
-      <EditorFAB onClick={() => alert('New document')}>
+      <EditorFAB onClick={() => console.info('New document')}>
         <Plus className='h-6 w-6' />
       </EditorFAB>
     </div>

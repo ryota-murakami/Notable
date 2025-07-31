@@ -2,16 +2,16 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Toggle } from './toggle'
 import { expect, userEvent, within } from '@storybook/test'
 import {
-  Bold,
-  Italic,
-  Underline,
-  AlignLeft,
   AlignCenter,
+  AlignLeft,
   AlignRight,
+  Bold,
   Code,
+  Italic,
   Link,
   List,
   ListOrdered,
+  Underline,
 } from 'lucide-react'
 import * as React from 'react'
 

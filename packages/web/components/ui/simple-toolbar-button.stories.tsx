@@ -2,18 +2,18 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import { ToolbarButton } from './simple-toolbar-button'
 import { expect, userEvent, within } from '@storybook/test'
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Bold,
-  Italic,
-  Underline,
-  Link,
   Code,
+  Italic,
+  Link,
   List,
   ListOrdered,
   Quote,
   Strikethrough,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
+  Underline,
 } from 'lucide-react'
 import * as React from 'react'
 

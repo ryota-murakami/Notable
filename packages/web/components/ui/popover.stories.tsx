@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
   Popover,
-  PopoverTrigger,
-  PopoverContent,
   PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
 } from './popover'
 import { Button } from './button'
 import { Label } from './label'
 import { Input } from './input'
 import { expect, userEvent, within } from '@storybook/test'
-import { Settings, Info, Calendar, User, Palette } from 'lucide-react'
+import { Calendar, Info, Palette, Settings, User } from 'lucide-react'
 
 const meta: Meta<typeof Popover> = {
   title: 'Components/UI/Popover',

@@ -1,18 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import {
   ContextMenu,
+  ContextMenuCheckboxItem,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuTrigger,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
   ContextMenuSeparator,
+  ContextMenuShortcut,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
-  ContextMenuShortcut,
-  ContextMenuRadioGroup,
-  ContextMenuRadioItem,
-  ContextMenuLabel,
-  ContextMenuCheckboxItem,
+  ContextMenuTrigger,
 } from './context-menu'
 import { expect, userEvent, within } from '@storybook/test'
 import * as React from 'react'

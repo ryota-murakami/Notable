@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Badge } from './badge'
 import { expect, within } from '@storybook/test'
-import { Star, Check, X, Info, AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Check, Info, Star, X } from 'lucide-react'
 
 const meta: Meta<typeof Badge> = {
   title: 'Components/UI/Badge',
@@ -228,14 +228,14 @@ export const Clickable: Story = {
       <Badge
         variant='outline'
         className='cursor-pointer hover:bg-accent transition-colors'
-        onClick={() => alert('Badge clicked!')}
+        onClick={() => console.info('Badge clicked!')}
       >
         Clickable Badge
       </Badge>
       <Badge
         variant='secondary'
         className='cursor-pointer hover:bg-secondary/80 transition-colors'
-        onClick={() => alert('Another click!')}
+        onClick={() => console.info('Another click!')}
       >
         Click Me Too
       </Badge>

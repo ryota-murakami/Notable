@@ -4,14 +4,14 @@ import { expect, userEvent, within } from '@storybook/test'
 import { Label } from './label'
 import * as React from 'react'
 import {
-  Moon,
-  Sun,
   Bell,
-  Mail,
-  Shield,
-  Wifi,
   Bluetooth,
+  Mail,
+  Moon,
   Plane,
+  Shield,
+  Sun,
+  Wifi,
 } from 'lucide-react'
 
 const meta: Meta<typeof Switch> = {
