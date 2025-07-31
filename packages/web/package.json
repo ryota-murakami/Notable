@@ -114,7 +114,6 @@
     "next-themes": "latest",
     "pdf-lib": "^1.17.1",
     "platejs": "^49.1.13",
-    "posthog-js": "^1.257.0",
     "process": "^0.11.10",
     "qrcode": "^1.5.4",
     "react": "^19",
