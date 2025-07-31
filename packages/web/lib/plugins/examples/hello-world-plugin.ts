@@ -18,6 +18,12 @@ import {
 } from '../types/plugin'
 import { PluginSDK, PluginUtils } from '../sdk/plugin-sdk'
 
+// Settings interface for type safety
+interface HelloWorldSettings {
+  helloCount?: number
+  lastDeactivated?: string
+}
+
 // Plugin manifest - this would typically be in a separate manifest.json file
 export const helloWorldManifest: PluginManifest = PluginSDK.createManifest({
   id: 'hello-world',
@@ -171,10 +177,14 @@ export class HelloWorldPlugin {
     this.logger.info('Settings saved')
   }
 
-  private async getSettings(): Promise<unknown> {
+  private async getSettings(): Promise<HelloWorldSettings> {
     // Fix: Add await to make this properly async
     await Promise.resolve()
-    return this.context.globalState.get('settings', {})
+    const settings = this.context.globalState.get(
+      'settings',
+      {}
+    ) as HelloWorldSettings
+    return settings
   }
 
   private async incrementHelloCount(): Promise<number> {

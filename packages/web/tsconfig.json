@@ -15,7 +15,7 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "types": ["node", "@types/web"],
+    "types": ["node"],
     "plugins": [
       {
         "name": "next"
