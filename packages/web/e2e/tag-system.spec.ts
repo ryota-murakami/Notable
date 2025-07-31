@@ -15,11 +15,21 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Tag System', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up authentication or any required state
-    await page.goto('/')
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
+    // Navigate to the app
+    await page.goto('/app')
 
     // Wait for app to load
-    await page.waitForSelector('[data-testid="app-loaded"]', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
   })
 
   test.describe('Basic Tag Operations', () => {
