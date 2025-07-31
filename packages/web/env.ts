@@ -1,8 +1,8 @@
 import { createEnv } from '@t3-oss/env-nextjs'
 import { z } from 'zod'
 
-// In CI environments, we need to allow builds without all env vars
-const isCI = process.env.CI === 'true'
+// In CI environments and Vercel deployments, we need to allow builds without all env vars
+const isCI = process.env.CI === 'true' || process.env.VERCEL === '1'
 
 export const env = createEnv({
   /**
