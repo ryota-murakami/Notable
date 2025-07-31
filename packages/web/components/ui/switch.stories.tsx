@@ -11,7 +11,7 @@ import {
   Shield,
   Wifi,
   Bluetooth,
-  Airplane,
+  Plane,
 } from 'lucide-react'
 
 const meta: Meta<typeof Switch> = {
@@ -361,7 +361,7 @@ export const ConnectionSettings: Story = {
           <div className='border-t pt-3'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>
-                <Airplane
+                <Plane
                   className={
                     connections.airplane
                       ? 'h-4 w-4'

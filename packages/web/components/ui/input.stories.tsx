@@ -94,7 +94,7 @@ export const Date: Story = {
   },
 }
 
-export const Search: Story = {
+export const SearchInput: Story = {
   args: {
     type: 'search',
     placeholder: 'Search...',
