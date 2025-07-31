@@ -150,7 +150,7 @@ export class TagShortcutManager {
   }
 
   // Register custom quick tag shortcuts
-  registerQuickTag(tagName: string, keys: string[], slotNumber?: number) {
+  registerQuickTag(tagName: string, keys: string[], _slotNumber?: number) {
     const shortcutId = `quick-tag-${tagName.toLowerCase()}`
     const displayName = `Quick Tag: ${tagName.charAt(0).toUpperCase() + tagName.slice(1)}`
 

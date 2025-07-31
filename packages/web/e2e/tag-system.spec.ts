@@ -1,4 +1,4 @@
-import { type BrowserContext, expect, type Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 /**
  * Comprehensive E2E Tests for Tag System
@@ -14,7 +14,7 @@ import { type BrowserContext, expect, type Page, test } from '@playwright/test'
  */
 
 test.describe('Tag System', () => {
-  test.beforeEach(async ({ page, context }) => {
+  test.beforeEach(async ({ page }) => {
     // Set up authentication or any required state
     await page.goto('/')
 
@@ -602,7 +602,7 @@ test.describe('Tag System Integration', () => {
     const download = await downloadPromise
 
     // Verify exported content includes tags
-    const exportedContent = await download.path()
+    const _exportedPath = await download.path()
     // Note: In real implementation, you'd read the file and verify tag content
   })
 
