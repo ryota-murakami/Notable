@@ -1,12 +1,12 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDebounce } from './use-debounce'
 import type {
+  SavedSearch,
+  SearchFilters,
   SearchQuery,
   SearchResult,
   SearchSuggestion,
-  SearchFilters,
-  SavedSearch,
 } from '@/types/search'
 import { SEARCH_CONSTANTS } from '@/types/search'
 

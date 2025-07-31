@@ -5,10 +5,17 @@
  * with Notable's functionality while maintaining security and stability.
  */
 
-// Fix: Add proper type reference for RequestInit
+// Fix: Add proper type reference for fetch API
+interface FetchInit {
+  method?: string
+  headers?: Record<string, string>
+  body?: string | FormData | ArrayBuffer
+  signal?: AbortSignal
+}
+
 declare const fetch: (
   input: string | URL,
-  init?: RequestInit
+  init?: FetchInit
 ) => Promise<Response>
 
 import {
@@ -224,7 +231,7 @@ export class PluginAPIFactory {
     this.requireAPIAccess(manifest, PluginAPIAccess.NETWORK)
 
     return {
-      fetch: async (url: string, options?: RequestInit) => {
+      fetch: async (url: string, options?: FetchInit) => {
         this.requirePermission(manifest, PluginPermission.NETWORK_ACCESS)
 
         // TODO: Add rate limiting and security checks

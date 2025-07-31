@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import type { SavedSearch } from '@/types/search'
 
 export async function GET(request: NextRequest) {

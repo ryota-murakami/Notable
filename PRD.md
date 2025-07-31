@@ -184,7 +184,7 @@ To create the world's most elegant and performant note-taking application that c
 ### Infrastructure
 
 - **Hosting**: Vercel (web) + Supabase
-- **Monitoring**: Sentry + Analytics
+- **Monitoring**: Sentry + Vercel Analytics
 - **CI/CD**: GitHub Actions
 
 ## User Interface Design
