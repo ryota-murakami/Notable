@@ -46,11 +46,11 @@ import {
 import { TagTree, TagTreeSearch } from '@/components/ui/tag-tree'
 import { TagBadge } from '@/components/ui/tag-badge'
 import {
-  useTags,
   useCreateTag,
-  useUpdateTag,
   useDeleteTag,
   useTagManager,
+  useTags,
+  useUpdateTag,
 } from '@/hooks/use-tags'
 import type { EnhancedTag, TagFormData } from '@/types/tags'
 import { DEFAULT_TAG_COLORS } from '@/types/tags'

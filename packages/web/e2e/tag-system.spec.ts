@@ -1,4 +1,4 @@
-import { test, expect, type Page, type BrowserContext } from '@playwright/test'
+import { type BrowserContext, expect, type Page, test } from '@playwright/test'
 
 /**
  * Comprehensive E2E Tests for Tag System

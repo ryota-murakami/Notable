@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Hash, TrendingUp, Eye, Filter } from 'lucide-react'
+import { Eye, Filter, Hash, TrendingUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

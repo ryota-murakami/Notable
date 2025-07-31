@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { shortcutManager, type KeyboardShortcut } from './keyboard-shortcuts'
+import { type KeyboardShortcut, shortcutManager } from './keyboard-shortcuts'
 import type { EnhancedTag } from '@/types/tags'
 
 export interface TagShortcutActions {

@@ -24,8 +24,8 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { TagInput } from '@/components/ui/tag-input'
 import { TagBadge } from '@/components/ui/tag-badge'
-import { useTags, useTagManager } from '@/hooks/use-tags'
-import type { EnhancedTag, BulkTagOperation, BulkTagResult } from '@/types/tags'
+import { useTagManager, useTags } from '@/hooks/use-tags'
+import type { BulkTagOperation, BulkTagResult, EnhancedTag } from '@/types/tags'
 
 export interface BulkTagOperationsProps {
   /** Whether the dialog is open */
