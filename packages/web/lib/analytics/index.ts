@@ -1,7 +1,6 @@
 // Analytics integration layer
 import type { AnalyticsProvider } from './provider'
 import { vercelAnalytics } from './vercel'
-import { posthogAnalytics } from './posthog'
 import { customAnalytics } from './custom'
 
 export interface AnalyticsEvent {
@@ -35,10 +34,6 @@ class Analytics {
     // Initialize providers based on environment variables
     if (process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ID) {
       this.providers.push(vercelAnalytics)
-    }
-
-    if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-      this.providers.push(posthogAnalytics)
     }
 
     // Always include custom analytics for internal tracking

@@ -3,6 +3,9 @@ import { z } from 'zod'
 
 // In CI environments, we need to allow builds without all env vars
 const isCI = process.env.CI === 'true'
+// In Vercel preview deployments, we need to allow builds without all env vars
+const isVercelPreview =
+  process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'production'
 
 export const env = createEnv({
   /**
@@ -14,35 +17,37 @@ export const env = createEnv({
       .enum(['development', 'test', 'production'])
       .default('development'),
     CI: z.string().optional(), // Only CI can be optional
-    DATABASE_URL: isCI ? z.string().optional() : z.string().url().min(1),
-    SUPABASE_SERVICE_ROLE_KEY: isCI ? z.string().optional() : z.string().min(1),
-    SUPABASE_JWT_SECRET: isCI ? z.string().optional() : z.string().min(1),
-    GOOGLE_CLIENT_ID: isCI ? z.string().optional() : z.string().min(1),
-    GOOGLE_CLIENT_SECRET: isCI ? z.string().optional() : z.string().min(1),
-    NEXTAUTH_SECRET: isCI ? z.string().optional() : z.string().min(1),
-    NEXTAUTH_URL: isCI
-      ? z.string().optional()
-      : z.preprocess(
-          // This makes Vercel deployments easier
-          (str) => process.env.VERCEL_URL ?? str,
-          // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-          process.env.VERCEL ? z.string().min(1) : z.string().url()
-        ),
-    RESEND_API_KEY: isCI ? z.string().optional() : z.string().min(1),
-    EMAIL_FROM: isCI ? z.string().optional() : z.string().email(),
-    UPLOADTHING_SECRET: isCI ? z.string().optional() : z.string().min(1),
-    UPLOADTHING_APP_ID: isCI ? z.string().optional() : z.string().min(1),
-    OPENAI_API_KEY: isCI ? z.string().optional() : z.string().min(1),
-    JWT_SECRET: isCI ? z.string().optional() : z.string().min(1),
-    SENTRY_DSN: isCI ? z.string().optional() : z.string().url().min(1),
-    SENTRY_ORG: isCI ? z.string().optional() : z.string().min(1),
-    SENTRY_PROJECT: isCI ? z.string().optional() : z.string().min(1),
-    SENTRY_AUTH_TOKEN: isCI ? z.string().optional() : z.string().min(1),
-    REDIS_URL: isCI ? z.string().optional() : z.string().url().min(1),
-    OTEL_SERVICE_NAME: isCI ? z.string().optional() : z.string().min(1),
-    OTEL_EXPORTER_OTLP_ENDPOINT: isCI
-      ? z.string().optional()
-      : z.string().url().min(1),
+    DATABASE_URL:
+      isCI || isVercelPreview ? z.string().optional() : z.string().url().min(1),
+    SUPABASE_SERVICE_ROLE_KEY:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    SUPABASE_JWT_SECRET:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    GOOGLE_CLIENT_ID:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    GOOGLE_CLIENT_SECRET:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    RESEND_API_KEY:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    EMAIL_FROM:
+      isCI || isVercelPreview ? z.string().optional() : z.string().email(),
+    UPLOADTHING_SECRET:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    UPLOADTHING_APP_ID:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    OPENAI_API_KEY:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    JWT_SECRET:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    SENTRY_DSN:
+      isCI || isVercelPreview ? z.string().optional() : z.string().url().min(1),
+    SENTRY_ORG:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    SENTRY_PROJECT:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    SENTRY_AUTH_TOKEN:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    REDIS_URL: z.string().optional(),
   },
 
   /**
@@ -67,15 +72,12 @@ export const env = createEnv({
           ? `https://${process.env.VERCEL_URL}`
           : 'http://localhost:3000'
       ),
-    NEXT_PUBLIC_SUPABASE_URL: isCI
-      ? z.string().optional()
-      : z.string().url().min(1),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: isCI
-      ? z.string().optional()
-      : z.string().min(1),
-    NEXT_PUBLIC_SENTRY_DSN: isCI
-      ? z.string().optional()
-      : z.string().url().min(1),
+    NEXT_PUBLIC_SUPABASE_URL:
+      isCI || isVercelPreview ? z.string().optional() : z.string().url().min(1),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
+      isCI || isVercelPreview ? z.string().optional() : z.string().min(1),
+    NEXT_PUBLIC_SENTRY_DSN:
+      isCI || isVercelPreview ? z.string().optional() : z.string().url().min(1),
   },
 
   /**
@@ -91,8 +93,6 @@ export const env = createEnv({
     SUPABASE_JWT_SECRET: process.env.SUPABASE_JWT_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     EMAIL_FROM: process.env.EMAIL_FROM,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
@@ -104,8 +104,6 @@ export const env = createEnv({
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     REDIS_URL: process.env.REDIS_URL,
-    OTEL_SERVICE_NAME: process.env.OTEL_SERVICE_NAME,
-    OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
     // Client
     NEXT_PUBLIC_APP_URL:
       process.env.NEXT_PUBLIC_APP_URL ||
