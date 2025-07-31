@@ -7,7 +7,7 @@ const config: TestRunnerConfig = {
   // Reasonable timeout for test completion
   testTimeout: 30000, // 30 seconds - reduced from 60s
 
-  async preVisit(page) {
+  preVisit(page) {
     // Set reasonable timeouts for page interactions
     page.setDefaultTimeout(15000) // 15s - reduced from 30s
   },
@@ -19,7 +19,7 @@ const config: TestRunnerConfig = {
     // Quick check for content with abort on failure
     try {
       await page.waitForSelector('#storybook-root > *', { timeout: 5000 })
-    } catch (error) {
+    } catch {
       // Log the issue but don't fail the test if content doesn't load immediately
       console.warn(
         'Story content did not load within 5s, but root element exists'

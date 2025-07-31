@@ -930,7 +930,7 @@ function generateTemporalInsights(
   return insights
 }
 
-async function detectCommunities(_supabase: any, _userId: string, _body: any) {
+function detectCommunities(_supabase: any, _userId: string, _body: any) {
   // This would implement community detection algorithms
   // For now, return a placeholder
   return NextResponse.json({
@@ -939,7 +939,7 @@ async function detectCommunities(_supabase: any, _userId: string, _body: any) {
   })
 }
 
-async function findSimilarNotes(_supabase: any, _userId: string, _body: any) {
+function findSimilarNotes(_supabase: any, _userId: string, _body: any) {
   // This would implement similarity analysis
   // For now, return a placeholder
   return NextResponse.json({
@@ -948,7 +948,7 @@ async function findSimilarNotes(_supabase: any, _userId: string, _body: any) {
   })
 }
 
-async function analyzeSpecificNote(supabase: any, userId: string, body: any) {
+function analyzeSpecificNote(_supabase: any, _userId: string, _body: any) {
   // This would analyze a specific note's position in the graph
   // For now, return a placeholder
   return NextResponse.json({
@@ -957,10 +957,10 @@ async function analyzeSpecificNote(supabase: any, userId: string, body: any) {
   })
 }
 
-async function generateConnectionSuggestions(
-  supabase: any,
-  userId: string,
-  noteIds: string[]
+function generateConnectionSuggestions(
+  _supabase: any,
+  _userId: string,
+  _noteIds: string[]
 ) {
   // This would generate intelligent suggestions for connecting isolated notes
   // For now, return empty suggestions

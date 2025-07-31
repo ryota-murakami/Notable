@@ -135,7 +135,7 @@ export const Warning: Story = {
   },
 }
 
-export const Info: Story = {
+export const InfoVariant: Story = {
   args: {
     variant: 'info',
   },

@@ -47,16 +47,14 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const url = new URL(request.url)
+    const maxNodesParam = url.searchParams.get('maxNodes')
+    const maxDepthParam = url.searchParams.get('maxDepth')
+    const minStrengthParam = url.searchParams.get('minStrength')
+
     const params: GraphDataRequest = {
-      maxNodes: url.searchParams.get('maxNodes')
-        ? parseInt(url.searchParams.get('maxNodes')!)
-        : 500,
-      maxDepth: url.searchParams.get('maxDepth')
-        ? parseInt(url.searchParams.get('maxDepth')!)
-        : 3,
-      minStrength: url.searchParams.get('minStrength')
-        ? parseFloat(url.searchParams.get('minStrength')!)
-        : 0.1,
+      maxNodes: maxNodesParam ? parseInt(maxNodesParam) : 500,
+      maxDepth: maxDepthParam ? parseInt(maxDepthParam) : 3,
+      minStrength: minStrengthParam ? parseFloat(minStrengthParam) : 0.1,
       relationshipTypes: url.searchParams.get('relationshipTypes')?.split(','),
       includeIsolated: url.searchParams.get('includeIsolated') === 'true',
       centerNodeId: url.searchParams.get('centerNodeId') || undefined,

@@ -11,7 +11,14 @@ const mockNote = {
   created_at: '2024-01-01T00:00:00Z',
   updated_at: '2024-01-02T00:00:00Z',
   tags: ['project', 'planning'],
-  user_id: 'user-1',
+  userId: 'user-1',
+  is_folder: false,
+  version: 1,
+  device_id: 'device-1',
+  last_modified: '2024-01-02T00:00:00Z',
+  vector_clock: { 'device-1': 1 },
+  local_changes: false,
+  deleted: false,
 }
 
 const meta: Meta<typeof ExportButton> = {

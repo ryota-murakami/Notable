@@ -454,7 +454,7 @@ export default function GraphPage() {
 function OverviewPanel({
   data,
   selectedNodes,
-  selectedLinks,
+  selectedLinks: _selectedLinks,
   hoveredNode,
   onOpenNote,
 }: {
