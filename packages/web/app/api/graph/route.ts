@@ -89,7 +89,7 @@ export async function GET(_request: NextRequest) {
     }
 
     // Get all notes for the user
-    console.log('Fetching notes for user:', user.id)
+    console.info('Fetching notes for user:', user.id)
     const { data: notes, error: notesError } = await supabase
       .from('notes')
       .select('id, title, created_at, updated_at')
@@ -123,7 +123,7 @@ export async function GET(_request: NextRequest) {
       )
     }
 
-    console.log('Found notes:', notes?.length || 0)
+    console.info('Found notes:', notes?.length || 0)
 
     // Get all note links for the user (handle missing table gracefully)
     let links: any[] = []
