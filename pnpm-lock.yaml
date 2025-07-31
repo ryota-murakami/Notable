@@ -384,7 +384,7 @@ importers:
         specifier: 2.2.4
         version: 2.2.4(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-dialog':
-        specifier: ^1.1.4
+        specifier: ^1.1.14
         version: 1.1.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.15
@@ -501,7 +501,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       cmdk:
-        specifier: ^1.0.4
+        specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       d3:
         specifier: ^7.9.0
@@ -561,7 +561,7 @@ importers:
         specifier: ^19
         version: 19.1.0
       react-day-picker:
-        specifier: ^9.8.0
+        specifier: ^9.8.1
         version: 9.8.1(react@19.1.0)
       react-dnd:
         specifier: ^16.0.1
