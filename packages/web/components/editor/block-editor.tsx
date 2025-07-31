@@ -115,7 +115,8 @@ export function BlockEditor({
         // Show drag handle (implement this UI element)
         const dragHandle = blockElement.querySelector('.block-drag-handle')
         if (dragHandle) {
-          ;(dragHandle as HTMLElement).style.opacity = '1'
+          const handle = dragHandle as HTMLElement
+          handle.style.opacity = '1'
         }
       }
     },
@@ -134,7 +135,8 @@ export function BlockEditor({
       // Hide drag handle
       const dragHandle = blockElement.querySelector('.block-drag-handle')
       if (dragHandle) {
-        ;(dragHandle as HTMLElement).style.opacity = '0'
+        const handle = dragHandle as HTMLElement
+        handle.style.opacity = '0'
       }
     }
   }, [])

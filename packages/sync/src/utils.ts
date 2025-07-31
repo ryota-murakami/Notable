@@ -233,7 +233,10 @@ export async function retry<T>(
     }
   }
 
-  throw lastError || new Error('Retry failed with unknown error')
+  if (lastError) {
+    throw lastError
+  }
+  throw new Error('Retry failed with unknown error')
 }
 
 /**
@@ -264,10 +267,12 @@ export function isValidUUID(str: string): boolean {
  * Sanitize text content for safe storage
  */
 export function sanitizeText(text: string): string {
-  // Remove control characters by keeping only printable characters
-  return text
-    .replace(/[^\u0020-\u007E\u00A0-\uFFFF]/g, '') // Keep printable ASCII + extended Unicode
-    .trim()
+  return (
+    text
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove control characters
+      .trim()
+  )
 }
 
 /**
@@ -304,7 +309,6 @@ export function deepEqual(obj1: unknown, obj2: unknown): boolean {
     return obj1 === obj2
   }
 
-  // TypeScript guard: ensure objects are non-null and can be indexed
   const o1 = obj1 as Record<string, unknown>
   const o2 = obj2 as Record<string, unknown>
 

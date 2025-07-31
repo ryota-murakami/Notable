@@ -301,6 +301,8 @@ export class SyncServiceImpl implements SyncService {
     }
 
     try {
+      // Add a small delay to make this truly async
+      await Promise.resolve()
       const presenceState = this.realtimeChannel.presenceState()
       const devices: DeviceInfo[] = []
 
@@ -308,7 +310,7 @@ export class SyncServiceImpl implements SyncService {
         if (Array.isArray(presence)) {
           for (const p of presence) {
             if (p && typeof p === 'object' && 'device_info' in p) {
-              devices.push((p as unknown as UserPresence).device_info)
+              devices.push((p as { device_info: DeviceInfo }).device_info)
             }
           }
         }
