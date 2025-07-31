@@ -47,9 +47,6 @@ test.describe('Template System E2E Tests', () => {
     await expect(page.locator('text=Project Kickoff')).toBeVisible()
 
     // Verify template cards have proper metadata
-    const templateCard = page
-      .locator('[role="button"]:has-text("Daily Standup")')
-      .first()
     await expect(page.locator('text=Built-in').first()).toBeVisible()
   })
 
