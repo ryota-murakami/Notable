@@ -51,7 +51,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     null
   )
   const [showVariableForm, setShowVariableForm] = useState(false)
-  const { useTemplate } = useTemplateActions()
+  const templateActions = useTemplateActions()
 
   // Tag management
   const { getOrCreateTag } = useTagManager()
@@ -313,7 +313,11 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       if (!selectedTemplate) return
 
       try {
-        const result = await useTemplate(selectedTemplate.id, title, variables)
+        const result = await templateActions.useTemplate(
+          selectedTemplate.id,
+          title,
+          variables
+        )
         if (result && result.noteId) {
           setSelectedNoteId(result.noteId)
           router.push(`/notes/${result.noteId}`)
@@ -334,7 +338,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         })
       }
     },
-    [selectedTemplate, useTemplate, router]
+    [selectedTemplate, templateActions, router]
   )
 
   const handleTemplateSelect = useCallback(
