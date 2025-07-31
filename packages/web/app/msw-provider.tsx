@@ -1,32 +1,31 @@
 'use client'
 
-import { Suspense, use } from 'react'
+import { Suspense } from 'react'
 
-let mockingEnabledPromise: Promise<void> | undefined
+let mockingPromise: Promise<void> | null = null
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
-) {
-  if (typeof window !== 'undefined') {
-    // Only run MSW in the browser
-    mockingEnabledPromise = import('../mocks/browser').then(
-      async ({ worker }) => {
-        await worker.start({
-          onUnhandledRequest: 'bypass', // Don't warn about unhandled requests
-          serviceWorker: {
-            url: '/mockServiceWorker.js',
-          },
-        })
-      }
-    )
+async function initializeMSW() {
+  if (typeof window === 'undefined') return
+  if (process.env.NODE_ENV !== 'development') return
+  
+  try {
+    // Direct import, but protected by NODE_ENV check
+    const { worker } = await import('../mocks/browser')
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+      serviceWorker: {
+        url: '/mockServiceWorker.js',
+      },
+    })
+  } catch (error) {
+    console.error('Failed to initialize MSW:', error)
   }
 }
 
 export function MSWProvider({ children }: { children: React.ReactNode }) {
-  // If MSW is enabled, we need to wait for it to start
-  if (mockingEnabledPromise) {
-    use(mockingEnabledPromise)
+  // Initialize MSW on first render in development only
+  if (process.env.NODE_ENV === 'development' && !mockingPromise) {
+    mockingPromise = initializeMSW()
   }
 
   return <>{children}</>
@@ -38,10 +37,8 @@ export function MSWProviderWrapper({
 }: {
   children: React.ReactNode
 }) {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
-  ) {
+  // Only use MSW in development
+  if (process.env.NODE_ENV === 'development') {
     return (
       <Suspense fallback={null}>
         <MSWProvider>{children}</MSWProvider>
