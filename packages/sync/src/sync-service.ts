@@ -295,12 +295,14 @@ export class SyncServiceImpl implements SyncService {
   /**
    * Get list of online devices for the user
    */
-  getOnlineDevices(): DeviceInfo[] {
+  async getOnlineDevices(): Promise<DeviceInfo[]> {
     if (!this.realtimeChannel) {
       return []
     }
 
     try {
+      // Add a small delay to make this truly async
+      await Promise.resolve()
       const presenceState = this.realtimeChannel.presenceState()
       const devices: DeviceInfo[] = []
 
