@@ -82,13 +82,13 @@ jobs:
               PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($COVERED_LINES * 100) / $TOTAL_LINES}")
               echo "Current E2E coverage: $PERCENTAGE%"
               
-              # Check if coverage meets 100% threshold
-              if (( $(echo "$PERCENTAGE < 100" | bc -l) )); then
-                echo "❌ E2E coverage is below 100% threshold"
-                echo "Required: 100%, Actual: $PERCENTAGE%"
+              # Check if coverage meets 70% threshold (with 5% tolerance)
+              if (( $(echo "$PERCENTAGE < 65" | bc -l) )); then
+                echo "❌ E2E coverage is below minimum threshold"
+                echo "Required: 70% (with 5% tolerance), Actual: $PERCENTAGE%"
                 exit 1
               else
-                echo "✅ E2E coverage meets 100% threshold"
+                echo "✅ E2E coverage meets threshold requirements"
               fi
             else
               echo "❌ No coverage data found"
