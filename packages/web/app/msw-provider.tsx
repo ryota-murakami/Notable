@@ -10,16 +10,23 @@ if (
 ) {
   if (typeof window !== 'undefined') {
     // Only run MSW in the browser
-    mockingEnabledPromise = import('../mocks/browser').then(
-      async ({ worker }) => {
+    mockingEnabledPromise = import('../mocks/browser')
+      .then(async ({ worker }) => {
         await worker.start({
           onUnhandledRequest: 'bypass', // Don't warn about unhandled requests
           serviceWorker: {
             url: '/mockServiceWorker.js',
           },
         })
-      }
-    )
+      })
+      .catch((error) => {
+        // Silently fail in production builds where MSW imports are aliased to false
+        if (process.env.NODE_ENV === 'production') {
+          console.warn('MSW not available in production build')
+        } else {
+          console.error('Failed to initialize MSW:', error)
+        }
+      })
   }
 }
 
