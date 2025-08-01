@@ -18,7 +18,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:jest": "jest",
-    "e2e": "playwright test e2e/smoke.spec.ts",
+    "e2e": "playwright test",
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
     "e2e:coverage": "rm -rf coverage .nyc_output/v8-coverage && COVERAGE=1 playwright test",
