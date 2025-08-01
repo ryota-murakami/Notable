@@ -167,15 +167,15 @@ test.describe('Comprehensive Authentication Tests', () => {
       await page.getByText('Logout').click()
 
       // Check local storage is cleared
-      const localStorage = await page.evaluate(() => {
+      const storageData = await page.evaluate(() => {
         return {
           preferences: localStorage.getItem('user-preferences'),
           draft: localStorage.getItem('draft-note'),
         }
       })
 
-      expect(localStorage.preferences).toBeNull()
-      expect(localStorage.draft).toBeNull()
+      expect(storageData.preferences).toBeNull()
+      expect(storageData.draft).toBeNull()
     })
   })
 

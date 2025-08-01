@@ -209,9 +209,9 @@ test.describe('Comprehensive Search Functionality Tests', () => {
 
       // Add tags
       await page.click('[data-testid="tag-input"]')
-      await page.type('important')
+      await page.locator('[data-testid="tag-input"]').type('important')
       await page.keyboard.press('Enter')
-      await page.type('work')
+      await page.locator('[data-testid="tag-input"]').type('work')
       await page.keyboard.press('Enter')
       await page.keyboard.press('Control+s')
 
