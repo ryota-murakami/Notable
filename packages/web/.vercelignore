@@ -3,7 +3,7 @@ node_modules
 .pnpm-store
 
 # Build outputs
-.next/cache
+.next
 .turbo
 dist
 build
