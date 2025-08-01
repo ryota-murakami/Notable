@@ -1,0 +1,32 @@
+{
+  "all": true,
+  "include": [
+    "app/**/*.{js,jsx,ts,tsx}",
+    "components/**/*.{js,jsx,ts,tsx}",
+    "lib/**/*.{js,jsx,ts,tsx}",
+    "features/**/*.{js,jsx,ts,tsx}",
+    "hooks/**/*.{js,jsx,ts,tsx}",
+    "utils/**/*.{js,jsx,ts,tsx}"
+  ],
+  "exclude": [
+    "**/*.test.{js,jsx,ts,tsx}",
+    "**/*.spec.{js,jsx,ts,tsx}",
+    "**/*.stories.{js,jsx,ts,tsx}",
+    "**/node_modules/**",
+    "coverage/**",
+    ".next/**",
+    "public/**",
+    "e2e/**",
+    "**/*.d.ts",
+    "next.config.mjs",
+    "babel.config.js",
+    "nyc.config.js"
+  ],
+  "reporter": ["text", "json", "lcov", "html"],
+  "report-dir": "./coverage",
+  "temp-dir": "./.nyc_output",
+  "check-coverage": false,
+  "sourceMap": false,
+  "instrument": false,
+  "require": []
+}

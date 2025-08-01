@@ -229,7 +229,10 @@ export function RichTextEditor({
   }, [onTitleChange, onContentChange])
 
   return (
-    <div className={`flex flex-col h-full ${className || ''}`}>
+    <div
+      className={`flex flex-col h-full ${className || ''}`}
+      data-testid='note-editor'
+    >
       {/* Header with Title and Template Button */}
       <div className='border-b bg-background px-6 py-4'>
         <div className='flex items-center justify-between gap-4'>
@@ -239,6 +242,7 @@ export function RichTextEditor({
             placeholder='Untitled Note'
             className='text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-0 h-auto flex-1'
             style={{ fontSize: '1.5rem', fontWeight: 'bold' }}
+            data-testid='note-title'
           />
           <Button
             variant='outline'
@@ -296,6 +300,7 @@ export function RichTextEditor({
           placeholder='Start writing your note...'
           autoFocus
           className='border-0 h-full'
+          data-testid='rich-text-editor'
         />
       </div>
 
