@@ -245,7 +245,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       // Get the note ID from URL
       await page.waitForURL('**/notes/**')
       const noteUrl = page.url()
-      const noteId = noteUrl.split('/notes/')[1]
+      const _noteId = noteUrl.split('/notes/')[1]
 
       // Add content
       await expect(page.getByTestId('note-editor')).toBeVisible()

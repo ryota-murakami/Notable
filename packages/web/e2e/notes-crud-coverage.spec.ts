@@ -454,9 +454,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     await expect(page).toHaveURL(/\/notes\/[a-zA-Z0-9-]+/)
 
     // Check for metadata - look for date-related elements or text
-    const metadataElements = page.locator(
-      '[data-testid*="date"], [data-testid*="metadata"], text=/created|updated|modified/i'
-    )
+    // Note: Metadata display might vary across implementations
 
     // Just verify that we're on the note page
     // Metadata display might vary, so we'll just check the note loads

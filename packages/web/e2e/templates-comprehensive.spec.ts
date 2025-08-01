@@ -236,7 +236,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(
-        '# \{{title}}\n\nDate: \{{date}}\n\nContent: \{{content}}'
+        '# {{title}}\n\nDate: {{date}}\n\nContent: {{content}}'
       )
 
       // Save template
@@ -405,12 +405,12 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        Text: \{{text:string}}
-        Number: \{{number:number}}
-        Date: \{{date:date}}
-        Boolean: \{{active:boolean}}
-        Select: \{{priority:select[low,medium,high]}}
-        Multiline: \{{description:text}}
+        Text: {{text:string}}
+        Number: {{number:number}}
+        Date: {{date:date}}
+        Boolean: {{active:boolean}}
+        Select: {{priority:select[low,medium,high]}}
+        Multiline: {{description:text}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -461,7 +461,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(
-        'Status: \{{status:select[draft,published,archived]:default=draft}}'
+        'Status: {{status:select[draft,published,archived]:default=draft}}'
       )
 
       await page.click('[data-testid="save-template-button"]')
@@ -566,11 +566,11 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        \{{#if urgent}}
-        ⚠️ URGENT: \{{title}}
-        \{{else}}
-        \{{title}}
-        \{{/if}}
+        {{#if urgent}}
+        ⚠️ URGENT: {{title}}
+        {{else}}
+        {{title}}
+        {{/if}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -604,9 +604,9 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        \{{#each tasks}}
-        - [ ] \{{this}}
-        \{{/each}}
+        {{#each tasks}}
+        - [ ] {{this}}
+        {{/each}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -688,7 +688,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-content-editor"]'
       )
       await contentEditor.click()
-      await contentEditor.type('Hello \{{name}}, welcome to \{{place}}!')
+      await contentEditor.type('Hello {{name}}, welcome to {{place}}!')
 
       await page.click('[data-testid="save-template-button"]')
 
@@ -721,10 +721,10 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        Default: \{{date}}
-        Long: \{{date:format="MMMM D, YYYY"}}
-        Short: \{{date:format="MM/DD/YY"}}
-        Time: \{{date:format="h:mm A"}}
+        Default: {{date}}
+        Long: {{date:format="MMMM D, YYYY"}}
+        Short: {{date:format="MM/DD/YY"}}
+        Time: {{date:format="h:mm A"}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -766,10 +766,10 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        Price: $\{{price}}
-        Quantity: \{{quantity}}
-        Total: $\{{price * quantity}}
-        With Tax (10%): $\{{(price * quantity * 1.1).toFixed(2)}}
+        Price: \${{price}}
+        Quantity: {{quantity}}
+        Total: \${{price * quantity}}
+        With Tax (10%): \${{(price * quantity * 1.1).toFixed(2)}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -809,11 +809,11 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        Original: \{{text}}
-        Uppercase: \{{text:upper}}
-        Lowercase: \{{text:lower}}
-        Capitalize: \{{text:capitalize}}
-        Slug: \{{text:slug}}
+        Original: {{text}}
+        Uppercase: {{text:upper}}
+        Lowercase: {{text:lower}}
+        Capitalize: {{text:capitalize}}
+        Slug: {{text:slug}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -858,21 +858,21 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        \{{#if showHeader}}
-        # \{{title}}
-        \{{#if subtitle}}
-        ## \{{subtitle}}
-        \{{/if}}
-        \{{/if}}
+        {{#if showHeader}}
+        # {{title}}
+        {{#if subtitle}}
+        ## {{subtitle}}
+        {{/if}}
+        {{/if}}
         
-        \{{#each sections}}
-        ### \{{this.name}}
-        \{{#if this.items}}
-        \{{#each this.items}}
-        - \{{this}}
-        \{{/each}}
-        \{{/if}}
-        \{{/each}}
+        {{#each sections}}
+        ### {{this.name}}
+        {{#if this.items}}
+        {{#each this.items}}
+        - {{this}}
+        {{/each}}
+        {{/if}}
+        {{/each}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -892,7 +892,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-content-editor"]'
       )
       await contentEditor.click()
-      await contentEditor.type('# \{{title}}\nDate: \{{date}}\n---')
+      await contentEditor.type('# {{title}}\nDate: {{date}}\n---')
 
       await page.click('[data-testid="save-template-button"]')
 
@@ -903,10 +903,10 @@ test.describe('Comprehensive Template System Tests', () => {
       await contentEditor.click()
       await contentEditor.clear()
       await contentEditor.type(`
-        \{{> Header Template}}
+        {{> Header Template}}
         
         ## Content
-        \{{content}}
+        {{content}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -950,11 +950,11 @@ test.describe('Comprehensive Template System Tests', () => {
       )
       await contentEditor.click()
       await contentEditor.type(`
-        Random ID: \{{uuid}}
-        Today: \{{today}}
-        Tomorrow: \{{tomorrow}}
-        Random Number: \{{random 1 100}}
-        Lorem Ipsum: \{{lorem 10}}
+        Random ID: {{uuid}}
+        Today: {{today}}
+        Tomorrow: {{tomorrow}}
+        Random Number: {{random 1 100}}
+        Lorem Ipsum: {{lorem 10}}
       `)
 
       await page.click('[data-testid="save-template-button"]')
@@ -1171,7 +1171,7 @@ test.describe('Comprehensive Template System Tests', () => {
             {
               name: 'Imported Template',
               category: 'personal',
-              content: '# \{{title}}',
+              content: '# {{title}}',
             },
           ])
         ),
