@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures/coverage'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Integrated Elite Features', () => {
   test.beforeEach(async ({ page }) => {

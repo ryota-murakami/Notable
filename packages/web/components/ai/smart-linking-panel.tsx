@@ -1,17 +1,17 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  Link,
-  Brain,
-  Loader2,
-  ExternalLink,
-  Hash,
-  Clock,
-  Sparkles,
   ArrowRight,
+  Brain,
+  Clock,
+  ExternalLink,
   Eye,
+  Hash,
+  Link,
+  Loader2,
   Plus,
+  Sparkles,
 } from 'lucide-react'
 import { Button } from '@/design-system/components/button'
 import { Badge } from '@/components/ui/badge'
@@ -211,7 +211,7 @@ export function SmartLinkingPanel({
             <div className='py-4 text-center'>
               <p className='text-sm text-destructive'>{error}</p>
               <Button
-                variant='outline'
+                variant='secondary'
                 size='sm'
                 onClick={fetchSuggestions}
                 className='mt-2'
@@ -306,7 +306,7 @@ export function SmartLinkingPanel({
                       {suggestion.tags.slice(0, 3).map((tag) => (
                         <Badge
                           key={tag}
-                          variant='outline'
+                          variant='secondary'
                           className='text-xs h-4'
                         >
                           <Hash className='h-2 w-2 mr-1' />
@@ -373,7 +373,7 @@ export function SmartLinkingPanel({
           {suggestions.length > 0 && (
             <div className='mt-4 pt-3 border-t'>
               <Button
-                variant='outline'
+                variant='secondary'
                 size='sm'
                 onClick={fetchSuggestions}
                 disabled={isLoading}

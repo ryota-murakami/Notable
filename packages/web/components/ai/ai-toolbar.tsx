@@ -10,13 +10,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  Sparkles,
-  FileText,
-  Edit3,
   CheckCircle,
-  Minimize2,
-  Maximize2,
+  Edit3,
+  FileText,
   Loader2,
+  Maximize2,
+  Minimize2,
+  Sparkles,
 } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
 
@@ -121,7 +121,7 @@ export function AIToolbar({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant='outline'
+            variant='secondary'
             size='sm'
             disabled={isLoading}
             className='text-xs'
@@ -160,7 +160,7 @@ export function AIToolbar({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant='outline'
+            variant='secondary'
             size='sm'
             disabled={isLoading}
             className='text-xs'

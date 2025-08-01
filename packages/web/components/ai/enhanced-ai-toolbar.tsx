@@ -6,13 +6,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuPortal,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -27,20 +27,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import {
-  Sparkles,
-  FileText,
-  Edit3,
-  CheckCircle,
-  Minimize2,
-  Maximize2,
-  Loader2,
   Brain,
+  CheckCircle,
+  Edit3,
+  FileText,
   Lightbulb,
-  MessageCircleQuestion,
-  PlusCircle,
   List,
-  Zap,
+  Loader2,
+  Maximize2,
+  MessageCircleQuestion,
+  Minimize2,
+  PlusCircle,
+  Sparkles,
   Wand2,
+  Zap,
 } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
 
@@ -260,7 +260,7 @@ export function EnhancedAIToolbar({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant='outline'
+              variant='secondary'
               size='sm'
               disabled={isLoading}
               className='text-xs'
@@ -425,7 +425,7 @@ export function EnhancedAIToolbar({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant='outline'
+            variant='secondary'
             size='sm'
             disabled={isLoading}
             className='text-xs'
@@ -464,7 +464,7 @@ export function EnhancedAIToolbar({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant='outline'
+            variant='secondary'
             size='sm'
             disabled={isLoading}
             className='text-xs'

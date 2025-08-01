@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures/coverage'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Authentication Coverage Tests', () => {
   test('complete login flow with all edge cases', async ({ page }) => {

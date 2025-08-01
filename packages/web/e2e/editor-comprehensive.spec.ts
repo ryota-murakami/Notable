@@ -540,11 +540,13 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await page.evaluate(() => {
         const html = '<strong>Bold</strong> and <em>italic</em> text'
         const blob = new Blob([html], { type: 'text/html' })
+        // eslint-disable-next-line no-undef
         const data = new DataTransfer()
         data.items.add(
           new File([blob], 'clipboard.html', { type: 'text/html' })
         )
         navigator.clipboard.write([
+          // eslint-disable-next-line no-undef
           new ClipboardItem({
             'text/html': blob,
           }),
