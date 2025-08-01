@@ -1,12 +1,13 @@
 'use client'
 
 import { Suspense, use } from 'react'
+import { env } from '../env'
 
 let mockingEnabledPromise: Promise<void> | undefined
 
 if (
   process.env.NODE_ENV === 'development' ||
-  process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
+  env.NEXT_PUBLIC_API_MOCKING === 'enabled'
 ) {
   if (typeof window !== 'undefined') {
     // Only run MSW in the browser
@@ -40,7 +41,7 @@ export function MSWProviderWrapper({
 }) {
   if (
     process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
+    env.NEXT_PUBLIC_API_MOCKING === 'enabled'
   ) {
     return (
       <Suspense fallback={null}>

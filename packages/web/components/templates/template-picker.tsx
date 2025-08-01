@@ -74,7 +74,9 @@ export function TemplatePicker({
     setIsLoading(true)
     try {
       // Fetch categories
-      const categoriesResponse = await fetch('/api/templates/categories')
+      const categoriesResponse = await fetch('/api/templates/categories', {
+        credentials: 'include',
+      })
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json()
         setCategories(categoriesData.data || [])
@@ -88,7 +90,9 @@ export function TemplatePicker({
       params.set('limit', '50')
 
       // Fetch templates
-      const templatesResponse = await fetch(`/api/templates?${params}`)
+      const templatesResponse = await fetch(`/api/templates?${params}`, {
+        credentials: 'include',
+      })
       if (templatesResponse.ok) {
         const templatesData = await templatesResponse.json()
         setTemplates(templatesData.data || [])

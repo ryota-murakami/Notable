@@ -26,6 +26,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build workspace dependencies
+        run: pnpm build --filter=@notable/sync --filter=@notable/routing
+
+      - name: Build Next.js app
+        run: |
+          cd packages/web
+          pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key'
+          NEXT_PUBLIC_APP_URL: 'http://localhost:4378'
+          NEXT_PUBLIC_API_MOCKING: 'enabled'
+
       - name: Install Playwright browsers
         run: |
           cd packages/web
@@ -39,6 +52,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co'
           NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key'
           NEXT_PUBLIC_APP_URL: 'http://localhost:4378'
+          NEXT_PUBLIC_API_MOCKING: 'enabled'
         run: |
           cd packages/web
           # Run tests in batches to avoid memory issues with large coverage files

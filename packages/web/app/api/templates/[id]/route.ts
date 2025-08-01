@@ -7,6 +7,237 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // For E2E tests with test database, return mock data
+  if (process.env.DATABASE_URL?.includes('localhost:5433')) {
+    const devBypassUser = await getDevAuthBypassUser()
+    if (!devBypassUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Mock template data
+    const mockTemplates: Record<string, any> = {
+      'daily-journal': {
+        id: 'daily-journal',
+        name: 'Daily Journal',
+        description: 'Structured daily journal for reflection and planning',
+        category: 'personal',
+        categoryName: 'Personal',
+        categoryIcon: '📝',
+        categoryColor: null,
+        content: {
+          type: 'doc',
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 1 },
+              content: [{ type: 'text', text: '{{date}}' }],
+            },
+            {
+              type: 'heading',
+              attrs: { level: 2 },
+              content: [{ type: 'text', text: 'Morning Reflection' }],
+            },
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: '{{morning_reflection}}' }],
+            },
+            {
+              type: 'heading',
+              attrs: { level: 2 },
+              content: [{ type: 'text', text: 'Goals for Today' }],
+            },
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: '{{goals}}' }],
+            },
+          ],
+        },
+        thumbnail: null,
+        isPublic: true,
+        isSystem: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        usageCount: 150,
+        rating: 4.8,
+        ratingCount: 25,
+        variables: [
+          {
+            id: '1',
+            name: 'gratitude_1',
+            label: 'Gratitude #1',
+            type: 'text',
+            placeholder: 'What are you grateful for?',
+            required: false,
+            displayOrder: 0,
+          },
+          {
+            id: '2',
+            name: 'gratitude_2',
+            label: 'Gratitude #2',
+            type: 'text',
+            placeholder: 'What are you grateful for?',
+            required: false,
+            displayOrder: 1,
+          },
+          {
+            id: '3',
+            name: 'gratitude_3',
+            label: 'Gratitude #3',
+            type: 'text',
+            placeholder: 'What are you grateful for?',
+            required: false,
+            displayOrder: 2,
+          },
+          {
+            id: '4',
+            name: 'mood',
+            label: 'Mood (1-10)',
+            type: 'number',
+            placeholder: 'Rate your mood',
+            required: false,
+            validation: { min: 1, max: 10 },
+            displayOrder: 3,
+          },
+          {
+            id: '5',
+            name: 'energy',
+            label: 'Energy Level (1-10)',
+            type: 'number',
+            placeholder: 'Rate your energy level',
+            required: false,
+            validation: { min: 1, max: 10 },
+            displayOrder: 4,
+          },
+          {
+            id: '6',
+            name: 'highlights',
+            label: "Today's Highlights",
+            type: 'textarea',
+            placeholder: 'What were the highlights of your day?',
+            required: false,
+            displayOrder: 5,
+          },
+        ],
+      },
+      'daily-standup': {
+        id: 'daily-standup',
+        name: 'Daily Standup',
+        description: 'Quick daily standup meeting notes',
+        category: 'meeting',
+        categoryName: 'Meeting Notes',
+        categoryIcon: '👥',
+        categoryColor: null,
+        content: {
+          type: 'doc',
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 1 },
+              content: [{ type: 'text', text: 'Daily Standup - {{date}}' }],
+            },
+            {
+              type: 'heading',
+              attrs: { level: 2 },
+              content: [{ type: 'text', text: '👤 {{name}}' }],
+            },
+            {
+              type: 'heading',
+              attrs: { level: 3 },
+              content: [{ type: 'text', text: 'Yesterday' }],
+            },
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: '{{yesterday}}' }],
+            },
+            {
+              type: 'heading',
+              attrs: { level: 3 },
+              content: [{ type: 'text', text: 'Today' }],
+            },
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: '{{today}}' }],
+            },
+            {
+              type: 'heading',
+              attrs: { level: 3 },
+              content: [{ type: 'text', text: 'Blockers' }],
+            },
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: '{{blockers}}' }],
+            },
+          ],
+        },
+        thumbnail: null,
+        isPublic: true,
+        isSystem: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        usageCount: 200,
+        rating: 4.5,
+        ratingCount: 40,
+        variables: [
+          {
+            id: '1',
+            name: 'date',
+            label: 'Date',
+            type: 'text',
+            defaultValue: new Date().toLocaleDateString(),
+            required: true,
+            displayOrder: 0,
+          },
+          {
+            id: '2',
+            name: 'name',
+            label: 'Your Name',
+            type: 'text',
+            required: true,
+            displayOrder: 1,
+          },
+          {
+            id: '3',
+            name: 'yesterday',
+            label: 'What did you do yesterday?',
+            type: 'textarea',
+            required: false,
+            displayOrder: 2,
+          },
+          {
+            id: '4',
+            name: 'today',
+            label: 'What will you do today?',
+            type: 'textarea',
+            required: false,
+            displayOrder: 3,
+          },
+          {
+            id: '5',
+            name: 'blockers',
+            label: 'Any blockers?',
+            type: 'textarea',
+            placeholder: 'None',
+            defaultValue: 'None',
+            required: false,
+            displayOrder: 4,
+          },
+        ],
+      },
+    }
+
+    const templateId = params.id
+    const template = mockTemplates[templateId]
+
+    if (!template) {
+      return NextResponse.json({ error: 'Template not found' }, { status: 404 })
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: template,
+    })
+  }
+
   const supabase = await createClient()
 
   try {

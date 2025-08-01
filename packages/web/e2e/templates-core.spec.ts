@@ -1,12 +1,44 @@
 import { expect, test } from './fixtures/coverage'
 
 test.describe('Template System Core Tests', () => {
+  test('debug - check API auth', async ({ page }) => {
+    // Set auth cookie
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
+    // Try to access template API directly
+    const response = await page.goto('/api/templates/categories')
+    console.log('Direct API access status:', response?.status())
+
+    const body = await response?.text()
+    console.log('API response body:', body)
+  })
   test.beforeEach(async ({ page }) => {
+    // Set auth cookie
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+        httpOnly: false,
+        secure: false,
+        sameSite: 'Lax',
+      },
+    ])
+
     // Navigate to the app
-    await page.goto('/')
+    await page.goto('/app')
 
     // Wait for the app to load
-    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
+    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('button', { name: 'New Note' })).toBeVisible()
   })
 
   test('should open template picker when clicking New Note', async ({
@@ -45,8 +77,37 @@ test.describe('Template System Core Tests', () => {
   })
 
   test('should display built-in templates', async ({ page }) => {
+    // Monitor API responses
+    const apiResponses: any[] = []
+    page.on('response', (response) => {
+      if (response.url().includes('/api/templates')) {
+        apiResponses.push({
+          url: response.url(),
+          status: response.status(),
+          ok: response.ok(),
+        })
+      }
+    })
+
     // Open template picker
     await page.click('button:has-text("New Note")')
+
+    // Wait for the dialog to open
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
+
+    // Wait a bit for API calls
+    await page.waitForTimeout(2000)
+
+    // Log API responses
+    console.log('Template API responses:', apiResponses)
+
+    // Check if we see "No templates found"
+    const noTemplatesVisible = await page
+      .locator('text=No templates found')
+      .isVisible()
+    console.log('No templates found visible:', noTemplatesVisible)
 
     // Wait for templates to load
     await page.waitForSelector('text=Daily Standup')
@@ -61,6 +122,11 @@ test.describe('Template System Core Tests', () => {
   test('should filter templates by category', async ({ page }) => {
     // Open template picker
     await page.click('button:has-text("New Note")')
+
+    // Wait for the dialog to open
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
 
     // Wait for templates
     await page.waitForSelector('text=Daily Standup')
@@ -79,6 +145,11 @@ test.describe('Template System Core Tests', () => {
   test('should create note from template with variables', async ({ page }) => {
     // Open template picker
     await page.click('button:has-text("New Note")')
+
+    // Wait for template picker dialog to open
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
 
     // Select Daily Journal template
     await page.waitForSelector('text=Daily Journal')
@@ -116,6 +187,11 @@ test.describe('Template System Core Tests', () => {
     // Open template picker
     await page.click('button:has-text("New Note")')
 
+    // Wait for the dialog to open
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
+
     // Select Daily Journal template
     await page.waitForSelector('text=Daily Journal')
     await page.click('div:has-text("Daily Journal").group')
@@ -136,6 +212,11 @@ test.describe('Template System Core Tests', () => {
   test('should cancel template selection', async ({ page }) => {
     // Open template picker
     await page.click('button:has-text("New Note")')
+
+    // Wait for the dialog to open
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
 
     // Select a template
     await page.waitForSelector('text=Daily Journal')
@@ -161,6 +242,11 @@ test.describe('Template System Core Tests', () => {
   test('should search templates', async ({ page }) => {
     // Open template picker
     await page.click('button:has-text("New Note")')
+
+    // Wait for the dialog to open
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
 
     // Search for "meeting"
     await page.fill('input[placeholder*="Search templates"]', 'meeting')

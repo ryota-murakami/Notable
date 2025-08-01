@@ -21,6 +21,14 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
     // Create a new note to access the editor
     await page.getByRole('button', { name: 'New Note' }).click()
 
+    // Handle template picker dialog
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
+
+    // Click "Blank Note" to create a blank note
+    await page.getByRole('button', { name: 'Blank Note' }).click()
+
     // Wait for navigation to note page
     await page.waitForURL(/\/notes\//, { timeout: 10000 })
 
@@ -30,7 +38,13 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
 
   test.describe('Text Formatting', () => {
     test('should apply all text formats', async ({ page }) => {
-      const editor = page.locator('.slate-content').first()
+      // Wait for the editor to be visible
+      await expect(page.getByTestId('block-editor')).toBeVisible()
+
+      const editor = page
+        .getByTestId('block-editor')
+        .locator('[contenteditable="true"]')
+        .first()
 
       // Type text
       await editor.click()
