@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { test } from './fixtures/coverage'
 
 test('smoke test - server responds', async ({ page }) => {
   // Simple smoke test that should complete quickly

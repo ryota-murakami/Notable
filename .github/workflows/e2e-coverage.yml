@@ -37,11 +37,14 @@ jobs:
 
       - name: Run E2E tests with coverage
         env:
-          COVERAGE: '1'
           CI: 'true'
+          NODE_ENV: 'test'
+          NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key'
+          NEXT_PUBLIC_APP_URL: 'http://localhost:4378'
         run: |
           cd packages/web
-          pnpm e2e:coverage
+          pnpm e2e:coverage:ci
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
