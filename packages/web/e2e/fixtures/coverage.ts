@@ -33,6 +33,7 @@ export const test = base.extend({
 
     // Save coverage data to temp files for later aggregation
     const coverageData = [...jsCoverage, ...cssCoverage]
+
     const tempDir = path.join(process.cwd(), '.nyc_output', 'v8-coverage')
 
     // Ensure directory exists
@@ -40,7 +41,7 @@ export const test = base.extend({
       fs.mkdirSync(tempDir, { recursive: true })
     }
 
-    // Save coverage data with unique filename
+    // Save optimized coverage data with unique filename
     const timestamp = Date.now()
     const random = Math.random().toString(36).substring(7)
     const filename = `coverage-${timestamp}-${random}.json`
