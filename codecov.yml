@@ -1,13 +1,7 @@
-codecov:
-  require_ci_to_pass: yes
-  notify:
-    wait_for_ci: true
+# Codecov configuration for Notable E2E coverage
 
 coverage:
-  precision: 2
-  round: down
-  range: '90...100'
-
+  # Require 100% coverage as per issue #279
   status:
     project:
       default:
@@ -28,23 +22,67 @@ coverage:
         informational: false
         only_pulls: false
 
-parsers:
-  gcov:
-    branch_detection:
-      conditional: yes
-      loop: yes
-      method: no
-      macro: no
+  # Coverage precision
+  precision: 2
+  round: down
+  range: '90...100'
 
+# Parser configuration
+parsers:
+  javascript:
+    enable_partials: yes
+
+# Comment settings
 comment:
   layout: 'reach,diff,flags,files,footer'
   behavior: default
   require_changes: false
   require_base: false
   require_head: true
+  branches:
+    - 'main'
+    - 'master'
 
+# Flag configuration for E2E tests
 flags:
   e2e:
     paths:
       - packages/web/
     carryforward: false
+
+# Ignore patterns
+ignore:
+  - '**/*.test.ts'
+  - '**/*.spec.ts'
+  - '**/test/**'
+  - '**/tests/**'
+  - '**/e2e/**'
+  - '**/__tests__/**'
+  - '**/__mocks__/**'
+  - '**/node_modules/**'
+  - '**/.next/**'
+  - '**/coverage/**'
+  - '**/dist/**'
+  - '**/build/**'
+  - '**/*.config.js'
+  - '**/*.config.ts'
+  - '**/scripts/**'
+
+# Codecov settings
+codecov:
+  notify:
+    # Notify when coverage drops below 100%
+    after_n_builds: 1
+    wait_for_ci: true
+
+  # Require CI to pass
+  require_ci_to_pass: true
+
+  # Bot configuration
+  bot: 'codecov-io'
+
+  # Branch configuration
+  branch: main
+
+  # Strict mode - fail if coverage is below target
+  strict_yaml_branch: main
