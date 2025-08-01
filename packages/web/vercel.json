@@ -3,6 +3,7 @@
   "buildCommand": "turbo build",
   "installCommand": "pnpm install",
   "outputDirectory": ".next",
+  "ignoreCommand": "cd ../.. && npx turbo-ignore @notable/web",
   "framework": "nextjs",
   "regions": ["iad1"],
   "trailingSlash": false,
