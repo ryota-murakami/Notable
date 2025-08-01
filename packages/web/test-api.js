@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 // Test script to check template API endpoints
 const fs = require('fs')
 
@@ -6,11 +9,11 @@ async function testTemplateAPIs() {
 
   const endpoints = ['/api/templates/categories', '/api/templates']
 
-  console.log('🔍 Testing template API endpoints...\n')
+  console.info('🔍 Testing template API endpoints...\n')
 
   for (const endpoint of endpoints) {
     try {
-      console.log(`Testing: ${endpoint}`)
+      console.info(`Testing: ${endpoint}`)
 
       const response = await fetch(`${baseUrl}${endpoint}`, {
         headers: {
@@ -18,20 +21,20 @@ async function testTemplateAPIs() {
         },
       })
 
-      console.log(`Status: ${response.status}`)
+      console.info(`Status: ${response.status}`)
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.log(`Error response:`, errorText)
+        console.info(`Error response:`, errorText)
       } else {
         const data = await response.json()
-        console.log(`Success:`, JSON.stringify(data, null, 2))
+        console.info(`Success:`, JSON.stringify(data, null, 2))
       }
     } catch (error) {
-      console.log(`❌ Request failed:`, error.message)
+      console.info(`❌ Request failed:`, error.message)
     }
 
-    console.log('---\n')
+    console.info('---\n')
   }
 }
 

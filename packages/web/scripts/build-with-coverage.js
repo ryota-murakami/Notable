@@ -1,9 +1,11 @@
 #!/usr/bin/env node
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const { execSync } = require('child_process')
 const path = require('path')
 
-console.log('Building with coverage instrumentation...')
+console.info('Building with coverage instrumentation...')
 
 // Set environment variables for coverage
 process.env.NODE_ENV = 'test'
@@ -21,7 +23,7 @@ try {
     },
   })
 
-  console.log('Build completed with coverage instrumentation')
+  console.info('Build completed with coverage instrumentation')
 } catch (error) {
   console.error('Build failed:', error.message)
   process.exit(1)

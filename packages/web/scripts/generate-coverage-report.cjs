@@ -6,7 +6,7 @@ async function generateCoverage() {
   const tempDir = path.join(process.cwd(), '.nyc_output', 'v8-coverage')
 
   if (!fs.existsSync(tempDir)) {
-    console.log('No coverage data found')
+    console.info('No coverage data found')
     return
   }
 
@@ -14,11 +14,11 @@ async function generateCoverage() {
   const files = fs.readdirSync(tempDir).filter((f) => f.startsWith('coverage-'))
 
   if (files.length === 0) {
-    console.log('No coverage files found')
+    console.info('No coverage files found')
     return
   }
 
-  console.log(`Processing ${files.length} coverage files...`)
+  console.info(`Processing ${files.length} coverage files...`)
 
   // Initialize monocart coverage reporter
   const mcr = MCR({
@@ -40,7 +40,7 @@ async function generateCoverage() {
   const chunkSize = 10
   for (let i = 0; i < files.length; i += chunkSize) {
     const chunk = files.slice(i, i + chunkSize)
-    console.log(`Processing files ${i + 1} to ${i + chunk.length}...`)
+    console.info(`Processing files ${i + 1} to ${i + chunk.length}...`)
 
     for (const file of chunk) {
       const filepath = path.join(tempDir, file)
@@ -54,7 +54,7 @@ async function generateCoverage() {
   }
 
   // Generate the report
-  console.log('Generating report...')
+  console.info('Generating report...')
   await mcr.generate()
 
   // Clean up temp files
@@ -62,7 +62,7 @@ async function generateCoverage() {
     fs.unlinkSync(path.join(tempDir, file))
   }
 
-  console.log('Coverage report generated in ./coverage')
+  console.info('Coverage report generated in ./coverage')
 }
 
 if (require.main === module) {
