@@ -87,7 +87,7 @@ test.describe('Template Picker Debug', () => {
       console.info('❌ Template picker is not visible')
       // Try to force it to appear by checking the React state
       await page.evaluate(() => {
-        console.log('Current document body HTML:', document.body.innerHTML)
+        console.info('Current document body HTML:', document.body.innerHTML)
       })
     }
   })
