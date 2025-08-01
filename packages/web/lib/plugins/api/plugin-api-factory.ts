@@ -73,7 +73,7 @@ export class PluginAPIFactory {
       insertText: (text: string) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Integrate with actual editor instance
-        console.log(`[Plugin ${manifest.id}] Insert text:`, text)
+        console.info(`[Plugin ${manifest.id}] Insert text:`, text)
       },
 
       getSelection: (): string => {
@@ -85,19 +85,19 @@ export class PluginAPIFactory {
       replaceSelection: (text: string) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Replace actual editor selection
-        console.log(`[Plugin ${manifest.id}] Replace selection:`, text)
+        console.info(`[Plugin ${manifest.id}] Replace selection:`, text)
       },
 
       registerBlock: (block: any): PluginDisposable => {
         this.requirePermission(manifest, PluginPermission.UI_MODIFY)
 
         // TODO: Register block with actual editor
-        console.log(`[Plugin ${manifest.id}] Register block:`, block)
+        console.info(`[Plugin ${manifest.id}] Register block:`, block)
 
         const disposable = {
           dispose: () => {
             // TODO: Unregister block
-            console.log(`[Plugin ${manifest.id}] Dispose block:`, block.type)
+            console.info(`[Plugin ${manifest.id}] Dispose block:`, block.type)
           },
         }
 
@@ -129,21 +129,21 @@ export class PluginAPIFactory {
       createNote: async (content: any) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Create note in database
-        console.log(`[Plugin ${manifest.id}] Create note:`, content)
+        console.info(`[Plugin ${manifest.id}] Create note:`, content)
         return { id: 'new-note', content }
       },
 
       updateNote: async (id: string, content: any) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Update note in database
-        console.log(`[Plugin ${manifest.id}] Update note ${id}:`, content)
+        console.info(`[Plugin ${manifest.id}] Update note ${id}:`, content)
         return { id, content }
       },
 
       deleteNote: async (id: string) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Delete note from database
-        console.log(`[Plugin ${manifest.id}] Delete note:`, id)
+        console.info(`[Plugin ${manifest.id}] Delete note:`, id)
       },
     }
   }
@@ -158,7 +158,7 @@ export class PluginAPIFactory {
       search: async (query: string) => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
         // TODO: Perform actual search
-        console.log(`[Plugin ${manifest.id}] Search:`, query)
+        console.info(`[Plugin ${manifest.id}] Search:`, query)
         return []
       },
 
@@ -166,14 +166,14 @@ export class PluginAPIFactory {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
 
         // TODO: Register with actual search system
-        console.log(
+        console.info(
           `[Plugin ${manifest.id}] Register search provider:`,
           provider
         )
 
         const disposable = {
           dispose: () => {
-            console.log(`[Plugin ${manifest.id}] Dispose search provider`)
+            console.info(`[Plugin ${manifest.id}] Dispose search provider`)
           },
         }
 
@@ -190,26 +190,26 @@ export class PluginAPIFactory {
       showInformationMessage: async (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
         // TODO: Show actual notification
-        console.log(`[Plugin ${manifest.id}] Info:`, message)
+        console.info(`[Plugin ${manifest.id}] Info:`, message)
         return undefined
       },
 
       showWarningMessage: async (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
-        console.log(`[Plugin ${manifest.id}] Warning:`, message)
+        console.info(`[Plugin ${manifest.id}] Warning:`, message)
         return undefined
       },
 
       showErrorMessage: async (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
-        console.log(`[Plugin ${manifest.id}] Error:`, message)
+        console.info(`[Plugin ${manifest.id}] Error:`, message)
         return undefined
       },
 
       createPanel: (options: any) => {
         this.requirePermission(manifest, PluginPermission.UI_MODIFY)
         // TODO: Create actual UI panel
-        console.log(`[Plugin ${manifest.id}] Create panel:`, options)
+        console.info(`[Plugin ${manifest.id}] Create panel:`, options)
         return {}
       },
     }
@@ -244,7 +244,7 @@ export class PluginAPIFactory {
         }
 
         // TODO: Validate URL against allowed domains
-        console.log(`[Plugin ${manifest.id}] Fetch:`, url)
+        console.info(`[Plugin ${manifest.id}] Fetch:`, url)
 
         return fetch(url, options)
       },
@@ -265,11 +265,11 @@ export class PluginAPIFactory {
         this.requirePermission(manifest, PluginPermission.COMMANDS)
 
         // TODO: Register with actual command system
-        console.log(`[Plugin ${manifest.id}] Register command:`, command)
+        console.info(`[Plugin ${manifest.id}] Register command:`, command)
 
         const disposable = {
           dispose: () => {
-            console.log(`[Plugin ${manifest.id}] Dispose command:`, command)
+            console.info(`[Plugin ${manifest.id}] Dispose command:`, command)
           },
         }
 
@@ -279,7 +279,7 @@ export class PluginAPIFactory {
 
       execute: async (command: string, ...args: any[]) => {
         // TODO: Execute actual command
-        console.log(`[Plugin ${manifest.id}] Execute command:`, command, args)
+        console.info(`[Plugin ${manifest.id}] Execute command:`, command, args)
         return undefined
       },
     }
@@ -297,11 +297,11 @@ export class PluginAPIFactory {
         listener: (...args: any[]) => void
       ): PluginDisposable => {
         // TODO: Register with actual event system
-        console.log(`[Plugin ${manifest.id}] Listen to event:`, event)
+        console.info(`[Plugin ${manifest.id}] Listen to event:`, event)
 
         const disposable = {
           dispose: () => {
-            console.log(
+            console.info(
               `[Plugin ${manifest.id}] Stop listening to event:`,
               event
             )
@@ -314,7 +314,7 @@ export class PluginAPIFactory {
 
       emit: (event: string, ...args: any[]) => {
         // TODO: Emit to actual event system
-        console.log(`[Plugin ${manifest.id}] Emit event:`, event, args)
+        console.info(`[Plugin ${manifest.id}] Emit event:`, event, args)
       },
     }
   }
@@ -333,7 +333,7 @@ export class PluginAPIFactory {
               if (typeof subValue === 'function') {
                 return (...args: any[]) => {
                   // Log API call
-                  console.log(
+                  console.info(
                     `[Plugin ${manifest.id}] API call: ${String(prop)}.${String(subProp)}`,
                     args
                   )
