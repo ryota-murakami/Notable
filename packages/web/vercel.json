@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "echo 'Build already handled by GitHub Actions'",
-  "installCommand": "echo 'Install already handled by GitHub Actions'",
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install",
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["iad1"],
