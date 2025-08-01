@@ -150,7 +150,10 @@ export function TemplatePicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn('max-w-6xl h-[80vh] p-0', className)}>
+      <DialogContent
+        className={cn('max-w-6xl h-[80vh] p-0', className)}
+        data-testid='template-picker'
+      >
         <DialogHeader className='px-6 py-4 border-b'>
           <DialogTitle className='flex items-center gap-2'>
             <Sparkles className='h-5 w-5 text-primary' />
@@ -186,6 +189,7 @@ export function TemplatePicker({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className='pl-9'
+                  data-testid='template-search'
                 />
                 {searchQuery && (
                   <Button
@@ -226,7 +230,7 @@ export function TemplatePicker({
               </div>
 
               {/* Categories */}
-              <div className='space-y-2'>
+              <div className='space-y-2' data-testid='template-categories'>
                 <h3 className='text-sm font-medium text-muted-foreground uppercase tracking-wide'>
                   Categories
                 </h3>
@@ -248,6 +252,7 @@ export function TemplatePicker({
                       size='sm'
                       onClick={() => setSelectedCategory(category.id)}
                       className='w-full justify-start'
+                      data-testid={`template-category-${category.id}`}
                     >
                       <span className='mr-2'>{category.icon}</span>
                       {category.name} ({category.templateCount})
@@ -389,6 +394,7 @@ function TemplateCard({
     <div
       onClick={onClick}
       className='group relative p-4 rounded-lg border border-border bg-card hover:bg-accent/50 cursor-pointer transition-all duration-200 hover:shadow-md'
+      data-testid={`template-card-${template.id}`}
     >
       {/* Template Preview/Thumbnail */}
       <div className='aspect-video mb-3 rounded-md bg-muted/50 border flex items-center justify-center overflow-hidden'>

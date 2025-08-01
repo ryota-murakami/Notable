@@ -242,7 +242,7 @@ export function RichTextEditor({
             placeholder='Untitled Note'
             className='text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-0 h-auto flex-1'
             style={{ fontSize: '1.5rem', fontWeight: 'bold' }}
-            data-testid='note-title'
+            data-testid='note-title-input'
           />
           <Button
             variant='outline'
