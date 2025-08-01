@@ -4,6 +4,23 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_JWT_SECRET",
+        "DATABASE_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "SLACK_WEBHOOK_URL",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT",
+        "SENTRY_AUTH_TOKEN",
+        "RESEND_API_KEY",
+        "EMAIL_FROM",
+        "JWT_SECRET",
+        "UPLOADTHING_SECRET",
+        "UPLOADTHING_APP_ID",
+        "OPENAI_API_KEY"
+      ],
       "outputs": [
         ".next/**",
         "!.next/cache/**",

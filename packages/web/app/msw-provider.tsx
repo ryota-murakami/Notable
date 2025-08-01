@@ -10,7 +10,7 @@ if (
 ) {
   if (typeof window !== 'undefined') {
     // Only run MSW in the browser
-    mockingEnabledPromise = import('../mocks/browser').then(
+    mockingEnabledPromise = import('@/mocks/browser').then(
       async ({ worker }) => {
         await worker.start({
           onUnhandledRequest: 'bypass', // Don't warn about unhandled requests
