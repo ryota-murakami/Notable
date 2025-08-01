@@ -21,6 +21,7 @@ BATCHES=(
   "e2e/integrated-*.spec.ts e2e/smoke.spec.ts"
   "e2e/application-shell.spec.ts e2e/deployment-validation.spec.ts"
   "e2e/supabase-integration.spec.ts e2e/spinner.spec.ts e2e/user-menu.spec.ts"
+  "e2e/comprehensive-*.spec.ts e2e/coverage-*.spec.ts e2e/simple-*.spec.ts"
 )
 
 # Run each batch
