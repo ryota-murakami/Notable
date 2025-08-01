@@ -25,7 +25,7 @@ const nextConfig = {
     // Temporarily ignore ESLint warnings during template system integration
     ignoreDuringBuilds: true,
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // Disable problematic optimizations
     if (!isServer) {
       config.optimization = {
@@ -34,6 +34,18 @@ const nextConfig = {
         sideEffects: false,
       }
     }
+
+    // Handle MSW imports - exclude from production builds
+    if (!dev && !isServer) {
+      // In production, replace MSW imports with empty modules
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '../mocks/browser': false,
+        './mocks/browser': false,
+        'msw/browser': false,
+      }
+    }
+
     return config
   },
 }
