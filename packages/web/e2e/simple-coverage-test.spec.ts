@@ -21,24 +21,24 @@ test.describe('Simple Coverage Test', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 30000 })
 
     // Log what we can see
-    console.log('App shell loaded')
+    console.info('App shell loaded')
 
     // Check what buttons are available
     const buttons = await page.getByRole('button').all()
-    console.log(`Found ${buttons.length} buttons`)
+    console.info(`Found ${buttons.length} buttons`)
 
     for (let i = 0; i < buttons.length; i++) {
       const text = await buttons[i].textContent()
-      console.log(`Button ${i}: ${text}`)
+      console.info(`Button ${i}: ${text}`)
     }
 
     // Check if editor exists on the page already
     const editors = await page.locator('.slate-content').all()
-    console.log(`Found ${editors.length} editors`)
+    console.info(`Found ${editors.length} editors`)
 
     // Check for any inputs
     const inputs = await page.locator('input').all()
-    console.log(`Found ${inputs.length} inputs`)
+    console.info(`Found ${inputs.length} inputs`)
 
     // Take a screenshot to see what's on the page
     await page.screenshot({ path: 'app-loaded.png' })

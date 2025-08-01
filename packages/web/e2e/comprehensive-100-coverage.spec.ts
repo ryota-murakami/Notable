@@ -62,7 +62,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     if (!currentUrl.includes('/notes/')) {
       // This is issue #219 - New Note click shows Welcome screen instead
       // Skip the rest of this test
-      console.log('Note creation navigation failed - known issue #219')
+      console.info('Note creation navigation failed - known issue #219')
       return
     }
 
@@ -100,7 +100,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
 
     // Check if navigation worked
     if (!page.url().includes('/notes/')) {
-      console.log('Note creation navigation failed')
+      console.info('Note creation navigation failed')
       return
     }
 
@@ -171,7 +171,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
 
     // Check if navigation worked
     if (!page.url().includes('/notes/')) {
-      console.log('Note creation navigation failed')
+      console.info('Note creation navigation failed')
       return
     }
 
@@ -193,7 +193,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
 
     // Check if navigation worked
     if (!page.url().includes('/notes/')) {
-      console.log('Note creation navigation failed')
+      console.info('Note creation navigation failed')
       return
     }
 
@@ -327,7 +327,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     if (!has404) {
       // If no 404 content, check if we were redirected to auth/home
       const currentUrl = page.url()
-      console.log('No 404 page found, current URL:', currentUrl)
+      console.info('No 404 page found, current URL:', currentUrl)
     }
 
     // Test network error handling

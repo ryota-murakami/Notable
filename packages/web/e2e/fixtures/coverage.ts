@@ -63,7 +63,7 @@ async function globalTeardownImpl() {
   const tempDir = path.join(process.cwd(), '.nyc_output', 'v8-coverage')
 
   if (!fs.existsSync(tempDir)) {
-    console.log('No coverage data found')
+    console.info('No coverage data found')
     return
   }
 
@@ -71,11 +71,11 @@ async function globalTeardownImpl() {
   const files = fs.readdirSync(tempDir).filter((f) => f.startsWith('coverage-'))
 
   if (files.length === 0) {
-    console.log('No coverage files found')
+    console.info('No coverage files found')
     return
   }
 
-  console.log(`Processing ${files.length} coverage files...`)
+  console.info(`Processing ${files.length} coverage files...`)
 
   // Initialize monocart coverage reporter
   const mcr = MCR({
@@ -108,7 +108,7 @@ async function globalTeardownImpl() {
     fs.unlinkSync(path.join(tempDir, file))
   }
 
-  console.log('Coverage report generated in ./coverage')
+  console.info('Coverage report generated in ./coverage')
 }
 
 // Export globalTeardown as default for Playwright

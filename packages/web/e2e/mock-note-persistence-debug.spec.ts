@@ -7,7 +7,7 @@ test.describe('Mock Note Persistence Debug', () => {
     page.on('console', (msg) => {
       const message = `[${msg.type()}] ${msg.text()}`
       consoleMessages.push(message)
-      console.log(`🌐 Browser: ${message}`)
+      console.info(`🌐 Browser: ${message}`)
     })
 
     // Set dev auth bypass cookie
@@ -20,11 +20,11 @@ test.describe('Mock Note Persistence Debug', () => {
       },
     ])
 
-    console.log('🔄 Step 1: Navigate to app')
+    console.info('🔄 Step 1: Navigate to app')
     await page.goto('http://localhost:4378/app')
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
-    console.log('🔄 Step 2: Create first note')
+    console.info('🔄 Step 2: Create first note')
     await page.getByRole('button', { name: 'New Note' }).click()
     await expect(page.getByTestId('template-picker')).toBeVisible()
     await page.getByRole('button', { name: 'Blank Note' }).click()
@@ -33,9 +33,11 @@ test.describe('Mock Note Persistence Debug', () => {
     await page.waitForURL('**/notes/**')
     const firstNoteUrl = page.url()
     const firstNoteId = firstNoteUrl.split('/notes/')[1]
-    console.log(`📝 First note created: ID=${firstNoteId}, URL=${firstNoteUrl}`)
+    console.info(
+      `📝 First note created: ID=${firstNoteId}, URL=${firstNoteUrl}`
+    )
 
-    console.log(
+    console.info(
       '🔄 Step 3: Fill first note content using JavaScript to trigger React events'
     )
     await expect(page.getByTestId('note-editor')).toBeVisible()
@@ -72,14 +74,14 @@ test.describe('Mock Note Persistence Debug', () => {
     await expect(page.getByTestId('note-content-textarea')).toHaveValue(
       'Content of debug note 1'
     )
-    console.log('✅ First note content verified')
+    console.info('✅ First note content verified')
 
-    console.log('🔄 Step 4: Navigate away to app')
+    console.info('🔄 Step 4: Navigate away to app')
     await page.goto('http://localhost:4378/app')
     await expect(page.getByTestId('app-shell')).toBeVisible()
-    console.log('✅ Navigated away from first note')
+    console.info('✅ Navigated away from first note')
 
-    console.log('🔄 Step 5: Navigate back to first note')
+    console.info('🔄 Step 5: Navigate back to first note')
     await page.goto(firstNoteUrl)
     await expect(page.getByTestId('note-editor')).toBeVisible()
 
@@ -87,33 +89,33 @@ test.describe('Mock Note Persistence Debug', () => {
     const isTestResult = await page.evaluate(() => {
       return document.cookie.includes('dev-auth-bypass=true')
     })
-    console.log(`🧪 isTest() check result: ${isTestResult}`)
+    console.info(`🧪 isTest() check result: ${isTestResult}`)
 
     // Check localStorage for mock notes
     const localStorageContent = await page.evaluate(() => {
       return localStorage.getItem('mock-notes-store')
     })
-    console.log(`💾 localStorage content: ${localStorageContent}`)
+    console.info(`💾 localStorage content: ${localStorageContent}`)
 
     // Check what values we actually get
     const actualTitle = await page.getByTestId('note-title-input').inputValue()
     const actualContent = await page
       .getByTestId('note-content-textarea')
       .inputValue()
-    console.log(`📊 Actual values after navigation back:`)
-    console.log(`  Title: "${actualTitle}"`)
-    console.log(`  Content: "${actualContent}"`)
+    console.info(`📊 Actual values after navigation back:`)
+    console.info(`  Title: "${actualTitle}"`)
+    console.info(`  Content: "${actualContent}"`)
 
-    console.log('🔄 Step 6: Check if persistence worked')
+    console.info('🔄 Step 6: Check if persistence worked')
     if (
       actualTitle === 'Debug Note 1' &&
       actualContent === 'Content of debug note 1'
     ) {
-      console.log('🎉 SUCCESS: Mock note persistence is working!')
+      console.info('🎉 SUCCESS: Mock note persistence is working!')
     } else {
-      console.log('❌ FAILED: Mock note persistence is not working')
-      console.log(`  Expected title: "Debug Note 1", got: "${actualTitle}"`)
-      console.log(
+      console.info('❌ FAILED: Mock note persistence is not working')
+      console.info(`  Expected title: "Debug Note 1", got: "${actualTitle}"`)
+      console.info(
         `  Expected content: "Content of debug note 1", got: "${actualContent}"`
       )
     }

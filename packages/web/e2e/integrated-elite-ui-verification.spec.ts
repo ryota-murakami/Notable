@@ -38,7 +38,7 @@ test.describe('Elite Features UI Integration Verification', () => {
     const inputValue = await searchInput.inputValue()
     expect(inputValue).toBe('test search')
 
-    console.log('✅ Enhanced Global Search integrated successfully')
+    console.info('✅ Enhanced Global Search integrated successfully')
   })
 
   test('Enhanced AI Toolbar Integration - Component Present in Note Editor', async ({
@@ -82,14 +82,14 @@ test.describe('Elite Features UI Integration Verification', () => {
       const isAIToolbarVisible = await aiToolbar.isVisible({ timeout: 5000 })
 
       if (isAIToolbarVisible) {
-        console.log('✅ Enhanced AI Toolbar integrated successfully')
+        console.info('✅ Enhanced AI Toolbar integrated successfully')
       } else {
-        console.log(
+        console.info(
           '⚠️ AI Toolbar may not be visible but note editor is present'
         )
       }
     } else {
-      console.log('⚠️ Note editor not accessible in current test scenario')
+      console.info('⚠️ Note editor not accessible in current test scenario')
     }
 
     // At minimum, verify the app shell is still stable
@@ -127,9 +127,9 @@ test.describe('Elite Features UI Integration Verification', () => {
       .isVisible({ timeout: 10000 })
 
     if (hasSmartPanel) {
-      console.log('✅ Smart Linking Panel integrated successfully')
+      console.info('✅ Smart Linking Panel integrated successfully')
     } else {
-      console.log('⚠️ Smart Linking Panel integration needs verification')
+      console.info('⚠️ Smart Linking Panel integration needs verification')
     }
 
     // Verify app stability
@@ -162,7 +162,7 @@ test.describe('Elite Features UI Integration Verification', () => {
       expect(response.status()).not.toBe(404)
       expect(response.status()).not.toBe(500)
 
-      console.log(
+      console.info(
         `✅ ${endpoint} endpoint is responding (${response.status()})`
       )
     }
@@ -190,7 +190,7 @@ test.describe('Elite Features UI Integration Verification', () => {
     const hasSearch = await searchElement.isVisible({ timeout: 5000 })
 
     expect(hasSearch).toBe(true)
-    console.log('✅ Coverage integration and test infrastructure working')
+    console.info('✅ Coverage integration and test infrastructure working')
   })
 
   test('Complete Elite Integration - All Systems Operational', async ({
@@ -198,18 +198,18 @@ test.describe('Elite Features UI Integration Verification', () => {
   }) => {
     // High-level verification that all elite features are integrated without breaking the app
 
-    console.log('🎯 Starting complete elite integration verification...')
+    console.info('🎯 Starting complete elite integration verification...')
 
     // 1. App loads successfully
     await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
-    console.log('✅ App shell loaded')
+    console.info('✅ App shell loaded')
 
     // 2. Enhanced search is in header
     const searchPresent = await page
       .locator('input[placeholder*="search" i], input[placeholder*="AI" i]')
       .first()
       .isVisible({ timeout: 5000 })
-    console.log(
+    console.info(
       searchPresent
         ? '✅ Enhanced search present'
         : '⚠️ Search needs verification'
@@ -220,20 +220,20 @@ test.describe('Elite Features UI Integration Verification', () => {
       .locator('text=New Note, button:has-text("New Note")')
       .first()
     await expect(newNoteButton).toBeVisible()
-    console.log('✅ Navigation functional')
+    console.info('✅ Navigation functional')
 
     // 4. APIs are responsive
     const healthCheck = await page.request.get('/api/tags')
     expect(healthCheck.status()).toBe(200)
-    console.log('✅ API endpoints responsive')
+    console.info('✅ API endpoints responsive')
 
     // Overall integration success
-    console.log('🎆 ELITE INTEGRATION VERIFICATION COMPLETE!')
-    console.log('🏆 Notable now features integrated elite-tier functionality:')
-    console.log('   • Enhanced Global Search with AI semantic search')
-    console.log('   • Enhanced AI Toolbar with advanced content generation')
-    console.log('   • Smart Linking Panel with auto-discovery')
-    console.log('   • All features working together seamlessly!')
+    console.info('🎆 ELITE INTEGRATION VERIFICATION COMPLETE!')
+    console.info('🏆 Notable now features integrated elite-tier functionality:')
+    console.info('   • Enhanced Global Search with AI semantic search')
+    console.info('   • Enhanced AI Toolbar with advanced content generation')
+    console.info('   • Smart Linking Panel with auto-discovery')
+    console.info('   • All features working together seamlessly!')
 
     // Final stability check
     await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()

@@ -36,46 +36,46 @@ test.describe('Note Creation Debug', () => {
       },
     ])
 
-    console.log('🔄 Step 1: Navigate to app')
+    console.info('🔄 Step 1: Navigate to app')
     await page.goto('http://localhost:4378/app', {
       waitUntil: 'networkidle',
       timeout: 30000,
     })
 
-    console.log('🔄 Step 2: Wait for app shell')
+    console.info('🔄 Step 2: Wait for app shell')
     await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 30000 })
 
-    console.log('🔄 Step 3: Click New Note button')
+    console.info('🔄 Step 3: Click New Note button')
     const newNoteButton = page.getByRole('button', { name: 'New Note' })
     await expect(newNoteButton).toBeVisible()
     await newNoteButton.click()
 
-    console.log('🔄 Step 4: Wait for template picker')
+    console.info('🔄 Step 4: Wait for template picker')
     const templatePicker = page.getByTestId('template-picker')
     await expect(templatePicker).toBeVisible({ timeout: 10000 })
 
-    console.log('🔄 Step 5: Click Blank Note button')
+    console.info('🔄 Step 5: Click Blank Note button')
     const blankNoteButton = page.getByRole('button', { name: 'Blank Note' })
     await expect(blankNoteButton).toBeVisible()
 
     // Get current URL before clicking
     const urlBeforeClick = page.url()
-    console.log(`📍 URL before Blank Note click: ${urlBeforeClick}`)
+    console.info(`📍 URL before Blank Note click: ${urlBeforeClick}`)
 
     await blankNoteButton.click()
 
-    console.log('🔄 Step 6: Wait for navigation and check results')
+    console.info('🔄 Step 6: Wait for navigation and check results')
     await page.waitForTimeout(5000) // Wait for any navigation/loading
 
     const urlAfterClick = page.url()
-    console.log(`📍 URL after Blank Note click: ${urlAfterClick}`)
+    console.info(`📍 URL after Blank Note click: ${urlAfterClick}`)
 
     // Check if URL changed to notes route
     const urlChanged = urlBeforeClick !== urlAfterClick
-    console.log(`🔄 URL changed: ${urlChanged}`)
+    console.info(`🔄 URL changed: ${urlChanged}`)
 
     if (urlChanged && urlAfterClick.includes('/notes/')) {
-      console.log('✅ Successfully navigated to note editor!')
+      console.info('✅ Successfully navigated to note editor!')
 
       // Check NoteEditor state
       const editorLoading = await page
@@ -86,9 +86,9 @@ test.describe('Note Creation Debug', () => {
         .isVisible()
       const noteEditor = await page.getByTestId('note-editor').isVisible()
 
-      console.log(`📝 Note editor loading: ${editorLoading}`)
-      console.log(`📝 Note editor not found: ${editorNotFound}`)
-      console.log(`📝 Note editor visible: ${noteEditor}`)
+      console.info(`📝 Note editor loading: ${editorLoading}`)
+      console.info(`📝 Note editor not found: ${editorNotFound}`)
+      console.info(`📝 Note editor visible: ${noteEditor}`)
 
       if (noteEditor) {
         // Check for input elements
@@ -98,26 +98,26 @@ test.describe('Note Creation Debug', () => {
         const contentTextarea = await page
           .getByTestId('note-content-textarea')
           .isVisible()
-        console.log(`✏️ Title input visible: ${titleInput}`)
-        console.log(`✏️ Content textarea visible: ${contentTextarea}`)
+        console.info(`✏️ Title input visible: ${titleInput}`)
+        console.info(`✏️ Content textarea visible: ${contentTextarea}`)
       }
     } else {
-      console.log('❌ Navigation to note editor failed')
+      console.info('❌ Navigation to note editor failed')
 
       // Check if there are any error messages
       const errorToasts = await page.locator('[role="alert"], .toast').count()
-      console.log(`🚨 Error toasts visible: ${errorToasts}`)
+      console.info(`🚨 Error toasts visible: ${errorToasts}`)
     }
 
     // Print all console messages
-    console.log('📋 Console messages:')
-    consoleMessages.forEach((msg) => console.log(`  ${msg}`))
+    console.info('📋 Console messages:')
+    consoleMessages.forEach((msg) => console.info(`  ${msg}`))
 
-    console.log('🧭 Navigation events:')
-    navigationEvents.forEach((event) => console.log(`  ${event}`))
+    console.info('🧭 Navigation events:')
+    navigationEvents.forEach((event) => console.info(`  ${event}`))
 
-    console.log('🚨 Failed requests:')
-    failedRequests.forEach((req) => console.log(`  ${req}`))
+    console.info('🚨 Failed requests:')
+    failedRequests.forEach((req) => console.info(`  ${req}`))
 
     // Take final screenshot
     await page.screenshot({ path: 'note-creation-final.png' })
