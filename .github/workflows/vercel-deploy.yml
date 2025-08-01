@@ -55,23 +55,18 @@ jobs:
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
 
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }} --cwd packages/web
-
-      - name: Build Project Artifacts
-        run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }} --cwd packages/web
-        env:
-          SKIP_ENV_VALIDATION: '1'
-
       - name: Deploy to Vercel
         id: deploy
         run: |
+          cd packages/web
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} --cwd packages/web > deployment-url.txt
+            vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} > deployment-url.txt
           else
-            vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --cwd packages/web > deployment-url.txt
+            vercel deploy --token=${{ secrets.VERCEL_TOKEN }} > deployment-url.txt
           fi
           echo "url=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
+        env:
+          SKIP_ENV_VALIDATION: '1'
 
       - name: Comment PR with deployment URL
         if: github.event_name == 'pull_request'
