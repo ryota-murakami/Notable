@@ -2,7 +2,17 @@ import { expect, test } from './fixtures/coverage'
 
 test.describe('Command Palette & Keyboard Shortcuts', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
+    await page.goto('/app')
 
     // Wait for the app to be fully loaded
     await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
