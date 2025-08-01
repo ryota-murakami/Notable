@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/coverage'
 
 test.describe('Elite Features UI Integration Verification', () => {
   test.beforeEach(async ({ page }) => {

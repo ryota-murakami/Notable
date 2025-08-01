@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Auth Route Middleware', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured

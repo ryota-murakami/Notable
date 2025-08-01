@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Supabase Integration Tests', () => {
   // Test authentication flow
@@ -12,15 +12,21 @@ test.describe('Supabase Integration Tests', () => {
 
     // Check auth page elements
     await expect(page.getByText('Welcome to Notable')).toBeVisible()
-    await expect(page.getByText('Sign in to access your synced notes')).toBeVisible()
+    await expect(
+      page.getByText('Sign in to access your synced notes')
+    ).toBeVisible()
 
     // Test sign in form
     await expect(page.getByPlaceholder('Your email address')).toBeVisible()
     await expect(page.getByPlaceholder('Your password')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Sign in', exact: true })
+    ).toBeVisible()
 
     // Test OAuth button
-    await expect(page.getByRole('button', { name: 'Sign in with Google' })).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Sign in with Google' })
+    ).toBeVisible()
   })
 
   // Test database operations (notes CRUD)
@@ -88,9 +94,7 @@ test.describe('Supabase Integration Tests', () => {
   })
 
   // Test error handling
-  test('should handle authentication errors gracefully', async ({
-    page,
-  }) => {
+  test('should handle authentication errors gracefully', async ({ page }) => {
     await page.goto('/auth')
 
     // Test sign in with invalid credentials

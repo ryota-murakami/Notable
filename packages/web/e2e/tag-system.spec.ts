@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 /**
  * Comprehensive E2E Tests for Tag System

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 // Trigger fresh E2E workflow run after fixing "Welcome to Notable" issue
 

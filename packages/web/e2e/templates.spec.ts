@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Template System E2E Tests', () => {
   test.beforeEach(async ({ page }) => {

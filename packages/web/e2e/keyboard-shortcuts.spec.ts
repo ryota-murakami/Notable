@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Keyboard Shortcuts', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured

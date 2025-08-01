@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Block Editor', () => {
   test.beforeEach(async ({ page }) => {

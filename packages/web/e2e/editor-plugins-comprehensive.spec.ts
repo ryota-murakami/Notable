@@ -1,4 +1,4 @@
-import { expect, test } from 'playwright-test-coverage'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Comprehensive Editor Plugins Tests', () => {
   test.beforeEach(async ({ page }) => {

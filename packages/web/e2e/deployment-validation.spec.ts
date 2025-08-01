@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 import { execSync } from 'child_process'
 import path from 'path'
 

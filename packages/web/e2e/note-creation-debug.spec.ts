@@ -1,4 +1,4 @@
-import { expect, test } from 'playwright-test-coverage'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Note Creation Debug', () => {
   test('should debug note creation flow step by step', async ({ page }) => {

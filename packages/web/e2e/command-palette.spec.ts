@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Command Palette & Keyboard Shortcuts', () => {
   test.beforeEach(async ({ page }) => {

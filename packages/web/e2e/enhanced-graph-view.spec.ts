@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Enhanced Graph View', () => {
   test.beforeEach(async ({ page }) => {

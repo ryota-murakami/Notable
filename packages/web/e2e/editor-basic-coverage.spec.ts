@@ -1,4 +1,4 @@
-import { expect, test } from 'playwright-test-coverage'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Editor Basic Coverage', () => {
   test('should debug template picker behavior', async ({ page }) => {

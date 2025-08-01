@@ -30,6 +30,10 @@ export default defineConfig({
 
   workers: process.env.CI ? 2 : 6,
 
+  /* Global teardown for coverage report generation */
+  globalTeardown:
+    process.env.COVERAGE === '1' ? './e2e/fixtures/coverage.ts' : undefined,
+
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
 

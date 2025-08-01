@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Rich Text Editor', () => {
   test.beforeEach(async ({ page }) => {

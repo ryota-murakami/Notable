@@ -1,4 +1,4 @@
-import { expect, test } from 'playwright-test-coverage'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Working Note Management - Comprehensive Tests', () => {
   test.beforeEach(async ({ page }) => {

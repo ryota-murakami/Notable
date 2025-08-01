@@ -1,4 +1,4 @@
-import { expect, test } from 'playwright-test-coverage'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Basic Coverage Test', () => {
   test('should trigger some code coverage', async ({ page }) => {
