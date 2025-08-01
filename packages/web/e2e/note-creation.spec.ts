@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Note Creation', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
@@ -14,11 +14,11 @@ test.describe('Note Creation', () => {
       },
     ])
 
-    // Navigate to the app
-    await page.goto('/app')
+    // Navigate to the app with longer timeout for initial compilation
+    await page.goto('/app', { waitUntil: 'networkidle' })
 
     // Wait for the app to load
-    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 30000 })
   })
 
   test('should create a new note without errors', async ({ page }) => {

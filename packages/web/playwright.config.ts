@@ -12,12 +12,12 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './e2e',
 
-  /* Global timeout for each test - reduced to prevent hanging */
-  timeout: process.env.CI ? 45000 : 30000, // 45s in CI, 30s locally
+  /* Global timeout for each test - increased for initial compilation */
+  timeout: process.env.CI ? 120000 : 90000, // 120s in CI, 90s locally
 
   /* Global expect timeout */
   expect: {
-    timeout: process.env.CI ? 10000 : 5000, // 10s in CI, 5s locally
+    timeout: process.env.CI ? 30000 : 20000, // 30s in CI, 20s locally
   },
 
   /* Run tests in files in parallel */
@@ -44,8 +44,8 @@ export default defineConfig({
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
 
-    /* Better navigation timeout */
-    navigationTimeout: process.env.CI ? 30000 : 15000,
+    /* Better navigation timeout - increased for initial compilation */
+    navigationTimeout: process.env.CI ? 60000 : 45000,
 
     /* Action timeout */
     actionTimeout: process.env.CI ? 10000 : 5000,
