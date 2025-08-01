@@ -2,19 +2,18 @@ import { expect, test } from './fixtures/coverage'
 
 test.describe('Comprehensive Search Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to auth page and sign in
-    await page.goto('/auth')
-    await page.waitForSelector('[data-testid="auth-container"]', {
-      timeout: 10000,
-    })
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
 
-    // Sign in with test credentials
-    await page.fill('[data-testid="email-input"]', 'test@example.com')
-    await page.fill('[data-testid="password-input"]', 'password123')
-    await page.click('[data-testid="submit-button"]')
-
-    // Wait for redirect to app
-    await page.waitForURL('/app', { timeout: 10000 })
+    // Navigate to the app
+    await page.goto('/app')
   })
 
   test.describe('Basic Search', () => {

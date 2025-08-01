@@ -78,13 +78,14 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'pnpm start',
+    command: 'NODE_ENV=test pnpm start',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes for CI
     stdout: 'pipe',
     stderr: 'pipe',
     env: {
+      // CRITICAL: Ensure NODE_ENV=test for environment validation
       NODE_ENV: 'test',
       NEXT_PUBLIC_API_MOCKING: 'enabled',
       DATABASE_URL:
@@ -92,6 +93,7 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co',
       NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key',
       NEXT_PUBLIC_APP_URL: 'http://localhost:4378',
+      NEXT_PUBLIC_SITE_URL: 'http://localhost:4378',
 
       // Required server env vars (placeholder values for testing)
       SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
@@ -104,7 +106,10 @@ export default defineConfig({
       UPLOADTHING_APP_ID: 'test-uploadthing-app-id',
       OPENAI_API_KEY: 'test-openai-api-key',
       JWT_SECRET: 'test-jwt-secret-for-app',
-      SENTRY_DSN: 'https://test@sentry.io/123456',
+
+      // Sentry configuration (placeholder values for testing)
+      NEXT_PUBLIC_SENTRY_DSN: 'https://placeholder@sentry.io/123456',
+      SENTRY_DSN: 'https://placeholder@sentry.io/123456',
       SENTRY_ORG: 'test-org',
       SENTRY_PROJECT: 'test-project',
       SENTRY_AUTH_TOKEN: 'test-sentry-auth-token',
