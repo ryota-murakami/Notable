@@ -2,6 +2,16 @@ import { expect, test } from './fixtures/coverage'
 
 test.describe('Block Editor', () => {
   test.beforeEach(async ({ page }) => {
+    // Set dev auth bypass cookie for testing
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
     // Navigate to a page with the block editor
     await page.goto('/notes/new')
     await page.waitForSelector('[data-testid="block-editor"]', {
