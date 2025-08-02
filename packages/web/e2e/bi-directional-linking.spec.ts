@@ -14,7 +14,7 @@ test.describe('Bi-directional Linking', () => {
     await cleanupTestData(page)
   })
 
-  test.skip('should create wiki links using [[Note Title]] syntax', async ({
+  test('should create wiki links using [[Note Title]] syntax', async ({
     page,
   }) => {
     // SKIPPED: Wiki links not implemented
@@ -34,14 +34,10 @@ test.describe('Bi-directional Linking', () => {
     await page.goto(`/notes/${note1.id}`)
 
     // Wait for editor to load
-    await page.waitForSelector(
-      '[data-testid="note-editor"] [contenteditable="true"]'
-    )
+    await page.waitForSelector('[data-testid="note-content-textarea"]')
 
     // Type wiki link syntax
-    const editor = page
-      .locator('[data-testid="note-editor"] [contenteditable="true"]')
-      .first()
+    const editor = page.locator('[data-testid="note-content-textarea"]').first()
     await editor.click()
     await editor.type(' This links to [[Target Note]].')
 
@@ -55,7 +51,7 @@ test.describe('Bi-directional Linking', () => {
     await expect(page).toHaveURL(`/notes/${note2.id}`)
   })
 
-  test.skip('should show backlinks in target note', async ({ page }) => {
+  test('should show backlinks in target note', async ({ page }) => {
     // SKIPPED: Backlinks panel not implemented
     // Create two test notes
     const note1 = await createTestNote(
@@ -71,13 +67,9 @@ test.describe('Bi-directional Linking', () => {
 
     // Navigate to source note and create link
     await page.goto(`/notes/${note1.id}`)
-    await page.waitForSelector(
-      '[data-testid="note-editor"] [contenteditable="true"]'
-    )
+    await page.waitForSelector('[data-testid="note-content-textarea"]')
 
-    const editor = page
-      .locator('[data-testid="note-editor"] [contenteditable="true"]')
-      .first()
+    const editor = page.locator('[data-testid="note-content-textarea"]').first()
     await editor.click()
     await editor.type(' This links to [[Target Note]].')
 
@@ -99,7 +91,7 @@ test.describe('Bi-directional Linking', () => {
     await expect(page).toHaveURL(`/notes/${note1.id}`)
   })
 
-  test.skip('should handle multiple links in same note', async ({ page }) => {
+  test('should handle multiple links in same note', async ({ page }) => {
     // SKIPPED: Wiki links not implemented
     // Create three test notes
     const note1 = await createTestNote(
@@ -112,10 +104,10 @@ test.describe('Bi-directional Linking', () => {
 
     // Navigate to main note
     await page.goto(`/notes/${note1.id}`)
-    await page.waitForSelector('[data-plate-editor]')
+    await page.waitForSelector('[data-testid="note-content-textarea"]')
 
     // Create multiple wiki links
-    const editor = page.locator('[data-plate-editor]')
+    const editor = page.locator('[data-testid="note-content-textarea"]')
     await editor.click()
     await editor.type(' Links to [[First Target]] and [[Second Target]].')
 
@@ -130,7 +122,7 @@ test.describe('Bi-directional Linking', () => {
     await expect(secondLink).toHaveText('Second Target')
   })
 
-  test.skip('should show link count in backlinks panel', async ({ page }) => {
+  test('should show link count in backlinks panel', async ({ page }) => {
     // SKIPPED: Backlinks count not implemented
     // Create notes
     const note1 = await createTestNote(page, 'Source 1', 'First source note.')
@@ -139,14 +131,14 @@ test.describe('Bi-directional Linking', () => {
 
     // Create links from both source notes to target
     await page.goto(`/notes/${note1.id}`)
-    await page.waitForSelector('[data-plate-editor]')
-    let editor = page.locator('[data-plate-editor]')
+    await page.waitForSelector('[data-testid="note-content-textarea"]')
+    let editor = page.locator('[data-testid="note-content-textarea"]')
     await editor.click()
     await editor.type(' Links to [[Target Note]].')
 
     await page.goto(`/notes/${note2.id}`)
-    await page.waitForSelector('[data-plate-editor]')
-    editor = page.locator('[data-plate-editor]')
+    await page.waitForSelector('[data-testid="note-content-textarea"]')
+    editor = page.locator('[data-testid="note-content-textarea"]')
     await editor.click()
     await editor.type(' Also links to [[Target Note]].')
 
@@ -161,9 +153,7 @@ test.describe('Bi-directional Linking', () => {
     await expect(linksBadge).toHaveText('2')
   })
 
-  test.skip('should handle non-existent note links gracefully', async ({
-    page,
-  }) => {
+  test('should handle non-existent note links gracefully', async ({ page }) => {
     // SKIPPED: Wiki links not implemented
     // Create one test note
     const note1 = await createTestNote(
@@ -174,10 +164,10 @@ test.describe('Bi-directional Linking', () => {
 
     // Navigate to source note
     await page.goto(`/notes/${note1.id}`)
-    await page.waitForSelector('[data-plate-editor]')
+    await page.waitForSelector('[data-testid="note-content-textarea"]')
 
     // Create link to non-existent note
-    const editor = page.locator('[data-plate-editor]')
+    const editor = page.locator('[data-testid="note-content-textarea"]')
     await editor.click()
     await editor.type(' Links to [[Non Existent Note]].')
 
@@ -191,7 +181,7 @@ test.describe('Bi-directional Linking', () => {
     expect(linkHref).toContain('/notes/search?title=Non%20Existent%20Note')
   })
 
-  test.skip('should update links when note title changes', async ({ page }) => {
+  test('should update links when note title changes', async ({ page }) => {
     // SKIPPED: Wiki links and title updates not implemented
     // Create two test notes
     const note1 = await createTestNote(
@@ -207,13 +197,9 @@ test.describe('Bi-directional Linking', () => {
 
     // Create link using original title
     await page.goto(`/notes/${note1.id}`)
-    await page.waitForSelector(
-      '[data-testid="note-editor"] [contenteditable="true"]'
-    )
+    await page.waitForSelector('[data-testid="note-content-textarea"]')
 
-    const editor = page
-      .locator('[data-testid="note-editor"] [contenteditable="true"]')
-      .first()
+    const editor = page.locator('[data-testid="note-content-textarea"]').first()
     await editor.click()
     await editor.type(' Links to [[Original Title]].')
 

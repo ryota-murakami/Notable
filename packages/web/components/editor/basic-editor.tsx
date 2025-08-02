@@ -21,6 +21,7 @@ import {
   withReact,
 } from 'slate-react'
 import { type HistoryEditor, withHistory } from 'slate-history'
+import { withWikiLinks } from './plugins/wiki-link-plugin'
 import { Toggle } from '../ui/toggle'
 import { Separator } from '../ui/separator'
 import {
@@ -397,68 +398,6 @@ export function BasicEditor({
     (props: RenderLeafProps) => <Leaf {...props} />,
     []
   )
-
-  // Custom editor with wiki link support
-  const withWikiLinks = (editor: Editor) => {
-    const { insertText, isInline } = editor
-
-    editor.isInline = (element) => {
-      return element.type === 'wiki-link' ? true : isInline(element)
-    }
-
-    editor.insertText = (text) => {
-      const { selection } = editor
-
-      if (text === ']' && selection && Range.isCollapsed(selection)) {
-        const [start] = Range.edges(selection)
-        const beforeText = Editor.string(editor, {
-          anchor: { ...start, offset: Math.max(0, start.offset - 2) },
-          focus: start,
-        })
-
-        if (beforeText === '[[') {
-          // Get the text between [[ and ]]
-          const afterText = Editor.string(editor, {
-            anchor: start,
-            focus: Editor.end(editor, []),
-          })
-          const endBracketIndex = afterText.indexOf(']')
-
-          if (endBracketIndex === -1) {
-            // No closing bracket yet, just insert the text
-            insertText(text)
-            return
-          }
-
-          // Extract the note title
-          const noteTitle = afterText.substring(0, endBracketIndex)
-
-          // Delete the [[ prefix and the note title
-          Transforms.delete(editor, {
-            at: {
-              anchor: { ...start, offset: start.offset - 2 },
-              focus: { ...start, offset: start.offset + endBracketIndex },
-            },
-          })
-
-          // Insert the wiki link
-          const wikiLink = {
-            type: 'wiki-link' as const,
-            noteTitle: noteTitle || 'Untitled',
-            url: `/search?title=${encodeURIComponent(noteTitle)}`,
-            children: [{ text: noteTitle || 'Untitled' }],
-          }
-
-          Transforms.insertNodes(editor, wikiLink)
-          return
-        }
-      }
-
-      insertText(text)
-    }
-
-    return editor
-  }
 
   const editor = useMemo(
     () => withWikiLinks(withHistory(withReact(createEditor()))),
