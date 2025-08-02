@@ -1,0 +1,67 @@
+--------------------------------|---------|----------|---------|---------|--------------------------
+File                            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s        
+--------------------------------|---------|----------|---------|---------|--------------------------
+All files                       |   22.82 |     9.99 |   15.04 |   23.55 |                          
+ app                            |       0 |      100 |       0 |       0 |                          
+  page.tsx                      |       0 |      100 |       0 |       0 | 4                        
+ components                     |   36.93 |    30.66 |   30.88 |   37.95 |                          
+  query-provider.tsx            |     100 |      100 |     100 |     100 |                          
+  rich-text-editor.tsx          |    1.31 |        0 |       0 |     1.4 | 49-246                   
+  routing-provider.tsx          |   64.28 |       60 |      75 |   64.28 | 32-37                    
+  shell.tsx                     |   37.22 |    23.61 |   18.75 |   37.87 | ...6,364-376,385,439-547 
+  sync-provider-wrapper.tsx     |     100 |       80 |     100 |     100 | 32-33                    
+  theme-provider.tsx            |     100 |      100 |     100 |     100 |                          
+  user-menu.tsx                 |   67.39 |    55.17 |   77.77 |   69.76 | 34,68-72,76-93,101       
+ components/editor              |   11.42 |        0 |       0 |   11.76 |                          
+  basic-editor.tsx              |   11.42 |        0 |       0 |   11.76 | ...5-172,182-206,215-362 
+ components/editor/plugins      |       0 |      100 |     100 |       0 |                          
+  advanced-blocks-kit.tsx       |       0 |      100 |     100 |       0 | 8-130                    
+  basic-blocks-kit.tsx          |       0 |      100 |     100 |       0 | 19-92                    
+  basic-marks-kit.tsx           |       0 |      100 |     100 |       0 | 10-85                    
+  basic-nodes-kit.tsx           |       0 |      100 |     100 |       0 | 6                        
+  enhanced-editor-kit.tsx       |       0 |      100 |     100 |       0 | 18-73                    
+  link-plugin.tsx               |       0 |      100 |     100 |       0 | 9-20                     
+ components/export              |       0 |        0 |       0 |       0 |                          
+  index.ts                      |       0 |        0 |       0 |       0 |                          
+ components/templates           |   20.21 |     5.68 |   12.28 |   19.66 |                          
+  template-picker.tsx           |   30.66 |    13.04 |   13.79 |    31.5 | ...4,136-140,147,187-388 
+  template-variable-form.tsx    |   12.96 |     3.07 |   10.71 |   11.42 | ...1-185,191-192,198-442 
+ components/ui                  |   32.85 |    12.35 |   12.43 |   33.91 |                          
+  advanced-search.tsx           |   34.69 |    26.92 |      10 |   36.95 | ...2-408,426-427,435-449 
+  badge.tsx                     |      50 |      100 |       0 |      50 | 35                       
+  button.tsx                    |     100 |       40 |     100 |     100 | 34-36                    
+  calendar.tsx                  |       0 |        0 |       0 |       0 | 30-192                   
+  checkbox.tsx                  |   66.66 |      100 |       0 |   66.66 | 12                       
+  command-palette.tsx           |   23.68 |    17.75 |   12.96 |   24.32 | ...2,371,375,379,417-799 
+  command.tsx                   |       0 |        0 |       0 |       0 | 20-157                   
+  dialog.tsx                    |   77.27 |      100 |   16.66 |   77.27 | 20,59,73,87,102          
+  dropdown-menu.tsx             |   72.72 |        0 |       0 |   72.72 | ...83,99,123,147,163,175 
+  input.tsx                     |   66.66 |      100 |       0 |   66.66 | 9                        
+  keyboard-shortcuts-dialog.tsx |    91.3 |    66.66 |    90.9 |    90.9 | 153-154                  
+  label.tsx                     |   66.66 |      100 |       0 |   66.66 | 9                        
+  popover.tsx                   |       0 |        0 |       0 |       0 | 11-45                    
+  scroll-area.tsx               |       0 |        0 |       0 |       0 | 13-36                    
+  select.tsx                    |       0 |        0 |       0 |       0 | 12-160                   
+  separator.tsx                 |   66.66 |        0 |       0 |   66.66 | 14                       
+  spinner.tsx                   |       0 |        0 |       0 |       0 | 10                       
+  tabs.tsx                      |   66.66 |      100 |       0 |   66.66 | 12,27,42,57              
+  tag-badge.tsx                 |   14.81 |        0 |       0 |   14.81 | 41-67,143-160,186-197    
+  tag-input.tsx                 |    2.94 |        0 |       0 |    3.33 | 37-211,235-251           
+  textarea.tsx                  |       0 |      100 |       0 |       0 | 6                        
+  toggle.tsx                    |      25 |        0 |       0 |      25 | 25-44                    
+ lib                            |   27.71 |     8.33 |   43.47 |   29.48 |                          
+  keyboard-shortcuts.ts         |    27.5 |     8.33 |   42.85 |   29.33 | 164-225,245-262,269-298  
+  utils.ts                      |   33.33 |      100 |      50 |   33.33 | 9-10                     
+ lib/export                     |       0 |        0 |       0 |       0 |                          
+  index.ts                      |       0 |        0 |       0 |       0 |                          
+ lib/export/utils               |       0 |        0 |       0 |       0 |                          
+  index.ts                      |       0 |        0 |       0 |       0 |                          
+ lib/services                   |     5.4 |        0 |       0 |    5.88 |                          
+  notes.ts                      |     5.4 |        0 |       0 |    5.88 | 23-107                   
+ lib/slate                      |       0 |        0 |       0 |       0 |                          
+  markdown-to-slate.ts          |       0 |        0 |       0 |       0 | 31-278                   
+ lib/templates                  |    0.64 |        0 |       0 |    0.68 |                          
+  engine.ts                     |    0.64 |        0 |       0 |    0.68 | 76-577                   
+ lib/utils                      |   41.17 |     9.09 |      25 |   46.66 |                          
+  environment.ts                |   41.17 |     9.09 |      25 |   46.66 | 18-24,35,45,56-58        
+--------------------------------|---------|----------|---------|---------|--------------------------

@@ -1,10 +1,9 @@
 import { defineConfig, devices } from '@playwright/test'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -12,12 +11,16 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './e2e',
 
-  /* Global timeout for each test - reduced to prevent hanging */
-  timeout: process.env.CI ? 45000 : 30000, // 45s in CI, 30s locally
+  /* Global setup/teardown */
+  globalSetup: path.resolve(__dirname, './e2e/fixtures/global-setup.ts'),
+  globalTeardown: path.resolve(__dirname, './e2e/fixtures/global-teardown.ts'),
+
+  /* Global timeout for each test - increased for initial compilation */
+  timeout: process.env.CI ? 120000 : 90000, // 120s in CI, 90s locally
 
   /* Global expect timeout */
   expect: {
-    timeout: process.env.CI ? 10000 : 5000, // 10s in CI, 5s locally
+    timeout: process.env.CI ? 30000 : 20000, // 30s in CI, 20s locally
   },
 
   /* Run tests in files in parallel */
@@ -29,6 +32,10 @@ export default defineConfig({
   retries: process.env.CI ? 3 : 0,
 
   workers: process.env.CI ? 2 : 6,
+
+  /* Global teardown for coverage report generation */
+  globalTeardown:
+    process.env.COVERAGE === '1' ? './e2e/fixtures/coverage.ts' : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
@@ -44,8 +51,8 @@ export default defineConfig({
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
 
-    /* Better navigation timeout */
-    navigationTimeout: process.env.CI ? 30000 : 15000,
+    /* Better navigation timeout - increased for initial compilation */
+    navigationTimeout: process.env.CI ? 60000 : 45000,
 
     /* Action timeout */
     actionTimeout: process.env.CI ? 10000 : 5000,
@@ -71,11 +78,41 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'NODE_ENV=test pnpm start',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes for CI
     stdout: 'pipe',
     stderr: 'pipe',
+    env: {
+      // CRITICAL: Ensure NODE_ENV=test for environment validation
+      NODE_ENV: 'test',
+      NEXT_PUBLIC_API_MOCKING: 'enabled',
+      DATABASE_URL:
+        'postgresql://postgres:testpassword@localhost:5433/notable_test',
+      NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: 'placeholder-anon-key',
+      NEXT_PUBLIC_APP_URL: 'http://localhost:4378',
+      NEXT_PUBLIC_SITE_URL: 'http://localhost:4378',
+
+      // Required server env vars (placeholder values for testing)
+      SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
+      SUPABASE_JWT_SECRET: 'test-jwt-secret',
+      GOOGLE_CLIENT_ID: 'test-google-client-id',
+      GOOGLE_CLIENT_SECRET: 'test-google-client-secret',
+      RESEND_API_KEY: 'test-resend-api-key',
+      EMAIL_FROM: 'test@example.com',
+      UPLOADTHING_SECRET: 'test-uploadthing-secret',
+      UPLOADTHING_APP_ID: 'test-uploadthing-app-id',
+      OPENAI_API_KEY: 'test-openai-api-key',
+      JWT_SECRET: 'test-jwt-secret-for-app',
+
+      // Sentry configuration (placeholder values for testing)
+      NEXT_PUBLIC_SENTRY_DSN: 'https://placeholder@sentry.io/123456',
+      SENTRY_DSN: 'https://placeholder@sentry.io/123456',
+      SENTRY_ORG: 'test-org',
+      SENTRY_PROJECT: 'test-project',
+      SENTRY_AUTH_TOKEN: 'test-sentry-auth-token',
+    },
   },
 })

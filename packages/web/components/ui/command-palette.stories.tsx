@@ -55,7 +55,7 @@ const sampleActions: CommandAction[] = [
     description: 'Create a new file',
     icon: <FileIcon className='h-4 w-4' />,
     keywords: ['create', 'add', 'new'],
-    onSelect: () => console.log('New file'),
+    onSelect: () => console.info('New file'),
     group: 'File',
   },
   {
@@ -64,7 +64,7 @@ const sampleActions: CommandAction[] = [
     description: 'Search across all files',
     icon: <SearchIcon className='h-4 w-4' />,
     keywords: ['find', 'lookup'],
-    onSelect: () => console.log('Search'),
+    onSelect: () => console.info('Search'),
     group: 'Navigation',
   },
   {
@@ -73,7 +73,7 @@ const sampleActions: CommandAction[] = [
     description: 'Open application settings',
     icon: <SettingsIcon className='h-4 w-4' />,
     keywords: ['preferences', 'config'],
-    onSelect: () => console.log('Settings'),
+    onSelect: () => console.info('Settings'),
     group: 'General',
   },
   {
@@ -82,7 +82,7 @@ const sampleActions: CommandAction[] = [
     description: 'Switch between light and dark mode',
     icon: <MoonIcon className='h-4 w-4' />,
     keywords: ['dark', 'light', 'theme'],
-    onSelect: () => console.log('Toggle theme'),
+    onSelect: () => console.info('Toggle theme'),
     group: 'View',
   },
   {
@@ -91,7 +91,7 @@ const sampleActions: CommandAction[] = [
     description: 'View all keyboard shortcuts',
     icon: <KeyboardIcon className='h-4 w-4' />,
     keywords: ['hotkeys', 'keys'],
-    onSelect: () => console.log('Shortcuts'),
+    onSelect: () => console.info('Shortcuts'),
     group: 'Help',
   },
 ]
@@ -145,7 +145,7 @@ export const WithGroups: Story = {
         title: 'User Profile',
         description: 'View your profile',
         icon: <UserIcon className='h-4 w-4' />,
-        onSelect: () => console.log('Profile'),
+        onSelect: () => console.info('Profile'),
         group: 'Account',
       },
       {
@@ -153,7 +153,7 @@ export const WithGroups: Story = {
         title: 'Log Out',
         description: 'Sign out of your account',
         icon: <UserIcon className='h-4 w-4' />,
-        onSelect: () => console.log('Logout'),
+        onSelect: () => console.info('Logout'),
         group: 'Account',
       },
     ],
@@ -173,11 +173,11 @@ export const NotableDefault: Story = {
       <NotableCommandPalette
         open={open}
         onOpenChange={setOpen}
-        onNewNote={() => console.log('New note')}
-        onSearch={() => console.log('Search')}
-        onSettings={() => console.log('Settings')}
-        onToggleTheme={() => console.log('Toggle theme')}
-        onShowKeyboardShortcuts={() => console.log('Show shortcuts')}
+        onNewNote={() => console.info('New note')}
+        onSearch={() => console.info('Search')}
+        onSettings={() => console.info('Settings')}
+        onToggleTheme={() => console.info('Toggle theme')}
+        onShowKeyboardShortcuts={() => console.info('Show shortcuts')}
         currentTheme='light'
       />
     )
@@ -197,19 +197,19 @@ export const NotableWithNoteActions: Story = {
       <NotableCommandPalette
         open={open}
         onOpenChange={setOpen}
-        onNewNote={() => console.log('New note')}
-        onSearch={() => console.log('Search')}
-        onSettings={() => console.log('Settings')}
-        onToggleTheme={() => console.log('Toggle theme')}
-        onShowKeyboardShortcuts={() => console.log('Show shortcuts')}
-        onEditNote={() => console.log('Edit note')}
-        onCopyNote={() => console.log('Copy note')}
-        onDeleteNote={() => console.log('Delete note')}
-        onExportNote={() => console.log('Export note')}
-        onAddTag={() => console.log('Add tag')}
-        onManageTags={() => console.log('Manage tags')}
-        onFilterByTag={() => console.log('Filter by tag')}
-        onCreateTag={() => console.log('Create tag')}
+        onNewNote={() => console.info('New note')}
+        onSearch={() => console.info('Search')}
+        onSettings={() => console.info('Settings')}
+        onToggleTheme={() => console.info('Toggle theme')}
+        onShowKeyboardShortcuts={() => console.info('Show shortcuts')}
+        onEditNote={() => console.info('Edit note')}
+        onCopyNote={() => console.info('Copy note')}
+        onDeleteNote={() => console.info('Delete note')}
+        onExportNote={() => console.info('Export note')}
+        onAddTag={() => console.info('Add tag')}
+        onManageTags={() => console.info('Manage tags')}
+        onFilterByTag={() => console.info('Filter by tag')}
+        onCreateTag={() => console.info('Create tag')}
         currentTheme='dark'
       />
     )
@@ -264,11 +264,11 @@ export const SearchPalette: Story = {
         open={open}
         onOpenChange={setOpen}
         notes={sampleNotes}
-        onNoteSelect={(note) => console.log('Selected note:', note)}
-        onNewNote={() => console.log('New note')}
-        onSettings={() => console.log('Settings')}
-        onToggleTheme={() => console.log('Toggle theme')}
-        onShowKeyboardShortcuts={() => console.log('Show shortcuts')}
+        onNoteSelect={(note) => console.info('Selected note:', note)}
+        onNewNote={() => console.info('New note')}
+        onSettings={() => console.info('Settings')}
+        onToggleTheme={() => console.info('Toggle theme')}
+        onShowKeyboardShortcuts={() => console.info('Show shortcuts')}
         currentTheme='light'
       />
     )
@@ -286,7 +286,7 @@ export const WithCustomActions: Story = {
         description: 'Deploy the current branch to production',
         icon: <FolderIcon className='h-4 w-4' />,
         keywords: ['deploy', 'production', 'release'],
-        onSelect: () => console.log('Deploy'),
+        onSelect: () => console.info('Deploy'),
         group: 'DevOps',
       },
       {
@@ -295,7 +295,7 @@ export const WithCustomActions: Story = {
         description: 'Execute all test suites',
         icon: <HomeIcon className='h-4 w-4' />,
         keywords: ['test', 'jest', 'unit'],
-        onSelect: () => console.log('Run tests'),
+        onSelect: () => console.info('Run tests'),
         group: 'DevOps',
       },
       {
@@ -304,7 +304,7 @@ export const WithCustomActions: Story = {
         description: 'Compose a new email',
         icon: <MailIcon className='h-4 w-4' />,
         keywords: ['email', 'mail', 'send'],
-        onSelect: () => console.log('Send email'),
+        onSelect: () => console.info('Send email'),
         group: 'Communication',
       },
     ],

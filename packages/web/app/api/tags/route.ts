@@ -44,6 +44,37 @@ export async function GET(request: NextRequest) {
       ? parseInt(searchParams.get('offset')!)
       : 0
 
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      const mockTags: EnhancedTag[] = [
+        {
+          id: 't1111111-1111-1111-1111-111111111111',
+          name: 'important',
+          color: '#ef4444',
+          user_id: user.id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          usage_count: 2,
+          parent_id: null,
+        },
+        {
+          id: 't2222222-2222-2222-2222-222222222222',
+          name: 'work',
+          color: '#3b82f6',
+          user_id: user.id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          usage_count: 1,
+          parent_id: null,
+        },
+      ]
+
+      return NextResponse.json({
+        success: true,
+        data: mockTags,
+      })
+    }
+
     // Build the query
     let tagsQuery = supabase
       .from('tags')
@@ -162,6 +193,36 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const { name, color } = body as TagInsert
+
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      // Basic validation still needed for mock
+      if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        return NextResponse.json(
+          { error: 'Tag name is required' },
+          { status: 400 }
+        )
+      }
+
+      const mockTag = {
+        id: `t${Date.now()}-mock-tag`,
+        name: name.trim(),
+        color: color || '#3b82f6',
+        user_id: user.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        usage_count: 0,
+        parent_id: null,
+      }
+
+      return NextResponse.json(
+        {
+          success: true,
+          data: mockTag,
+        },
+        { status: 201 }
+      )
+    }
 
     // Validate required fields
     if (!name || typeof name !== 'string' || name.trim().length === 0) {

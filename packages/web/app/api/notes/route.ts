@@ -3,6 +3,54 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      const mockNotes = [
+        {
+          id: 'mock-note-' + Date.now(),
+          title: 'Test Note 1',
+          content: {
+            type: 'doc',
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  { type: 'text', text: 'This is a test note content' },
+                ],
+              },
+            ],
+          },
+          user_id: 'mock-user-id',
+          folder_id: null,
+          is_public: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          deleted_at: null,
+        },
+        {
+          id: 'mock-note-' + (Date.now() + 1),
+          title: 'Test Note 2',
+          content: {
+            type: 'doc',
+            content: [
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'This is another test note' }],
+              },
+            ],
+          },
+          user_id: 'mock-user-id',
+          folder_id: null,
+          is_public: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          deleted_at: null,
+        },
+      ]
+
+      return NextResponse.json({ notes: mockNotes, total: mockNotes.length })
+    }
+
     const supabase = await createClient()
 
     // Get the current user
@@ -66,6 +114,35 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      const body = await request.json()
+      const { title, content, folder_id, is_hidden } = body
+
+      const mockNote = {
+        id: 'mock-note-' + Date.now(),
+        title: title || 'Untitled',
+        content: content || {
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'New note content' }],
+            },
+          ],
+        },
+        user_id: 'mock-user-id',
+        folder_id: folder_id || null,
+        is_hidden: is_hidden || false,
+        is_public: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        deleted_at: null,
+      }
+
+      return NextResponse.json({ note: mockNote }, { status: 201 })
+    }
+
     const supabase = await createClient()
 
     // Get the current user

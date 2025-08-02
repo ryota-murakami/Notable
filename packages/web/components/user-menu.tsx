@@ -82,6 +82,9 @@ export function UserMenu({ className }: UserMenuProps) {
       document.cookie =
         'dev-auth-bypass=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
 
+      // Clear all localStorage data
+      localStorage.clear()
+
       toast.success('Logged out successfully', {
         description: 'You have been logged out of your account.',
       })
@@ -103,7 +106,8 @@ export function UserMenu({ className }: UserMenuProps) {
 
   // Create mock user for testing when dev-auth-bypass is enabled
   const testMode = isTest()
-  const mockUser: SupabaseUser | null = testMode && !user ? createMockUser() : null
+  const mockUser: SupabaseUser | null =
+    testMode && !user ? createMockUser() : null
 
   const currentUser = user || mockUser
 
@@ -123,7 +127,9 @@ export function UserMenu({ className }: UserMenuProps) {
           aria-label='User menu'
           data-testid='user-menu-trigger'
         >
-          <span className='text-sm font-semibold'>{getInitials(currentUser)}</span>
+          <span className='text-sm font-semibold'>
+            {getInitials(currentUser)}
+          </span>
         </button>
       </DropdownMenu.Trigger>
 

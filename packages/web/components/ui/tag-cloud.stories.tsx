@@ -357,7 +357,9 @@ export const WithClickHandler: Story = {
     interactive: true,
     showCounts: true,
     onTagClick: (tag) => {
-      console.log(`Clicked on tag: ${tag.name} (used ${tag.usage_count} times)`)
+      console.info(
+        `Clicked on tag: ${tag.name} (used ${tag.usage_count} times)`
+      )
     },
   },
 }
@@ -370,7 +372,7 @@ export const WithHoverHandler: Story = {
     showCounts: true,
     onTagHover: (tag) => {
       if (tag) {
-        console.log(`Hovering over: ${tag.name}`)
+        console.info(`Hovering over: ${tag.name}`)
       }
     },
   },

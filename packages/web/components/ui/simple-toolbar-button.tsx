@@ -23,6 +23,7 @@ export const ToolbarButton = React.forwardRef<
       tooltip,
       children,
       onClick,
+      onMouseDown,
       ...props
     },
     ref
@@ -32,6 +33,12 @@ export const ToolbarButton = React.forwardRef<
       onClick?.(e)
     }
 
+    const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
+      // Prevent focus loss to maintain text selection
+      e.preventDefault()
+      onMouseDown?.(e)
+    }
+
     return (
       <Button
         ref={ref}
@@ -39,7 +46,9 @@ export const ToolbarButton = React.forwardRef<
         size='sm'
         className={cn('h-8 px-2', className)}
         onClick={handleClick}
+        onMouseDown={handleMouseDown}
         title={tooltip}
+        data-plate-prevent-unselect
         {...props}
       >
         {children}

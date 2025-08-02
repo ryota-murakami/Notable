@@ -420,6 +420,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
             onClick={handleCreateNote}
             className='w-full justify-start mb-6'
             size='sm'
+            data-testid='new-note-button'
           >
             <Plus className='mr-2 h-4 w-4' />
             New Note

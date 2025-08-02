@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 test.describe('Spinner Component', () => {
   test('shows spinner in Shell loading state', async ({ page }) => {

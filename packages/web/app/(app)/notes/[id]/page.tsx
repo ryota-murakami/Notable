@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { NoteEditor } from '@/components/note-editor'
+import { NoteEditorRich } from '@/components/note-editor-rich'
 
 interface NotePageProps {
   params: Promise<{
@@ -14,5 +14,5 @@ export default async function NotePage({ params }: NotePageProps) {
     notFound()
   }
 
-  return <NoteEditor noteId={id} />
+  return <NoteEditorRich noteId={id} />
 }

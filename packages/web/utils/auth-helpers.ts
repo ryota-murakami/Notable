@@ -10,12 +10,14 @@ export async function getDevAuthBypassUser() {
   const devAuthBypassCookie =
     cookieStore.get('dev-auth-bypass')?.value === 'true'
 
-  if (
-    devAuthBypassCookie &&
-    (process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test' ||
-      process.env.CI === 'true')
-  ) {
+  // For E2E tests, also check for test database URL
+  const isTestEnvironment =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.CI === 'true' ||
+    process.env.DATABASE_URL?.includes('localhost:5433')
+
+  if (devAuthBypassCookie && isTestEnvironment) {
     return createMockUser()
   }
 
@@ -64,10 +66,12 @@ export async function shouldBypassAuth() {
   const devAuthBypassCookie =
     cookieStore.get('dev-auth-bypass')?.value === 'true'
 
-  return (
-    devAuthBypassCookie &&
-    (process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test' ||
-      process.env.CI === 'true')
-  )
+  // For E2E tests, also check for test database URL
+  const isTestEnvironment =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.CI === 'true' ||
+    process.env.DATABASE_URL?.includes('localhost:5433')
+
+  return devAuthBypassCookie && isTestEnvironment
 }

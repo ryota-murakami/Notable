@@ -233,6 +233,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'bold')}
           onPressedChange={() => toggleMark(editor, 'bold')}
           aria-label='Bold'
+          data-testid='bold-button'
         >
           <Bold className='h-4 w-4' />
         </Toggle>
@@ -241,6 +242,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'italic')}
           onPressedChange={() => toggleMark(editor, 'italic')}
           aria-label='Italic'
+          data-testid='italic-button'
         >
           <Italic className='h-4 w-4' />
         </Toggle>
@@ -249,6 +251,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'underline')}
           onPressedChange={() => toggleMark(editor, 'underline')}
           aria-label='Underline'
+          data-testid='underline-button'
         >
           <Underline className='h-4 w-4' />
         </Toggle>
@@ -257,6 +260,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'strikethrough')}
           onPressedChange={() => toggleMark(editor, 'strikethrough')}
           aria-label='Strikethrough'
+          data-testid='strikethrough-button'
         >
           <Strikethrough className='h-4 w-4' />
         </Toggle>
@@ -265,6 +269,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'code')}
           onPressedChange={() => toggleMark(editor, 'code')}
           aria-label='Code'
+          data-testid='code-button'
         >
           <Code className='h-4 w-4' />
         </Toggle>
@@ -279,6 +284,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'heading-one')}
           onPressedChange={() => toggleBlock(editor, 'heading-one')}
           aria-label='Heading 1'
+          data-testid='heading-1'
         >
           <Heading1 className='h-4 w-4' />
         </Toggle>
@@ -287,6 +293,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'heading-two')}
           onPressedChange={() => toggleBlock(editor, 'heading-two')}
           aria-label='Heading 2'
+          data-testid='heading-2'
         >
           <Heading2 className='h-4 w-4' />
         </Toggle>
@@ -295,6 +302,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'heading-three')}
           onPressedChange={() => toggleBlock(editor, 'heading-three')}
           aria-label='Heading 3'
+          data-testid='heading-3'
         >
           <Heading3 className='h-4 w-4' />
         </Toggle>
@@ -303,6 +311,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'block-quote')}
           onPressedChange={() => toggleBlock(editor, 'block-quote')}
           aria-label='Quote'
+          data-testid='quote-button'
         >
           <Quote className='h-4 w-4' />
         </Toggle>
@@ -311,6 +320,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'bulleted-list')}
           onPressedChange={() => toggleBlock(editor, 'bulleted-list')}
           aria-label='Bullet List'
+          data-testid='bulleted-list'
         >
           <List className='h-4 w-4' />
         </Toggle>
@@ -319,6 +329,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'numbered-list')}
           onPressedChange={() => toggleBlock(editor, 'numbered-list')}
           aria-label='Numbered List'
+          data-testid='numbered-list'
         >
           <ListOrdered className='h-4 w-4' />
         </Toggle>
@@ -381,6 +392,7 @@ export function BasicEditor({
             'selection:bg-primary/20',
             readOnly && 'cursor-text select-text'
           )}
+          data-testid='note-content-textarea'
         />
       </div>
     </Slate>

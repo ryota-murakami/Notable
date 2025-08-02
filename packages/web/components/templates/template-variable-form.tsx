@@ -197,7 +197,10 @@ export function TemplateVariableForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn('max-w-2xl max-h-[90vh] p-0', className)}>
+      <DialogContent
+        className={cn('max-w-2xl max-h-[90vh] p-0', className)}
+        data-testid='template-variable-form'
+      >
         <DialogHeader className='px-6 py-4 border-b'>
           <DialogTitle className='flex items-center gap-2'>
             <span className='text-2xl'>{template.categoryIcon}</span>

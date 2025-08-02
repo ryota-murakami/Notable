@@ -8,49 +8,6 @@ import { AdvancedBlocksKit } from './advanced-blocks-kit'
 import { SlashCommandPlugin } from './slash-command-kit'
 import { LinkKit } from './link-plugin'
 
-// Component imports for advanced blocks
-import { TodoElement } from '@/components/ui/todo-block'
-import { ToggleElement } from '@/components/ui/toggle-block'
-import { CalloutElement } from '@/components/ui/callout-block'
-import { CodeBlockElement } from '@/components/ui/code-block'
-
-// Update advanced blocks with proper components
-const TodoPlugin = createPlatePlugin({
-  key: 'action_item',
-  node: {
-    isElement: true,
-    type: 'action_item',
-    component: TodoElement,
-  },
-})
-
-const TogglePlugin = createPlatePlugin({
-  key: 'toggle',
-  node: {
-    isElement: true,
-    type: 'toggle',
-    component: ToggleElement,
-  },
-})
-
-const CalloutPlugin = createPlatePlugin({
-  key: 'callout',
-  node: {
-    isElement: true,
-    type: 'callout',
-    component: CalloutElement,
-  },
-})
-
-const CodeBlockPlugin = createPlatePlugin({
-  key: 'code_block',
-  node: {
-    isElement: true,
-    type: 'code_block',
-    component: CodeBlockElement,
-  },
-})
-
 // Block Reference Plugin for linking between blocks
 const BlockReferencePlugin = createPlatePlugin({
   key: 'block_reference',
@@ -75,11 +32,8 @@ export const EnhancedEditorKit = [
   ...BasicNodesKit,
   ...BasicMarksKit,
 
-  // Advanced blocks with components
-  TodoPlugin,
-  TogglePlugin,
-  CalloutPlugin,
-  CodeBlockPlugin,
+  // Advanced blocks with proper UI components
+  ...AdvancedBlocksKit,
 
   // Interactive features
   SlashCommandPlugin,
