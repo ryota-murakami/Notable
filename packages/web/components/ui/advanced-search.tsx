@@ -132,6 +132,7 @@ export function AdvancedSearch({
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder='Search notes...'
                 className='flex-1 border-0 focus-visible:ring-0 px-0'
+                data-testid='search-input'
               />
               <Button
                 variant='ghost'
@@ -274,7 +275,7 @@ export function AdvancedSearch({
 
               {/* Results */}
               {!isLoading && results.length > 0 && (
-                <div className='space-y-4'>
+                <div className='space-y-4' data-testid='search-results'>
                   <div className='text-sm text-muted-foreground'>
                     {totalCount} results found
                   </div>
@@ -433,6 +434,7 @@ export function GlobalSearchTrigger() {
         variant='outline'
         className='relative w-full justify-start text-sm text-muted-foreground'
         onClick={() => setOpen(true)}
+        data-testid='search-button'
       >
         <Search className='mr-2 h-4 w-4' />
         Search...

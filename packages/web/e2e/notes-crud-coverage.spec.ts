@@ -171,12 +171,12 @@ test.describe('Note CRUD Coverage Tests', () => {
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
 
     // Verify editor is visible
-    const editor = page.locator('[data-testid="note-editor"]')
+    const editor = page.locator('[data-testid="note-editor"]').first()
     await expect(editor).toBeVisible({ timeout: 10000 })
   })
 
-  test.skip('search for notes', async ({ page }) => {
-    // SKIPPED: Search functionality not implemented
+  test('search for notes', async ({ page }) => {
+    // Now testing with implemented search functionality
     await page.goto('/app')
 
     // Open search
@@ -243,8 +243,8 @@ test.describe('Note CRUD Coverage Tests', () => {
     await editor.type('Test note content')
   })
 
-  test.skip('navigate between notes', async ({ page }) => {
-    // SKIPPED: Note list navigation not implemented
+  test('navigate between notes', async ({ page }) => {
+    // Testing note navigation via sidebar
     await page.goto('/app')
 
     // Create first note
@@ -267,7 +267,9 @@ test.describe('Note CRUD Coverage Tests', () => {
     const firstNoteUrl = page.url()
 
     // Add title to first note
-    const titleInput1 = page.locator('input[placeholder="Untitled"]')
+    const titleInput1 = page.locator(
+      'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
+    )
     await expect(titleInput1).toBeVisible({ timeout: 10000 })
     await titleInput1.click()
     await titleInput1.clear()
@@ -298,7 +300,9 @@ test.describe('Note CRUD Coverage Tests', () => {
     const secondNoteUrl = page.url()
 
     // Add title to second note
-    const titleInput2 = page.locator('input[placeholder="Untitled"]')
+    const titleInput2 = page.locator(
+      'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
+    )
     await expect(titleInput2).toBeVisible({ timeout: 10000 })
     await titleInput2.click()
     await titleInput2.clear()
@@ -311,18 +315,26 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     // Navigate back and forth to verify URL navigation works
     await page.goto(firstNoteUrl)
-    await expect(page.locator('input[placeholder="Untitled"]')).toBeVisible({
+    await expect(
+      page.locator(
+        'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
+      )
+    ).toBeVisible({
       timeout: 10000,
     })
 
     await page.goto(secondNoteUrl)
-    await expect(page.locator('input[placeholder="Untitled"]')).toBeVisible({
+    await expect(
+      page.locator(
+        'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
+      )
+    ).toBeVisible({
       timeout: 10000,
     })
   })
 
-  test.skip('auto-save functionality', async ({ page }) => {
-    // SKIPPED: Auto-save persistence not verifiable without backend
+  test('auto-save functionality', async ({ page }) => {
+    // Testing auto-save functionality with backend
     // Create a note
     await page.goto('/app')
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
@@ -355,7 +367,9 @@ test.describe('Note CRUD Coverage Tests', () => {
     await expect(editor).toContainText('Auto-save test content')
 
     // Test title editing as well
-    const titleInput = page.locator('input[placeholder="Untitled"]')
+    const titleInput = page.locator(
+      'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
+    )
     await expect(titleInput).toBeVisible({ timeout: 10000 })
     await titleInput.click()
     await titleInput.clear()
@@ -452,7 +466,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Just verify that we're on the note page
     // Metadata display might vary, so we'll just check the note loads
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
-    const editor = page.locator('[data-testid="note-editor"]')
+    const editor = page.locator('[data-testid="note-editor"]').first()
     await expect(editor).toBeVisible({ timeout: 10000 })
   })
 })

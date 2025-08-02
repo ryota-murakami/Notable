@@ -13,7 +13,7 @@ import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
-import { FileText, Plus, BarChart3 } from 'lucide-react'
+import { FileText, Plus, BarChart3, Star, Archive } from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import {
   NotableCommandPalette,
@@ -466,6 +466,32 @@ export function Shell({ children }: { children?: React.ReactNode }) {
             >
               <BarChart3 className='mr-2 h-4 w-4' />
               Graph View
+            </Button>
+          </div>
+
+          {/* Filter Options */}
+          <div className='mt-4 space-y-1'>
+            <Button
+              variant='ghost'
+              className='w-full justify-start'
+              data-testid='filter-favorites'
+              onClick={() => {
+                /* TODO: Implement filter */
+              }}
+            >
+              <Star className='mr-2 h-4 w-4' />
+              Favorites
+            </Button>
+            <Button
+              variant='ghost'
+              className='w-full justify-start'
+              data-testid='filter-archived'
+              onClick={() => {
+                /* TODO: Implement filter */
+              }}
+            >
+              <Archive className='mr-2 h-4 w-4' />
+              Archived
             </Button>
           </div>
         </div>

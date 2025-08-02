@@ -67,7 +67,7 @@ export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
   }
 
   return (
-    <div className='flex-1 flex flex-col' data-testid='note-editor'>
+    <div className='flex-1 flex flex-col' data-testid='note-editor-container'>
       <RichTextEditor
         noteId={noteId}
         initialTitle={note.title}

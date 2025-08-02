@@ -2,9 +2,17 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { env } from '@/env'
 import { getDevAuthBypassUser } from '@/utils/auth-helpers'
+import { createMockSupabaseClient } from './test-client'
 
 export async function createClient() {
   const cookieStore = await cookies()
+
+  // Check for dev auth bypass first
+  const devBypassUser = await getDevAuthBypassUser()
+  if (devBypassUser && process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    // Return mock client for tests
+    return createMockSupabaseClient()
+  }
 
   // Handle missing environment variables gracefully
   const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
