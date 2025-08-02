@@ -35,9 +35,9 @@ test.describe('Graph View', () => {
     const url = page.url()
     const noteId = url.split('/notes/')[1]
 
-    // Fill in title using textarea
-    const editor = page.locator('textarea[placeholder="Start writing..."]')
-    await editor.fill(`# ${title}`)
+    // Fill in title
+    const titleInput = page.locator('[data-testid="note-title-input"]')
+    await titleInput.fill(title)
 
     // Return note ID for cleanup
     return { id: noteId }

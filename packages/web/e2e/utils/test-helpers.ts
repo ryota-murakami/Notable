@@ -39,14 +39,14 @@ export async function createTestNote(
   // Wait for editor to be ready
   await page.waitForTimeout(2000)
 
-  // Fill in note details - title is now in the editor
-  const editor = page
-    .locator('[data-testid="note-editor"] [contenteditable="true"]')
-    .first()
+  // Fill in title
+  const titleInput = page.locator('[data-testid="note-title-input"]')
+  await titleInput.fill(title)
+
+  // Fill in content in the rich text editor
+  const editor = page.locator('[data-testid="note-content-textarea"]')
   await editor.click()
-  await editor.fill(`# ${title}`)
-  await editor.press('Enter')
-  await editor.fill(content)
+  await editor.type(content)
 
   // Save note (assuming auto-save or save button)
   await page.waitForTimeout(1000)
