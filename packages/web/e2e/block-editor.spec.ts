@@ -1,7 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 
-test.describe.skip('Block Editor', () => {
-  // SKIPPED: Block editor functionality not fully implemented
+test.describe('Block Editor', () => {
   test.beforeEach(async ({ page }) => {
     // Set dev auth bypass cookie for testing
     await page.context().addCookies([

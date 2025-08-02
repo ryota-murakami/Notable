@@ -13,8 +13,7 @@ import { expect, test } from './fixtures/coverage'
  * - Tag statistics and analytics
  */
 
-test.describe.skip('Tag System', () => {
-  // SKIPPED: Comprehensive tag system not implemented
+test.describe('Tag System', () => {
   test.beforeEach(async ({ page }) => {
     // Set dev auth bypass cookie for testing
     await page.context().addCookies([
