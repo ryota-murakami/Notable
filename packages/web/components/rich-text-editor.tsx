@@ -10,6 +10,7 @@ import { TagList } from '@/components/ui/tag-badge'
 import { TemplatePicker } from '@/components/templates/template-picker'
 import { TemplateVariableForm } from '@/components/templates/template-variable-form'
 import { ExportButton } from '@/components/export/export-button'
+import { NoteActions } from '@/components/note-actions'
 import { TemplateEngine } from '@/lib/templates/engine'
 import { markdownToSlate } from '@/lib/slate/markdown-to-slate'
 import {
@@ -29,6 +30,12 @@ interface RichTextEditorProps {
   onContentChange?: (content: Descendant[]) => void
   onTemplateUsed?: (templateId: string, noteTitle: string) => void
   className?: string
+  isFavorite?: boolean
+  isPinned?: boolean
+  isArchived?: boolean
+  onToggleFavorite?: () => void
+  onTogglePin?: () => void
+  onToggleArchive?: () => void
 }
 
 const defaultContent: Descendant[] = [
@@ -46,6 +53,12 @@ export function RichTextEditor({
   onContentChange,
   onTemplateUsed,
   className,
+  isFavorite = false,
+  isPinned = false,
+  isArchived = false,
+  onToggleFavorite,
+  onTogglePin,
+  onToggleArchive,
 }: RichTextEditorProps) {
   const [title, setTitle] = useState(initialTitle)
   const [content, setContent] = useState<Descendant[]>(initialContent)
@@ -246,6 +259,16 @@ export function RichTextEditor({
             data-testid='note-title-input'
           />
           <div className='flex items-center gap-2'>
+            <NoteActions
+              noteId={noteId}
+              isFavorite={isFavorite}
+              isPinned={isPinned}
+              isArchived={isArchived}
+              onFavorite={onToggleFavorite}
+              onPin={onTogglePin}
+              onArchive={onToggleArchive}
+            />
+            <div className='w-px h-6 bg-border mx-1' />
             <ExportButton
               note={{
                 id: noteId,

@@ -15,6 +15,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
 import { FileText, Plus, BarChart3, Star, Archive } from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
+import { NoteActions } from '@/components/note-actions'
 import {
   NotableCommandPalette,
   useCommandPalette,
@@ -38,6 +39,18 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current: _current, title: _title, navigate: _navigate } = useRouting()
   const supabase = createClient()
+
+  // Note organization state
+  const [noteOrganization, setNoteOrganization] = useState({
+    favorites: [] as string[],
+    pinned: [] as string[],
+    archived: [] as string[],
+  })
+
+  // Filter state
+  const [activeFilter, setActiveFilter] = useState<
+    'all' | 'favorites' | 'archived'
+  >('all')
 
   // Command palette and keyboard shortcuts state
   const commandPalette = useCommandPalette()
@@ -215,6 +228,34 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       title: 'Filter by tag',
       description: 'Tag filtering is not yet implemented.',
     })
+  }, [])
+
+  // Note organization handlers
+  const handleToggleFavorite = useCallback((noteId: string) => {
+    setNoteOrganization((prev) => ({
+      ...prev,
+      favorites: prev.favorites.includes(noteId)
+        ? prev.favorites.filter((id) => id !== noteId)
+        : [...prev.favorites, noteId],
+    }))
+  }, [])
+
+  const handleTogglePin = useCallback((noteId: string) => {
+    setNoteOrganization((prev) => ({
+      ...prev,
+      pinned: prev.pinned.includes(noteId)
+        ? prev.pinned.filter((id) => id !== noteId)
+        : [...prev.pinned, noteId],
+    }))
+  }, [])
+
+  const handleToggleArchive = useCallback((noteId: string) => {
+    setNoteOrganization((prev) => ({
+      ...prev,
+      archived: prev.archived.includes(noteId)
+        ? prev.archived.filter((id) => id !== noteId)
+        : [...prev.archived, noteId],
+    }))
   }, [])
 
   // Keyboard shortcuts registration
@@ -436,23 +477,62 @@ export function Shell({ children }: { children?: React.ReactNode }) {
                   No notes yet. Create your first note to get started.
                 </div>
               ) : (
-                notes.map((note) => (
-                  <button
-                    key={note.id}
-                    onClick={() => handleNoteSelect(note.id)}
-                    className='flex items-center space-x-2 p-2 rounded-md hover:bg-muted cursor-pointer group w-full text-left'
-                  >
-                    <FileText className='h-4 w-4 text-muted-foreground' />
-                    <div className='flex-1 truncate'>
-                      <div className='text-sm font-medium'>
-                        {note.title || 'Untitled'}
-                      </div>
-                      <div className='text-xs text-muted-foreground'>
-                        {new Date(note.updated_at).toLocaleDateString()}
+                notes
+                  .filter((note) => {
+                    if (activeFilter === 'favorites') {
+                      return noteOrganization.favorites.includes(note.id)
+                    }
+                    if (activeFilter === 'archived') {
+                      return noteOrganization.archived.includes(note.id)
+                    }
+                    // For 'all' filter, exclude archived notes
+                    return !noteOrganization.archived.includes(note.id)
+                  })
+                  .sort((a, b) => {
+                    // Sort pinned notes first
+                    const aPinned = noteOrganization.pinned.includes(a.id)
+                    const bPinned = noteOrganization.pinned.includes(b.id)
+                    if (aPinned && !bPinned) return -1
+                    if (!aPinned && bPinned) return 1
+                    return 0
+                  })
+                  .map((note) => (
+                    <div
+                      key={note.id}
+                      className='flex items-center p-2 rounded-md hover:bg-muted group'
+                    >
+                      <button
+                        onClick={() => handleNoteSelect(note.id)}
+                        className='flex items-center space-x-2 flex-1 text-left'
+                      >
+                        <FileText className='h-4 w-4 text-muted-foreground' />
+                        <div className='flex-1 truncate'>
+                          <div className='text-sm font-medium'>
+                            {note.title || 'Untitled'}
+                          </div>
+                          <div className='text-xs text-muted-foreground'>
+                            {new Date(note.updated_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </button>
+                      <div className='opacity-0 group-hover:opacity-100 transition-opacity'>
+                        <NoteActions
+                          noteId={note.id}
+                          isFavorite={noteOrganization.favorites.includes(
+                            note.id
+                          )}
+                          isPinned={noteOrganization.pinned.includes(note.id)}
+                          isArchived={noteOrganization.archived.includes(
+                            note.id
+                          )}
+                          onFavorite={() => handleToggleFavorite(note.id)}
+                          onPin={() => handleTogglePin(note.id)}
+                          onArchive={() => handleToggleArchive(note.id)}
+                          className='ml-2'
+                        />
                       </div>
                     </div>
-                  </button>
-                ))
+                  ))
               )}
             </div>
           </div>
@@ -472,23 +552,27 @@ export function Shell({ children }: { children?: React.ReactNode }) {
           {/* Filter Options */}
           <div className='mt-4 space-y-1'>
             <Button
-              variant='ghost'
+              variant={activeFilter === 'favorites' ? 'secondary' : 'ghost'}
               className='w-full justify-start'
               data-testid='filter-favorites'
-              onClick={() => {
-                /* TODO: Implement filter */
-              }}
+              onClick={() =>
+                setActiveFilter(
+                  activeFilter === 'favorites' ? 'all' : 'favorites'
+                )
+              }
             >
               <Star className='mr-2 h-4 w-4' />
               Favorites
             </Button>
             <Button
-              variant='ghost'
+              variant={activeFilter === 'archived' ? 'secondary' : 'ghost'}
               className='w-full justify-start'
               data-testid='filter-archived'
-              onClick={() => {
-                /* TODO: Implement filter */
-              }}
+              onClick={() =>
+                setActiveFilter(
+                  activeFilter === 'archived' ? 'all' : 'archived'
+                )
+              }
             >
               <Archive className='mr-2 h-4 w-4' />
               Archived
@@ -522,6 +606,16 @@ export function Shell({ children }: { children?: React.ReactNode }) {
                         : selectedNote.content
                       : undefined
                   }
+                  isFavorite={noteOrganization.favorites.includes(
+                    selectedNote.id
+                  )}
+                  isPinned={noteOrganization.pinned.includes(selectedNote.id)}
+                  isArchived={noteOrganization.archived.includes(
+                    selectedNote.id
+                  )}
+                  onToggleFavorite={() => handleToggleFavorite(selectedNote.id)}
+                  onTogglePin={() => handleTogglePin(selectedNote.id)}
+                  onToggleArchive={() => handleToggleArchive(selectedNote.id)}
                   onTitleChange={(title) => {
                     // TODO: Implement title update
                     console.info('Title changed:', title)
