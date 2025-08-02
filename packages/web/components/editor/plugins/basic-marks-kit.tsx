@@ -1,38 +1,45 @@
 'use client'
 
 import { createPlatePlugin } from 'platejs/react'
+import {
+  BoldPlugin as BaseBoldPlugin,
+  ItalicPlugin as BaseItalicPlugin,
+  UnderlinePlugin as BaseUnderlinePlugin,
+  StrikethroughPlugin as BaseStrikethroughPlugin,
+  CodePlugin as BaseCodePlugin,
+  SubscriptPlugin as BaseSubscriptPlugin,
+  SuperscriptPlugin as BaseSuperscriptPlugin,
+} from '@udecode/plate-basic-marks/react'
+// import { HighlightPlugin as BaseHighlightPlugin } from '@udecode/plate-highlight/react'
+// import { KbdPlugin as BaseKbdPlugin } from '@udecode/plate-kbd/react'
 
 import { CodeLeaf } from '@/components/ui/code-node'
 import { HighlightLeaf } from '@/components/ui/highlight-node'
 import { KbdLeaf } from '@/components/ui/kbd-node'
 
-// Text Mark Plugins with proper v49 configuration
-const BoldPlugin = createPlatePlugin({
-  key: 'bold',
+// Text Mark Plugins with keyboard shortcuts enabled
+const BoldPlugin = BaseBoldPlugin.extend({
   node: {
     isLeaf: true,
     type: 'bold',
   },
 })
 
-const ItalicPlugin = createPlatePlugin({
-  key: 'italic',
+const ItalicPlugin = BaseItalicPlugin.extend({
   node: {
     isLeaf: true,
     type: 'italic',
   },
 })
 
-const UnderlinePlugin = createPlatePlugin({
-  key: 'underline',
+const UnderlinePlugin = BaseUnderlinePlugin.extend({
   node: {
     isLeaf: true,
     type: 'underline',
   },
 })
 
-const CodePlugin = createPlatePlugin({
-  key: 'code',
+const CodePlugin = BaseCodePlugin.extend({
   node: {
     isLeaf: true,
     type: 'code',
@@ -40,24 +47,21 @@ const CodePlugin = createPlatePlugin({
   },
 })
 
-const StrikethroughPlugin = createPlatePlugin({
-  key: 'strikethrough',
+const StrikethroughPlugin = BaseStrikethroughPlugin.extend({
   node: {
     isLeaf: true,
     type: 'strikethrough',
   },
 })
 
-const SubscriptPlugin = createPlatePlugin({
-  key: 'subscript',
+const SubscriptPlugin = BaseSubscriptPlugin.extend({
   node: {
     isLeaf: true,
     type: 'subscript',
   },
 })
 
-const SuperscriptPlugin = createPlatePlugin({
-  key: 'superscript',
+const SuperscriptPlugin = BaseSuperscriptPlugin.extend({
   node: {
     isLeaf: true,
     type: 'superscript',

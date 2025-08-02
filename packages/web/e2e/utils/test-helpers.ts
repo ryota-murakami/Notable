@@ -26,22 +26,39 @@ export async function createTestNote(
   title: string,
   content: string
 ): Promise<{ id: string; title: string; content: string }> {
-  // Navigate to notes page
-  await page.goto('/notes')
-
   // Click new note button
   await page.click('[data-testid="new-note-button"]')
 
-  // Fill in note details
-  await page.fill('[data-testid="note-title"]', title)
-  await page.fill('[data-testid="note-content"]', content)
+  // Handle template picker
+  await page.waitForSelector('[role="dialog"]:has-text("Choose a Template")')
+  await page.click('button:has-text("Blank Note")')
+
+  // Wait for navigation to note editor
+  await page.waitForURL(/\/notes\/[a-z0-9-]+/)
+
+  // Wait for editor to be ready
+  await page.waitForTimeout(2000)
+
+  // Fill in note details - title is now in the editor
+  const editor = page
+    .locator('[data-testid="note-editor"] [contenteditable="true"]')
+    .first()
+  await editor.click()
+  await editor.fill(`# ${title}`)
+  await editor.press('Enter')
+  await editor.fill(content)
 
   // Save note (assuming auto-save or save button)
   await page.waitForTimeout(1000)
 
-  // Return mock note object
+  // Extract the note ID from the URL
+  const url = page.url()
+  const match = url.match(/\/notes\/([a-z0-9-]+)/)
+  const id = match ? match[1] : `test-note-${Date.now()}`
+
+  // Return note object
   return {
-    id: `test-note-${Date.now()}`,
+    id,
     title,
     content,
   }

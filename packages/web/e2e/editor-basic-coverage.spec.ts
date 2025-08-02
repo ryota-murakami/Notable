@@ -58,7 +58,7 @@ test.describe('Editor Basic Coverage', () => {
     await page.screenshot({ path: 'before-click.png' })
 
     // Check for new note button
-    const newNoteButton = page.getByRole('button', { name: 'New Note' })
+    const newNoteButton = page.locator('[data-testid="new-note-button"]')
     await expect(newNoteButton).toBeVisible()
 
     console.info('📋 Clicking New Note button...')
@@ -72,7 +72,7 @@ test.describe('Editor Basic Coverage', () => {
 
     // Check if template picker dialog exists
     const templatePickerExists = await page
-      .getByTestId('template-picker')
+      .locator('[role="dialog"]:has-text("Choose a Template")')
       .count()
     console.info(`🔍 Template picker dialogs found: ${templatePickerExists}`)
 

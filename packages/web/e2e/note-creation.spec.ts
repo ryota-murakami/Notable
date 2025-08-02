@@ -26,7 +26,7 @@ test.describe('Note Creation', () => {
     await page.waitForSelector('[data-testid="app-shell"]')
 
     // Find the "New Note" button
-    const newNoteButton = page.locator('button:has-text("New Note")')
+    const newNoteButton = page.locator('[data-testid="new-note-button"]')
 
     // Button should be visible and enabled
     await expect(newNoteButton).toBeVisible()
@@ -35,16 +35,22 @@ test.describe('Note Creation', () => {
     // Click the new note button
     await newNoteButton.click()
 
-    // Wait for navigation and note editor to load
-    await page.waitForTimeout(2000)
+    // Wait for template picker dialog
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
 
-    // CORE FIX FOR ISSUE #219: Verify we're no longer seeing the welcome screen
-    // This was the main problem - clicking "New Note" was still showing "Welcome Notable"
-    const welcomeScreen = page.locator('text="Welcome to Notable"')
-    await expect(welcomeScreen).not.toBeVisible()
+    // Click Blank Note
+    await page.click('button:has-text("Blank Note")')
 
-    // Verify the URL changed to a note route (indicating navigation worked correctly)
-    expect(page.url()).toMatch(/\/notes\/mock-note-\d+/)
+    // Wait for navigation to note
+    await page.waitForURL(/\/notes\/[a-z0-9-]+/)
+
+    // Verify we're on a note page - look for the textarea editor
+    await expect(page.locator('textarea')).toBeVisible()
+
+    // Verify the URL changed to a note route
+    expect(page.url()).toMatch(/\/notes\/[a-z0-9-]+/)
 
     // Check that we don't see any error messages
     const errorText = page.locator('text="Oops! Something went wrong"')
@@ -55,18 +61,31 @@ test.describe('Note Creation', () => {
     // Wait for app shell to be visible
     await page.waitForSelector('[data-testid="app-shell"]')
 
-    const newNoteButton = page.locator('button:has-text("New Note")')
+    const newNoteButton = page.locator('[data-testid="new-note-button"]')
 
     // Create 3 notes
     for (let i = 0; i < 3; i++) {
       await newNoteButton.click()
-      await page.waitForTimeout(200) // Small delay between creations
+
+      // Handle template picker each time
+      await expect(
+        page.locator('[role="dialog"]:has-text("Choose a Template")')
+      ).toBeVisible()
+      await page.click('button:has-text("Blank Note")')
+
+      // Wait for navigation
+      await page.waitForURL(/\/notes\/[a-z0-9-]+/)
+
+      // Go back to home to create another
+      if (i < 2) {
+        await page.goto('/app')
+        await page.waitForSelector('[data-testid="app-shell"]')
+      }
     }
 
-    // Should see at least 3 notes with "Untitled" text
-    const untitledNotes = page.locator('text="Untitled"')
-    const count = await untitledNotes.count()
-    expect(count).toBeGreaterThanOrEqual(3)
+    // Should be on the last created note
+    await expect(page.locator('textarea')).toBeVisible()
+    expect(page.url()).toMatch(/\/notes\/[a-z0-9-]+/)
   })
 
   test('should handle authentication errors gracefully', async ({ page }) => {

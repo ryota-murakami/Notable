@@ -187,3 +187,49 @@ CREATE INDEX idx_saved_searches_shortcut_key ON saved_searches(shortcut_key);
 -- Create triggers for saved_searches
 CREATE TRIGGER update_saved_searches_updated_at BEFORE UPDATE ON saved_searches
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Create search suggestions function
+CREATE OR REPLACE FUNCTION get_search_suggestions(
+    p_query TEXT,
+    p_user_id UUID,
+    p_limit INTEGER DEFAULT 10
+)
+RETURNS TABLE(
+    suggestion TEXT,
+    type VARCHAR(20),
+    count INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    WITH recent_queries AS (
+        SELECT DISTINCT query as suggestion, 'history' as type, 1 as count
+        FROM search_history 
+        WHERE user_id = p_user_id 
+        AND query ILIKE '%' || p_query || '%'
+        ORDER BY timestamp DESC
+        LIMIT p_limit / 2
+    ),
+    note_titles AS (
+        SELECT DISTINCT title as suggestion, 'note' as type, 1 as count
+        FROM notes 
+        WHERE user_id = p_user_id 
+        AND title ILIKE '%' || p_query || '%'
+        AND deleted_at IS NULL
+        ORDER BY updated_at DESC
+        LIMIT p_limit / 2
+    ),
+    tag_names AS (
+        SELECT DISTINCT name as suggestion, 'tag' as type, 1 as count
+        FROM tags 
+        WHERE user_id = p_user_id 
+        AND name ILIKE '%' || p_query || '%'
+        LIMIT p_limit / 2
+    )
+    SELECT * FROM recent_queries
+    UNION ALL
+    SELECT * FROM note_titles
+    UNION ALL
+    SELECT * FROM tag_names
+    LIMIT p_limit;
+END;
+$$ LANGUAGE plpgsql;

@@ -244,6 +244,7 @@ export function TemplatePicker({
                     size='sm'
                     onClick={() => setSelectedCategory('all')}
                     className='w-full justify-start'
+                    data-testid='template-category-all'
                   >
                     All Templates ({templates.length})
                   </Button>
@@ -399,6 +400,7 @@ function TemplateCard({
       onClick={onClick}
       className='group relative p-4 rounded-lg border border-border bg-card hover:bg-accent/50 cursor-pointer transition-all duration-200 hover:shadow-md'
       data-testid={`template-card-${template.id}`}
+      data-template-name={template.name}
     >
       {/* Template Preview/Thumbnail */}
       <div className='aspect-video mb-3 rounded-md bg-muted/50 border flex items-center justify-center overflow-hidden'>

@@ -6,6 +6,37 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      const mockNote = {
+        id: params.id,
+        title: 'Mock Note',
+        content: {
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [
+                {
+                  type: 'text',
+                  text: 'This is a mock note content for testing.',
+                },
+              ],
+            },
+          ],
+        },
+        user_id: 'mock-user-id',
+        folder_id: null,
+        is_public: false,
+        is_hidden: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        deleted_at: null,
+      }
+
+      return NextResponse.json({ note: mockNote })
+    }
+
     const supabase = await createClient()
 
     // Get the current user
@@ -51,6 +82,35 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      const body = await request.json()
+      const { title, content, folder_id, is_hidden } = body
+
+      const mockNote = {
+        id: params.id,
+        title: title || 'Updated Mock Note',
+        content: content || {
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Updated mock note content.' }],
+            },
+          ],
+        },
+        user_id: 'mock-user-id',
+        folder_id: folder_id || null,
+        is_public: false,
+        is_hidden: is_hidden || false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        deleted_at: null,
+      }
+
+      return NextResponse.json({ note: mockNote })
+    }
+
     const supabase = await createClient()
 
     // Get the current user
@@ -122,6 +182,11 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      return NextResponse.json({ message: 'Note deleted successfully' })
+    }
+
     const supabase = await createClient()
 
     // Get the current user

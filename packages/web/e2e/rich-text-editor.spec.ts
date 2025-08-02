@@ -31,35 +31,38 @@ test.describe('Rich Text Editor', () => {
   })
 
   test('should handle new note creation', async ({ page }) => {
-    // Try to find new note button
-    const newNoteButton = page.getByRole('button', { name: 'New Note' })
-    const hasNewNoteButton = await newNoteButton.isVisible().catch(() => false)
+    // Click new note button
+    await page.click('[data-testid="new-note-button"]')
 
-    if (hasNewNoteButton) {
-      await newNoteButton.click()
-      // Wait a bit for navigation
-      await page.waitForTimeout(1000)
+    // Handle template picker
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
+    await page.click('button:has-text("Blank Note")')
 
-      // Check if we navigated to a note page
-      const url = page.url()
-      if (url.includes('/notes/')) {
-        console.info('Successfully navigated to note editor')
-      }
-    }
+    // Wait for navigation
+    await page.waitForURL(/\/notes\/[a-z0-9-]+/)
+
+    // Check if we navigated to a note page
+    const url = page.url()
+    expect(url).toMatch(/\/notes\/[a-z0-9-]+/)
 
     // App should remain stable
     await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
   })
 
   test('should check for editor elements', async ({ page }) => {
-    // Navigate to notes if possible
-    const newNoteButton = page.getByRole('button', { name: 'New Note' })
-    const hasNewNoteButton = await newNoteButton.isVisible().catch(() => false)
+    // Navigate to notes
+    await page.click('[data-testid="new-note-button"]')
 
-    if (hasNewNoteButton) {
-      await newNoteButton.click()
-      await page.waitForTimeout(1000)
-    }
+    // Handle template picker
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
+    await page.click('button:has-text("Blank Note")')
+
+    // Wait for navigation
+    await page.waitForURL(/\/notes\/[a-z0-9-]+/)
 
     // Check for any editor-like elements
     const possibleEditors = [
@@ -91,14 +94,17 @@ test.describe('Rich Text Editor', () => {
   })
 
   test('should handle text input if editor exists', async ({ page }) => {
-    // Navigate to notes if possible
-    const newNoteButton = page.getByRole('button', { name: 'New Note' })
-    const hasNewNoteButton = await newNoteButton.isVisible().catch(() => false)
+    // Navigate to notes
+    await page.click('[data-testid="new-note-button"]')
 
-    if (hasNewNoteButton) {
-      await newNoteButton.click()
-      await page.waitForTimeout(1000)
-    }
+    // Handle template picker
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
+    await page.click('button:has-text("Blank Note")')
+
+    // Wait for navigation
+    await page.waitForURL(/\/notes\/[a-z0-9-]+/)
 
     // Try to find an editable element
     const editor = page
@@ -121,14 +127,17 @@ test.describe('Rich Text Editor', () => {
   })
 
   test('should check for formatting toolbar', async ({ page }) => {
-    // Navigate to notes if possible
-    const newNoteButton = page.getByRole('button', { name: 'New Note' })
-    const hasNewNoteButton = await newNoteButton.isVisible().catch(() => false)
+    // Navigate to notes
+    await page.click('[data-testid="new-note-button"]')
 
-    if (hasNewNoteButton) {
-      await newNoteButton.click()
-      await page.waitForTimeout(1000)
-    }
+    // Handle template picker
+    await expect(
+      page.locator('[role="dialog"]:has-text("Choose a Template")')
+    ).toBeVisible()
+    await page.click('button:has-text("Blank Note")')
+
+    // Wait for navigation
+    await page.waitForURL(/\/notes\/[a-z0-9-]+/)
 
     // Check for toolbar buttons
     const toolbarButtons = [

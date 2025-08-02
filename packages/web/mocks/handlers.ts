@@ -435,6 +435,25 @@ export const handlers = [
     })
   }),
 
+  // Mock Supabase RPC function calls
+  http.post('*/rest/v1/rpc/get_search_suggestions', async ({ request }) => {
+    const body = (await request.json()) as Record<string, any>
+    const query = body.p_query || ''
+
+    // Mock search suggestions based on query
+    const suggestions = [
+      { suggestion: `${query} in notes`, type: 'note', count: 1 },
+      { suggestion: `${query} in templates`, type: 'note', count: 1 },
+      { suggestion: `recent ${query}`, type: 'history', count: 1 },
+      { suggestion: `${query} tag`, type: 'tag', count: 1 },
+    ].filter(
+      (s) =>
+        query === '' || s.suggestion.toLowerCase().includes(query.toLowerCase())
+    )
+
+    return HttpResponse.json(suggestions.slice(0, body.p_limit || 10))
+  }),
+
   // Mock sync endpoints
   http.post('*/api/sync/offline-changes', async ({ request }) => {
     const body = (await request.json()) as { changes?: any[] }
