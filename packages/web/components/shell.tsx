@@ -13,7 +13,7 @@ import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
-import { FileText, Plus } from 'lucide-react'
+import { FileText, Plus, BarChart3 } from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import {
   NotableCommandPalette,
@@ -455,6 +455,18 @@ export function Shell({ children }: { children?: React.ReactNode }) {
                 ))
               )}
             </div>
+          </div>
+
+          {/* Graph View */}
+          <div className='mt-4'>
+            <Button
+              variant='ghost'
+              className='w-full justify-start'
+              onClick={() => router.push('/app/graph')}
+            >
+              <BarChart3 className='mr-2 h-4 w-4' />
+              Graph View
+            </Button>
           </div>
         </div>
       </aside>
