@@ -17,25 +17,41 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Basic Search', () => {
-    test.skip('should open search with keyboard shortcut', async ({ page }) => {
-      // SKIPPED: Search dialog functionality not implemented
-      // Press search shortcut
+    test('should open search with keyboard shortcut', async ({ page }) => {
+      // Press command palette shortcut
       await page.keyboard.press('Control+k')
 
-      // Verify search dialog opens
-      await expect(page.locator('[data-testid="search-dialog"]')).toBeVisible()
+      // Wait a bit for animation
+      await page.waitForTimeout(500)
 
-      // Verify search input is focused
-      await expect(page.locator('[data-testid="search-input"]')).toBeFocused()
+      // Verify command palette opens - use partial text match
+      const commandInput = page.locator('input[type="text"]').first()
+      await expect(commandInput).toBeVisible()
+      await expect(commandInput).toBeFocused()
+
+      // Verify Search Notes option is visible
+      await expect(page.locator('text="Search Notes"')).toBeVisible()
     })
 
-    test.skip('should search notes by title', async ({ page }) => {
-      // SKIPPED: Search functionality needs implementation
-      // Create test notes
+    test('should search using header search bar', async ({ page }) => {
+      // Click on the search input in the header
+      const searchBar = page.locator('input[placeholder="Search..."]')
+      await expect(searchBar).toBeVisible()
+
+      // Click and type in search bar
+      await searchBar.click()
+      await searchBar.fill('test search')
+
+      // The search bar should accept input
+      await expect(searchBar).toHaveValue('test search')
+    })
+
+    test('should search notes by title', async ({ page }) => {
+      // First create some test notes
       const notes = ['JavaScript Tutorial', 'Python Guide', 'TypeScript Basics']
 
       for (const title of notes) {
-        await page.click('[data-testid="new-note-button"]')
+        await page.click('button:has-text("New Note")')
 
         // Handle template picker
         await expect(
@@ -43,28 +59,34 @@ test.describe('Comprehensive Search Functionality Tests', () => {
         ).toBeVisible()
         await page.click('button:has-text("Blank Note")')
 
-        await page.waitForSelector('input[placeholder="Untitled"]')
-        await page.fill('input[placeholder="Untitled"]', title)
+        // Wait for navigation to new note
+        await page.waitForURL(/\/notes\/[a-z0-9-]+/)
+
+        // Fill in the title using correct selector
+        await page.fill('[data-testid="note-title-input"]', title)
         await page.waitForTimeout(1000) // Auto-save
 
         // Go back to create next note
         await page.goto('/app')
       }
 
-      // Open search
+      // Open command palette
       await page.keyboard.press('Control+k')
+      await expect(
+        page.locator('[placeholder="Type a command or search"]')
+      ).toBeVisible()
 
-      // Search for "Script"
-      await page.fill('[data-testid="search-input"]', 'Script')
+      // Search for "Script" - should find JavaScript and TypeScript
+      await page.fill('[placeholder="Type a command or search"]', 'Script')
+      await page.waitForTimeout(300) // Debounce
 
-      // Verify results
-      await expect(page.locator('[data-testid="search-result"]')).toHaveCount(2)
-      await expect(page.locator('[data-testid="search-result"]')).toContainText(
-        'JavaScript Tutorial'
-      )
-      await expect(page.locator('[data-testid="search-result"]')).toContainText(
-        'TypeScript Basics'
-      )
+      // Verify results appear in command palette
+      // The command palette should show matching notes
+      await expect(page.locator('text="JavaScript Tutorial"')).toBeVisible()
+      await expect(page.locator('text="TypeScript Basics"')).toBeVisible()
+
+      // Python Guide should not be visible
+      await expect(page.locator('text="Python Guide"')).not.toBeVisible()
     })
 
     test.skip('should search notes by content', async ({ page }) => {
