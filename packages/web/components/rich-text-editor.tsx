@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Download } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { BasicEditor } from '@/components/editor/basic-editor'
@@ -9,6 +9,7 @@ import { TagInput } from '@/components/ui/tag-input'
 import { TagList } from '@/components/ui/tag-badge'
 import { TemplatePicker } from '@/components/templates/template-picker'
 import { TemplateVariableForm } from '@/components/templates/template-variable-form'
+import { ExportButton } from '@/components/export/export-button'
 import { TemplateEngine } from '@/lib/templates/engine'
 import { markdownToSlate } from '@/lib/slate/markdown-to-slate'
 import {
@@ -244,16 +245,31 @@ export function RichTextEditor({
             style={{ fontSize: '1.5rem', fontWeight: 'bold' }}
             data-testid='note-title-input'
           />
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={() => setIsTemplatePickerOpen(true)}
-            className='flex items-center gap-2 shrink-0'
-            disabled={isProcessingTemplate}
-          >
-            <Sparkles className='h-4 w-4' />
-            {isProcessingTemplate ? 'Processing...' : 'New from Template'}
-          </Button>
+          <div className='flex items-center gap-2'>
+            <ExportButton
+              note={{
+                id: noteId,
+                title: title || 'Untitled',
+                content: JSON.stringify(content),
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                user_id: 'current-user',
+                tags: tags,
+              }}
+              size='sm'
+              variant='outline'
+            />
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => setIsTemplatePickerOpen(true)}
+              className='flex items-center gap-2 shrink-0'
+              disabled={isProcessingTemplate}
+            >
+              <Sparkles className='h-4 w-4' />
+              {isProcessingTemplate ? 'Processing...' : 'New from Template'}
+            </Button>
+          </div>
         </div>
       </div>
 
