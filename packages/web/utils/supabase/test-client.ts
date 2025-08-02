@@ -13,6 +13,7 @@ export function createMockSupabaseClient(): SupabaseClient {
     notes: new Map(),
     tags: new Map(),
     folders: new Map(),
+    note_links: new Map(),
   }
 
   const mockClient = {
@@ -27,6 +28,13 @@ export function createMockSupabaseClient(): SupabaseClient {
 
       return {
         select: (columns?: string) => ({
+          or: (query: string) => ({
+            order: (column: string, options?: any) =>
+              Promise.resolve({
+                data: Array.from(tableData.values()),
+                error: null,
+              }),
+          }),
           eq: (column: string, value: any) => ({
             single: () => {
               const item = Array.from(tableData.values()).find(

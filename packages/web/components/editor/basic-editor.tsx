@@ -8,6 +8,9 @@ import {
   Editor,
   Element as SlateElement,
   Transforms,
+  Range,
+  Point,
+  Text,
 } from 'slate'
 import {
   Editable,
@@ -47,6 +50,13 @@ type CustomElement =
   | { type: 'bulleted-list'; children: CustomElement[] }
   | { type: 'numbered-list'; children: CustomElement[] }
   | { type: 'list-item'; children: CustomText[] }
+  | {
+      type: 'wiki-link'
+      noteId?: string
+      noteTitle: string
+      url: string
+      children: CustomText[]
+    }
 
 type CustomText = {
   text: string
@@ -167,6 +177,25 @@ const Element = ({ attributes, children, element }: RenderElementProps) => {
         <ol {...attributes} className='list-decimal pl-6 my-2'>
           {children}
         </ol>
+      )
+    case 'wiki-link':
+      return (
+        <a
+          {...attributes}
+          href={element.noteId ? `/notes/${element.noteId}` : element.url}
+          data-wiki-link='true'
+          data-note-id={element.noteId}
+          title={`Link to: ${element.noteTitle}`}
+          className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline decoration-blue-600/30 hover:decoration-blue-600/60 transition-colors duration-200 cursor-pointer'
+          onClick={(e) => {
+            e.preventDefault()
+            if (element.noteId) {
+              window.location.href = `/notes/${element.noteId}`
+            }
+          }}
+        >
+          {children}
+        </a>
       )
     default:
       return (
@@ -368,7 +397,73 @@ export function BasicEditor({
     (props: RenderLeafProps) => <Leaf {...props} />,
     []
   )
-  const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+
+  // Custom editor with wiki link support
+  const withWikiLinks = (editor: Editor) => {
+    const { insertText, isInline } = editor
+
+    editor.isInline = (element) => {
+      return element.type === 'wiki-link' ? true : isInline(element)
+    }
+
+    editor.insertText = (text) => {
+      const { selection } = editor
+
+      if (text === ']' && selection && Range.isCollapsed(selection)) {
+        const [start] = Range.edges(selection)
+        const beforeText = Editor.string(editor, {
+          anchor: { ...start, offset: Math.max(0, start.offset - 2) },
+          focus: start,
+        })
+
+        if (beforeText === '[[') {
+          // Get the text between [[ and ]]
+          const afterText = Editor.string(editor, {
+            anchor: start,
+            focus: Editor.end(editor, []),
+          })
+          const endBracketIndex = afterText.indexOf(']')
+
+          if (endBracketIndex === -1) {
+            // No closing bracket yet, just insert the text
+            insertText(text)
+            return
+          }
+
+          // Extract the note title
+          const noteTitle = afterText.substring(0, endBracketIndex)
+
+          // Delete the [[ prefix and the note title
+          Transforms.delete(editor, {
+            at: {
+              anchor: { ...start, offset: start.offset - 2 },
+              focus: { ...start, offset: start.offset + endBracketIndex },
+            },
+          })
+
+          // Insert the wiki link
+          const wikiLink = {
+            type: 'wiki-link' as const,
+            noteTitle: noteTitle || 'Untitled',
+            url: `/search?title=${encodeURIComponent(noteTitle)}`,
+            children: [{ text: noteTitle || 'Untitled' }],
+          }
+
+          Transforms.insertNodes(editor, wikiLink)
+          return
+        }
+      }
+
+      insertText(text)
+    }
+
+    return editor
+  }
+
+  const editor = useMemo(
+    () => withWikiLinks(withHistory(withReact(createEditor()))),
+    []
+  )
 
   return (
     <Slate editor={editor} initialValue={initialValue} onChange={onChange}>

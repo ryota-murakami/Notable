@@ -11,6 +11,7 @@ import { TemplatePicker } from '@/components/templates/template-picker'
 import { TemplateVariableForm } from '@/components/templates/template-variable-form'
 import { ExportButton } from '@/components/export/export-button'
 import { NoteActions } from '@/components/note-actions'
+import { BacklinksPanel } from '@/components/backlinks-panel'
 import { TemplateEngine } from '@/lib/templates/engine'
 import { markdownToSlate } from '@/lib/slate/markdown-to-slate'
 import {
@@ -330,17 +331,28 @@ export function RichTextEditor({
         </div>
       </div>
 
-      {/* Content Editor */}
-      <div className='flex-1 overflow-auto'>
-        <BasicEditor
-          key={noteId} // Force re-render when note changes
-          initialValue={content}
-          onChange={handleContentChange}
-          placeholder='Start writing your note...'
-          autoFocus
-          className='border-0 h-full'
-          data-testid='rich-text-editor'
-        />
+      {/* Content Area with Editor and Backlinks */}
+      <div className='flex-1 flex'>
+        {/* Main Editor */}
+        <div className='flex-1 overflow-auto'>
+          <BasicEditor
+            key={noteId} // Force re-render when note changes
+            initialValue={content}
+            onChange={handleContentChange}
+            placeholder='Start writing your note...'
+            autoFocus
+            className='border-0 h-full'
+            data-testid='rich-text-editor'
+          />
+        </div>
+
+        {/* Backlinks Panel */}
+        <div
+          className='w-80 border-l bg-background/50 p-4 overflow-auto'
+          data-testid='backlinks-panel'
+        >
+          <BacklinksPanel noteId={noteId} className='sticky top-0' />
+        </div>
       </div>
 
       {/* Template Picker Modal */}
