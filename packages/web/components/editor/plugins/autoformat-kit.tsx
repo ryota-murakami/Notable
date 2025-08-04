@@ -114,24 +114,32 @@ const autoformatMarks: AutoformatRule[] = [
 // Wiki link formatting rule
 const autoformatWikiLinks: AutoformatRule[] = [
   {
-    match: '[[',
-    mode: 'text',
-    format: (editor) => {
-      // This will be triggered when user types [[
-      // We'll need to handle the closing ]] in a different way
-      return false
-    },
-  },
-  {
-    match: '[[*]]',
+    match: /\[\[([^\]]+)\]\]$/,
     mode: 'text',
     format: (editor, options) => {
-      // Handle match extraction when it exists
+      // Extract the note title from regex match
       if (options && 'match' in options && Array.isArray(options.match)) {
         const noteTitle = options.match[1]
 
+        // Delete the matched text including brackets
+        const { selection } = editor
+        if (selection) {
+          // Move selection back to include the full matched text
+          const matchLength = options.match[0].length
+          editor.select({
+            anchor: {
+              path: selection.anchor.path,
+              offset: selection.anchor.offset - matchLength,
+            },
+            focus: selection.focus,
+          })
+
+          // Delete the matched text
+          editor.deleteFragment()
+        }
+
         // Insert wiki link element
-        ;(editor as any).insertNode({
+        editor.insertNode({
           type: 'wikiLink',
           noteTitle: noteTitle.trim(),
           url: `/notes/search?title=${encodeURIComponent(noteTitle.trim())}`,

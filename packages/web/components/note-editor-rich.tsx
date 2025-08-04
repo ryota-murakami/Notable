@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useNote } from '@/hooks/use-note'
-import { RichTextEditor } from '@/components/rich-text-editor'
+import { RichTextEditorClient } from '@/components/rich-text-editor-client'
 import { Spinner } from '@/components/ui/spinner'
 import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
 import { plateToMarkdown } from '@/lib/plate/plate-to-markdown'
@@ -93,7 +93,7 @@ export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
 
   return (
     <div className='flex-1 flex flex-col' data-testid='note-editor-container'>
-      <RichTextEditor
+      <RichTextEditorClient
         noteId={noteId}
         initialTitle={effectiveNote.title}
         initialContent={initialContent}

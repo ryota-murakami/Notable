@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Download, Sparkles } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { EnhancedPlateEditor } from '@/components/editor/enhanced-plate-editor'
+import { EnhancedPlateEditorClient } from '@/components/editor/enhanced-plate-editor-client'
 import { TagInput } from '@/components/ui/tag-input'
 import { TagList } from '@/components/ui/tag-badge'
 import { TemplatePicker } from '@/components/templates/template-picker'
@@ -387,7 +387,7 @@ export function RichTextEditor({
       <div className='flex-1 flex'>
         {/* Main Editor */}
         <div className='flex-1 overflow-auto'>
-          <EnhancedPlateEditor
+          <EnhancedPlateEditorClient
             key={noteId} // Force re-render when note changes
             value={content}
             onChange={handleContentChange}

@@ -7,6 +7,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 COMPOSE_FILE="$PROJECT_DIR/docker-compose.test.yml"
 
+# Load test environment variables if .env.test exists
+if [ -f "$PROJECT_DIR/.env.test" ]; then
+    export $(grep -v '^#' "$PROJECT_DIR/.env.test" | xargs)
+fi
+
 # Colors for output
 GREEN='\033[0;32m'
 RED='\033[0;31m'

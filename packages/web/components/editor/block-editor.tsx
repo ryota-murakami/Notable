@@ -11,6 +11,7 @@ import { BasicMarksKit } from './plugins/basic-marks-kit'
 import { AdvancedBlocksKit } from './plugins/advanced-blocks-kit'
 import { SlashCommandPlugin } from './plugins/slash-command-kit'
 import { AutoformatKit } from './plugins/autoformat-kit'
+import { WikiLinkPlugin } from './plugins/wiki-link-plate-plugin'
 // import { SlashCommandMenu, useSlashCommand } from './slash-command-menu'
 import { SimpleSlashMenu, useSimpleSlashCommand } from './simple-slash-menu'
 import { EditorToolbar } from './editor-toolbar'
@@ -57,6 +58,7 @@ const createBlockEditorPlugins = () => [
   ...AdvancedBlocksKit,
   AutoformatKit,
   SlashCommandPlugin,
+  WikiLinkPlugin,
   BlockSelectionPlugin,
   BlockDragDropPlugin,
 ]
