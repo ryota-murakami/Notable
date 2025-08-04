@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Comprehensive Editor Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,6 +35,9 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
 
     // Wait for editor to be ready
     await page.waitForTimeout(2000)
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Text Formatting', () => {

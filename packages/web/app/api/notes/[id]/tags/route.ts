@@ -32,8 +32,21 @@ export async function GET(
       .from('notes')
       .select('id')
       .eq('id', id)
-      .eq('user_id', user.id)
       .maybeSingle()
+
+    // Check if note belongs to user
+    if (note && user) {
+      const { data: userNote } = await supabase
+        .from('notes')
+        .select('id')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (!userNote) {
+        return NextResponse.json({ error: 'Note not found' }, { status: 404 })
+      }
+    }
 
     if (noteError) {
       console.error('Error fetching note:', noteError)
@@ -131,8 +144,21 @@ export async function POST(
       .from('notes')
       .select('id')
       .eq('id', id)
-      .eq('user_id', user.id)
       .maybeSingle()
+
+    // Check if note belongs to user
+    if (note && user) {
+      const { data: userNote } = await supabase
+        .from('notes')
+        .select('id')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (!userNote) {
+        return NextResponse.json({ error: 'Note not found' }, { status: 404 })
+      }
+    }
 
     if (noteError) {
       console.error('Error fetching note:', noteError)

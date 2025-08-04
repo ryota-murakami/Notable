@@ -238,27 +238,75 @@ export const handlers = [
     return HttpResponse.json({ error: 'Template not found' }, { status: 404 })
   }),
 
-  // Mock other API endpoints that return 401
+  // Search history endpoint - MUST be before graph handler to avoid pattern conflicts
   http.get('*/api/search/history', ({ cookies }) => {
     if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    // Return mock search history
     return HttpResponse.json({
       data: [
         {
           id: 'search-1',
-          query: 'TypeScript',
-          timestamp: new Date().toISOString(),
+          query: 'typescript',
+          timestamp: new Date(Date.now() - 60000).toISOString(),
           results_count: 5,
         },
         {
           id: 'search-2',
-          query: 'React hooks',
-          timestamp: new Date().toISOString(),
+          query: 'react hooks',
+          timestamp: new Date(Date.now() - 120000).toISOString(),
           results_count: 3,
         },
       ],
       total: 2,
+    })
+  }),
+
+  // Mock other API endpoints that return 401
+  // Graph API handler for enhanced graph view
+  http.get('*/api/graph', ({ cookies }) => {
+    console.log('MSW Graph API handler called!')
+    console.log('Cookies:', cookies)
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        nodes: [
+          {
+            id: 'note-1',
+            label: 'Test Note 1',
+            title: 'Test Note 1',
+            connections: 2,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            tags: [],
+          },
+          {
+            id: 'note-2',
+            label: 'Test Note 2',
+            title: 'Test Note 2',
+            connections: 2,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            tags: [],
+          },
+        ],
+        edges: [
+          {
+            from: 'note-1',
+            to: 'note-2',
+            label: 'links to',
+            title: 'Test Note 1 links to Test Note 2',
+          },
+        ],
+        stats: {
+          totalNotes: 2,
+          totalLinks: 1,
+          avgConnections: 2,
+        },
+      },
     })
   }),
 
@@ -385,7 +433,17 @@ export const handlers = [
   }),
 
   // Mock notes endpoints
-  http.get('*/rest/v1/notes', () => {
+  http.get('*/rest/v1/notes', ({ request }) => {
+    const url = new URL(request.url)
+    const customId = url.searchParams.get('custom_id')?.replace('eq.', '')
+
+    // If searching for a specific daily note
+    if (customId && customId.startsWith('daily-')) {
+      // Return empty array to indicate no daily note exists yet
+      return HttpResponse.json([])
+    }
+
+    // Default notes list
     return HttpResponse.json([
       {
         id: 'n1111111-1111-1111-1111-111111111111',
@@ -412,13 +470,29 @@ export const handlers = [
 
   http.post('*/rest/v1/notes', async ({ request }) => {
     const body = (await request.json()) as Record<string, any>
-    return HttpResponse.json({
-      id: `n${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      ...body,
-      user_id: TEST_USER.id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
+
+    // Handle daily notes specially
+    const noteId = body.custom_id?.startsWith('daily-')
+      ? `dn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      : `n${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+
+    return HttpResponse.json([
+      {
+        id: noteId,
+        ...body,
+        user_id: TEST_USER.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        deleted_at: null,
+        is_pinned: false,
+        is_favorited: false,
+        is_archived: false,
+        is_daily_note: body.is_daily_note || false,
+        custom_id: body.custom_id || null,
+        folder_id: null,
+        tags: [],
+      },
+    ])
   }),
 
   http.patch('*/rest/v1/notes', async ({ request }) => {
@@ -780,9 +854,9 @@ export const handlers = [
     })
   }),
 
-  // Default handler for unhandled requests
-  http.all('*', ({ request }) => {
-    console.warn(`Unhandled request: ${request.method} ${request.url}`)
+  // Default handler for unhandled API requests only (not page routes)
+  http.all('*/api/*', ({ request }) => {
+    console.warn(`Unhandled API request: ${request.method} ${request.url}`)
     return new HttpResponse(null, { status: 404 })
   }),
 
@@ -935,23 +1009,56 @@ export const handlers = [
     const body = (await request.json()) as any
     const query = body.query || ''
 
+    const mockResults = query
+      ? [
+          {
+            id: 'n1111111-1111-1111-1111-111111111111',
+            title: 'Welcome to Notable',
+            content: 'Welcome to Notable! This is your first note.',
+            headline_title: `Welcome to <mark>${query}</mark>`,
+            headline_content: `Welcome to Notable! This is your first <mark>${query}</mark>.`,
+            updated_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            tags: [],
+            rank: 0.9,
+          },
+          {
+            id: 'n2222222-2222-2222-2222-222222222222',
+            title: 'Meeting Notes',
+            content:
+              'Team Meeting - Discussed project roadmap and upcoming features.',
+            headline_title: 'Meeting Notes',
+            headline_content: 'Team Meeting - Discussed project roadmap.',
+            updated_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            tags: [
+              {
+                id: 't1111111-1111-1111-1111-111111111111',
+                name: 'important',
+                color: '#ef4444',
+              },
+            ],
+            rank: 0.8,
+          },
+        ]
+      : []
+
     return HttpResponse.json({
-      results: query
-        ? [
-            {
-              id: 'advanced-result-1',
-              title: 'Advanced Search Result',
-              content: 'Content matching advanced search criteria',
-              type: 'note',
-              score: 0.95,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            },
-          ]
-        : [],
-      total: query ? 1 : 0,
-      query,
-      filters: body.filters || {},
+      success: true,
+      data: {
+        results: mockResults,
+        totalCount: mockResults.length,
+        hasMore: false,
+        query: {
+          original: query,
+          parsed: query,
+          operators: [],
+        },
+        filters: body.filters || {},
+        performance: {
+          responseTime: 50,
+        },
+      },
     })
   }),
 
@@ -1034,6 +1141,136 @@ export const handlers = [
     return HttpResponse.json({
       success: true,
       message: `Saved search ${params.id} deleted`,
+    })
+  }),
+
+  // Note links endpoints
+  http.get('*/api/notes/:id/links', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Mock note links data
+    const mockLinks = {
+      backlinks: [
+        {
+          id: 'link-1',
+          source_note_id: 'note-1',
+          target_note_id: params.id as string,
+          source_note_title: 'Source Note 1',
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: 'link-2',
+          source_note_id: 'note-2',
+          target_note_id: params.id as string,
+          source_note_title: 'Source Note 2',
+          created_at: new Date().toISOString(),
+        },
+      ],
+      forwardLinks: [
+        {
+          id: 'link-3',
+          source_note_id: params.id as string,
+          target_note_id: 'note-3',
+          target_note_title: 'Target Note 3',
+          created_at: new Date().toISOString(),
+        },
+      ],
+    }
+
+    return HttpResponse.json({
+      data: mockLinks,
+      total: {
+        backlinks: mockLinks.backlinks.length,
+        forwardLinks: mockLinks.forwardLinks.length,
+      },
+    })
+  }),
+
+  http.post('*/api/notes/:id/links', async ({ request, params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = (await request.json()) as any
+
+    return HttpResponse.json({
+      success: true,
+      link: {
+        id: `link-${Date.now()}`,
+        source_note_id: params.id as string,
+        target_note_id: body.target_note_id,
+        created_at: new Date().toISOString(),
+      },
+    })
+  }),
+
+  http.delete('*/api/notes/:id/links/:linkId', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    return HttpResponse.json({
+      success: true,
+      message: `Link ${params.linkId} deleted`,
+    })
+  }),
+
+  // Note tags endpoints
+  http.get('*/api/notes/:id/tags', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Mock note tags data
+    const mockTags = [
+      {
+        id: 'tag-1',
+        name: 'javascript',
+        color: '#f59e0b',
+        note_count: 5,
+      },
+      {
+        id: 'tag-2',
+        name: 'react',
+        color: '#3b82f6',
+        note_count: 3,
+      },
+    ]
+
+    return HttpResponse.json({
+      data: mockTags,
+      total: mockTags.length,
+    })
+  }),
+
+  http.post('*/api/notes/:id/tags', async ({ request, params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = (await request.json()) as any
+
+    return HttpResponse.json({
+      success: true,
+      noteTag: {
+        id: `note-tag-${Date.now()}`,
+        note_id: params.id as string,
+        tag_id: body.tag_id,
+        created_at: new Date().toISOString(),
+      },
+    })
+  }),
+
+  http.delete('*/api/notes/:id/tags/:tagId', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    return HttpResponse.json({
+      success: true,
+      message: `Tag ${params.tagId} removed from note`,
     })
   }),
 ]

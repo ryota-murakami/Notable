@@ -108,11 +108,42 @@ const autoformatMarks: AutoformatRule[] = [
   },
 ]
 
+// Wiki link formatting rule
+const autoformatWikiLinks: AutoformatRule[] = [
+  {
+    match: '[[',
+    mode: 'text',
+    format: (editor) => {
+      // This will be triggered when user types [[
+      // We'll need to handle the closing ]] in a different way
+      return false
+    },
+  },
+  {
+    match: /\[\[([^\]]+)\]\]/,
+    mode: 'text',
+    type: 'wikiLink',
+    format: (editor, { match }) => {
+      const noteTitle = match[1]
+
+      // Insert wiki link element
+      editor.insertNode({
+        type: 'wikiLink',
+        noteTitle: noteTitle.trim(),
+        url: `/notes/search?title=${encodeURIComponent(noteTitle.trim())}`,
+        children: [{ text: noteTitle.trim() }],
+      })
+
+      return true
+    },
+  },
+]
+
 // Configure the autoformat plugin with rules
 export const AutoformatKit = AutoformatPlugin.configure({
   options: {
     enableUndoOnDelete: true,
-    rules: [...autoformatBlocks, ...autoformatMarks],
+    rules: [...autoformatBlocks, ...autoformatMarks, ...autoformatWikiLinks],
   },
 })
 

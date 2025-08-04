@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Template System Core Tests', () => {
   test('debug - check API auth', async ({ page }) => {
@@ -39,6 +40,9 @@ test.describe('Template System Core Tests', () => {
     // Wait for the app to load
     await page.waitForLoadState('networkidle')
     await expect(page.locator('[data-testid="new-note-button"]')).toBeVisible()
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('should open template picker when clicking New Note', async ({

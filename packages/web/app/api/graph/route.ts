@@ -9,57 +9,116 @@ export async function GET(_request: NextRequest) {
   // If dev auth bypass is enabled, return mock data for E2E tests
   if (devBypassUser) {
     console.info('Dev auth bypass detected, returning mock graph data')
+
+    const nodes = [
+      {
+        id: 'note-1',
+        label: 'Test Note 1',
+        title: 'Test Note 1',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        connections: 2,
+        tags: [],
+      },
+      {
+        id: 'note-2',
+        label: 'Test Note 2',
+        title: 'Test Note 2',
+        created_at: new Date(
+          Date.now() - 8 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        updated_at: new Date().toISOString(),
+        connections: 2,
+        tags: [],
+      },
+      {
+        id: 'note-3',
+        label: 'Hub Note',
+        title: 'Hub Note',
+        created_at: new Date(
+          Date.now() - 15 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        updated_at: new Date().toISOString(),
+        connections: 4, // Hub node has many connections
+        tags: [],
+      },
+      {
+        id: 'note-4',
+        label: 'Isolated Note',
+        title: 'Isolated Note',
+        created_at: new Date(
+          Date.now() - 45 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        updated_at: new Date().toISOString(),
+        connections: 0, // Isolated node has no connections
+        tags: [],
+      },
+      {
+        id: 'note-5',
+        label: 'Connected Note',
+        title: 'Connected Note',
+        created_at: new Date(
+          Date.now() - 60 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        updated_at: new Date().toISOString(),
+        connections: 2,
+        tags: [],
+      },
+    ]
+
+    const edges = [
+      {
+        from: 'note-1',
+        to: 'note-2',
+        source: 'note-1',
+        target: 'note-2',
+        label: 'links to',
+        title: 'Test Note 1 links to Test Note 2',
+      },
+      {
+        from: 'note-1',
+        to: 'note-3',
+        source: 'note-1',
+        target: 'note-3',
+        label: 'links to',
+        title: 'Test Note 1 links to Hub Note',
+      },
+      {
+        from: 'note-2',
+        to: 'note-3',
+        source: 'note-2',
+        target: 'note-3',
+        label: 'links to',
+        title: 'Test Note 2 links to Hub Note',
+      },
+      {
+        from: 'note-3',
+        to: 'note-5',
+        source: 'note-3',
+        target: 'note-5',
+        label: 'links to',
+        title: 'Hub Note links to Connected Note',
+      },
+      {
+        from: 'note-5',
+        to: 'note-3',
+        source: 'note-5',
+        target: 'note-3',
+        label: 'links to',
+        title: 'Connected Note links to Hub Note',
+      },
+    ]
+
     return NextResponse.json({
       success: true,
       data: {
-        nodes: [
-          {
-            id: 'note-1',
-            label: 'Sample Note 1',
-            title: 'Sample Note 1',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            connections: 2,
-          },
-          {
-            id: 'note-2',
-            label: 'Sample Note 2',
-            title: 'Sample Note 2',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            connections: 1,
-          },
-          {
-            id: 'note-3',
-            label: 'Sample Note 3',
-            title: 'Sample Note 3',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            connections: 1,
-          },
-        ],
-        edges: [
-          {
-            from: 'note-1',
-            to: 'note-2',
-            source: 'note-1',
-            target: 'note-2',
-            label: 'connected to',
-            title: 'Link: connected to',
-          },
-          {
-            from: 'note-1',
-            to: 'note-3',
-            source: 'note-1',
-            target: 'note-3',
-            label: 'references',
-            title: 'Link: references',
-          },
-        ],
+        nodes,
+        edges,
         stats: {
-          totalNotes: 3,
-          totalLinks: 2,
-          avgConnections: 1.33,
+          totalNotes: nodes.length,
+          totalLinks: edges.length,
+          avgConnections:
+            nodes.reduce((sum, n) => sum + n.connections, 0) / nodes.length,
         },
       },
     })

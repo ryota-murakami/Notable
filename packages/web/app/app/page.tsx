@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 export default function AppPage() {
   return (
     <div className='flex-1 flex items-center justify-center p-6'>

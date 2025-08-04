@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { getDevAuthBypassUser } from '@/utils/auth-helpers'
 import type { TagUpdate } from '@/types/tags'
+import { mockStore } from '@/utils/mock-data-store'
 
 export async function GET(
   request: NextRequest,
@@ -26,6 +27,28 @@ export async function GET(
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
       user = authUser
+    }
+
+    // Return mock data when API mocking is enabled or dev auth bypass is used
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const hasDevAuthBypass =
+      cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' || hasDevAuthBypass) {
+      const tag = mockStore.tags.get(id)
+
+      if (!tag || tag.user_id !== user.id) {
+        return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...tag,
+          children: [], // Mock children support
+        },
+      })
     }
 
     // Get the tag with usage count
@@ -108,6 +131,60 @@ export async function PUT(
 
     const body = await request.json()
     const { name, color } = body as TagUpdate
+
+    // Return mock data when API mocking is enabled or dev auth bypass is used
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const hasDevAuthBypass =
+      cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' || hasDevAuthBypass) {
+      const existingTag = mockStore.tags.get(id)
+
+      if (!existingTag || existingTag.user_id !== user.id) {
+        return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
+      }
+
+      // Validate name if provided
+      if (name !== undefined) {
+        if (!name || typeof name !== 'string' || name.trim().length === 0) {
+          return NextResponse.json(
+            { error: 'Tag name is required' },
+            { status: 400 }
+          )
+        }
+
+        // Check for duplicate names (excluding current tag)
+        if (name.trim() !== existingTag.name) {
+          const duplicateTag = mockStore.tags.findByName(name.trim(), user.id)
+          if (duplicateTag && duplicateTag.id !== id) {
+            return NextResponse.json(
+              { error: 'A tag with this name already exists' },
+              { status: 409 }
+            )
+          }
+        }
+      }
+
+      // Update the tag
+      const updates: Partial<typeof existingTag> = {}
+      if (name !== undefined) updates.name = name.trim()
+      if (color !== undefined) updates.color = color
+
+      const updatedTag = mockStore.tags.update(id, updates)
+
+      if (!updatedTag) {
+        return NextResponse.json(
+          { error: 'Failed to update tag' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: updatedTag,
+      })
+    }
 
     // Verify tag exists and belongs to user
     const { data: existingTag, error: fetchError } = await supabase
@@ -246,6 +323,35 @@ export async function DELETE(
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
       user = authUser
+    }
+
+    // Return mock data when API mocking is enabled or dev auth bypass is used
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const hasDevAuthBypass =
+      cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' || hasDevAuthBypass) {
+      const tag = mockStore.tags.get(id)
+
+      if (!tag || tag.user_id !== user.id) {
+        return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
+      }
+
+      // Delete the tag
+      const deleted = mockStore.tags.delete(id)
+
+      if (!deleted) {
+        return NextResponse.json(
+          { error: 'Failed to delete tag' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Tag deleted successfully',
+      })
     }
 
     // Check if tag exists and belongs to user

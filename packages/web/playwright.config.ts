@@ -45,6 +45,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:4378',
 
+    /* Enable downloads in tests */
+    acceptDownloads: true,
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
@@ -62,7 +65,10 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        acceptDownloads: true,
+      },
     },
     // Temporarily disable other browsers to speed up CI and prevent hanging
     // TODO: Re-enable firefox and mobile testing after core issues are resolved
@@ -78,7 +84,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'NODE_ENV=test pnpm start',
+    command: 'NODE_ENV=test pnpm dev',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes for CI
@@ -106,6 +112,9 @@ export default defineConfig({
       UPLOADTHING_APP_ID: 'test-uploadthing-app-id',
       OPENAI_API_KEY: 'test-openai-api-key',
       JWT_SECRET: 'test-jwt-secret-for-app',
+
+      // Test-specific configuration
+      NEXT_PUBLIC_BYPASS_TEMPLATE_PICKER: 'true',
 
       // Sentry configuration (placeholder values for testing)
       NEXT_PUBLIC_SENTRY_DSN: 'https://placeholder@sentry.io/123456',

@@ -59,12 +59,12 @@ export async function createClient() {
   })
 
   // Check for dev auth bypass in test/development/CI environments
-  const devBypassUser = await getDevAuthBypassUser()
-  if (devBypassUser) {
+  const devUser = await getDevAuthBypassUser()
+  if (devUser) {
     // Override the auth.getUser method to return mock user
     client.auth.getUser = () =>
       Promise.resolve({
-        data: { user: devBypassUser },
+        data: { user: devUser },
         error: null,
       })
   }

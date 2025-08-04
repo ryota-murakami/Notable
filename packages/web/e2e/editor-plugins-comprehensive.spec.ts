@@ -1,4 +1,8 @@
 import { expect, test } from './fixtures/coverage'
+import {
+  waitForHydration,
+  clickWithHydration,
+} from './utils/wait-for-hydration'
 
 test.describe('Comprehensive Editor Plugins Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -17,7 +21,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
     await page.waitForSelector('[data-testid="app-shell"]')
 
     // Click new note button
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Handle template picker
     await expect(
@@ -30,6 +34,9 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Basic Marks Kit', () => {

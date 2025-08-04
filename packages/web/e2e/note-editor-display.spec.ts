@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Note Editor Display', () => {
   test.beforeEach(async ({ page }) => {
@@ -26,6 +27,9 @@ test.describe('Note Editor Display', () => {
     if (loadingText > 0) {
       await page.waitForSelector('text=Loading...', { state: 'hidden' })
     }
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('should display editor when clicking New Note button', async ({

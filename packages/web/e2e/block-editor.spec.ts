@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Block Editor', () => {
   test.beforeEach(async ({ page }) => {
@@ -53,6 +54,9 @@ test.describe('Block Editor', () => {
         timeout: 5000,
       })
     }
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Basic Block Operations', () => {

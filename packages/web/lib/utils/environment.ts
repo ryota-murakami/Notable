@@ -37,16 +37,35 @@ export const isProduction = (): boolean => {
 
 /**
  * Check if running in test environment
- * For client-side, checks for test auth bypass cookie
+ * For client-side, checks for test auth bypass cookie or API mocking env var
  */
 export const isTest = (): boolean => {
   if (!isBrowser) {
     // Server-side: safe to use process.env
-    return process.env.NODE_ENV === 'test'
+    return (
+      process.env.NODE_ENV === 'test' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
+    )
   }
 
-  // Client-side: check for test auth bypass cookie
-  return document.cookie.includes('dev-auth-bypass=true')
+  // Client-side: check for test auth bypass cookie or API mocking
+  // Use try-catch to prevent errors during SSR/hydration
+  try {
+    return (
+      document.cookie.includes('dev-auth-bypass=true') ||
+      (typeof window !== 'undefined' &&
+        (window as any).__NEXT_PUBLIC_API_MOCKING === 'enabled') ||
+      (typeof process !== 'undefined' &&
+        process.env.NEXT_PUBLIC_API_MOCKING === 'enabled')
+    )
+  } catch (error) {
+    // Fallback during SSR/hydration phase
+    return (
+      (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') ||
+      (typeof process !== 'undefined' &&
+        process.env.NEXT_PUBLIC_API_MOCKING === 'enabled')
+    )
+  }
 }
 
 /**

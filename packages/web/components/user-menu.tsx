@@ -20,7 +20,9 @@ export function UserMenu({ className }: UserMenuProps) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [user, setUser] = React.useState<SupabaseUser | null>(null)
   const [loading, setLoading] = React.useState(true)
-  const supabase = createClient()
+
+  // Memoize the supabase client to prevent recreating it on every render
+  const supabase = React.useMemo(() => createClient(), [])
 
   React.useEffect(() => {
     // Get initial user

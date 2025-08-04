@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Note Creation', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
@@ -19,6 +20,9 @@ test.describe('Note Creation', () => {
 
     // Wait for the app to load
     await page.waitForSelector('[data-testid="app-shell"]', { timeout: 30000 })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('should create a new note without errors', async ({ page }) => {

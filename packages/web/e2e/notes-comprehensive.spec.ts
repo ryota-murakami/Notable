@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Comprehensive Note Management Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,6 +16,9 @@ test.describe('Comprehensive Note Management Tests', () => {
     // Navigate to app and wait for shell to load
     await page.goto('/app', { waitUntil: 'networkidle', timeout: 30000 })
     await page.waitForSelector('[data-testid="app-shell"]', { timeout: 30000 })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Note CRUD Operations', () => {

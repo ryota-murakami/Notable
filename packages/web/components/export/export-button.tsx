@@ -10,7 +10,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@radix-ui/react-dropdown-menu'
+} from '@/components/ui/dropdown-menu'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { ExportDialog } from './export-dialog'
 import { type Note } from '../../types/note'
 import { type ExportFormat } from '../../types/export'
@@ -29,6 +35,7 @@ export function ExportButton({
   size = 'sm',
   compact = false,
 }: ExportButtonProps) {
+  const [showExportDialog, setShowExportDialog] = React.useState(false)
   const { exportNote } = useExport({
     autoDownload: true,
     showToasts: true,
@@ -36,11 +43,24 @@ export function ExportButton({
 
   const handleQuickExport = async (format: ExportFormat) => {
     try {
-      const options = {
+      const baseOptions = {
         format,
         includeFrontMatter: true,
         includeDates: true,
         includeTags: true,
+      }
+
+      // Add format-specific defaults
+      let options = baseOptions
+      if (format === 'react') {
+        options = {
+          ...baseOptions,
+          typescript: true,
+          styling: 'tailwind' as const,
+          componentName: undefined, // Will be auto-generated
+          includeProps: false, // Don't generate separate type files for quick export
+          includeDocs: false, // Don't generate docs for quick export
+        }
       }
 
       await exportNote(note, options)
@@ -62,67 +82,62 @@ export function ExportButton({
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant={variant} size={size} className='gap-2'>
-            <Download className='h-4 w-4' />
-            Export
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align='end'
-          className='w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-md p-1'
-        >
-          <DropdownMenuLabel className='px-2 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300'>
-            Quick Export
-          </DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => handleQuickExport('markdown')}
-            className='flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded'
-          >
-            <FileText className='h-4 w-4 mr-2' />
-            Export as Markdown
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => handleQuickExport('html')}
-            className='flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded'
-          >
-            <Globe className='h-4 w-4 mr-2' />
-            Export as HTML
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => handleQuickExport('pdf')}
-            className='flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded'
-          >
-            <FileCode className='h-4 w-4 mr-2' />
-            Export as PDF
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => handleQuickExport('react')}
-            className='flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded'
-          >
-            <Component className='h-4 w-4 mr-2' />
-            Export as React
-          </DropdownMenuItem>
+      <TooltipProvider>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant={variant} size={size} className='gap-2'>
+              <Download className='h-4 w-4' />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='end' className='w-56'>
+            <DropdownMenuLabel>Quick Export</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => handleQuickExport('markdown')}
+              data-testid='export-format-markdown'
+            >
+              <FileText className='h-4 w-4 mr-2' />
+              Export as Markdown
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleQuickExport('html')}
+              data-testid='export-format-html'
+            >
+              <Globe className='h-4 w-4 mr-2' />
+              Export as HTML
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleQuickExport('pdf')}
+              data-testid='export-format-pdf'
+            >
+              <FileCode className='h-4 w-4 mr-2' />
+              Export as PDF
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleQuickExport('react')}
+              data-testid='export-format-react'
+            >
+              <Component className='h-4 w-4 mr-2' />
+              Export as React
+            </DropdownMenuItem>
 
-          <DropdownMenuSeparator className='my-1 border-t border-gray-200 dark:border-gray-700' />
+            <DropdownMenuSeparator />
 
-          <DropdownMenuLabel className='px-2 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300'>
-            Advanced Options
-          </DropdownMenuLabel>
-          <DropdownMenuItem
-            asChild
-            className='px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded'
-          >
-            <ExportDialog note={note} defaultFormat='markdown'>
-              <div className='flex items-center gap-2 cursor-pointer w-full'>
-                <FileText className='h-4 w-4' />
-                Export with Options...
-              </div>
-            </ExportDialog>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuLabel>Advanced Options</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => setShowExportDialog(true)}>
+              <FileText className='h-4 w-4 mr-2' />
+              Export with Options...
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TooltipProvider>
+
+      <ExportDialog
+        note={note}
+        defaultFormat='markdown'
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+      />
     </>
   )
 }

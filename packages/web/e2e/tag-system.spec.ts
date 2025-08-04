@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 /**
  * Comprehensive E2E Tests for Tag System
@@ -26,10 +27,13 @@ test.describe('Tag System', () => {
     ])
 
     // Navigate to the app
-    await page.goto('/app')
+    await page.goto('http://localhost:4378/app')
 
     // Wait for app to load
     await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Basic Tag Operations', () => {
@@ -37,17 +41,46 @@ test.describe('Tag System', () => {
       // Navigate to tag management
       await page.getByRole('button', { name: /manage tags/i }).click()
 
+      // Wait for the dialog to appear
+      await page.waitForSelector('[role="dialog"]')
+
+      // Click on "Manage Tags" section in the dialog sidebar
+      await page
+        .locator('[role="dialog"]')
+        .getByRole('button', { name: /^Manage Tags$/ })
+        .click()
+
       // Create new tag
       await page.getByRole('button', { name: /create tag/i }).click()
-      await page.getByPlaceholder(/tag name/i).fill('test-tag')
-      await page
-        .getByPlaceholder(/description/i)
-        .fill('A test tag for E2E testing')
-      await page.getByRole('button', { name: /create/i }).click()
 
-      // Verify tag appears in the list
-      await expect(page.getByText('test-tag')).toBeVisible()
-      await expect(page.getByText('A test tag for E2E testing')).toBeVisible()
+      // Wait for the create dialog to appear
+      await page.waitForSelector('[role="dialog"]')
+
+      // Fill in the form
+      await page.getByPlaceholder('Enter tag name...').fill('test-tag')
+      await page
+        .getByPlaceholder('Enter tag description...')
+        .fill('A test tag for E2E testing')
+
+      // Submit the form by clicking the Create button in the dialog
+      await page
+        .locator('[role="dialog"]')
+        .getByRole('button', { name: /^create$/i })
+        .click()
+
+      // Wait for the tag creation dialog to close and the main tag management to refresh
+      await page.waitForTimeout(3000)
+
+      // Take a screenshot to see what's on screen
+      await page.screenshot({ path: 'tag-created.png', fullPage: true })
+
+      // Verify tag appears in the tag hierarchy section
+      await expect(
+        page.locator('[data-testid="tag-tree"]').getByText('test-tag')
+      ).toBeVisible({ timeout: 10000 })
+
+      // Alternative: check if it appears anywhere on the page
+      await expect(page.getByText('test-tag')).toBeVisible({ timeout: 10000 })
     })
 
     test('should edit an existing tag', async ({ page }) => {
@@ -622,8 +655,8 @@ test.describe.skip('Tag System Integration', () => {
     const page1 = await context.newPage()
     const page2 = await context.newPage()
 
-    await page1.goto('/')
-    await page2.goto('/')
+    await page1.goto('http://localhost:4378/')
+    await page2.goto('http://localhost:4378/')
 
     // Create tag in first tab
     await page1.getByRole('button', { name: /manage tags/i }).click()

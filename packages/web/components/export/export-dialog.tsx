@@ -42,6 +42,8 @@ interface ExportDialogProps {
   children?: React.ReactNode
   defaultFormat?: ExportFormat
   onExportComplete?: (format: ExportFormat) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function ExportDialog({
@@ -49,8 +51,12 @@ export function ExportDialog({
   children,
   defaultFormat = 'markdown',
   onExportComplete,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: ExportDialogProps) {
-  const [open, setOpen] = React.useState(false)
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)
+  const open = controlledOpen ?? uncontrolledOpen
+  const setOpen = controlledOnOpenChange ?? setUncontrolledOpen
   const [selectedFormat, setSelectedFormat] =
     React.useState<ExportFormat>(defaultFormat)
   const [options, setOptions] = React.useState<ExportOptions>(() =>
@@ -591,11 +597,11 @@ function ReactOptions({
         </div>
         <Switch
           id='use-typescript'
-          checked={(options as ReactExportOptions).useTypeScript}
+          checked={(options as ReactExportOptions).typescript}
           onCheckedChange={(checked) =>
             onChange({
               ...options,
-              useTypeScript: checked,
+              typescript: checked,
             } as Partial<ExportOptions>)
           }
         />
@@ -704,7 +710,7 @@ function getDefaultOptionsForFormat(format: ExportFormat): ExportOptions {
       return {
         ...baseOptions,
         format: 'react',
-        useTypeScript: true,
+        typescript: true,
         styling: 'tailwind' as const,
         functional: true,
         includePropTypes: false,

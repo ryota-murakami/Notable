@@ -1,31 +1,28 @@
 'use client'
 
-import { Editor, Transforms, Range, Text as SlateText } from 'slate'
+import { Editor, Transforms, Range, Text as SlateText, Node, Path } from 'slate'
 
 export const withWikiLinks = (editor: Editor) => {
-  const { normalizeNode, insertText, isInline } = editor
+  const { insertText, isInline, normalizeNode } = editor
 
   editor.isInline = (element) => {
     return element.type === 'wiki-link' ? true : isInline(element)
   }
 
-  // Override normalizeNode to detect wiki link patterns
+  // Use normalizeNode to detect and convert wiki link patterns
   editor.normalizeNode = (entry) => {
     const [node, path] = entry
 
     // Only process text nodes
     if (SlateText.isText(node)) {
       const text = node.text
-      const wikiLinkPattern = /\[\[([^\]]+)\]\]/g
+      const wikiLinkRegex = /\[\[([^\]]+)\]\]/g
       let match
 
-      while ((match = wikiLinkPattern.exec(text)) !== null) {
+      while ((match = wikiLinkRegex.exec(text)) !== null) {
         const [fullMatch, noteTitle] = match
-        const { index } = match
-
-        // Split the text node and replace with wiki link
-        const start = index
-        const end = index + fullMatch.length
+        const startOffset = match.index
+        const endOffset = startOffset + fullMatch.length
 
         // Create the wiki link element
         const wikiLink = {
@@ -35,28 +32,22 @@ export const withWikiLinks = (editor: Editor) => {
           children: [{ text: noteTitle.trim() }],
         }
 
-        // Replace the text with nodes
-        Transforms.splitNodes(editor, {
-          at: { path, offset: end },
-          always: true,
-        })
+        // Split the text node and insert the wiki link
+        const range = {
+          anchor: { path, offset: startOffset },
+          focus: { path, offset: endOffset },
+        }
 
-        Transforms.splitNodes(editor, {
-          at: { path, offset: start },
-          always: true,
-        })
+        // Delete the text and insert the wiki link element
+        Transforms.delete(editor, { at: range })
+        Transforms.insertNodes(editor, wikiLink, { at: range.anchor })
 
-        // The wiki link pattern is now in its own text node
-        const targetPath = [...path.slice(0, -1), path[path.length - 1] + 1]
-
-        Transforms.removeNodes(editor, { at: targetPath })
-        Transforms.insertNodes(editor, wikiLink, { at: targetPath })
-
+        // Return early to let normalization continue
         return
       }
     }
 
-    // Fall back to default normalization
+    // Default normalization
     normalizeNode(entry)
   }
 

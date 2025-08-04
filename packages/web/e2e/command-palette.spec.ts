@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Command Palette & Keyboard Shortcuts', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,6 +17,9 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
 
     // Wait for the app to be fully loaded
     await expect(page.locator('[data-testid="app-shell"]')).toBeVisible()
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('should open command palette with Cmd+K', async ({ page }) => {
@@ -69,7 +73,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
 
     // Verify the editor is visible
-    const editor = page.locator('textarea[placeholder="Start writing..."]')
+    const editor = page.locator('[data-testid="note-content-textarea"]')
     await expect(editor).toBeVisible({ timeout: 10000 })
   })
 
@@ -87,7 +91,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
 
     // Verify the editor is visible
-    const editor = page.locator('textarea[placeholder="Start writing..."]')
+    const editor = page.locator('[data-testid="note-content-textarea"]')
     await expect(editor).toBeVisible({ timeout: 10000 })
   })
 

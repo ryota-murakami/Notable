@@ -1,4 +1,8 @@
 import { expect, test } from './fixtures/coverage'
+import {
+  waitForHydration,
+  clickWithHydration,
+} from './utils/wait-for-hydration'
 
 test.describe('Template System E2E Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -12,23 +16,48 @@ test.describe('Template System E2E Tests', () => {
       },
     ])
 
+    // Force template picker to show in tests BEFORE navigation
+    await page.addInitScript(() => {
+      window.sessionStorage.setItem('forceTemplatePicker', 'true')
+    })
+
     // Navigate to the app
     await page.goto('/app')
 
     // Wait for the app to load
     await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('should open template picker when clicking New Note', async ({
     page,
   }) => {
+    // Debug: Check if forceTemplatePicker is set
+    const forceTemplatePickerValue = await page.evaluate(() => {
+      return window.sessionStorage.getItem('forceTemplatePicker')
+    })
+    console.log('forceTemplatePicker value:', forceTemplatePickerValue)
+
     // Click the "New Note" button - should open template picker
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
+
+    // Wait a bit for dialog to appear
+    await page.waitForTimeout(1000)
+
+    // Debug: Check what's visible on the page
+    const dialogExists = await page.locator('[role="dialog"]').count()
+    console.log('Dialog count:', dialogExists)
+
+    // If no dialog, check if we navigated instead
+    const currentUrl = page.url()
+    console.log('Current URL after click:', currentUrl)
 
     // Verify template picker dialog opens
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
-    ).toBeVisible()
+    ).toBeVisible({ timeout: 10000 })
 
     // Verify key elements are present
     await expect(
@@ -42,7 +71,7 @@ test.describe('Template System E2E Tests', () => {
 
   test('should display built-in templates in categories', async ({ page }) => {
     // Click New Note to open template picker
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Wait for template picker to open and templates to load
     await expect(
@@ -70,7 +99,7 @@ test.describe('Template System E2E Tests', () => {
 
   test('should filter templates by category', async ({ page }) => {
     // Click New Note to open template picker
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Wait for template picker to open and templates to load
     await expect(
@@ -97,7 +126,7 @@ test.describe('Template System E2E Tests', () => {
 
   test('should search templates', async ({ page }) => {
     // Click New Note to open template picker
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Wait for template picker to open and templates to load
     await expect(
@@ -131,12 +160,10 @@ test.describe('Template System E2E Tests', () => {
     ).toBeVisible()
   })
 
-  test.skip('should create note from template with variables', async ({
-    page,
-  }) => {
-    // SKIPPED: Template variable forms not implemented
+  test('should create note from template with variables', async ({ page }) => {
+    // Template variable forms are now implemented
     // Click New Note to open template picker
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Wait for templates to load and select Daily Journal template
     await page.waitForSelector('text=Daily Journal')
@@ -177,7 +204,7 @@ test.describe('Template System E2E Tests', () => {
   }) => {
     // SKIPPED: Test expects variables that don't exist in actual template
     // Click New Note to open template picker
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Wait for templates to load and select daily journal template
     await page.waitForSelector('text=Daily Journal')
@@ -213,7 +240,7 @@ test.describe('Template System E2E Tests', () => {
   test.skip('should validate required template variables', async ({ page }) => {
     // SKIPPED: Template variable validation not implemented
     // Click New Note to open template picker
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     await page.waitForSelector('text=Daily Journal')
     await page.click('[data-template-name="Daily Journal"]')
@@ -238,7 +265,7 @@ test.describe('Template System E2E Tests', () => {
   }) => {
     // SKIPPED: Test expects variable types that don't exist in actual templates
     // Click New Note to open template picker directly
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     await page.waitForSelector('text=Project Kickoff')
     await page.click('[data-template-name="Project Kickoff"]')
@@ -286,7 +313,7 @@ test.describe('Template System E2E Tests', () => {
   }) => {
     // SKIPPED: Test expects template engine features that aren't implemented
     // Click New Note to open template picker directly
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     await page.waitForSelector('text=Daily Journal')
     await page.click('[data-template-name="Daily Journal"]')
@@ -320,7 +347,7 @@ test.describe('Template System E2E Tests', () => {
 
   test('should show popular and recent templates tabs', async ({ page }) => {
     // Click New Note to open template picker directly
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Check tabs exist
     await expect(
@@ -345,7 +372,7 @@ test.describe('Template System E2E Tests', () => {
   test.skip('should cancel template creation', async ({ page }) => {
     // SKIPPED: Template variable forms with cancel button not implemented
     // Click New Note to open template picker directly
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     await page.waitForSelector('text=Daily Journal')
     await page.click('[data-template-name="Daily Journal"]')
@@ -361,7 +388,7 @@ test.describe('Template System E2E Tests', () => {
 
   test('should create blank note from template picker', async ({ page }) => {
     // Click New Note to open template picker directly
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     await page.waitForSelector('button:has-text("Blank Note")')
     await page.click('button:has-text("Blank Note")')
@@ -378,7 +405,7 @@ test.describe('Template System E2E Tests', () => {
   }) => {
     // SKIPPED: Test expects validation features that don't exist
     // Click New Note to open template picker directly
-    await page.click('[data-testid="new-note-button"]')
+    await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     await page.waitForSelector('text=Project Kickoff')
     await page.click('[data-template-name="Project Kickoff"]')

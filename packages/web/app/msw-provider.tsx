@@ -5,9 +5,11 @@ import { env } from '../env'
 
 let mockingEnabledPromise: Promise<void> | undefined
 
+// Enable MSW when API mocking is enabled, but disable in test environment to avoid service worker conflicts
 if (
-  process.env.NODE_ENV === 'development' ||
-  env.NEXT_PUBLIC_API_MOCKING === 'enabled'
+  process.env.NODE_ENV !== 'test' &&
+  process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' &&
+  process.env.NODE_ENV === 'development'
 ) {
   if (typeof window !== 'undefined') {
     // Only run MSW in the browser
@@ -39,9 +41,11 @@ export function MSWProviderWrapper({
 }: {
   children: React.ReactNode
 }) {
+  // Enable MSW wrapper when API mocking is enabled, but disable in test environment
   if (
-    process.env.NODE_ENV === 'development' ||
-    env.NEXT_PUBLIC_API_MOCKING === 'enabled'
+    process.env.NODE_ENV !== 'test' &&
+    process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' &&
+    process.env.NODE_ENV === 'development'
   ) {
     return (
       <Suspense fallback={null}>

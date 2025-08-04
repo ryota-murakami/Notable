@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Template Picker Debug', () => {
   test.use({
@@ -16,6 +17,9 @@ test.describe('Template Picker Debug', () => {
         path: '/',
       },
     ])
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('should debug template picker visibility step by step', async ({

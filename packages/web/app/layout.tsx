@@ -3,6 +3,7 @@ import { SyncProviderWrapper } from '../components/sync-provider-wrapper'
 import { RoutingProvider } from '../components/routing-provider'
 import { MSWProviderWrapper } from './msw-provider'
 import { QueryProvider } from '../components/query-provider'
+import { DevTools } from '../components/dev-tools'
 import { Toaster } from 'sonner'
 import { Theme } from '@radix-ui/themes'
 import './globals.css'
@@ -92,6 +93,7 @@ export default function RootLayout({
                 </RoutingProvider>
               </QueryProvider>
               <Toaster position='top-center' richColors />
+              <DevTools />
             </Theme>
           </ThemeProvider>
         </MSWProviderWrapper>

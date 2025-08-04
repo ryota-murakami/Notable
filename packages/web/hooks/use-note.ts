@@ -28,7 +28,14 @@ export function useNote(noteId: string) {
           const mockNote: Note = {
             id: noteId,
             title: 'Untitled',
-            content: '',
+            content: JSON.stringify([
+              {
+                type: 'paragraph',
+                children: [
+                  { text: 'This is a test note for export functionality.' },
+                ],
+              },
+            ]),
             user_id: 'mock-user-id',
             folder_id: null,
             is_hidden: false,
@@ -37,6 +44,7 @@ export function useNote(noteId: string) {
           }
           if (mounted) {
             setNote(mockNote)
+            setLoading(false)
           }
           return
         }

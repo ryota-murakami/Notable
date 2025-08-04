@@ -11,6 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
 import { Badge } from '@/design-system/components/badge'
 import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface KeyboardShortcut {
   keys: string[]
@@ -36,7 +37,7 @@ export function KeyboardShortcutsDialog({
     },
     {
       keys: ['Cmd', 'K'],
-      description: 'Quick search / Open command palette',
+      description: 'Open search',
       category: 'General',
     },
     {
@@ -58,17 +59,17 @@ export function KeyboardShortcutsDialog({
     },
     {
       keys: ['j', 'k'],
-      description: 'Navigate up/down (vim-style)',
-      category: 'Navigation',
-    },
-    {
-      keys: ['Enter'],
-      description: 'Select item',
+      description: 'Navigate previous/next note',
       category: 'Navigation',
     },
     {
       keys: ['Cmd', '1-9'],
       description: 'Quick switch to note by number',
+      category: 'Navigation',
+    },
+    {
+      keys: ['Cmd', 'G'],
+      description: 'Open graph view',
       category: 'Navigation',
     },
 
@@ -79,24 +80,147 @@ export function KeyboardShortcutsDialog({
       category: 'Notes',
     },
     {
-      keys: ['Cmd', 'S'],
-      description: 'Save current note',
-      category: 'Notes',
-    },
-    {
       keys: ['Cmd', 'D'],
       description: 'Delete current note',
       category: 'Notes',
     },
     {
-      keys: ['Cmd', 'C'],
-      description: 'Copy note content',
+      keys: ['Cmd', 'S'],
+      description: 'Save current note',
       category: 'Notes',
     },
     {
-      keys: ['Cmd', 'E'],
-      description: 'Toggle edit/view mode',
+      keys: ['Cmd', 'T'],
+      description: "Open today's daily note",
       category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'T'],
+      description: "Open yesterday's daily note",
+      category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'H'],
+      description: 'Open version history',
+      category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'Option', 'T'],
+      description: 'Open template picker',
+      category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'M'],
+      description: 'Open tag management',
+      category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'Option', 'F'],
+      description: 'Toggle favorite',
+      category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'Option', 'P'],
+      description: 'Toggle pin',
+      category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'A'],
+      description: 'Toggle archive',
+      category: 'Notes',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'D'],
+      description: 'Duplicate note',
+      category: 'Notes',
+    },
+
+    // Search shortcuts
+    {
+      keys: ['Cmd', 'Shift', 'F'],
+      description: 'Open advanced search',
+      category: 'Search',
+    },
+    {
+      keys: ['Cmd', 'F'],
+      description: 'Focus sidebar filter',
+      category: 'Search',
+    },
+
+    // View shortcuts
+    {
+      keys: ['Cmd', ','],
+      description: 'Toggle sidebar',
+      category: 'View',
+    },
+    {
+      keys: ['Cmd', 'E'],
+      description: 'Toggle view mode',
+      category: 'View',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'E'],
+      description: 'Open export dialog',
+      category: 'View',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'R'],
+      description: 'Toggle smart suggestions',
+      category: 'View',
+    },
+
+    // Editing shortcuts
+    {
+      keys: ['Cmd', 'B'],
+      description: 'Make text bold',
+      category: 'Editing',
+    },
+    {
+      keys: ['Cmd', 'I'],
+      description: 'Make text italic',
+      category: 'Editing',
+    },
+    {
+      keys: ['Cmd', 'U'],
+      description: 'Underline text',
+      category: 'Editing',
+    },
+    {
+      keys: ['Cmd', '`'],
+      description: 'Format as code',
+      category: 'Editing',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'X'],
+      description: 'Strike through text',
+      category: 'Editing',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'L'],
+      description: 'Focus title input',
+      category: 'Editing',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'K'],
+      description: 'Focus content editor',
+      category: 'Editing',
+    },
+
+    // AI shortcuts
+    {
+      keys: ['Cmd', 'Shift', 'G'],
+      description: 'AI content generation',
+      category: 'AI',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'S'],
+      description: 'AI summary',
+      category: 'AI',
+    },
+    {
+      keys: ['Cmd', 'Shift', 'I'],
+      description: 'AI improve content',
+      category: 'AI',
     },
 
     // View shortcuts
@@ -183,26 +307,24 @@ export function KeyboardShortcutsDialog({
           </TabsList>
 
           {categories.map((category) => (
-            <TabsContent
-              key={category}
-              value={category}
-              className='mt-4 max-h-[50vh] overflow-y-auto'
-            >
-              <div className='space-y-3'>
-                {groupedShortcuts[category].map((shortcut, index) => (
-                  <div
-                    key={index}
-                    className='flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50'
-                  >
-                    <span className='text-sm text-foreground'>
-                      {shortcut.description}
-                    </span>
-                    <div className='flex items-center gap-1'>
-                      {formatKeys(shortcut.keys)}
+            <TabsContent key={category} value={category} className='mt-4'>
+              <ScrollArea className='h-[50vh]'>
+                <div className='space-y-3 pr-4'>
+                  {groupedShortcuts[category].map((shortcut, index) => (
+                    <div
+                      key={index}
+                      className='flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50'
+                    >
+                      <span className='text-sm text-foreground'>
+                        {shortcut.description}
+                      </span>
+                      <div className='flex items-center gap-1'>
+                        {formatKeys(shortcut.keys)}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </ScrollArea>
             </TabsContent>
           ))}
         </Tabs>

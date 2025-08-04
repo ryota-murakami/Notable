@@ -3,7 +3,14 @@ export interface KeyboardShortcut {
   name: string
   description: string
   keys: string[]
-  category: 'navigation' | 'editing' | 'view' | 'notes' | 'search' | 'general'
+  category:
+    | 'navigation'
+    | 'editing'
+    | 'view'
+    | 'notes'
+    | 'search'
+    | 'general'
+    | 'ai'
   action: () => void
   enabled?: boolean
   global?: boolean
@@ -71,6 +78,13 @@ export const defaultShortcuts: Omit<KeyboardShortcut, 'action'>[] = [
     category: 'search',
   },
   {
+    id: 'open-advanced-search',
+    name: 'Advanced Search',
+    description: 'Open advanced search dialog',
+    keys: ['Cmd+Shift+F', 'Ctrl+Shift+F'],
+    category: 'search',
+  },
+  {
     id: 'focus-filter',
     name: 'Focus Filter',
     description: 'Focus the sidebar filter',
@@ -129,6 +143,184 @@ export const defaultShortcuts: Omit<KeyboardShortcut, 'action'>[] = [
     description: 'Show keyboard shortcuts help',
     keys: ['Cmd+/', 'Ctrl+/'],
     category: 'general',
+  },
+
+  // New Feature Shortcuts
+
+  // Daily Notes
+  {
+    id: 'open-daily-note',
+    name: "Today's Daily Note",
+    description: "Open or create today's daily note",
+    keys: ['Cmd+T', 'Ctrl+T'],
+    category: 'notes',
+  },
+  {
+    id: 'open-yesterday-note',
+    name: "Yesterday's Daily Note",
+    description: "Open yesterday's daily note",
+    keys: ['Cmd+Shift+T', 'Ctrl+Shift+T'],
+    category: 'notes',
+  },
+
+  // Version History
+  {
+    id: 'open-version-history',
+    name: 'Version History',
+    description: 'Open version history for current note',
+    keys: ['Cmd+H', 'Ctrl+H'],
+    category: 'notes',
+  },
+
+  // AI Features
+  {
+    id: 'ai-generate',
+    name: 'AI Generate',
+    description: 'Open AI content generation',
+    keys: ['Cmd+Shift+G', 'Ctrl+Shift+G'],
+    category: 'ai',
+  },
+  {
+    id: 'ai-summary',
+    name: 'AI Summary',
+    description: 'Generate AI summary of content',
+    keys: ['Cmd+Shift+S', 'Ctrl+Shift+S'],
+    category: 'ai',
+  },
+  {
+    id: 'ai-improve',
+    name: 'AI Improve',
+    description: 'Improve content with AI',
+    keys: ['Cmd+Shift+I', 'Ctrl+Shift+I'],
+    category: 'ai',
+  },
+
+  // Templates
+  {
+    id: 'open-template-picker',
+    name: 'Template Picker',
+    description: 'Open template picker dialog',
+    keys: ['Cmd+Option+T', 'Ctrl+Alt+T'],
+    category: 'notes',
+  },
+
+  // Export
+  {
+    id: 'open-export',
+    name: 'Export Note',
+    description: 'Open export dialog for current note',
+    keys: ['Cmd+Shift+E', 'Ctrl+Shift+E'],
+    category: 'view',
+  },
+
+  // Graph View
+  {
+    id: 'open-graph-view',
+    name: 'Graph View',
+    description: 'Open graph visualization',
+    keys: ['Cmd+G', 'Ctrl+G'],
+    category: 'navigation',
+  },
+
+  // Tag Management
+  {
+    id: 'open-tag-management',
+    name: 'Manage Tags',
+    description: 'Open tag management panel',
+    keys: ['Cmd+Shift+M', 'Ctrl+Shift+M'],
+    category: 'notes',
+  },
+
+  // Smart Suggestions
+  {
+    id: 'toggle-smart-suggestions',
+    name: 'Toggle Smart Suggestions',
+    description: 'Show/hide smart suggestions panel',
+    keys: ['Cmd+Shift+R', 'Ctrl+Shift+R'],
+    category: 'view',
+  },
+
+  // Editor Formatting
+  {
+    id: 'format-bold',
+    name: 'Bold',
+    description: 'Make text bold',
+    keys: ['Cmd+B', 'Ctrl+B'],
+    category: 'editing',
+  },
+  {
+    id: 'format-italic',
+    name: 'Italic',
+    description: 'Make text italic',
+    keys: ['Cmd+I', 'Ctrl+I'],
+    category: 'editing',
+  },
+  {
+    id: 'format-underline',
+    name: 'Underline',
+    description: 'Underline text',
+    keys: ['Cmd+U', 'Ctrl+U'],
+    category: 'editing',
+  },
+  {
+    id: 'format-code',
+    name: 'Code',
+    description: 'Format as inline code',
+    keys: ['Cmd+`', 'Ctrl+`'],
+    category: 'editing',
+  },
+  {
+    id: 'format-strikethrough',
+    name: 'Strikethrough',
+    description: 'Strike through text',
+    keys: ['Cmd+Shift+X', 'Ctrl+Shift+X'],
+    category: 'editing',
+  },
+
+  // Note Organization
+  {
+    id: 'toggle-favorite',
+    name: 'Toggle Favorite',
+    description: 'Add/remove current note from favorites',
+    keys: ['Cmd+Option+F', 'Ctrl+Alt+F'],
+    category: 'notes',
+  },
+  {
+    id: 'toggle-pin',
+    name: 'Toggle Pin',
+    description: 'Pin/unpin current note',
+    keys: ['Cmd+Option+P', 'Ctrl+Alt+P'],
+    category: 'notes',
+  },
+  {
+    id: 'toggle-archive',
+    name: 'Toggle Archive',
+    description: 'Archive/unarchive current note',
+    keys: ['Cmd+Shift+A', 'Ctrl+Shift+A'],
+    category: 'notes',
+  },
+
+  // Quick Actions
+  {
+    id: 'duplicate-note',
+    name: 'Duplicate Note',
+    description: 'Create a copy of current note',
+    keys: ['Cmd+Shift+D', 'Ctrl+Shift+D'],
+    category: 'notes',
+  },
+  {
+    id: 'focus-title',
+    name: 'Focus Title',
+    description: 'Focus the note title input',
+    keys: ['Cmd+Shift+L', 'Ctrl+Shift+L'],
+    category: 'editing',
+  },
+  {
+    id: 'focus-content',
+    name: 'Focus Content',
+    description: 'Focus the note content editor',
+    keys: ['Cmd+Shift+K', 'Ctrl+Shift+K'],
+    category: 'editing',
   },
 ]
 

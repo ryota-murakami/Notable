@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { getDevAuthBypassUser } from '@/utils/auth-helpers'
 import type { EnhancedTag, TagFilter, TagInsert } from '@/types/tags'
+import { mockStore } from '@/utils/mock-data-store'
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -44,30 +45,14 @@ export async function GET(request: NextRequest) {
       ? parseInt(searchParams.get('offset')!)
       : 0
 
-    // Return mock data when API mocking is enabled
-    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
-      const mockTags: EnhancedTag[] = [
-        {
-          id: 't1111111-1111-1111-1111-111111111111',
-          name: 'important',
-          color: '#ef4444',
-          user_id: user.id,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          usage_count: 2,
-          parent_id: null,
-        },
-        {
-          id: 't2222222-2222-2222-2222-222222222222',
-          name: 'work',
-          color: '#3b82f6',
-          user_id: user.id,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          usage_count: 1,
-          parent_id: null,
-        },
-      ]
+    // Return mock data when API mocking is enabled or dev auth bypass is used
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const hasDevAuthBypass =
+      cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' || hasDevAuthBypass) {
+      const mockTags = mockStore.tags.getAll(user.id)
 
       return NextResponse.json({
         success: true,
@@ -194,8 +179,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { name, color } = body as TagInsert
 
-    // Return mock data when API mocking is enabled
-    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    // Return mock data when API mocking is enabled or dev auth bypass is used
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const hasDevAuthBypass =
+      cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' || hasDevAuthBypass) {
       // Basic validation still needed for mock
       if (!name || typeof name !== 'string' || name.trim().length === 0) {
         return NextResponse.json(
@@ -204,16 +194,21 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      const mockTag = {
-        id: `t${Date.now()}-mock-tag`,
+      // Check for duplicate tag names
+      const existingTag = mockStore.tags.findByName(name.trim(), user.id)
+      if (existingTag) {
+        return NextResponse.json(
+          { error: 'A tag with this name already exists' },
+          { status: 409 }
+        )
+      }
+
+      const mockTag = mockStore.tags.create({
         name: name.trim(),
         color: color || '#3b82f6',
         user_id: user.id,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        usage_count: 0,
         parent_id: null,
-      }
+      })
 
       return NextResponse.json(
         {

@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe.skip('Comprehensive Tag Components Tests', () => {
   // SKIPPED: Tag components not implemented
@@ -21,6 +22,9 @@ test.describe.skip('Comprehensive Tag Components Tests', () => {
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Tag Input Component', () => {

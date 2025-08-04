@@ -89,6 +89,7 @@ const TagTree: React.FC<TagTreeProps> = ({
           'flex items-center justify-center py-8 text-muted-foreground',
           className
         )}
+        data-testid='tag-tree'
       >
         <div className='text-center'>
           <Hash className='mx-auto h-8 w-8 mb-2 opacity-50' />
@@ -110,7 +111,7 @@ const TagTree: React.FC<TagTreeProps> = ({
   }
 
   return (
-    <div className={cn('space-y-1', className)}>
+    <div className={cn('space-y-1', className)} data-testid='tag-tree'>
       {tags.map((tag) => (
         <TagTreeNode
           key={tag.id}

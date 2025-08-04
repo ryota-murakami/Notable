@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Rich Text Editor', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,6 +24,9 @@ test.describe('Rich Text Editor', () => {
       state: 'visible',
       timeout: 10000,
     })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('should render app shell', async ({ page }) => {

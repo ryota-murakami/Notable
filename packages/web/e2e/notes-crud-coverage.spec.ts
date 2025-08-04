@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Note CRUD Coverage Tests', () => {
   test.use({
@@ -16,6 +17,9 @@ test.describe('Note CRUD Coverage Tests', () => {
         path: '/',
       },
     ])
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('create a new note from homepage', async ({ page }) => {

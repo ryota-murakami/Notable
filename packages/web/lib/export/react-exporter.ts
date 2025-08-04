@@ -33,15 +33,11 @@ export class ReactExporter extends BaseExporter {
 
       // Generate component based on options
       if (reactOptions.typescript) {
-        const { component, types } = this.converter.convertWithTypeScript(
+        // For simple exports, generate single-file TypeScript without separate type definitions
+        componentCode = this.converter.convertToSingleFileTypeScript(
           content,
           componentName
         )
-        componentCode = component
-        additionalFiles.push({
-          name: `${componentName}.types.ts`,
-          content: types,
-        })
       } else {
         componentCode = this.converter.convert(content, componentName)
       }

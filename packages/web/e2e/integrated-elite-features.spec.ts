@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe.skip('Integrated Elite Features', () => {
   // SKIPPED: Elite features not implemented in current version
@@ -18,6 +19,9 @@ test.describe.skip('Integrated Elite Features', () => {
     await expect(page.locator('[data-testid="app-shell"]')).toBeVisible({
       timeout: 30000,
     })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('Enhanced Global Search - Complete AI Search Experience', async ({

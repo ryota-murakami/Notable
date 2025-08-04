@@ -22,6 +22,7 @@ import {
 } from 'slate-react'
 import { type HistoryEditor, withHistory } from 'slate-history'
 import { withWikiLinks } from './plugins/wiki-link-plugin'
+import { WikiLinkElement } from './wiki-link-element'
 import { Toggle } from '../ui/toggle'
 import { Separator } from '../ui/separator'
 import {
@@ -181,22 +182,9 @@ const Element = ({ attributes, children, element }: RenderElementProps) => {
       )
     case 'wiki-link':
       return (
-        <a
-          {...attributes}
-          href={element.noteId ? `/notes/${element.noteId}` : element.url}
-          data-wiki-link='true'
-          data-note-id={element.noteId}
-          title={`Link to: ${element.noteTitle}`}
-          className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline decoration-blue-600/30 hover:decoration-blue-600/60 transition-colors duration-200 cursor-pointer'
-          onClick={(e) => {
-            e.preventDefault()
-            if (element.noteId) {
-              window.location.href = `/notes/${element.noteId}`
-            }
-          }}
-        >
+        <WikiLinkElement attributes={attributes} element={element}>
           {children}
-        </a>
+        </WikiLinkElement>
       )
     default:
       return (

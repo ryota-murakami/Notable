@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Comprehensive Search Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,6 +15,9 @@ test.describe('Comprehensive Search Functionality Tests', () => {
 
     // Navigate to the app
     await page.goto('/app')
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Basic Search', () => {

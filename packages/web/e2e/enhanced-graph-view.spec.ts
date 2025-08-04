@@ -1,7 +1,12 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Enhanced Graph View', () => {
   test.beforeEach(async ({ page }) => {
+    // Enable console logging
+    page.on('console', (msg) => console.log('BROWSER CONSOLE:', msg.text()))
+    page.on('pageerror', (error) => console.log('PAGE ERROR:', error.message))
+
     // Set dev auth bypass cookie for testing
     await page.context().addCookies([
       {
@@ -15,6 +20,23 @@ test.describe('Enhanced Graph View', () => {
     // Navigate to the graph page with extended timeout for D3.js compilation
     await page.goto('/app/graph', { timeout: 60000 })
     await page.waitForLoadState('networkidle', { timeout: 30000 })
+
+    // Wait for React hydration
+    await waitForHydration(page)
+
+    // Wait for either graph to load or error to show
+    try {
+      await Promise.race([
+        page
+          .locator('[data-testid="graph-visualization"]')
+          .waitFor({ timeout: 10000 }),
+        page
+          .locator('text="Failed to load graph data"')
+          .waitFor({ timeout: 10000 }),
+      ])
+    } catch (error) {
+      // If neither is found, continue - tests will handle the specific cases
+    }
   })
 
   test('should display enhanced graph controls', async ({ page }) => {

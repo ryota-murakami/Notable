@@ -12,6 +12,8 @@ import { TemplateVariableForm } from '@/components/templates/template-variable-f
 import { ExportButton } from '@/components/export/export-button'
 import { NoteActions } from '@/components/note-actions'
 import { BacklinksPanel } from '@/components/backlinks-panel'
+import { EnhancedAIToolbar } from '@/components/ai/enhanced-ai-toolbar'
+import { VersionHistoryButton } from '@/components/ui/version-history-button'
 import { TemplateEngine } from '@/lib/templates/engine'
 import { markdownToSlate } from '@/lib/slate/markdown-to-slate'
 import {
@@ -243,6 +245,32 @@ export function RichTextEditor({
     onContentChange?.(defaultContent)
   }, [onTitleChange, onContentChange])
 
+  // Handle AI content updates
+  const handleAIContentUpdate = useCallback(
+    (newContent: string) => {
+      // Convert the AI-generated content to Slate format
+      const slateContent = markdownToSlate(newContent)
+      setContent(slateContent)
+      onContentChange?.(slateContent)
+    },
+    [onContentChange]
+  )
+
+  // Convert Slate content to text for AI processing
+  const getContentAsText = useCallback((): string => {
+    return content
+      .map((node: any) => {
+        if (node.type === 'paragraph') {
+          return (
+            node.children?.map((child: any) => child.text || '').join('') || ''
+          )
+        }
+        return ''
+      })
+      .join('\n')
+      .trim()
+  }, [content])
+
   return (
     <div
       className={`flex flex-col h-full ${className || ''}`}
@@ -282,6 +310,12 @@ export function RichTextEditor({
               }}
               size='sm'
               variant='outline'
+            />
+            <VersionHistoryButton
+              noteId={noteId}
+              size='sm'
+              variant='outline'
+              showLabel={false}
             />
             <Button
               variant='outline'
@@ -329,6 +363,15 @@ export function RichTextEditor({
             />
           </div>
         </div>
+      </div>
+
+      {/* AI Toolbar Section */}
+      <div className='border-b bg-background/30 px-6 py-2'>
+        <EnhancedAIToolbar
+          content={getContentAsText()}
+          onContentUpdate={handleAIContentUpdate}
+          className='justify-start'
+        />
       </div>
 
       {/* Content Area with Editor and Backlinks */}

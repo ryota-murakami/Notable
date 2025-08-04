@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Comprehensive Template System Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,6 +16,9 @@ test.describe('Comprehensive Template System Tests', () => {
     // Navigate directly to app
     await page.goto('/app')
     await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Template Picker', () => {

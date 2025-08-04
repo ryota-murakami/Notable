@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe.skip('Debug Marks Test', () => {
   // SKIPPED: Debug test for rich text marks not applicable to textarea
@@ -17,6 +18,9 @@ test.describe.skip('Debug Marks Test', () => {
     await page.waitForSelector('[data-testid="block-editor"]', {
       timeout: 10000,
     })
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test('debug text selection and marks', async ({ page }) => {

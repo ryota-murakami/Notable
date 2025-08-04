@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe.skip('Elite-Tier Features Integration', () => {
   // SKIPPED: Elite features not implemented in current version
@@ -15,6 +16,9 @@ test.describe.skip('Elite-Tier Features Integration', () => {
         path: '/',
       },
     ])
+
+    // Wait for React hydration
+    await waitForHydration(page)
   })
 
   test.describe('Semantic Search Features', () => {

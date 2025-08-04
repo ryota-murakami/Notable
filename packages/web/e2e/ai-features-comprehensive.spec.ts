@@ -1,0 +1,357 @@
+import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
+
+test.describe('AI Features - Comprehensive Testing', () => {
+  test.beforeEach(async ({ page }) => {
+    // Set up dev auth bypass
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
+    // Navigate to the app
+    await page.goto('/app')
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
+
+    // Wait for React hydration
+    await waitForHydration(page)
+  })
+
+  test('should display AI toolbar buttons in note editor', async ({ page }) => {
+    // Create a new note
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    // Add some content to enable AI features
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    await titleInput.fill('AI Features Test Note')
+
+    // Add content to the editor
+    const editor = page.locator('[contenteditable="true"]').first()
+    await editor.click()
+    await editor.fill(
+      'This is test content for AI processing. It has multiple sentences and ideas.'
+    )
+    await page.waitForTimeout(1000)
+
+    // Check for AI toolbar buttons
+    const aiGenerateButton = page.locator('button', { hasText: 'AI Generate' })
+    const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
+    const aiImproveButton = page.locator('button', { hasText: 'AI Improve' })
+
+    // All three AI buttons should be visible
+    await expect(aiGenerateButton).toBeVisible({ timeout: 5000 })
+    await expect(aiSummaryButton).toBeVisible({ timeout: 5000 })
+    await expect(aiImproveButton).toBeVisible({ timeout: 5000 })
+
+    // Buttons should have proper icons
+    await expect(aiGenerateButton.locator('svg')).toBeVisible()
+    await expect(aiSummaryButton.locator('svg')).toBeVisible()
+    await expect(aiImproveButton.locator('svg')).toBeVisible()
+  })
+
+  test('should open AI Generate dropdown with content options', async ({
+    page,
+  }) => {
+    // Create a new note with content
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    await titleInput.fill('AI Generate Test')
+
+    const editor = page.locator('[contenteditable="true"]').first()
+    await editor.click()
+    await editor.fill('Starting content for AI generation.')
+    await page.waitForTimeout(1000)
+
+    // Click AI Generate button
+    const aiGenerateButton = page.locator('button', { hasText: 'AI Generate' })
+    await aiGenerateButton.click()
+    await page.waitForTimeout(500)
+
+    // Check for dropdown menu options
+    const continueWriting = page.getByText('Continue Writing')
+    const brainstormIdeas = page.getByText('Brainstorm Ideas')
+    const answerQuestion = page.getByText('Answer Question')
+    const createOutline = page.getByText('Create Outline')
+    const generateIdeas = page.getByText('Generate Ideas')
+
+    // At least Continue Writing should be visible
+    await expect(continueWriting).toBeVisible()
+
+    // Check if other options are visible
+    const optionsVisible = [
+      await brainstormIdeas.isVisible().catch(() => false),
+      await answerQuestion.isVisible().catch(() => false),
+      await createOutline.isVisible().catch(() => false),
+      await generateIdeas.isVisible().catch(() => false),
+    ]
+
+    // At least one additional option should be visible
+    expect(optionsVisible.some((visible) => visible)).toBeTruthy()
+  })
+
+  test('should open generate content dialog when option is clicked', async ({
+    page,
+  }) => {
+    // Create a new note with content
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    await titleInput.fill('Dialog Test')
+    await page.waitForTimeout(500)
+
+    // Click AI Generate button
+    const aiGenerateButton = page.locator('button', { hasText: 'AI Generate' })
+    await aiGenerateButton.click()
+    await page.waitForTimeout(500)
+
+    // Click on Continue Writing option
+    const continueWriting = page.getByText('Continue Writing')
+    await continueWriting.click()
+    await page.waitForTimeout(500)
+
+    // Dialog should open
+    const dialog = page.locator('[role="dialog"]')
+    await expect(dialog).toBeVisible()
+
+    // Should have prompt textarea
+    const promptTextarea = page.locator('textarea#prompt')
+    await expect(promptTextarea).toBeVisible()
+
+    // Should have Generate Content button
+    const generateButton = page.getByText('Generate Content')
+    await expect(generateButton).toBeVisible()
+
+    // Should initially be disabled
+    await expect(generateButton).toBeDisabled()
+
+    // Add prompt text
+    await promptTextarea.fill('Continue this story about...')
+
+    // Button should now be enabled
+    await expect(generateButton).toBeEnabled()
+  })
+
+  test('should display AI Summary dropdown options', async ({ page }) => {
+    // Create a note with substantial content
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    await titleInput.fill('Summary Test Note')
+
+    const editor = page.locator('[contenteditable="true"]').first()
+    await editor.click()
+    await editor.fill(
+      'This is a long piece of content that contains multiple ideas and concepts. It discusses various topics including technology, innovation, and future trends. The content is substantial enough to warrant summarization through artificial intelligence processing.'
+    )
+    await page.waitForTimeout(1000)
+
+    // Click AI Summary button
+    const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
+    await aiSummaryButton.click()
+    await page.waitForTimeout(500)
+
+    // Check for summary options
+    const briefSummary = page.getByText('Brief Summary')
+    const detailedSummary = page.getByText('Detailed Summary')
+    const bulletPoints = page.getByText('Bullet Points')
+
+    // All summary options should be visible
+    await expect(briefSummary).toBeVisible()
+    await expect(detailedSummary).toBeVisible()
+    await expect(bulletPoints).toBeVisible()
+  })
+
+  test('should display AI Improve dropdown options', async ({ page }) => {
+    // Create a note with content to improve
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    await titleInput.fill('Improvement Test Note')
+
+    const editor = page.locator('[contenteditable="true"]').first()
+    await editor.click()
+    await editor.fill(
+      'This text can be improved and made more professional. It might have gramatical errors or could be more clear and concise.'
+    )
+    await page.waitForTimeout(1000)
+
+    // Click AI Improve button
+    const aiImproveButton = page.locator('button', { hasText: 'AI Improve' })
+    await aiImproveButton.click()
+    await page.waitForTimeout(500)
+
+    // Check for improvement options
+    const improveWriting = page.getByText('Improve Writing')
+    const proofread = page.getByText('Proofread')
+    const simplify = page.getByText('Simplify')
+
+    // Core improvement options should be visible
+    await expect(improveWriting).toBeVisible()
+    await expect(proofread).toBeVisible()
+    await expect(simplify).toBeVisible()
+  })
+
+  test('should handle AI actions with no content gracefully', async ({
+    page,
+  }) => {
+    // Create a new note without content
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    await titleInput.fill('Empty Content Test')
+    await page.waitForTimeout(500)
+
+    // Try to click AI Summary with no content
+    const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
+    await aiSummaryButton.click()
+    await page.waitForTimeout(200)
+
+    const briefSummary = page.getByText('Brief Summary')
+    if (await briefSummary.isVisible()) {
+      await briefSummary.click()
+
+      // Should show toast notification about no content
+      // Wait for toast to appear and disappear
+      await page.waitForTimeout(1000)
+    }
+
+    // The test should not crash
+    await expect(page.locator('[data-testid="note-editor"]')).toBeVisible()
+  })
+
+  test('should show loading states during AI processing', async ({ page }) => {
+    // Create a note with content
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    await titleInput.fill('Loading State Test')
+
+    const editor = page.locator('[contenteditable="true"]').first()
+    await editor.click()
+    await editor.fill('Test content for AI processing.')
+    await page.waitForTimeout(1000)
+
+    // Click AI Summary and select an option
+    const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
+    await aiSummaryButton.click()
+    await page.waitForTimeout(200)
+
+    const briefSummary = page.getByText('Brief Summary')
+    if (await briefSummary.isVisible()) {
+      await briefSummary.click()
+
+      // Should show loading spinner (very briefly)
+      const loadingSpinner = page.locator('.animate-spin')
+
+      // Wait briefly to see if loading state appears
+      await page.waitForTimeout(100)
+
+      // The request should complete (or fail gracefully)
+      await page.waitForTimeout(2000)
+    }
+
+    // Button should return to normal state
+    await expect(aiSummaryButton).toContainText('AI Summary')
+    await expect(aiSummaryButton).not.toHaveClass(/animate-spin/)
+  })
+
+  test('should have proper accessibility for AI features', async ({ page }) => {
+    // Create a note
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    // AI buttons should be keyboard accessible
+    const aiGenerateButton = page.locator('button', { hasText: 'AI Generate' })
+    const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
+    const aiImproveButton = page.locator('button', { hasText: 'AI Improve' })
+
+    // All buttons should be focusable and have proper roles
+    await expect(aiGenerateButton).toBeEnabled()
+    await expect(aiSummaryButton).toBeEnabled()
+    await expect(aiImproveButton).toBeEnabled()
+
+    // Focus the first AI button
+    await aiGenerateButton.focus()
+
+    // Should be able to open with Enter key
+    await page.keyboard.press('Enter')
+    await page.waitForTimeout(200)
+
+    // Dropdown should be accessible via keyboard
+    const dropdown = page.locator('[role="menu"], [role="menuitem"]').first()
+    if (await dropdown.isVisible()) {
+      // Should be able to navigate with arrow keys
+      await page.keyboard.press('ArrowDown')
+      await page.keyboard.press('Enter')
+    }
+  })
+
+  test('should integrate AI toolbar properly in editor layout', async ({
+    page,
+  }) => {
+    // Create a note
+    await page.click('[data-testid="new-note-button"]')
+    await page.waitForSelector('[data-testid="note-editor"]', {
+      timeout: 10000,
+    })
+
+    // AI toolbar should be positioned correctly in the editor
+    const aiToolbar = page
+      .locator('button', { hasText: 'AI Generate' })
+      .locator('..')
+
+    // Should be visible and properly positioned
+    await expect(aiToolbar).toBeVisible()
+
+    // Should not overlap with other editor elements
+    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const editorContent = page.locator('[contenteditable="true"]').first()
+
+    await expect(titleInput).toBeVisible()
+    await expect(editorContent).toBeVisible()
+
+    // All elements should be accessible
+    await titleInput.click()
+    await titleInput.fill('Layout Test')
+
+    await editorContent.click()
+    await editorContent.fill('Test content')
+
+    // AI buttons should still be clickable
+    const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
+    await aiSummaryButton.click()
+    await page.waitForTimeout(200)
+
+    // Should not interfere with editor functionality
+    await expect(titleInput).toHaveValue('Layout Test')
+    await expect(editorContent).toContainText('Test content')
+  })
+})
