@@ -46,7 +46,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     ).toBeVisible()
   })
 
-  test.skip('should show New Note command in palette', async ({ page }) => {
+  test('should show New Note command in palette', async ({ page }) => {
     // SKIPPED: Command palette not fully implemented
     // Open command palette
     await page.keyboard.press('Meta+k')
@@ -95,9 +95,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await expect(editor).toBeVisible({ timeout: 10000 })
   })
 
-  test.skip('should show keyboard shortcuts dialog with Cmd+/', async ({
-    page,
-  }) => {
+  test('should show keyboard shortcuts dialog with Cmd+/', async ({ page }) => {
     // SKIPPED: Keyboard shortcuts dialog not implemented
     // Open keyboard shortcuts dialog
     await page.keyboard.press('Meta+/')
@@ -163,7 +161,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     ).toBeVisible()
   })
 
-  test.skip('should open keyboard shortcuts from command palette', async ({
+  test('should open keyboard shortcuts from command palette', async ({
     page,
   }) => {
     // SKIPPED: Keyboard shortcuts command not available in command palette

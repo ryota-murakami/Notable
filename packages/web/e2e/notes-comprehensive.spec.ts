@@ -56,7 +56,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       )
     })
 
-    test.skip('should read and display existing note', async ({ page }) => {
+    test('should read and display existing note', async ({ page }) => {
       // SKIPPED: Note list integration not implemented
       // Create a note first
       await page.click('[data-testid="new-note-button"]')
@@ -142,7 +142,7 @@ test.describe('Comprehensive Note Management Tests', () => {
   })
 
   test.describe('Note Search', () => {
-    test.skip('should search notes by title', async ({ page }) => {
+    test('should search notes by title', async ({ page }) => {
       // SKIPPED: Search functionality needs proper implementation
       // Create multiple notes
       const notes = ['Alpha Note', 'Beta Note', 'Gamma Note']
@@ -187,9 +187,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       ).toContainText('JavaScript Note')
     })
 
-    test.skip('should show no results for non-matching search', async ({
-      page,
-    }) => {
+    test('should show no results for non-matching search', async ({ page }) => {
       // SKIPPED: Search functionality needs implementation
       // Create a note
       await page.click('[data-testid="new-note-button"]')
@@ -206,7 +204,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should clear search and show all notes', async ({ page }) => {
+    test('should clear search and show all notes', async ({ page }) => {
       // SKIPPED: Search and note list functionality not implemented
       // Create notes
       const notes = ['Note One', 'Note Two']

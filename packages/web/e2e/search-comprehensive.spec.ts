@@ -93,7 +93,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(page.locator('text="Python Guide"')).not.toBeVisible()
     })
 
-    test.skip('should search notes by content', async ({ page }) => {
+    test('should search notes by content', async ({ page }) => {
       // SKIPPED: Search by content needs implementation
       // Create note with specific content
       await page.click('[data-testid="new-note-button"]')
@@ -128,7 +128,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       ).toContainText('useEffect is a powerful')
     })
 
-    test.skip('should highlight search terms in results', async ({ page }) => {
+    test('should highlight search terms in results', async ({ page }) => {
       // SKIPPED: Search highlighting not implemented
       // Create note
       await page.click('[data-testid="new-note-button"]')
@@ -165,7 +165,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       )
     })
 
-    test.skip('should show no results message', async ({ page }) => {
+    test('should show no results message', async ({ page }) => {
       // SKIPPED: Search functionality not implemented
       // Search for non-existent content
       await page.keyboard.press('Control+k')
@@ -183,9 +183,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       ).toContainText('No results found')
     })
 
-    test.skip('should navigate search results with keyboard', async ({
-      page,
-    }) => {
+    test('should navigate search results with keyboard', async ({ page }) => {
       // SKIPPED: Search results navigation not implemented
       // Create multiple notes
       for (let i = 1; i <= 3; i++) {
@@ -226,7 +224,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Advanced Search', () => {
-    test.skip('should open advanced search dialog', async ({ page }) => {
+    test('should open advanced search dialog', async ({ page }) => {
       // SKIPPED: Advanced search not implemented
       // Open search
       await page.keyboard.press('Control+k')
@@ -241,7 +239,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(page.locator('[data-testid="search-filters"]')).toBeVisible()
     })
 
-    test.skip('should filter by date range', async ({ page }) => {
+    test('should filter by date range', async ({ page }) => {
       // SKIPPED: Date range filtering not implemented
       // Create notes on different dates
       await page.click('[data-testid="new-note-button"]')
@@ -265,7 +263,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(page.locator('[data-testid="search-result"]')).toHaveCount(0)
     })
 
-    test.skip('should filter by tags', async ({ page }) => {
+    test('should filter by tags', async ({ page }) => {
       // SKIPPED: Tag filtering not implemented
       // Create notes with tags
       await page.click('[data-testid="new-note-button"]')
@@ -394,7 +392,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Search History', () => {
-    test.skip('should save search history', async ({ page }) => {
+    test('should save search history', async ({ page }) => {
       // SKIPPED: Search history not implemented
       // Perform searches
       await page.keyboard.press('Control+k')
@@ -546,7 +544,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Search Suggestions', () => {
-    test.skip('should show search suggestions', async ({ page }) => {
+    test('should show search suggestions', async ({ page }) => {
       // SKIPPED: Search suggestions not implemented
       // Create notes with common terms
       const titles = [
@@ -576,7 +574,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       ).toContainText('React')
     })
 
-    test.skip('should autocomplete from suggestions', async ({ page }) => {
+    test('should autocomplete from suggestions', async ({ page }) => {
       // SKIPPED: Search autocomplete not implemented
       // Create note
       await page.click('[data-testid="new-note-button"]')
@@ -635,7 +633,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       )
     })
 
-    test.skip('should debounce search input', async ({ page }) => {
+    test('should debounce search input', async ({ page }) => {
       // SKIPPED: Search debouncing not implemented
       // Open search
       await page.keyboard.press('Control+k')
@@ -656,7 +654,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Search Integration', () => {
-    test.skip('should integrate with command palette', async ({ page }) => {
+    test('should integrate with command palette', async ({ page }) => {
       // SKIPPED: Command palette integration not implemented
       // Open command palette
       await page.keyboard.press('Control+Shift+p')

@@ -43,7 +43,7 @@ test.describe('Advanced Search System', () => {
     ).toBeFocused()
   })
 
-  test.skip('should search notes by content', async ({ page }) => {
+  test('should search notes by content', async ({ page }) => {
     // SKIPPED: Search input events not triggering properly in test environment
     // The dialog opens but React onChange events need investigation
     // Test search functionality with mock data
@@ -116,7 +116,7 @@ test.describe('Advanced Search System', () => {
     }
   })
 
-  test.skip('should filter search by tags', async ({ page }) => {
+  test('should filter search by tags', async ({ page }) => {
     // SKIPPED: Filter button interaction issues in test environment
     // The search dialog opens but filter interactions need debugging
 
@@ -142,7 +142,7 @@ test.describe('Advanced Search System', () => {
     // For now, just verify the filter UI is accessible
   })
 
-  test.skip('should show search suggestions', async ({ page }) => {
+  test('should show search suggestions', async ({ page }) => {
     // SKIPPED: Search suggestions not implemented
     // Create multiple notes
     const notes = [
@@ -197,7 +197,7 @@ test.describe('Advanced Search System', () => {
     ).toContainText('React')
   })
 
-  test.skip('should save and load search history', async ({ page }) => {
+  test('should save and load search history', async ({ page }) => {
     // SKIPPED: Search history not implemented
     // Perform a search
     await page.click('button:has-text("Search...")')
@@ -232,7 +232,7 @@ test.describe('Advanced Search System', () => {
     )
   })
 
-  test.skip('should save searches', async ({ page }) => {
+  test('should save searches', async ({ page }) => {
     // SKIPPED: Save search functionality not implemented
     // Open search and enter query
     await page.click('button:has-text("Search...")')
@@ -248,7 +248,7 @@ test.describe('Advanced Search System', () => {
     await expect(page.locator('[role="dialog"]')).toContainText('results found')
   })
 
-  test.skip('should navigate to note from search results', async ({ page }) => {
+  test('should navigate to note from search results', async ({ page }) => {
     // SKIPPED: Search navigation not implemented
     // Create a note
     await page.click('text=New Note')
@@ -292,7 +292,7 @@ test.describe('Advanced Search System', () => {
     ).not.toBeVisible()
   })
 
-  test.skip('should handle empty search results', async ({ page }) => {
+  test('should handle empty search results', async ({ page }) => {
     // SKIPPED: Depends on search dialog opening which is not working
     // Search for non-existent content
     await page.click('button:has-text("Search...")')
@@ -309,7 +309,7 @@ test.describe('Advanced Search System', () => {
     ).toBeVisible()
   })
 
-  test.skip('should support keyboard navigation', async ({ page }) => {
+  test('should support keyboard navigation', async ({ page }) => {
     // SKIPPED: Depends on search dialog and search results which are not fully implemented
     // Create multiple notes
     for (let i = 1; i <= 3; i++) {
@@ -334,7 +334,7 @@ test.describe('Advanced Search System', () => {
     await expect(page).toHaveURL(/\/notes\//)
   })
 
-  test.skip('should close search with Escape key', async ({ page }) => {
+  test('should close search with Escape key', async ({ page }) => {
     // SKIPPED: Depends on search dialog opening which is not working
     // Open search
     await page.click('button:has-text("Search...")')

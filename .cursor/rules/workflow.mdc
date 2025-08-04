@@ -1,0 +1,13 @@
+---
+title: Workflow
+---
+
+# Workflow
+
+- When you create new React code, you MUST add Playwright tests and run e2e.
+- When fixing test/lint/typecheck/build/e2e failures, always re-run tests to verify the fix.
+- When you have modified code, run test/lint/typecheck/build/e2e before finishing work.
+description:
+globs:
+alwaysApply: false
+---
