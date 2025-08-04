@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('complete tag creation end-to-end', async ({ page }) => {
   // Set dev auth bypass cookie for testing
@@ -50,7 +50,7 @@ test('complete tag creation end-to-end', async ({ page }) => {
     console.log('✅ Found tag name input field')
 
     // Enter a test tag name
-    const testTagName = 'test-tag-' + Date.now()
+    const testTagName = `test-tag-${Date.now()}`
     await tagNameInput.fill(testTagName)
     console.log(`✅ Entered tag name: ${testTagName}`)
 
@@ -85,7 +85,10 @@ test('complete tag creation end-to-end', async ({ page }) => {
           )
         }
       } catch (error) {
-        console.log('❌ Failed to click create button:', error.message)
+        console.log(
+          '❌ Failed to click create button:',
+          error instanceof Error ? error.message : String(error)
+        )
       }
     } else {
       console.log('❌ Create button not found in dialog')

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe.skip('Debug Marks Test', () => {

@@ -13,7 +13,7 @@ import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
-import { FileText, Plus, BarChart3, Star, Archive, Tags } from 'lucide-react'
+import { Archive, BarChart3, FileText, Plus, Star, Tags } from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import { NoteActions } from '@/components/note-actions'
 import {

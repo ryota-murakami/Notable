@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('programmatic navigation debug test', async ({ page }) => {
   // Capture console messages and errors
@@ -7,7 +7,9 @@ test('programmatic navigation debug test', async ({ page }) => {
   })
 
   page.on('pageerror', (error) => {
-    console.log(`[PAGE ERROR] ${error.message}`)
+    console.log(
+      `[PAGE ERROR] ${error instanceof Error ? error.message : String(error)}`
+    )
   })
 
   // Set dev auth bypass cookie for testing
@@ -66,7 +68,7 @@ test('programmatic navigation debug test', async ({ page }) => {
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         method: 'router.push',
       }
     }

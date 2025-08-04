@@ -104,7 +104,7 @@ for (const testFile of testFiles) {
   }
 }
 
-console.log('\n' + '='.repeat(60))
+console.log(`\n${'='.repeat(60)}`)
 console.log('SUMMARY:')
 console.log(`Total tests: ${totalPassed + totalFailed + totalSkipped}`)
 console.log(`✓ Passed: ${totalPassed}`)

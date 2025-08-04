@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import { Star, Pin, Archive, MoreVertical } from 'lucide-react'
+import { Archive, MoreVertical, Pin, Star } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,

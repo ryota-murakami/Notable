@@ -3,12 +3,12 @@
 import { createPlatePlugin } from 'platejs/react'
 import {
   BoldPlugin as BaseBoldPlugin,
-  ItalicPlugin as BaseItalicPlugin,
-  UnderlinePlugin as BaseUnderlinePlugin,
-  StrikethroughPlugin as BaseStrikethroughPlugin,
   CodePlugin as BaseCodePlugin,
+  ItalicPlugin as BaseItalicPlugin,
+  StrikethroughPlugin as BaseStrikethroughPlugin,
   SubscriptPlugin as BaseSubscriptPlugin,
   SuperscriptPlugin as BaseSuperscriptPlugin,
+  UnderlinePlugin as BaseUnderlinePlugin,
 } from '@udecode/plate-basic-marks/react'
 // import { HighlightPlugin as BaseHighlightPlugin } from '@udecode/plate-highlight/react'
 // import { KbdPlugin as BaseKbdPlugin } from '@udecode/plate-kbd/react'

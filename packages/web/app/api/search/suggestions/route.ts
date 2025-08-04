@@ -15,11 +15,23 @@ export async function GET(request: NextRequest) {
       }
 
       const mockSuggestions: SearchSuggestion[] = [
-        { suggestion: `${query} in notes`, type: 'note', score: 0.9 },
-        { suggestion: `${query} in templates`, type: 'template', score: 0.8 },
-        { suggestion: `recent ${query}`, type: 'history', score: 0.7 },
-        { suggestion: `${query} tag`, type: 'tag', score: 0.6 },
-        { suggestion: `${query} content`, type: 'content', score: 0.5 },
+        {
+          suggestion: `${query} in notes`,
+          type: 'content' as const,
+          score: 0.9,
+        },
+        {
+          suggestion: `${query} in templates`,
+          type: 'content' as const,
+          score: 0.8,
+        },
+        { suggestion: `recent ${query}`, type: 'history' as const, score: 0.7 },
+        { suggestion: `${query} tag`, type: 'tag' as const, score: 0.6 },
+        {
+          suggestion: `${query} content`,
+          type: 'content' as const,
+          score: 0.5,
+        },
       ].filter((s) => s.suggestion.toLowerCase().includes(query.toLowerCase()))
 
       return NextResponse.json({

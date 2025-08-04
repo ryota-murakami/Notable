@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 import {
-  waitForHydration,
   clickWithHydration,
+  waitForHydration,
 } from './utils/wait-for-hydration'
 
 test.describe('Comprehensive Editor Plugins Tests', () => {
@@ -786,7 +786,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       let editorHTML = await editor.innerHTML()
       console.log(
         '🚨 Editor HTML after typing "/":',
-        editorHTML.substring(0, 200) + '...'
+        `${editorHTML.substring(0, 200)}...`
       )
 
       // Try typing some text after the slash
@@ -799,7 +799,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       editorHTML = await editor.innerHTML()
       console.log(
         '🚨 Editor HTML after typing "/h":',
-        editorHTML.substring(0, 200) + '...'
+        `${editorHTML.substring(0, 200)}...`
       )
 
       // Type "1" to complete "/h1"
@@ -812,7 +812,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       editorHTML = await editor.innerHTML()
       console.log(
         '🚨 Editor HTML after typing "/h1":',
-        editorHTML.substring(0, 200) + '...'
+        `${editorHTML.substring(0, 200)}...`
       )
 
       // Press space or enter to see if it transforms
@@ -828,7 +828,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
 
       // Final HTML check
       editorHTML = await editor.innerHTML()
-      console.log('🚨 Final editor HTML:', editorHTML.substring(0, 300) + '...')
+      console.log('🚨 Final editor HTML:', `${editorHTML.substring(0, 300)}...`)
 
       // Type some content to see where it goes
       await editor.type('Test heading content')

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('tag editing functionality', async ({ page }) => {
   // Set dev auth bypass cookie for testing
@@ -22,7 +22,7 @@ test('tag editing functionality', async ({ page }) => {
   console.log('✅ App shell loaded')
 
   // Step 1: Create a tag first via API
-  const originalTagName = 'edit-test-tag-' + Date.now()
+  const originalTagName = `edit-test-tag-${Date.now()}`
 
   const createResponse = await page.evaluate(async (tagName) => {
     try {
@@ -48,7 +48,7 @@ test('tag editing functionality', async ({ page }) => {
       return {
         status: 0,
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   }, originalTagName)
@@ -64,7 +64,7 @@ test('tag editing functionality', async ({ page }) => {
   console.log(`✅ Created test tag with ID: ${tagId}`)
 
   // Step 2: Edit the tag via API
-  const newTagName = 'edited-tag-' + Date.now()
+  const newTagName = `edited-tag-${Date.now()}`
   const newColor = '#4ecdc4'
 
   const editResponse = await page.evaluate(
@@ -92,7 +92,7 @@ test('tag editing functionality', async ({ page }) => {
         return {
           status: 0,
           success: false,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
         }
       }
     },
@@ -124,7 +124,7 @@ test('tag editing functionality', async ({ page }) => {
       return {
         status: 0,
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   }, tagId)
@@ -164,7 +164,7 @@ test('tag editing functionality', async ({ page }) => {
       return {
         status: 0,
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   }, tagId)
@@ -191,7 +191,7 @@ test('tag editing functionality', async ({ page }) => {
       return {
         status: 0,
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   }, tagId)

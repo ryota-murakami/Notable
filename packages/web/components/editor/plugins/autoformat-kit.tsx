@@ -45,8 +45,9 @@ const autoformatBlocks: AutoformatRule[] = [
     mode: 'block',
     type: 'ul',
     format: (editor) => {
-      editor.tf.setListItem({ type: 'li' })
-      editor.tf.toggleList({ type: 'ul' })
+      // TODO: Implement list formatting
+      // editor.tf.setListItem({ type: 'li' })
+      // editor.tf.toggleList({ type: 'ul' })
     },
   },
   {
@@ -54,8 +55,9 @@ const autoformatBlocks: AutoformatRule[] = [
     mode: 'block',
     type: 'ul',
     format: (editor) => {
-      editor.tf.setListItem({ type: 'li' })
-      editor.tf.toggleList({ type: 'ul' })
+      // TODO: Implement list formatting
+      // editor.tf.setListItem({ type: 'li' })
+      // editor.tf.toggleList({ type: 'ul' })
     },
   },
   {
@@ -63,8 +65,9 @@ const autoformatBlocks: AutoformatRule[] = [
     mode: 'block',
     type: 'ol',
     format: (editor) => {
-      editor.tf.setListItem({ type: 'li' })
-      editor.tf.toggleList({ type: 'ol' })
+      // TODO: Implement list formatting
+      // editor.tf.setListItem({ type: 'li' })
+      // editor.tf.toggleList({ type: 'ol' })
     },
   },
   {
@@ -120,21 +123,24 @@ const autoformatWikiLinks: AutoformatRule[] = [
     },
   },
   {
-    match: /\[\[([^\]]+)\]\]/,
+    match: '[[*]]',
     mode: 'text',
-    type: 'wikiLink',
-    format: (editor, { match }) => {
-      const noteTitle = match[1]
+    format: (editor, options) => {
+      // Handle match extraction when it exists
+      if (options && 'match' in options && Array.isArray(options.match)) {
+        const noteTitle = options.match[1]
 
-      // Insert wiki link element
-      editor.insertNode({
-        type: 'wikiLink',
-        noteTitle: noteTitle.trim(),
-        url: `/notes/search?title=${encodeURIComponent(noteTitle.trim())}`,
-        children: [{ text: noteTitle.trim() }],
-      })
+        // Insert wiki link element
+        ;(editor as any).insertNode({
+          type: 'wikiLink',
+          noteTitle: noteTitle.trim(),
+          url: `/notes/search?title=${encodeURIComponent(noteTitle.trim())}`,
+          children: [{ text: noteTitle.trim() }],
+        })
 
-      return true
+        return true
+      }
+      return false
     },
   },
 ]

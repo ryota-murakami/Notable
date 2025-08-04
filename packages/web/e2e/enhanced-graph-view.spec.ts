@@ -5,7 +5,12 @@ test.describe('Enhanced Graph View', () => {
   test.beforeEach(async ({ page }) => {
     // Enable console logging
     page.on('console', (msg) => console.log('BROWSER CONSOLE:', msg.text()))
-    page.on('pageerror', (error) => console.log('PAGE ERROR:', error.message))
+    page.on('pageerror', (error) =>
+      console.log(
+        'PAGE ERROR:',
+        error instanceof Error ? error.message : String(error)
+      )
+    )
 
     // Set dev auth bypass cookie for testing
     await page.context().addCookies([

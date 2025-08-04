@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('direct route navigation test', async ({ page }) => {
   // Set dev auth bypass cookie for testing
@@ -52,7 +52,9 @@ test('direct route navigation test', async ({ page }) => {
       console.log('❓ UNKNOWN: Unexpected page state')
     }
   } catch (error) {
-    console.log(`❌ Navigation failed: ${error.message}`)
+    console.log(
+      `❌ Navigation failed: ${error instanceof Error ? error.message : String(error)}`
+    )
     await page.screenshot({
       path: 'direct-route-test-error.png',
       fullPage: true,

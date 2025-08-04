@@ -14,7 +14,7 @@ function serializeNode(node: Descendant): string {
 
   const children = node.children.map((n) => serializeNode(n)).join('')
 
-  switch (node.type) {
+  switch ((node as any).type) {
     case 'heading-one':
       return `# ${children}`
     case 'heading-two':

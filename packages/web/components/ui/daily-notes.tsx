@@ -10,7 +10,7 @@ import {
   TrendingUp,
   Zap,
 } from 'lucide-react'
-import { format, isToday, isYesterday, startOfWeek, addDays } from 'date-fns'
+import { addDays, format, isToday, isYesterday, startOfWeek } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -162,7 +162,7 @@ export function DailyNotes({ className, compact = false }: DailyNotesProps) {
 interface WeeklyDailyNotesProps {
   dailyNotes?: Array<{
     id: string
-    custom_id: string
+    custom_id?: string
     title: string
     created_at: string
   }>
@@ -185,7 +185,7 @@ function WeeklyDailyNotes({
       {weekDays.map((date) => {
         const dailyNoteId = `daily-${date.toISOString().split('T')[0]}`
         const hasNote = dailyNotes.some(
-          (note) => note.custom_id === dailyNoteId
+          (note) => note.custom_id && note.custom_id === dailyNoteId
         )
         const isCurrentDay = isToday(date)
         const isPastDay = date < today && !isCurrentDay

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('complete tag creation workflow', async ({ page }) => {
   // Set dev auth bypass cookie for testing
@@ -127,7 +127,7 @@ test('complete tag creation workflow', async ({ page }) => {
       console.log('✅ Step 7: Found tag name input field')
 
       // Step 8: Enter a test tag name using Playwright fill with retries
-      const testTagName = 'test-tag-' + Date.now()
+      const testTagName = `test-tag-${Date.now()}`
 
       // Try Playwright fill with longer timeout and multiple attempts
       let fillSuccess = false
@@ -150,7 +150,9 @@ test('complete tag creation workflow', async ({ page }) => {
             )
           }
         } catch (error) {
-          console.log(`Attempt ${attempt} failed with error: ${error.message}`)
+          console.log(
+            `Attempt ${attempt} failed with error: ${error instanceof Error ? error.message : String(error)}`
+          )
           if (attempt < 3) {
             await page.waitForTimeout(1000)
           }
@@ -252,7 +254,7 @@ test('complete tag creation workflow', async ({ page }) => {
           } catch (error) {
             console.log(
               '❌ Step 10 failed - Create button click error:',
-              error.message
+              error instanceof Error ? error.message : String(error)
             )
           }
         } else {

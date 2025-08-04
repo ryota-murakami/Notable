@@ -4,11 +4,11 @@ import * as React from 'react'
 import { MarkToolbarButton } from '../ui/mark-toolbar-button'
 import {
   BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  StrikethroughIcon,
   CodeIcon,
   HighlighterIcon,
+  ItalicIcon,
+  StrikethroughIcon,
+  UnderlineIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

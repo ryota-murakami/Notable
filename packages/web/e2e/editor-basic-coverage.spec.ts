@@ -11,7 +11,9 @@ test.describe('Editor Basic Coverage', () => {
     })
 
     page.on('pageerror', (error) => {
-      pageErrors.push(`Page error: ${error.message}`)
+      pageErrors.push(
+        `Page error: ${error instanceof Error ? error.message : String(error)}`
+      )
     })
 
     page.on('requestfailed', (request) => {

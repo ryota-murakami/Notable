@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('debug note loading issue', async ({ page }) => {
   // Capture all console messages and errors
@@ -7,7 +7,9 @@ test('debug note loading issue', async ({ page }) => {
   })
 
   page.on('pageerror', (error) => {
-    console.log(`[PAGE ERROR] ${error.message}`)
+    console.log(
+      `[PAGE ERROR] ${error instanceof Error ? error.message : String(error)}`
+    )
     console.log(`[PAGE ERROR STACK] ${error.stack}`)
   })
 
@@ -96,7 +98,7 @@ test('debug note loading issue', async ({ page }) => {
           '[data-testid="note-editor"]'
         ),
       },
-      textContent: document.body.textContent?.substring(0, 500) + '...', // First 500 chars
+      textContent: `${document.body.textContent?.substring(0, 500)}...`, // First 500 chars
       reactVersion: (window as any).React?.version || 'not found',
     }
   })

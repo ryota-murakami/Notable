@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('basic app functionality check', async ({ page }) => {
   // Set dev auth bypass cookie for testing

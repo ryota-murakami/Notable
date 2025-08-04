@@ -216,7 +216,12 @@ export function useDailyNotes() {
           .insert({
             user_id: user.user.id,
             title: dailyNoteTitle,
-            content: noteContent,
+            content: JSON.stringify([
+              {
+                type: 'paragraph',
+                children: [{ text: '' }],
+              },
+            ]),
             custom_id: dailyNoteId,
             is_daily_note: true,
           })
@@ -251,7 +256,7 @@ export function useDailyNotes() {
   // Navigate to today's daily note (create if doesn't exist)
   const goToTodaysDailyNote = useCallback(async () => {
     try {
-      const note = await createOrGetDailyNote.mutateAsync()
+      const note = await createOrGetDailyNote.mutateAsync(new Date())
       router.push(`/notes/${note.id}`)
     } catch (error) {
       console.error('Failed to navigate to daily note:', error)

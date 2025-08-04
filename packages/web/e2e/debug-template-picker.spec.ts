@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('debug template picker navigation', async ({ page }) => {
   // Capture console messages from the browser
@@ -8,7 +8,9 @@ test('debug template picker navigation', async ({ page }) => {
 
   // Capture page errors
   page.on('pageerror', (error) => {
-    console.log(`[PAGE ERROR] ${error.message}`)
+    console.log(
+      `[PAGE ERROR] ${error instanceof Error ? error.message : String(error)}`
+    )
   })
 
   // Set dev auth bypass cookie for testing
@@ -113,7 +115,7 @@ test('debug template picker navigation', async ({ page }) => {
 
       if (blankNoteButton) {
         console.log('Clicking Blank Note button')
-        blankNoteButton.click()
+        ;(blankNoteButton as HTMLElement).click()
         return true
       }
 
@@ -127,7 +129,10 @@ test('debug template picker navigation', async ({ page }) => {
       console.log('❌ Failed to click Blank Note button')
     }
   } catch (error) {
-    console.log('❌ Template picker dialog not found:', error.message)
+    console.log(
+      '❌ Template picker dialog not found:',
+      error instanceof Error ? error.message : String(error)
+    )
 
     // Check what's actually on screen
     const currentUrl = page.url()

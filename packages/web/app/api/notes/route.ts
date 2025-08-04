@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
       const mockNotes = [
         {
-          id: 'mock-note-' + Date.now(),
+          id: `mock-note-${Date.now()}`,
           title: 'Test Note 1',
           content: {
             type: 'doc',
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
           deleted_at: null,
         },
         {
-          id: 'mock-note-' + (Date.now() + 1),
+          id: `mock-note-${Date.now() + 1}`,
           title: 'Test Note 2',
           content: {
             type: 'doc',
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       const { title, content, folder_id, is_hidden } = body
 
       const mockNote = {
-        id: 'mock-note-' + Date.now(),
+        id: `mock-note-${Date.now()}`,
         title: title || 'Untitled',
         content: content || {
           type: 'doc',

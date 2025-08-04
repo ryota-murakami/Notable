@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 
 /**
  * Helper function to create a new note, handling the template picker dialog

@@ -1,8 +1,8 @@
 import { expect, test } from './fixtures/coverage'
 import {
+  addTagsToNote,
   createNewNote,
   createRichNote,
-  addTagsToNote,
 } from './helpers/note-creation'
 import { waitForHydration } from './utils/wait-for-hydration'
 
@@ -19,8 +19,7 @@ test.describe('Comprehensive Export Functionality Tests', () => {
     ])
 
     // Create a unique mock note ID for consistent testing and avoid parallel conflicts
-    const mockNoteId =
-      'mock-note-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+    const mockNoteId = `mock-note-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
     // Navigate directly to a note page to bypass note creation issues
     await page.goto(`http://localhost:4378/notes/${mockNoteId}`)
@@ -200,7 +199,7 @@ test.describe('Comprehensive Export Functionality Tests', () => {
 
     test('should preserve Markdown formatting', async ({ page }) => {
       // Navigate to a new note
-      const mockNoteId = 'mock-note-markdown-' + Date.now()
+      const mockNoteId = `mock-note-markdown-${Date.now()}`
       await page.goto(`http://localhost:4378/notes/${mockNoteId}`)
       await page.waitForSelector('[data-testid="note-title-input"]', {
         timeout: 10000,
@@ -372,7 +371,7 @@ test.describe('Comprehensive Export Functionality Tests', () => {
 
     test('should preserve HTML structure', async ({ page }) => {
       // Navigate to a new note
-      const mockNoteId = 'mock-note-html-' + Date.now()
+      const mockNoteId = `mock-note-html-${Date.now()}`
       await page.goto(`http://localhost:4378/notes/${mockNoteId}`)
       await page.waitForSelector('[data-testid="note-title-input"]', {
         timeout: 10000,

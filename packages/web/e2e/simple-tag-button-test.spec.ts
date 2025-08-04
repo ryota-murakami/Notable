@@ -1,9 +1,12 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('simple tag button click test', async ({ page }) => {
   // Listen for JavaScript errors
   page.on('pageerror', (error) => {
-    console.log('JavaScript error:', error.message)
+    console.log(
+      'JavaScript error:',
+      error instanceof Error ? error.message : String(error)
+    )
   })
 
   page.on('console', (msg) => {
@@ -43,7 +46,10 @@ test('simple tag button click test', async ({ page }) => {
     await manageTagsButton.click({ force: true, timeout: 15000 })
     console.log('✅ Manage Tags button clicked successfully!')
   } catch (error) {
-    console.log('❌ Click failed:', error.message)
+    console.log(
+      '❌ Click failed:',
+      error instanceof Error ? error.message : String(error)
+    )
 
     // Try alternative click methods
     try {
@@ -51,7 +57,10 @@ test('simple tag button click test', async ({ page }) => {
       await manageTagsButton.dispatchEvent('click')
       console.log('✅ dispatchEvent click worked!')
     } catch (error2) {
-      console.log('❌ dispatchEvent also failed:', error2.message)
+      console.log(
+        '❌ dispatchEvent also failed:',
+        error2 instanceof Error ? error2.message : String(error2)
+      )
     }
   }
 

@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 import {
-  waitForHydration,
   clickWithHydration,
+  waitForHydration,
 } from './utils/wait-for-hydration'
 
 test.describe('Daily Notes Feature', () => {

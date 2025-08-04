@@ -19,7 +19,11 @@ import {
 } from '@/components/ui/tooltip'
 import { ExportDialog } from './export-dialog'
 import { type Note } from '../../types/note'
-import { type ExportFormat } from '../../types/export'
+import {
+  type ExportFormat,
+  type ExportOptions,
+  type ReactExportOptions,
+} from '../../types/export'
 import { useExport } from '../../hooks/use-export'
 
 interface ExportButtonProps {
@@ -51,16 +55,17 @@ export function ExportButton({
       }
 
       // Add format-specific defaults
-      let options = baseOptions
+      let options: ExportOptions = baseOptions
       if (format === 'react') {
-        options = {
+        const reactOptions: ReactExportOptions = {
           ...baseOptions,
+          format: 'react',
           typescript: true,
           styling: 'tailwind' as const,
           componentName: undefined, // Will be auto-generated
-          includeProps: false, // Don't generate separate type files for quick export
-          includeDocs: false, // Don't generate docs for quick export
+          includePropTypes: false, // Don't generate separate type files for quick export
         }
+        options = reactOptions
       }
 
       await exportNote(note, options)

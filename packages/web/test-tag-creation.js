@@ -17,7 +17,7 @@ const testTagCreation = async () => {
         Cookie: 'dev-auth-bypass=true',
       },
       body: JSON.stringify({
-        name: 'test-tag-' + Date.now(),
+        name: `test-tag-${Date.now()}`,
         color: '#ff6b6b',
       }),
     })

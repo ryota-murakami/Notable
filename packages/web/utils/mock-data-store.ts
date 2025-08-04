@@ -180,6 +180,10 @@ const mockDataStore = new MockDataStore()
 // Export with the interface expected by API routes
 export const mockStore = {
   tags: {
+    get: (id: string): EnhancedTag | undefined => {
+      return mockDataStore.getTag(id)
+    },
+
     getAll: (userId: string): EnhancedTag[] => {
       return mockDataStore.getAllTags().filter((tag) => tag.user_id === userId)
     },

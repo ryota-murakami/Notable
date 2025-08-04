@@ -17,3 +17,7 @@ export function CodeLeaf(props: PlateLeafProps) {
     </PlateLeaf>
   )
 }
+
+export function CodeElement(props: any) {
+  return <CodeLeaf {...props} />
+}

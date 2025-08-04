@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('API tag creation and cache refresh', async ({ page }) => {
   // Set dev auth bypass cookie for testing
@@ -41,13 +41,13 @@ test('API tag creation and cache refresh', async ({ page }) => {
       const result = await response.json()
       return result
     } catch (error) {
-      return { error: error.message }
+      return { error: error instanceof Error ? error.message : String(error) }
     }
   })
   console.log('Server-side environment check:', serverEnvCheck)
 
   // Test 1: Create a tag directly via API
-  const testTagName = 'api-test-tag-' + Date.now()
+  const testTagName = `api-test-tag-${Date.now()}`
 
   const apiResponse = await page.evaluate(async (tagName) => {
     try {
@@ -73,7 +73,7 @@ test('API tag creation and cache refresh', async ({ page }) => {
       return {
         status: 0,
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   }, testTagName)
@@ -104,7 +104,7 @@ test('API tag creation and cache refresh', async ({ page }) => {
       return {
         status: 0,
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   })

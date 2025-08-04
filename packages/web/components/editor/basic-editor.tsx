@@ -6,11 +6,11 @@ import {
   createEditor,
   type Descendant,
   Editor,
-  Element as SlateElement,
-  Transforms,
-  Range,
   Point,
+  Range,
+  Element as SlateElement,
   Text,
+  Transforms,
 } from 'slate'
 import {
   Editable,
@@ -388,7 +388,9 @@ export function BasicEditor({
   )
 
   const editor = useMemo(
-    () => withWikiLinks(withHistory(withReact(createEditor()))),
+    () =>
+      withWikiLinks(withHistory(withReact(createEditor()))) as ReactEditor &
+        HistoryEditor,
     []
   )
 

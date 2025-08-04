@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { Sparkles, Download } from 'lucide-react'
+import { Download, Sparkles } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { BasicEditor } from '@/components/editor/basic-editor'
@@ -305,20 +305,28 @@ export function RichTextEditor({
                 content: JSON.stringify(content),
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
-                user_id: 'current-user',
-                tags: tags,
+                userId: 'current-user',
+                tags: tags.map((tag) => tag.name),
+                // Sync-related properties (required by Note type)
+                is_folder: false,
+                version: 1,
+                device_id: 'web',
+                last_modified: new Date().toISOString(),
+                vector_clock: {},
+                local_changes: false,
+                deleted: false,
               }}
               size='sm'
-              variant='outline'
+              variant='ghost'
             />
             <VersionHistoryButton
               noteId={noteId}
               size='sm'
-              variant='outline'
+              variant='ghost'
               showLabel={false}
             />
             <Button
-              variant='outline'
+              variant='ghost'
               size='sm'
               onClick={() => setIsTemplatePickerOpen(true)}
               className='flex items-center gap-2 shrink-0'

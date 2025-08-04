@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { isDevModeActive, toggleDevMode, setupDevMode } from '@/utils/dev-setup'
+import { useEffect, useState } from 'react'
+import { isDevModeActive, setupDevMode, toggleDevMode } from '@/utils/dev-setup'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

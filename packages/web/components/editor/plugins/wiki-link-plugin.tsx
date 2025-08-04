@@ -1,6 +1,13 @@
 'use client'
 
-import { Editor, Transforms, Range, Text as SlateText, Node, Path } from 'slate'
+import {
+  type Editor,
+  Node,
+  Path,
+  Range,
+  Text as SlateText,
+  Transforms,
+} from 'slate'
 
 export const withWikiLinks = (editor: Editor) => {
   const { insertText, isInline, normalizeNode } = editor
