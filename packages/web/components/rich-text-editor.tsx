@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Download, Sparkles } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { BasicEditor } from '@/components/editor/basic-editor'
+import { EnhancedPlateEditor } from '@/components/editor/enhanced-plate-editor'
 import { TagInput } from '@/components/ui/tag-input'
 import { TagList } from '@/components/ui/tag-badge'
 import { TemplatePicker } from '@/components/templates/template-picker'
@@ -15,7 +15,8 @@ import { BacklinksPanel } from '@/components/backlinks-panel'
 import { EnhancedAIToolbar } from '@/components/ai/enhanced-ai-toolbar'
 import { VersionHistoryButton } from '@/components/ui/version-history-button'
 import { TemplateEngine } from '@/lib/templates/engine'
-import { markdownToSlate } from '@/lib/slate/markdown-to-slate'
+import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
+import { plateToMarkdown } from '@/lib/plate/plate-to-markdown'
 import {
   useAddTagsToNote,
   useNoteTags,
@@ -203,7 +204,7 @@ export function RichTextEditor({
 
         // Update title and content
         setTitle(noteTitle)
-        setContent(slateContent)
+        setContent(plateContent)
 
         // Notify parent components
         onTitleChange?.(noteTitle)
@@ -248,10 +249,10 @@ export function RichTextEditor({
   // Handle AI content updates
   const handleAIContentUpdate = useCallback(
     (newContent: string) => {
-      // Convert the AI-generated content to Slate format
-      const slateContent = markdownToSlate(newContent)
-      setContent(slateContent)
-      onContentChange?.(slateContent)
+      // Convert the AI-generated content to Plate format
+      const plateContent = markdownToPlate(newContent)
+      setContent(plateContent)
+      onContentChange?.(plateContent)
     },
     [onContentChange]
   )
@@ -386,9 +387,9 @@ export function RichTextEditor({
       <div className='flex-1 flex'>
         {/* Main Editor */}
         <div className='flex-1 overflow-auto'>
-          <BasicEditor
+          <EnhancedPlateEditor
             key={noteId} // Force re-render when note changes
-            initialValue={content}
+            value={content}
             onChange={handleContentChange}
             placeholder='Start writing your note...'
             autoFocus

@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 import { useNote } from '@/hooks/use-note'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import { Spinner } from '@/components/ui/spinner'
-import { markdownToSlate } from '@/lib/slate/markdown-to-slate'
-import { slateToMarkdown } from '@/lib/slate/slate-to-markdown'
+import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
+import { plateToMarkdown } from '@/lib/plate/plate-to-markdown'
 import { updateNoteLinks } from '@/lib/note-links'
 import { isTest } from '@/lib/utils/environment'
-import type { Descendant } from 'slate'
+import type { Value } from 'platejs/react'
 
 interface NoteEditorRichProps {
   noteId: string
@@ -42,9 +42,9 @@ export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
     updateNote({ title: newTitle })
   }
 
-  const handleContentChange = async (newContent: Descendant[]) => {
-    // Convert Slate content to markdown for storage
-    const markdown = slateToMarkdown(newContent)
+  const handleContentChange = async (newContent: Value) => {
+    // Convert Plate content to markdown for storage
+    const markdown = plateToMarkdown(newContent)
     updateNote({ content: markdown })
 
     // Update note links based on wiki links in content
@@ -75,8 +75,8 @@ export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
     )
   }
 
-  // Convert markdown content to Slate format
-  let initialContent: Descendant[] = [
+  // Convert markdown content to Plate format
+  let initialContent: Value = [
     {
       type: 'paragraph',
       children: [{ text: '' }],
@@ -85,7 +85,7 @@ export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
 
   if (effectiveNote.content && typeof effectiveNote.content === 'string') {
     try {
-      initialContent = markdownToSlate(effectiveNote.content)
+      initialContent = markdownToPlate(effectiveNote.content)
     } catch (error) {
       console.error('Failed to parse note content:', error)
     }
