@@ -299,7 +299,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create template
-    const { data: template, error: templateError } = await supabase
+    const { data, error: templateError } = await supabase
       .from('templates')
       .insert({
         name: name.trim(),
@@ -311,10 +311,17 @@ export async function POST(request: NextRequest) {
         created_by: user.id,
       })
       .select()
-      .single()
 
     if (templateError) {
       console.error('Error creating template:', templateError)
+      return NextResponse.json(
+        { error: 'Failed to create template' },
+        { status: 500 }
+      )
+    }
+
+    const template = data?.[0]
+    if (!template) {
       return NextResponse.json(
         { error: 'Failed to create template' },
         { status: 500 }

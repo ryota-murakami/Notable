@@ -127,7 +127,6 @@ export async function POST(request: NextRequest) {
         is_pinned: is_pinned || false,
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Save search error:', error)
@@ -137,7 +136,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ success: true, data }, { status: 201 })
+    const savedSearch = data?.[0]
+    if (!savedSearch) {
+      return NextResponse.json(
+        { error: 'Failed to save search' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(
+      { success: true, data: savedSearch },
+      { status: 201 }
+    )
   } catch (error) {
     console.error('Save search API error:', error)
     return NextResponse.json(
@@ -182,7 +192,6 @@ export async function PUT(request: NextRequest) {
       .eq('id', id)
       .eq('user_id', user.id)
       .select()
-      .single()
 
     if (error) {
       console.error('Update saved search error:', error)
@@ -192,7 +201,15 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ success: true, data })
+    const updatedSearch = data?.[0]
+    if (!updatedSearch) {
+      return NextResponse.json(
+        { error: 'Failed to update saved search' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ success: true, data: updatedSearch })
   } catch (error) {
     console.error('Update saved search API error:', error)
     return NextResponse.json(

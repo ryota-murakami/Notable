@@ -125,7 +125,7 @@ export async function createNoteFromWikiLink(title: string, userId: string) {
     }
 
     // Create new note
-    const { data: newNote, error } = await supabase
+    const { data, error } = await supabase
       .from('notes')
       .insert({
         title,
@@ -133,9 +133,11 @@ export async function createNoteFromWikiLink(title: string, userId: string) {
         user_id: userId,
       })
       .select('id')
-      .single()
 
     if (error) throw error
+
+    const newNote = data?.[0]
+    if (!newNote) throw new Error('Failed to create note')
 
     return newNote.id
   } catch (error) {

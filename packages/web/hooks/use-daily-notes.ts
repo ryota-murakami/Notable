@@ -48,14 +48,12 @@ export function useDailyNotes() {
         .eq('user_id', user.user.id)
         .eq('custom_id', dailyNoteId)
         .is('deleted_at', null)
-        .single()
 
-      if (error && error.code !== 'PGRST116') {
-        // PGRST116 is "not found" error, which is expected if no daily note exists
+      if (error) {
         throw error
       }
 
-      return data as Note | null
+      return data?.[0] as Note | null
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
@@ -95,14 +93,14 @@ export function useDailyNotes() {
       const dailyNoteTitle = getDailyNoteTitle(date)
 
       // First check if daily note already exists
-      const { data: existingNote } = await supabase
+      const { data: existingNotes } = await supabase
         .from('notes')
         .select('*')
         .eq('user_id', user.user.id)
         .eq('custom_id', dailyNoteId)
         .is('deleted_at', null)
-        .single()
 
+      const existingNote = existingNotes?.[0]
       if (existingNote) {
         return existingNote as Note
       }
@@ -179,7 +177,7 @@ export function useDailyNotes() {
         }
 
         // Create the daily note
-        const { data: newNote, error } = await supabase
+        const { data, error } = await supabase
           .from('notes')
           .insert({
             user_id: user.user.id,
@@ -189,9 +187,11 @@ export function useDailyNotes() {
             is_daily_note: true,
           })
           .select()
-          .single()
 
         if (error) throw error
+
+        const newNote = data?.[0]
+        if (!newNote) throw new Error('Failed to create daily note')
 
         // Track template usage if we used the template
         if (templates.length > 0) {
@@ -211,7 +211,7 @@ export function useDailyNotes() {
           templateError
         )
 
-        const { data: newNote, error } = await supabase
+        const { data, error } = await supabase
           .from('notes')
           .insert({
             user_id: user.user.id,
@@ -226,9 +226,11 @@ export function useDailyNotes() {
             is_daily_note: true,
           })
           .select()
-          .single()
 
         if (error) throw error
+
+        const newNote = data?.[0]
+        if (!newNote) throw new Error('Failed to create daily note')
         return newNote as Note
       }
     },

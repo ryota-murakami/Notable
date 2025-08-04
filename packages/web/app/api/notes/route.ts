@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new note
-    const { data: note, error } = await supabase
+    const { data, error } = await supabase
       .from('notes')
       .insert({
         title: title || 'Untitled',
@@ -178,10 +178,17 @@ export async function POST(request: NextRequest) {
         is_hidden: is_hidden || false,
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Error creating note:', error)
+      return NextResponse.json(
+        { error: 'Failed to create note' },
+        { status: 500 }
+      )
+    }
+
+    const note = data?.[0]
+    if (!note) {
       return NextResponse.json(
         { error: 'Failed to create note' },
         { status: 500 }

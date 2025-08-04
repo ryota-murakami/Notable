@@ -28,20 +28,22 @@ export async function GET(
     }
 
     // Verify note exists and belongs to user
-    const { data: note, error: noteError } = await supabase
+    const { data: notes, error: noteError } = await supabase
       .from('notes')
       .select('id')
       .eq('id', id)
-      .maybeSingle()
+
+    const note = notes?.[0]
 
     // Check if note belongs to user
     if (note && user) {
-      const { data: userNote } = await supabase
+      const { data: userNotes } = await supabase
         .from('notes')
         .select('id')
         .eq('id', id)
         .eq('user_id', user.id)
-        .maybeSingle()
+
+      const userNote = userNotes?.[0]
 
       if (!userNote) {
         return NextResponse.json({ error: 'Note not found' }, { status: 404 })
@@ -140,20 +142,22 @@ export async function POST(
     }
 
     // Verify note exists and belongs to user
-    const { data: note, error: noteError } = await supabase
+    const { data: notes, error: noteError } = await supabase
       .from('notes')
       .select('id')
       .eq('id', id)
-      .maybeSingle()
+
+    const note = notes?.[0]
 
     // Check if note belongs to user
     if (note && user) {
-      const { data: userNote } = await supabase
+      const { data: userNotes } = await supabase
         .from('notes')
         .select('id')
         .eq('id', id)
         .eq('user_id', user.id)
-        .maybeSingle()
+
+      const userNote = userNotes?.[0]
 
       if (!userNote) {
         return NextResponse.json({ error: 'Note not found' }, { status: 404 })

@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     let suggestions
     try {
       suggestions = JSON.parse(content)
-    } catch (e) {
+    } catch {
       // Fallback if AI doesn't return valid JSON
       suggestions = [
         {

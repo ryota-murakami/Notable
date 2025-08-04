@@ -130,14 +130,21 @@ export async function POST(
         to_note_id: toNoteId,
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Error creating note link:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json(data, { status: 201 })
+    const noteLink = data?.[0]
+    if (!noteLink) {
+      return NextResponse.json(
+        { error: 'Failed to create note link' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(noteLink, { status: 201 })
   } catch (error) {
     console.error('Error in POST /api/notes/[id]/links:', error)
     return NextResponse.json(

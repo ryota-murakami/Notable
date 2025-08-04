@@ -393,15 +393,22 @@ export async function PUT(
     if (thumbnail !== undefined) updateData.thumbnail = thumbnail
     if (isPublic !== undefined) updateData.is_public = isPublic
 
-    const { data: updatedTemplate, error: updateError } = await supabase
+    const { data, error: updateError } = await supabase
       .from('templates')
       .update(updateData)
       .eq('id', templateId)
       .select()
-      .single()
 
     if (updateError) {
       console.error('Error updating template:', updateError)
+      return NextResponse.json(
+        { error: 'Failed to update template' },
+        { status: 500 }
+      )
+    }
+
+    const updatedTemplate = data?.[0]
+    if (!updatedTemplate) {
       return NextResponse.json(
         { error: 'Failed to update template' },
         { status: 500 }

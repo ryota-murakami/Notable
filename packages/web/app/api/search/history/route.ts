@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new search history entry
-    const { data: newEntry, error: insertError } = await supabase
+    const { data, error: insertError } = await supabase
       .from('search_history')
       .insert({
         user_id: user.id,
@@ -158,10 +158,17 @@ export async function POST(request: NextRequest) {
         results_count: results_count || 0,
       })
       .select()
-      .single()
 
     if (insertError) {
       console.error('Error creating search history:', insertError)
+      return NextResponse.json(
+        { error: 'Failed to save search history' },
+        { status: 500 }
+      )
+    }
+
+    const newEntry = data?.[0]
+    if (!newEntry) {
       return NextResponse.json(
         { error: 'Failed to save search history' },
         { status: 500 }

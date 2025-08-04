@@ -33,6 +33,32 @@ export interface Database {
           updated_at?: string
         }
       }
+      folders: {
+        Row: {
+          id: string
+          name: string
+          user_id: string
+          parent_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          user_id: string
+          parent_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          user_id?: string
+          parent_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
       tags: {
         Row: {
           id: string

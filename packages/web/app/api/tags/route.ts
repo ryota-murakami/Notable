@@ -271,14 +271,21 @@ export async function POST(request: NextRequest) {
       user_id: user.id,
     }
 
-    const { data: newTag, error: insertError } = await supabase
+    const { data, error: insertError } = await supabase
       .from('tags')
       .insert(tagData)
       .select()
-      .single()
 
     if (insertError) {
       console.error('Error creating tag:', insertError)
+      return NextResponse.json(
+        { error: 'Failed to create tag' },
+        { status: 500 }
+      )
+    }
+
+    const newTag = data?.[0]
+    if (!newTag) {
       return NextResponse.json(
         { error: 'Failed to create tag' },
         { status: 500 }

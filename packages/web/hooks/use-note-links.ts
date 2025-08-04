@@ -35,10 +35,11 @@ export function useCreateNoteLink() {
         .from('note_links')
         .insert(link)
         .select()
-        .single()
 
       if (error) throw error
-      return data
+      const newLink = data?.[0]
+      if (!newLink) throw new Error('Failed to create note link')
+      return newLink
     },
     onSuccess: (data) => {
       // Invalidate queries for both notes involved in the link

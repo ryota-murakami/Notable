@@ -527,7 +527,7 @@ async function createRelationship(supabase: any, userId: string, body: any) {
     }
 
     // Create relationship
-    const { data: relationship, error } = await supabase
+    const { data, error } = await supabase
       .from('note_relationships')
       .insert({
         source_note_id: validatedData.sourceNoteId,
@@ -541,10 +541,17 @@ async function createRelationship(supabase: any, userId: string, body: any) {
         created_by: userId,
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Error creating relationship:', error)
+      return NextResponse.json(
+        { error: 'Failed to create relationship' },
+        { status: 500 }
+      )
+    }
+
+    const relationship = data?.[0]
+    if (!relationship) {
       return NextResponse.json(
         { error: 'Failed to create relationship' },
         { status: 500 }

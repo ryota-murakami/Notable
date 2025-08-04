@@ -66,21 +66,11 @@ export default defineConfig({
         acceptDownloads: true,
       },
     },
-    // Temporarily disable other browsers to speed up CI and prevent hanging
-    // TODO: Re-enable firefox and mobile testing after core issues are resolved
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'NODE_ENV=test pnpm dev',
+    command: 'NODE_ENV=test pnpm start',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes for CI

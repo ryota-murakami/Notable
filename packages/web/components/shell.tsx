@@ -13,7 +13,15 @@ import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
-import { Archive, BarChart3, FileText, Plus, Star, Tags } from 'lucide-react'
+import {
+  Archive,
+  BarChart3,
+  FileText,
+  FolderIcon,
+  Plus,
+  Star,
+  Tags,
+} from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import { NoteActions } from '@/components/note-actions'
 import {
@@ -33,11 +41,23 @@ import type { Template } from '@/types/templates'
 import { TagManagementPanel } from '@/components/ui/tag-management-panel'
 import { DailyNotes } from '@/components/ui/daily-notes'
 import { SmartNoteSuggestions } from '@/components/ui/smart-note-suggestions'
+import { FolderTree } from '@/components/folders/folder-tree'
+import { NewFolderButton } from '@/components/folders/new-folder-button'
+import { useFolders } from '@/hooks/use-folders'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
-  const { notes, loading: notesLoading, createNote, deleteNote } = useNotes()
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
+  const {
+    notes,
+    loading: notesLoading,
+    createNote,
+    deleteNote,
+  } = useNotes({
+    folder_id: selectedFolderId,
+  })
+  const { moveNotesToFolder } = useFolders()
   const router = useRouter()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current: _current, title: _title, navigate: _navigate } = useRouting()
@@ -112,6 +132,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         const newNote = await createNote({
           title: 'Untitled',
           content: '',
+          folder_id: selectedFolderId,
         })
 
         if (newNote) {
@@ -131,7 +152,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       // Show template picker instead of creating note directly
       setShowTemplatePicker(true)
     }
-  }, [isTestMode, router, createNote])
+  }, [isTestMode, router, createNote, selectedFolderId])
 
   const handleDeleteCurrentNote = useCallback(async () => {
     if (!selectedNoteId) return
@@ -660,6 +681,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       const newNote = await createNote({
         title: 'Untitled',
         content: '',
+        folder_id: selectedFolderId,
       })
       if (newNote) {
         setSelectedNoteId(newNote.id)
@@ -673,7 +695,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         variant: 'destructive',
       })
     }
-  }, [createNote, router])
+  }, [createNote, router, selectedFolderId])
 
   if (shouldShowLoading) {
     return (
@@ -723,6 +745,30 @@ export function Shell({ children }: { children?: React.ReactNode }) {
           {/* Daily Notes */}
           <div className='mb-6'>
             <DailyNotes compact />
+          </div>
+
+          {/* Folders */}
+          <div className='mb-4'>
+            <div className='flex items-center justify-between mb-2'>
+              <h3 className='text-sm font-medium text-muted-foreground'>
+                Folders
+              </h3>
+              <NewFolderButton
+                parentId={selectedFolderId}
+                variant='ghost'
+                size='icon'
+                className='h-6 w-6'
+                data-testid='new-folder-button'
+              />
+            </div>
+            <FolderTree
+              selectedFolderId={selectedFolderId}
+              onFolderSelect={setSelectedFolderId}
+              onNoteCreate={async (folderId) => {
+                setSelectedFolderId(folderId)
+                await handleNewNote()
+              }}
+            />
           </div>
 
           <div className='space-y-2'>
