@@ -1,5 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "buildCommand": "turbo build",
+  "installCommand": "pnpm install",
+  "ignoreCommand": "cd ../.. && npx turbo-ignore @notable/web",
   "framework": "nextjs",
   "outputDirectory": ".next"
 }
