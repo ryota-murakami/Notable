@@ -118,7 +118,10 @@ const autoformatWikiLinks: AutoformatRule[] = [
   {
     match: '[[',
     mode: 'text',
-    format: ['wikiLink', { noteTitle: '', url: '' }],
+    format: (editor) => {
+      // TODO: Implement wiki link formatting
+      // This should create a wiki link element
+    },
   },
 ]
 
