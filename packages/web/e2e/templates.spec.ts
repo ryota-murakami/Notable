@@ -148,8 +148,11 @@ test.describe('Template System E2E Tests', () => {
       page.getByRole('heading', { name: 'Daily Journal' })
     ).not.toBeVisible()
 
-    // Clear search using jsType with empty string
-    await jsType(page, 'input[placeholder*="Search templates"]', '')
+    // Clear search using keyboard simulation (reliable for React controlled inputs)
+    const searchInput = page.locator('input[placeholder*="Search templates"]')
+    await searchInput.click() // Focus the input
+    await page.keyboard.press('Control+A') // Select all text
+    await page.keyboard.press('Backspace') // Clear the selected text
 
     // All templates should be visible again
     await expect(

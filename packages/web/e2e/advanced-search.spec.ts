@@ -242,9 +242,11 @@ test.describe('Advanced Search System', () => {
     // Reopen search
     await jsClick(page, '[data-testid="search-button"]')
 
-    // Clear search input by directly overwriting with fill()
+    // Clear search input using keyboard simulation (reliable for React controlled inputs)
     const searchInput = page.locator('input[placeholder="Search notes..."]')
-    await searchInput.fill('') // Direct fill with empty string should replace content
+    await searchInput.click() // Focus the input
+    await page.keyboard.press('Control+A') // Select all text
+    await page.keyboard.press('Backspace') // Clear the selected text
     await page.waitForTimeout(300)
 
     // Look for recent searches section

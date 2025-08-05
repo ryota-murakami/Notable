@@ -86,25 +86,11 @@ export async function jsType(
       continue
     }
 
-    // Special handling for clearing input (empty string)
+    // Special handling for clearing input (empty string) - use keyboard simulation for React
     if (text === '') {
-      await page.evaluate((sel) => {
-        const element = document.querySelector(sel) as
-          | HTMLInputElement
-          | HTMLTextAreaElement
-        if (element) {
-          element.focus()
-          element.select() // Select all text first
-
-          // Clear using multiple methods
-          element.value = ''
-
-          // Dispatch events to notify React of the change
-          element.dispatchEvent(new Event('input', { bubbles: true }))
-          element.dispatchEvent(new Event('change', { bubbles: true }))
-          element.blur()
-        }
-      }, selector)
+      await input.click() // Focus the input
+      await page.keyboard.press('Control+A') // Select all text
+      await page.keyboard.press('Backspace') // Clear the selected text
 
       // Verify clearing worked
       await page.waitForTimeout(100)
@@ -122,21 +108,6 @@ export async function jsType(
           if (element) {
             // Focus the element
             element.focus()
-
-            // For clearing (empty string), use more aggressive approach
-            if (value === '') {
-              // Select all text first
-              element.select()
-              element.setSelectionRange(0, element.value.length)
-
-              // Dispatch events for deletion
-              element.dispatchEvent(
-                new KeyboardEvent('keydown', { key: 'Delete', bubbles: true })
-              )
-              element.dispatchEvent(
-                new KeyboardEvent('keyup', { key: 'Delete', bubbles: true })
-              )
-            }
 
             // Clear existing value
             element.value = ''
