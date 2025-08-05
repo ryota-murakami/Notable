@@ -34,13 +34,8 @@ test.describe('Simple Export Tests', () => {
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible({ timeout: 5000 })
 
-    // Click Blank Note button using JavaScript evaluation for better reliability
-    await page.evaluate(() => {
-      const button = Array.from(document.querySelectorAll('button')).find(
-        (btn) => btn.textContent?.includes('Blank Note')
-      )
-      if (button) (button as HTMLElement).click()
-    })
+    // Click Blank Note button using jsClick for reliable interaction
+    await jsClick(page, 'button:has-text("Blank Note")')
 
     // Verify template picker closes
     await expect(
@@ -75,13 +70,8 @@ test.describe('Simple Export Tests', () => {
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible({ timeout: 5000 })
 
-    // Click Blank Note button using JavaScript evaluation for better reliability
-    await page.evaluate(() => {
-      const button = Array.from(document.querySelectorAll('button')).find(
-        (btn) => btn.textContent?.includes('Blank Note')
-      )
-      if (button) (button as HTMLElement).click()
-    })
+    // Click Blank Note button using jsClick for reliable interaction
+    await jsClick(page, 'button:has-text("Blank Note")')
 
     // Verify template picker closes
     await expect(
@@ -103,8 +93,8 @@ test.describe('Simple Export Tests', () => {
     await page.waitForTimeout(1000)
 
     // Export as markdown
-    await page.click('button:has-text("Export")')
-    await page.click('text="Export as Markdown"')
+    await jsClick(page, 'button:has-text("Export")')
+    await jsClick(page, 'text="Export as Markdown"')
 
     // Wait for download
     const download = await page.waitForEvent('download', { timeout: 5000 })
