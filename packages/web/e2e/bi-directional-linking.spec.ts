@@ -359,7 +359,7 @@ test.describe('Bi-directional Linking', () => {
       'Source Note',
       'This is the source note.'
     )
-    const note2 = await createTestNote(
+    const _note2 = await createTestNote(
       page,
       'Original Title',
       'Target note content.'
