@@ -10,7 +10,7 @@ if (typeof window !== 'undefined' && isTest()) {
           url: '/mockServiceWorker.js',
         },
       })
-      console.log('🛠️ MSW initialized for testing')
+      console.info('🛠️ MSW initialized for testing')
     })
     .catch((error) => {
       console.warn('Failed to initialize MSW:', error)

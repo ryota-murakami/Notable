@@ -3,8 +3,8 @@ import { waitForHydration } from './utils/wait-for-hydration'
 import {
   jsClick,
   jsType,
-  jsTypeTitle,
   jsTypeContent,
+  jsTypeTitle,
   waitForInputReady,
 } from './utils/js-click'
 

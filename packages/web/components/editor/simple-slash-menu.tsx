@@ -88,6 +88,14 @@ export function SimpleSlashMenu({
       onClick={(e) => {
         console.info('🚨 Menu container onClick called!', e.target)
       }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          console.info('🚨 Menu container onKeyDown called!', e.target)
+        }
+      }}
+      role='menu'
+      tabIndex={0}
       onMouseDown={(e) => {
         console.info('🚨 Menu container onMouseDown called!', e.target)
       }}

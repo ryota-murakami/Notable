@@ -1,7 +1,6 @@
 'use client'
 
 import { createPlatePlugin } from 'platejs/react'
-import { type PlateEditor } from 'platejs/react'
 import { WikiLinkElement } from '@/components/ui/wiki-link-node'
 
 // Wiki Link Plugin for Plate.js
@@ -47,7 +46,7 @@ export const WikiLinkPlugin = createPlatePlugin({
           const match = text.match(/\[\[([^\]]+)\]$/)
           if (match) {
             event.preventDefault()
-            const noteTitle = match[1]
+            const _noteTitle = match[1]
 
             // Replace the pattern with a wiki-link node
             // TODO: Implement proper transforms

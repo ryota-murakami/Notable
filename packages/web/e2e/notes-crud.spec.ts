@@ -8,7 +8,7 @@ test.describe('Notes CRUD Operations', () => {
   test.beforeEach(async ({ page }) => {
     // Enable console logging to debug issues
     page.on('console', (msg) => {
-      console.log(`Browser ${msg.type()}: ${msg.text()}`)
+      console.info(`Browser ${msg.type()}: ${msg.text()}`)
     })
 
     page.on('pageerror', (error) => {
@@ -41,7 +41,7 @@ test.describe('Notes CRUD Operations', () => {
     console.info('Testing note creation')
 
     // Debug: Check initial state
-    console.log('Current URL before click:', page.url())
+    console.info('Current URL before click:', page.url())
 
     // Check test mode detection
     const testModeInfo = await page.evaluate(() => {
@@ -49,9 +49,9 @@ test.describe('Notes CRUD Operations', () => {
       const hasDevAuthBypass = cookies.includes('dev-auth-bypass=true')
       const envVar = (window as any).__NEXT_PUBLIC_API_MOCKING
 
-      console.log('Cookies:', cookies)
-      console.log('Has dev-auth-bypass cookie:', hasDevAuthBypass)
-      console.log('__NEXT_PUBLIC_API_MOCKING:', envVar)
+      console.info('Cookies:', cookies)
+      console.info('Has dev-auth-bypass cookie:', hasDevAuthBypass)
+      console.info('__NEXT_PUBLIC_API_MOCKING:', envVar)
 
       return {
         cookies,
@@ -60,14 +60,14 @@ test.describe('Notes CRUD Operations', () => {
       }
     })
 
-    console.log('Test mode info:', testModeInfo)
+    console.info('Test mode info:', testModeInfo)
 
     // Enable console logging before clicking
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
-        console.log('Browser ERROR:', msg.text())
+        console.error('Browser ERROR:', msg.text())
       } else {
-        console.log('Browser console:', msg.text())
+        console.info('Browser console:', msg.text())
       }
     })
 
@@ -75,34 +75,34 @@ test.describe('Notes CRUD Operations', () => {
     const isTestModeInfo = await page.evaluate(() => {
       // Try to get the isTestMode value from React component
       const shellElement = document.querySelector('[data-testid="app-shell"]')
-      console.log('Shell element found:', !!shellElement)
+      console.info('Shell element found:', !!shellElement)
       return {
         shellFound: !!shellElement,
         windowLocation: window.location.href,
       }
     })
-    console.log('isTestMode debug info:', isTestModeInfo)
+    console.info('isTestMode debug info:', isTestModeInfo)
 
     // Click new note button with hydration safety
     await clickWithHydration(page, '[data-testid="new-note-button"]')
 
     // Wait for note creation to process
-    console.log('Waiting for note creation or template picker...')
+    console.info('Waiting for note creation or template picker...')
     await page.waitForTimeout(1000)
 
     // Check if template picker appeared
     const hasTemplatePicker = await page.evaluate(() => {
       const dialog = document.querySelector('[role="dialog"]')
       const hasTemplateText = dialog?.textContent?.includes('Choose a Template')
-      console.log('Dialog found:', !!dialog)
-      console.log('Has template text:', hasTemplateText)
+      console.info('Dialog found:', !!dialog)
+      console.info('Has template text:', hasTemplateText)
       return !!dialog && hasTemplateText
     })
 
-    console.log('Template picker appeared:', hasTemplatePicker)
+    console.info('Template picker appeared:', hasTemplatePicker)
 
     if (hasTemplatePicker) {
-      console.log(
+      console.info(
         'Template picker is showing - test mode not detected properly'
       )
       // Click blank note option
@@ -112,7 +112,7 @@ test.describe('Notes CRUD Operations', () => {
           (btn) => btn.textContent?.trim() === 'Blank Note'
         )
         if (blankButton) {
-          console.log('Clicking Blank Note button')
+          console.info('Clicking Blank Note button')
           blankButton.click()
         }
       })
@@ -122,25 +122,25 @@ test.describe('Notes CRUD Operations', () => {
 
     // Get the note ID from sessionStorage (set by shell component)
     const noteId = await page.evaluate(() => {
-      console.log('Checking sessionStorage...')
+      console.info('Checking sessionStorage...')
       const storedId = window.sessionStorage.getItem('lastCreatedNoteId')
-      console.log('sessionStorage.lastCreatedNoteId:', storedId)
+      console.info('sessionStorage.lastCreatedNoteId:', storedId)
 
       // Also check if we navigated
-      console.log('Current location:', window.location.href)
+      console.info('Current location:', window.location.href)
 
       return storedId
     })
 
-    console.log('Created note ID:', noteId)
-    console.log('Current URL after creation:', page.url())
+    console.info('Created note ID:', noteId)
+    console.info('Current URL after creation:', page.url())
 
     if (!noteId) {
       throw new Error('Note was not created')
     }
 
     // Just verify the note was created
-    console.log(
+    console.info(
       '✅ Note creation test passed - note created successfully with ID:',
       noteId
     )

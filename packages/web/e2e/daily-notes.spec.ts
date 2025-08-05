@@ -41,7 +41,7 @@ test.describe('Daily Notes Feature', () => {
     // Listen for console errors
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
-        console.log('Console error:', msg.text())
+        console.error('Console error:', msg.text())
       }
     })
 

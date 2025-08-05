@@ -4,7 +4,6 @@ import {
   AutoformatPlugin,
   type AutoformatRule,
 } from '@udecode/plate-autoformat'
-import { type PlateEditor } from 'platejs/react'
 
 // Block formatting rules (including headings)
 const autoformatBlocks: AutoformatRule[] = [
@@ -67,7 +66,7 @@ const autoformatBlocks: AutoformatRule[] = [
     match: '1. ',
     mode: 'block',
     type: 'ol',
-    format: (editor) => {
+    format: (_editor) => {
       // TODO: Implement list formatting
       // editor.tf.setListItem({ type: 'li' })
       // editor.tf.toggleList({ type: 'ol' })

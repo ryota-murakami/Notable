@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsTypeTitle, jsTypeContent } from './utils/js-click'
+import { jsClick, jsTypeContent, jsTypeTitle } from './utils/js-click'
 
 test.describe('Rich Text Editor', () => {
   test.beforeEach(async ({ page }) => {

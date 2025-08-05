@@ -1,7 +1,5 @@
 'use client'
 
-import { isTest } from '@/lib/utils/environment'
-
 export function MSWProvider({ children }: { children: React.ReactNode }) {
   // Simple passthrough - MSW initialization happens elsewhere
   return <>{children}</>
