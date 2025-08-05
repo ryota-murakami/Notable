@@ -7,7 +7,7 @@ import { ArrowUpRight, Copy, Edit3, Link } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // Types for block references
-interface BlockReference {
+interface _BlockReference {
   id: string
   blockId: string
   referenceType: 'link' | 'embed' | 'mention'
@@ -237,7 +237,7 @@ interface BlockSearchProps {
 
 export function BlockSearchMenu({
   isOpen,
-  onClose,
+  onClose: _onClose,
   onSelect,
   position,
 }: BlockSearchProps) {
@@ -303,6 +303,9 @@ export function BlockSearchMenu({
               <div
                 key={block.id}
                 onClick={() => onSelect(block)}
+                onKeyDown={(e) => e.key === 'Enter' && onSelect(block)}
+                role='button'
+                tabIndex={0}
                 className='p-3 rounded hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0'
               >
                 <div className='font-medium text-sm'>

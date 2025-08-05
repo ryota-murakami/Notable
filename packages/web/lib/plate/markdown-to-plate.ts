@@ -1,4 +1,4 @@
-import type { Value } from 'platejs/react'
+import type { Value } from 'platejs'
 
 export function markdownToPlate(markdown: string): Value {
   if (!markdown || markdown.trim() === '') {
@@ -79,7 +79,7 @@ export function markdownToPlate(markdown: string): Value {
       let codeContent = ''
       i++
       while (i < lines.length && !lines[i].startsWith('```')) {
-        codeContent += lines[i] + '\n'
+        codeContent += `${lines[i]}\n`
         i++
       }
       nodes.push({

@@ -24,18 +24,29 @@ export function useNote(noteId: string) {
         setError(null)
 
         // In test environment, return mock note for mock IDs
-        if (isTest() && noteId.startsWith('mock-note-')) {
+        if (
+          isTest() &&
+          (noteId.startsWith('mock-note-') || noteId.startsWith('test-'))
+        ) {
           const mockNote: Note = {
             id: noteId,
-            title: 'Untitled',
-            content: JSON.stringify([
-              {
-                type: 'paragraph',
-                children: [
-                  { text: 'This is a test note for export functionality.' },
-                ],
-              },
-            ]),
+            title:
+              noteId === 'test-block-editor-note'
+                ? 'Test Block Editor Note'
+                : 'Untitled',
+            content:
+              noteId === 'test-block-editor-note'
+                ? ''
+                : JSON.stringify([
+                    {
+                      type: 'paragraph',
+                      children: [
+                        {
+                          text: 'This is a test note for export functionality.',
+                        },
+                      ],
+                    },
+                  ]),
             user_id: 'mock-user-id',
             folder_id: null,
             is_hidden: false,
@@ -79,7 +90,10 @@ export function useNote(noteId: string) {
 
       try {
         // In test environment, update mock note locally
-        if (isTest() && noteId.startsWith('mock-note-')) {
+        if (
+          isTest() &&
+          (noteId.startsWith('mock-note-') || noteId.startsWith('test-'))
+        ) {
           const updatedNote: Note = {
             ...note,
             ...updates,

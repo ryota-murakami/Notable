@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import { getDevAuthBypassUser } from '@/utils/auth-helpers'
 
 // GET /api/templates/categories - Get all template categories with counts
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   // For E2E tests with test database, return mock data
   if (process.env.DATABASE_URL?.includes('localhost:5433')) {
     const devBypassUser = await getDevAuthBypassUser()

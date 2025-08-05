@@ -13,54 +13,23 @@ test.describe('Block Editor', () => {
       },
     ])
 
-    // Navigate to app and create a new note
-    await page.goto('/app')
-    await page.waitForSelector('[data-testid="app-shell"]')
+    // Navigate to the editor test page which doesn't use dynamic imports
+    await page.goto(`/editor-test`)
 
-    // Click new note button
-    await page.click('[data-testid="new-note-button"]')
+    // Wait for page to stabilize
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(2000)
 
-    // Handle template picker
-    await expect(
-      page.locator('[role="dialog"]:has-text("Choose a Template")')
-    ).toBeVisible()
-    await page.click('button:has-text("Blank Note")')
+    // Wait for the editor to be available
+    const editor = page.locator('[contenteditable="true"]').first()
+    await expect(editor).toBeVisible({ timeout: 10000 })
 
-    // Wait for navigation to note editor
-    await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 15000 })
-
-    // Wait for editor to be ready - give it more time
-    await page.waitForTimeout(3000)
-
-    // The editor might be using different implementations (Slate.js or Plate.js)
-    // Try clicking on the placeholder text first to activate the editor
-    const placeholderText = page.getByText('Start writing...')
-    if (await placeholderText.isVisible()) {
-      await placeholderText.click()
-      await page.waitForTimeout(1000)
-    }
-
-    // Wait for contenteditable to be available using multiple strategies
-    try {
-      // First try: Look for contenteditable element
-      await page.waitForSelector('[contenteditable="true"]', {
-        state: 'visible',
-        timeout: 5000,
-      })
-    } catch {
-      // Second try: Look for role="textbox"
-      await page.waitForSelector('[role="textbox"]', {
-        state: 'visible',
-        timeout: 5000,
-      })
-    }
-
-    // Wait for React hydration
-    await waitForHydration(page)
+    // Additional wait for editor to be ready
+    await page.waitForTimeout(1000)
   })
 
   test.describe('Basic Block Operations', () => {
-    test.skip('should create a new paragraph block', async ({ page }) => {
+    test('should create a new paragraph block', async ({ page }) => {
       // SKIPPED: Editor not initializing properly
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -89,26 +58,15 @@ test.describe('Block Editor', () => {
     test.skip('should create heading blocks using autoformat', async ({
       page,
     }) => {
-      // SKIPPED: Autoformat for headings may not be implemented
-      // Try multiple selectors for the editor
-      let editor = page.locator('[contenteditable="true"]').first()
+      const editor = page.locator('[contenteditable="true"]').first()
 
-      // If no contenteditable found, try role="textbox" or click placeholder
-      if (!(await editor.isVisible())) {
-        const placeholder = page.getByText('Start writing...')
-        if (await placeholder.isVisible()) {
-          await placeholder.click()
-          await page.waitForTimeout(1000)
-        }
-        // Try again after clicking
-        editor = page
-          .locator('[contenteditable="true"], [role="textbox"]')
-          .first()
-      }
+      // Clear existing content
+      await editor.click()
+      await page.keyboard.press('Control+a')
+      await page.keyboard.press('Delete')
 
       // Use autoformat pattern for heading
-      await editor.click()
-      await editor.fill('# This is a heading')
+      await editor.type('# This is a heading')
       await page.keyboard.press('Enter')
 
       // Verify heading is created

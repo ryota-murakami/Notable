@@ -132,7 +132,7 @@ export function DevTools() {
                 size='sm'
                 onClick={() => {
                   localStorage.clear()
-                  console.log('🧹 LocalStorage cleared')
+                  console.info('🧹 LocalStorage cleared')
                 }}
                 className='w-full'
               >
@@ -161,7 +161,7 @@ export function DevTools() {
                       try {
                         const response = await fetch('/api/tags')
                         const data = await response.json()
-                        console.log('📋 Tags API response:', data)
+                        console.info('📋 Tags API response:', data)
                       } catch (error) {
                         console.error('❌ Tags API error:', error)
                       }
@@ -186,7 +186,7 @@ export function DevTools() {
                           }),
                         })
                         const data = await response.json()
-                        console.log('✅ Tag creation response:', data)
+                        console.info('✅ Tag creation response:', data)
                       } catch (error) {
                         console.error('❌ Tag creation error:', error)
                       }

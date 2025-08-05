@@ -9,6 +9,7 @@ test.describe('Wiki Link Simple Test', () => {
     await page.goto('http://localhost:4378/app')
 
     // Click and type in the editor
+    const editor = page.locator('[data-testid="plate-editor"]')
     await editor.click()
     await page.keyboard.type('Test content with ')
 

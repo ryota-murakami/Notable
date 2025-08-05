@@ -170,6 +170,20 @@ const TEST_SESSION = {
 
 // Define mock handlers for your API endpoints
 export const handlers = [
+  // Folders API
+  http.get('*/api/folders', ({ cookies }) => {
+    // Allow access in test environment with dev-auth-bypass cookie
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    console.log('[MSW] GET /api/folders - returning empty folders list')
+    return HttpResponse.json({
+      data: [],
+      total: 0,
+    })
+  }),
+
   // Template API Handlers (with auth bypass for tests)
   http.get('*/api/templates/categories', ({ cookies }) => {
     // Allow access in test environment with dev-auth-bypass cookie
@@ -899,6 +913,22 @@ export const handlers = [
 
   http.get('*/api/notes/:id', ({ params }) => {
     const { id } = params
+
+    // Special handling for block editor test note
+    if (id === 'test-block-editor-note') {
+      return HttpResponse.json({
+        note: {
+          id: 'test-block-editor-note',
+          title: 'Test Block Editor Note',
+          content: '', // Empty content for testing
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          user_id: '11111111-1111-1111-1111-111111111111',
+          folder_id: null,
+          is_public: false,
+        },
+      })
+    }
 
     return HttpResponse.json({
       note: {

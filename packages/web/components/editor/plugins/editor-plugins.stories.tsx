@@ -9,7 +9,7 @@ import { EnhancedEditorKit } from './enhanced-editor-kit'
 import { LinkKit } from './link-plugin'
 import { SlashCommandPlugin } from './slash-command-kit'
 import { BlockReferencePlugin } from './block-reference-kit'
-import { expect, userEvent, within } from '@storybook/test'
+import { userEvent, within } from '@storybook/test'
 
 // Wrapper component for demonstrating plugins
 const PluginDemo = ({

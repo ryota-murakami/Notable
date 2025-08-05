@@ -22,16 +22,16 @@ import {
   useNoteTags,
   useRemoveTagFromNote,
 } from '@/hooks/use-tags'
-import type { Descendant } from 'slate'
+import type { Value } from 'platejs'
 import type { EnhancedTag } from '@/types/tags'
 import type { Template, TemplateVariable } from '@/types/templates'
 
 interface RichTextEditorProps {
   noteId: string
   initialTitle?: string
-  initialContent?: Descendant[]
+  initialContent?: Value
   onTitleChange?: (title: string) => void
-  onContentChange?: (content: Descendant[]) => void
+  onContentChange?: (content: Value) => void
   onTemplateUsed?: (templateId: string, noteTitle: string) => void
   className?: string
   isFavorite?: boolean
@@ -42,7 +42,7 @@ interface RichTextEditorProps {
   onToggleArchive?: () => void
 }
 
-const defaultContent: Descendant[] = [
+const defaultContent: Value = [
   {
     type: 'paragraph',
     children: [{ text: '' }],
@@ -65,7 +65,9 @@ export function RichTextEditor({
   onToggleArchive,
 }: RichTextEditorProps) {
   const [title, setTitle] = useState(initialTitle)
-  const [content, setContent] = useState<Descendant[]>(initialContent)
+  const [content, setContent] = useState<Value>(
+    initialContent || defaultContent
+  )
 
   // Template state
   const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false)
@@ -100,7 +102,7 @@ export function RichTextEditor({
 
   // Handle content changes
   const handleContentChange = useCallback(
-    (newContent: Descendant[]) => {
+    (newContent: Value) => {
       setContent(newContent)
       onContentChange?.(newContent)
     },
@@ -200,11 +202,11 @@ export function RichTextEditor({
         })
 
         // Convert markdown to Slate format
-        const slateContent = markdownToSlate(processedContent)
+        const slateContent = markdownToPlate(processedContent)
 
         // Update title and content
         setTitle(noteTitle)
-        setContent(plateContent)
+        setContent(slateContent)
 
         // Notify parent components
         onTitleChange?.(noteTitle)

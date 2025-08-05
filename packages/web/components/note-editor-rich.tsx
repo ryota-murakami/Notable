@@ -8,7 +8,7 @@ import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
 import { plateToMarkdown } from '@/lib/plate/plate-to-markdown'
 import { updateNoteLinks } from '@/lib/note-links'
 import { isTest } from '@/lib/utils/environment'
-import type { Value } from 'platejs/react'
+import type { Value } from 'platejs'
 
 interface NoteEditorRichProps {
   noteId: string

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { ExportButton } from './export-button'
-import { expect, fn, userEvent, within } from '@storybook/test'
+import { expect, userEvent, within } from '@storybook/test'
 
 // Mock note data
 const mockNote = {

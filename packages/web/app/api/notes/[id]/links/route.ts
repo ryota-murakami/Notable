@@ -93,7 +93,7 @@ export async function POST(
   try {
     const fromNoteId = params.id
     const body = await request.json()
-    const { toNoteId, toNoteTitle } = body
+    const { toNoteId } = body
 
     // Check auth
     const devBypassUser = await getDevAuthBypassUser()

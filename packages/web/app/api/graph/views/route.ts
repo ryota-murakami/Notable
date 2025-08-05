@@ -107,9 +107,8 @@ export async function GET(request: NextRequest) {
     const includePublic = url.searchParams.get('includePublic') === 'true'
     const onlyPublic = url.searchParams.get('onlyPublic') === 'true'
     const viewType = url.searchParams.get('type')
-    const limit = url.searchParams.get('limit')
-      ? parseInt(url.searchParams.get('limit')!)
-      : 50
+    const limitParam = url.searchParams.get('limit')
+    const limit = limitParam ? parseInt(limitParam) : 50
 
     // Build query
     let query = supabase.from('graph_views').select('*')

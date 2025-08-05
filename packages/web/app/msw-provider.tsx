@@ -1,7 +1,6 @@
 'use client'
 
 import { Suspense, use } from 'react'
-import { env } from '../env'
 
 let mockingEnabledPromise: Promise<void> | undefined
 

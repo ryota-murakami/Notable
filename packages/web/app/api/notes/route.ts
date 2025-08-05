@@ -65,12 +65,10 @@ export async function GET(request: NextRequest) {
 
     // Get query parameters
     const { searchParams } = new URL(request.url)
-    const limit = searchParams.get('limit')
-      ? parseInt(searchParams.get('limit')!)
-      : 50
-    const offset = searchParams.get('offset')
-      ? parseInt(searchParams.get('offset')!)
-      : 0
+    const limitParam = searchParams.get('limit')
+    const offsetParam = searchParams.get('offset')
+    const limit = limitParam ? parseInt(limitParam) : 50
+    const offset = offsetParam ? parseInt(offsetParam) : 0
     const search = searchParams.get('search')
     const folder_id = searchParams.get('folder_id')
 

@@ -21,7 +21,7 @@ export function SimpleSlashMenu({
   onSelect,
   position,
 }: SimpleSlashMenuProps) {
-  console.log('🚨 SimpleSlashMenu rendered!', { isOpen, position })
+  console.info('🚨 SimpleSlashMenu rendered!', { isOpen, position })
   const [selectedIndex, setSelectedIndex] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -56,12 +56,12 @@ export function SimpleSlashMenu({
           break
         case 'Enter':
           event.preventDefault()
-          console.log('🚨 Enter key pressed in SimpleSlashMenu!', {
+          console.info('🚨 Enter key pressed in SimpleSlashMenu!', {
             selectedIndex,
             command: SLASH_COMMANDS[selectedIndex]?.title,
           })
           if (SLASH_COMMANDS[selectedIndex]) {
-            console.log('🚨 Calling onSelect from keyboard...')
+            console.info('🚨 Calling onSelect from keyboard...')
             onSelect(SLASH_COMMANDS[selectedIndex])
           }
           break
@@ -86,10 +86,10 @@ export function SimpleSlashMenu({
       }}
       data-testid='simple-slash-menu'
       onClick={(e) => {
-        console.log('🚨 Menu container onClick called!', e.target)
+        console.info('🚨 Menu container onClick called!', e.target)
       }}
       onMouseDown={(e) => {
-        console.log('🚨 Menu container onMouseDown called!', e.target)
+        console.info('🚨 Menu container onMouseDown called!', e.target)
       }}
     >
       <div className='text-xs font-medium text-muted-foreground mb-2 px-2'>
@@ -110,8 +110,10 @@ export function SimpleSlashMenu({
                   ? 'bg-accent text-accent-foreground'
                   : 'hover:bg-accent hover:text-accent-foreground'
               )}
+              role='button'
+              tabIndex={0}
               onClick={(e) => {
-                console.log('🚨 SimpleSlashMenu onClick called!', {
+                console.info('🚨 SimpleSlashMenu onClick called!', {
                   commandKey: command.key,
                   commandTitle: command.title,
                 })
@@ -119,8 +121,15 @@ export function SimpleSlashMenu({
                 e.stopPropagation()
                 onSelect(command)
               }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onSelect(command)
+                }
+              }}
               onMouseDown={(e) => {
-                console.log('🚨 SimpleSlashMenu onMouseDown called!', {
+                console.info('🚨 SimpleSlashMenu onMouseDown called!', {
                   commandKey: command.key,
                   commandTitle: command.title,
                 })
@@ -129,7 +138,7 @@ export function SimpleSlashMenu({
                 onSelect(command)
               }}
               onPointerDown={(e) => {
-                console.log('🚨 SimpleSlashMenu onPointerDown called!', {
+                console.info('🚨 SimpleSlashMenu onPointerDown called!', {
                   commandKey: command.key,
                   commandTitle: command.title,
                 })
@@ -164,19 +173,19 @@ export function useSimpleSlashCommand(editor: any) {
   const [position, setPosition] = useState({ x: 0, y: 0 })
 
   const openMenu = useCallback((pos: { x: number; y: number }) => {
-    console.log('🚨 SimpleSlashMenu opening at:', pos)
+    console.info('🚨 SimpleSlashMenu opening at:', pos)
     setPosition(pos)
     setIsOpen(true)
   }, [])
 
   const closeMenu = useCallback(() => {
-    console.log('🚨 SimpleSlashMenu closing')
+    console.info('🚨 SimpleSlashMenu closing')
     setIsOpen(false)
   }, [])
 
   const handleCommandSelect = useCallback(
     (command: SlashCommandItem) => {
-      console.log('🚨 SimpleSlashMenu handleCommandSelect called!', {
+      console.info('🚨 SimpleSlashMenu handleCommandSelect called!', {
         commandKey: command.key,
         commandTitle: command.title,
       })
@@ -186,9 +195,9 @@ export function useSimpleSlashCommand(editor: any) {
         editor.focus()
 
         // Execute the command
-        console.log('🚨 About to execute command action...')
+        console.info('🚨 About to execute command action...')
         command.action(editor)
-        console.log('🚨 Command action executed successfully')
+        console.info('🚨 Command action executed successfully')
 
         // Close the menu
         closeMenu()
@@ -202,7 +211,7 @@ export function useSimpleSlashCommand(editor: any) {
   // Add a direct command execution method for testing
   const executeCommand = useCallback(
     (commandKey: string) => {
-      console.log('🚨 Direct command execution:', commandKey)
+      console.info('🚨 Direct command execution:', commandKey)
       const command = SLASH_COMMANDS.find((cmd) => cmd.key === commandKey)
       if (command) {
         handleCommandSelect(command)

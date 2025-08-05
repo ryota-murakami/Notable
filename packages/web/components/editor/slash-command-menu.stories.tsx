@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import * as React from 'react'
-import { SlashCommandMenu, useSlashCommand } from './slash-command-menu'
+import { SlashCommandMenu } from './slash-command-menu'
 import { expect, userEvent, within } from '@storybook/test'
-import { SLASH_COMMANDS } from './plugins/slash-command-kit'
 
 const meta = {
   title: 'Components/Editor/SlashCommandMenu',
@@ -42,7 +41,7 @@ export const Default: Story = {
     onSelect: () => {},
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const _canvas = within(canvasElement)
 
     // Wait for portal to render
     await new Promise((resolve) => setTimeout(resolve, 100))
@@ -66,7 +65,7 @@ export const WithSearch: Story = {
     onClose: () => {},
     onSelect: () => {},
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement: _canvasElement }) => {
     // Wait for portal to render
     await new Promise((resolve) => setTimeout(resolve, 100))
 
@@ -102,7 +101,7 @@ export const EmptySearchResults: Story = {
     onClose: () => {},
     onSelect: () => {},
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement: _canvasElement }) => {
     // Wait for portal to render
     await new Promise((resolve) => setTimeout(resolve, 100))
 
@@ -130,7 +129,7 @@ export const KeyboardNavigation: Story = {
     onClose: () => {},
     onSelect: () => {},
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement: _canvasElement }) => {
     // Wait for portal to render
     await new Promise((resolve) => setTimeout(resolve, 100))
 
@@ -244,6 +243,9 @@ export const Playground: Story = {
       <div>
         <div
           onClick={handleClick}
+          onKeyDown={(e) => e.key === 'Enter' && handleClick(e as any)}
+          role='button'
+          tabIndex={0}
           style={{
             width: '600px',
             height: '300px',
@@ -312,7 +314,7 @@ export const InteractionTest: Story = {
     onClose: () => {},
     onSelect: () => {},
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement: _canvasElement }) => {
     // Wait for portal to render
     await new Promise((resolve) => setTimeout(resolve, 100))
 

@@ -6,12 +6,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
   CheckCircle,
-  Edit3,
   FileText,
   Loader2,
   Maximize2,

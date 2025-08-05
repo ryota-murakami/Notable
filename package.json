@@ -63,7 +63,24 @@
       "slate-react": "^0.117.4",
       "yjs": "^13.6.27",
       "typescript": "^5"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "@swc/core",
+      "@tailwindcss/oxide",
+      "core-js-pure",
+      "detox",
+      "dtrace-provider",
+      "electron",
+      "electron-winstaller",
+      "esbuild",
+      "msgpackr-extract",
+      "msw",
+      "oxc-resolver",
+      "sharp",
+      "supabase",
+      "unrs-resolver"
+    ]
   },
   "resolutions": {
     "slate": "^0.117.2",

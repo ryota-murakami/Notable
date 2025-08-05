@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   ArrowRight,
   Brain,
   Clock,
-  ExternalLink,
   Eye,
   Hash,
   Link,
@@ -22,7 +21,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Separator } from '@/components/ui/separator'
 import { toast } from '@/hooks/use-toast'
 
 interface SmartLinkingSuggestion {
@@ -62,7 +60,7 @@ export function SmartLinkingPanel({
   const [lastAnalyzedContent, setLastAnalyzedContent] = useState('')
 
   // Fetch smart linking suggestions
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = useCallback(async () => {
     if (
       !currentNoteId ||
       (!currentNoteContent.trim() && !currentNoteTitle.trim())
@@ -121,7 +119,7 @@ export function SmartLinkingPanel({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [currentNoteId, currentNoteContent, currentNoteTitle, lastAnalyzedContent])
 
   // Debounced effect to fetch suggestions when content changes
   useEffect(() => {
@@ -130,7 +128,7 @@ export function SmartLinkingPanel({
     }, 2000) // Wait 2 seconds after user stops typing
 
     return () => clearTimeout(timeoutId)
-  }, [currentNoteContent, currentNoteTitle, currentNoteId])
+  }, [currentNoteContent, currentNoteTitle, currentNoteId, fetchSuggestions])
 
   // Handle viewing a related note
   const handleViewNote = (noteId: string) => {
@@ -260,7 +258,7 @@ export function SmartLinkingPanel({
                 </Badge>
               </div>
 
-              {suggestions.map((suggestion, index) => (
+              {suggestions.map((suggestion, _index) => (
                 <div
                   key={suggestion.noteId}
                   className='p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors'
@@ -296,7 +294,7 @@ export function SmartLinkingPanel({
                   {/* Relevant Snippet */}
                   {suggestion.relevantSnippet && (
                     <div className='text-xs bg-muted/50 rounded p-2 mb-2 line-clamp-2'>
-                      "{suggestion.relevantSnippet}"
+                      &ldquo;{suggestion.relevantSnippet}&rdquo;
                     </div>
                   )}
 

@@ -5,14 +5,14 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Bold,
-  Italic,
-  Underline,
-  Strikethrough,
   Code,
+  Italic,
   Link,
-  Quote,
   List,
   ListOrdered,
+  Quote,
+  Strikethrough,
+  Underline,
 } from 'lucide-react'
 import {
   Tooltip,

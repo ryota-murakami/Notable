@@ -92,6 +92,9 @@ function FolderNode({
             )}
             style={{ paddingLeft: `${folder.level * 16 + 8}px` }}
             onClick={() => onFolderSelect?.(folder.id)}
+            onKeyDown={(e) => e.key === 'Enter' && onFolderSelect?.(folder.id)}
+            role='button'
+            tabIndex={0}
             data-testid={`folder-${folder.name}`}
           >
             {folder.children.length > 0 && (
@@ -217,6 +220,9 @@ export function FolderTree({
           selectedFolderId === null && 'bg-accent text-accent-foreground'
         )}
         onClick={() => onFolderSelect?.(null)}
+        onKeyDown={(e) => e.key === 'Enter' && onFolderSelect?.(null)}
+        role='button'
+        tabIndex={0}
         data-testid='folder-root'
       >
         <div className='w-4' />
@@ -233,7 +239,7 @@ export function FolderTree({
           onFolderSelect={onFolderSelect}
           onNoteCreate={onNoteCreate}
           onFolderCreate={(parentId) => {
-            const name = prompt('Enter folder name:')
+            const name = window.prompt('Enter folder name:')
             if (name) {
               createFolder.mutate({ name, parent_id: parentId })
             }
@@ -242,7 +248,9 @@ export function FolderTree({
             updateFolder.mutate({ id: folderId, name: newName })
           }}
           onFolderDelete={(folderId) => {
-            if (confirm('Are you sure you want to delete this folder?')) {
+            if (
+              window.confirm('Are you sure you want to delete this folder?')
+            ) {
               deleteFolder.mutate(folderId)
             }
           }}

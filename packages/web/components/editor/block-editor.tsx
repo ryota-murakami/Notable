@@ -71,7 +71,7 @@ export function BlockEditor({
   readOnly = false,
   autoFocus = false,
 }: BlockEditorProps) {
-  console.log('BlockEditor component rendered!')
+  console.info('BlockEditor component rendered!')
   const _editorRef = useRef<HTMLDivElement>(null)
   const [value, setValue] = useState(initialValue)
 
@@ -95,16 +95,16 @@ export function BlockEditor({
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       ;(window as any).slashCommand = { executeCommand }
-      console.log('🚨 Exposed window.slashCommand.executeCommand for testing')
+      console.info('🚨 Exposed window.slashCommand.executeCommand for testing')
     }
   }, [executeCommand])
 
   // RE-ENABLED: Handle slash command trigger with SimpleSlashMenu
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      console.log('🚨 BlockEditor handleKeyDown called:', event.key)
+      console.info('🚨 BlockEditor handleKeyDown called:', event.key)
       if (event.key === '/' && !isOpen && editor.selection) {
-        console.log('🚨 Opening SimpleSlashMenu...')
+        console.info('🚨 Opening SimpleSlashMenu...')
         // Get cursor position for menu placement
         const selection = window.getSelection()
         if (selection && selection.rangeCount > 0) {
@@ -246,7 +246,7 @@ export function BlockEditor({
                     event.key
                   )
                 ) {
-                  console.log(
+                  console.info(
                     '🚨 Editor delegating key to slash menu:',
                     event.key
                   )

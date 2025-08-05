@@ -6,10 +6,7 @@ import {
   createEditor,
   type Descendant,
   Editor,
-  Point,
-  Range,
   Element as SlateElement,
-  Text,
   Transforms,
 } from 'slate'
 import {

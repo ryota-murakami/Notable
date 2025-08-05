@@ -1,4 +1,4 @@
-import type { Value } from 'platejs/react'
+import type { Value } from 'platejs'
 
 export function plateToMarkdown(value: Value): string {
   if (!value || !Array.isArray(value)) {

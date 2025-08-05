@@ -1,7 +1,6 @@
 'use client'
 
-import { createPlatePlugin } from 'platejs/react'
-import { ParagraphPlugin } from 'platejs/react'
+import { createPlatePlugin, ParagraphPlugin } from 'platejs/react'
 
 import { BlockquoteElement } from '@/components/ui/blockquote-node'
 import {

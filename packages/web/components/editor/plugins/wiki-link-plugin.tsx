@@ -1,16 +1,9 @@
 'use client'
 
-import {
-  type Editor,
-  Node,
-  Path,
-  Range,
-  Text as SlateText,
-  Transforms,
-} from 'slate'
+import { type Editor, Text as SlateText, Transforms } from 'slate'
 
 export const withWikiLinks = (editor: Editor) => {
-  const { insertText, isInline, normalizeNode } = editor
+  const { insertText: _insertText, isInline, normalizeNode } = editor
 
   editor.isInline = (element) => {
     return element.type === 'wiki-link' ? true : isInline(element)

@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useCallback, useMemo } from 'react'
-import { Plate, PlateContent, usePlateEditor } from 'platejs/react'
+import React from 'react'
+import { type Value } from 'platejs'
+import { Plate, usePlateEditor } from 'platejs/react'
 import { Editor, EditorContainer } from '@/components/ui/editor'
 import { BasicNodesKit } from './plugins/basic-nodes-kit'
 import { FloatingToolbar } from './floating-toolbar'
 import { cn } from '@/lib/utils'
-import type { PlateEditor, Value } from 'platejs/react'
 
 interface EnhancedPlateEditorProps {
   value?: Value
@@ -28,10 +28,14 @@ export function EnhancedPlateEditor({
   const editor = usePlateEditor({
     plugins: BasicNodesKit,
     value,
-    onChange: ({ value }) => {
-      onChange?.(value)
-    },
   })
+
+  // Handle value changes
+  React.useEffect(() => {
+    if (onChange && editor.children !== value) {
+      onChange(editor.children)
+    }
+  }, [editor.children, onChange, value])
 
   return (
     <Plate editor={editor}>

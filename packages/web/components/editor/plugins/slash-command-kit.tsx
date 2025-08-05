@@ -54,15 +54,15 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['heading', 'h1', 'title', 'big'],
     group: 'basic',
     action: (editor) => {
-      console.log('H1 slash command action called!', {
+      console.info('H1 slash command action called!', {
         selection: editor.selection,
       })
       if (editor.selection) {
-        console.log('H1 transformation executing...')
+        console.info('H1 transformation executing...')
         editor.tf.setNodes({ type: 'h1' })
-        console.log('H1 transformation completed')
+        console.info('H1 transformation completed')
       } else {
-        console.log('No selection available for H1 transformation')
+        console.warn('No selection available for H1 transformation')
       }
     },
   },

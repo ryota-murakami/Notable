@@ -148,7 +148,7 @@ test.describe('Notes CRUD Operations', () => {
     )
   })
 
-  test.skip('should display multiple created notes', async ({ page }) => {
+  test('should display multiple created notes', async ({ page }) => {
     // SKIPPED: Note list doesn't update after creating notes
     console.info('Testing multiple note creation')
 

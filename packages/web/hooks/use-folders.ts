@@ -232,7 +232,7 @@ export function useFolders() {
         path.unshift(currentFolder)
         currentFolder = currentFolder.parent_id
           ? getFolderById(currentFolder.parent_id)
-          : null
+          : undefined
       }
 
       return path

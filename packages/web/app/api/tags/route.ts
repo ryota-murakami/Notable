@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { getDevAuthBypassUser } from '@/utils/auth-helpers'
-import type { EnhancedTag, TagFilter, TagInsert } from '@/types/tags'
+import type { EnhancedTag, TagInsert } from '@/types/tags'
 import { mockStore } from '@/utils/mock-data-store'
 
 export async function GET(request: NextRequest) {
@@ -38,12 +38,10 @@ export async function GET(request: NextRequest) {
         | 'updated') || 'name'
     const sortOrder =
       (searchParams.get('sort_order') as 'asc' | 'desc') || 'asc'
-    const limit = searchParams.get('limit')
-      ? parseInt(searchParams.get('limit')!)
-      : undefined
-    const offset = searchParams.get('offset')
-      ? parseInt(searchParams.get('offset')!)
-      : 0
+    const limitParam = searchParams.get('limit')
+    const offsetParam = searchParams.get('offset')
+    const limit = limitParam ? parseInt(limitParam) : undefined
+    const offset = offsetParam ? parseInt(offsetParam) : 0
 
     // Return mock data when API mocking is enabled or dev auth bypass is used
     const { cookies } = await import('next/headers')

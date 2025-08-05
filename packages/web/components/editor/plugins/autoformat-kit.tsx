@@ -1,7 +1,10 @@
 'use client'
 
-import { AutoformatPlugin } from '@udecode/plate-autoformat'
-import type { AutoformatRule } from '@udecode/plate-autoformat'
+import {
+  AutoformatPlugin,
+  type AutoformatRule,
+} from '@udecode/plate-autoformat'
+import { type PlateEditor } from 'platejs/react'
 
 // Block formatting rules (including headings)
 const autoformatBlocks: AutoformatRule[] = [
@@ -44,7 +47,7 @@ const autoformatBlocks: AutoformatRule[] = [
     match: '- ',
     mode: 'block',
     type: 'ul',
-    format: (editor) => {
+    format: (_editor) => {
       // TODO: Implement list formatting
       // editor.tf.setListItem({ type: 'li' })
       // editor.tf.toggleList({ type: 'ul' })
@@ -54,7 +57,7 @@ const autoformatBlocks: AutoformatRule[] = [
     match: '* ',
     mode: 'block',
     type: 'ul',
-    format: (editor) => {
+    format: (_editor) => {
       // TODO: Implement list formatting
       // editor.tf.setListItem({ type: 'li' })
       // editor.tf.toggleList({ type: 'ul' })
@@ -111,46 +114,10 @@ const autoformatMarks: AutoformatRule[] = [
   },
 ]
 
-// Wiki link formatting rule
+// Wiki link formatting rule - simplified for now
 const autoformatWikiLinks: AutoformatRule[] = [
-  {
-    match: /\[\[([^\]]+)\]\]$/,
-    mode: 'text',
-    format: (editor, options) => {
-      // Extract the note title from regex match
-      if (options && 'match' in options && Array.isArray(options.match)) {
-        const noteTitle = options.match[1]
-
-        // Delete the matched text including brackets
-        const { selection } = editor
-        if (selection) {
-          // Move selection back to include the full matched text
-          const matchLength = options.match[0].length
-          editor.select({
-            anchor: {
-              path: selection.anchor.path,
-              offset: selection.anchor.offset - matchLength,
-            },
-            focus: selection.focus,
-          })
-
-          // Delete the matched text
-          editor.deleteFragment()
-        }
-
-        // Insert wiki link element
-        editor.insertNode({
-          type: 'wikiLink',
-          noteTitle: noteTitle.trim(),
-          url: `/notes/search?title=${encodeURIComponent(noteTitle.trim())}`,
-          children: [{ text: noteTitle.trim() }],
-        })
-
-        return true
-      }
-      return false
-    },
-  },
+  // TODO: Implement wiki link autoformat properly
+  // This requires proper integration with the wiki link plugin
 ]
 
 // Configure the autoformat plugin with rules
