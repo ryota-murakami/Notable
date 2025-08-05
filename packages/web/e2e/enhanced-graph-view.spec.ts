@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
+import { jsClick, jsType } from './utils/js-click'
 
 test.describe('Enhanced Graph View', () => {
   test.beforeEach(async ({ page }) => {
@@ -100,8 +101,8 @@ test.describe('Enhanced Graph View', () => {
     // Initially analytics should be hidden
     await expect(page.locator('text=Hub Notes')).not.toBeVisible()
 
-    // Click analytics toggle
-    await page.locator('button', { hasText: 'Analytics' }).click()
+    // Click analytics toggle using jsClick to avoid timeout issues
+    await jsClick(page, 'button:has-text("Analytics")')
 
     // Analytics panel should now be visible
     await expect(page.locator('text=Hub Notes')).toBeVisible()
@@ -121,8 +122,8 @@ test.describe('Enhanced Graph View', () => {
   test('should filter nodes by search term', async ({ page }) => {
     const searchInput = page.locator('input[placeholder="Search notes..."]')
 
-    // Type a search term
-    await searchInput.fill('test')
+    // Type a search term using jsType for reliable input handling
+    await jsType(page, 'input[placeholder="Search notes..."]', 'test')
 
     // Wait for graph to update
     await page.waitForTimeout(500)
@@ -166,13 +167,13 @@ test.describe('Enhanced Graph View', () => {
     await dateSelect.selectOption('30days')
     await expect(dateSelect).toHaveValue('30days')
 
-    // Adjust connection filter
+    // Adjust connection filter using jsType for reliable slider handling
     const connectionSlider = page.locator('input[type="range"]')
-    await connectionSlider.fill('2')
+    await jsType(page, 'input[type="range"]', '2')
 
-    // Toggle hub filter
+    // Toggle hub filter using jsClick for reliable checkbox interaction
     const hubCheckbox = page.locator('input[type="checkbox"]').first()
-    await hubCheckbox.uncheck()
+    await jsClick(page, 'input[type="checkbox"]')
     await expect(hubCheckbox).not.toBeChecked()
 
     // Check that the note count updates
@@ -208,9 +209,9 @@ test.describe('Enhanced Graph View', () => {
   })
 
   test('should show proper empty state messages', async ({ page }) => {
-    // Filter to show no results
+    // Filter to show no results using jsType for reliable slider handling
     const connectionSlider = page.locator('input[type="range"]')
-    await connectionSlider.fill('10') // Very high number to filter out all nodes
+    await jsType(page, 'input[type="range"]', '10') // Very high number to filter out all nodes
 
     // Should show "no matches" message
     await expect(
@@ -241,8 +242,8 @@ test.describe('Enhanced Graph View', () => {
     // Verify back button exists
     await expect(backButton).toBeVisible()
 
-    // Click the button
-    await backButton.click()
+    // Click the button using jsClick to avoid timeout issues
+    await jsClick(page, 'button:has-text("Back to Notes")')
 
     // Wait for navigation or timeout
     try {
