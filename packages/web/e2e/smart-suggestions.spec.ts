@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
+import { jsClick, jsType } from './utils/js-click'
 
 test.describe('Smart Note Suggestions Feature', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,19 +25,25 @@ test.describe('Smart Note Suggestions Feature', () => {
   test('should display smart suggestions panel when note is selected', async ({
     page,
   }) => {
-    // Create a new note
-    await page.click('[data-testid="new-note-button"]')
+    // Create a new note using jsClick to avoid timeout issues
+    await jsClick(page, '[data-testid="new-note-button"]')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
 
-    // Add content to trigger suggestions
+    // Add content to trigger suggestions using jsType for reliable input handling
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Smart Suggestions Test Note')
+    await jsType(
+      page,
+      'input[placeholder*="Untitled"]',
+      'Smart Suggestions Test Note'
+    )
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
-    await editor.fill(
+    await jsClick(page, '[contenteditable="true"]')
+    await jsType(
+      page,
+      '[contenteditable="true"]',
       'This is a test note about artificial intelligence and machine learning. It contains content that should trigger smart suggestions for related notes and search terms.'
     )
     await page.waitForTimeout(2000)
@@ -66,11 +73,17 @@ test.describe('Smart Note Suggestions Feature', () => {
     })
 
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Technology and Innovation')
+    await jsType(
+      page,
+      'input[placeholder*="Untitled"]',
+      'Technology and Innovation'
+    )
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
-    await editor.fill(
+    await jsClick(page, '[contenteditable="true"]')
+    await jsType(
+      page,
+      '[contenteditable="true"]',
       'This note discusses modern technology trends including artificial intelligence, machine learning, blockchain, and cloud computing. These technologies are revolutionizing various industries.'
     )
     await page.waitForTimeout(3000)
@@ -114,11 +127,13 @@ test.describe('Smart Note Suggestions Feature', () => {
     })
 
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Project Management')
+    await jsType(page, 'input[placeholder*="Untitled"]', 'Project Management')
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
-    await editor.fill(
+    await jsClick(page, '[contenteditable="true"]')
+    await jsType(
+      page,
+      '[contenteditable="true"]',
       'Effective project management requires careful planning, team coordination, and regular progress monitoring. Key methodologies include Agile, Scrum, and Waterfall approaches.'
     )
     await page.waitForTimeout(2000)
@@ -128,9 +143,9 @@ test.describe('Smart Note Suggestions Feature', () => {
     )
     await expect(suggestionsPanel).toBeVisible()
 
-    // Click on Search tab
+    // Click on Search tab using jsClick to avoid timeout issues
     const searchTab = page.getByText('Search')
-    await searchTab.click()
+    await jsClick(page, 'text=Search')
     await page.waitForTimeout(1000)
 
     // Should show search suggestions or empty state
@@ -163,11 +178,17 @@ test.describe('Smart Note Suggestions Feature', () => {
     })
 
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Software Development Best Practices')
+    await jsType(
+      page,
+      'input[placeholder*="Untitled"]',
+      'Software Development Best Practices'
+    )
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
-    await editor.fill(
+    await jsClick(page, '[contenteditable="true"]')
+    await jsType(
+      page,
+      '[contenteditable="true"]',
       'Software development requires following best practices including code reviews, testing, documentation, and version control. These practices ensure maintainable and reliable software.'
     )
     await page.waitForTimeout(2000)
@@ -177,9 +198,9 @@ test.describe('Smart Note Suggestions Feature', () => {
     )
     await expect(suggestionsPanel).toBeVisible()
 
-    // Click on Related tab
+    // Click on Related tab using jsClick to avoid timeout issues
     const relatedTab = page.getByText('Related')
-    await relatedTab.click()
+    await jsClick(page, 'text=Related')
     await page.waitForTimeout(1000)
 
     // Should show related content or empty state
@@ -208,11 +229,13 @@ test.describe('Smart Note Suggestions Feature', () => {
     })
 
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Action Test Note')
+    await jsType(page, 'input[placeholder*="Untitled"]', 'Action Test Note')
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
-    await editor.fill(
+    await jsClick(page, '[contenteditable="true"]')
+    await jsType(
+      page,
+      '[contenteditable="true"]',
       'This note is for testing suggestion actions and interactions.'
     )
     await page.waitForTimeout(2000)
@@ -230,7 +253,7 @@ test.describe('Smart Note Suggestions Feature', () => {
       '[data-testid^="search-suggestion-"]'
     )
     if ((await searchSuggestions.count()) > 0) {
-      await searchSuggestions.first().click()
+      await jsClick(page, '[data-testid^="search-suggestion-"]')
       // Should not crash
       await page.waitForTimeout(500)
     }
@@ -238,7 +261,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     // Check action buttons in smart suggestions
     const actionButtons = page.locator('[data-testid^="suggestion-"] button')
     if ((await actionButtons.count()) > 0) {
-      await actionButtons.first().click()
+      await jsClick(page, '[data-testid^="suggestion-"] button')
       // Should not crash
       await page.waitForTimeout(500)
     }
@@ -255,7 +278,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     })
 
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Collapse Test Note')
+    await jsType(page, 'input[placeholder*="Untitled"]', 'Collapse Test Note')
     await page.waitForTimeout(1000)
 
     const suggestionsPanel = page.locator(
@@ -270,15 +293,15 @@ test.describe('Smart Note Suggestions Feature', () => {
     const tabsList = page.locator('[role="tablist"]')
     await expect(tabsList).toBeVisible()
 
-    // Click to collapse
-    await collapseButton.click()
+    // Click to collapse using jsClick
+    await jsClick(page, '[data-testid="smart-suggestions-panel"] button')
     await page.waitForTimeout(300)
 
     // Tabs should be hidden when collapsed
     await expect(tabsList).not.toBeVisible()
 
-    // Click to expand
-    await collapseButton.click()
+    // Click to expand using jsClick
+    await jsClick(page, '[data-testid="smart-suggestions-panel"] button')
     await page.waitForTimeout(300)
 
     // Tabs should be visible again
@@ -298,15 +321,17 @@ test.describe('Smart Note Suggestions Feature', () => {
     await expect(suggestionsPanel).toBeVisible()
 
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Loading Test Note')
+    await jsType(page, 'input[placeholder*="Untitled"]', 'Loading Test Note')
 
     // Should show loading spinner in header while processing
     const loadingSpinner = suggestionsPanel.locator('.animate-spin')
 
     // Add content to trigger suggestions
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
-    await editor.fill(
+    await jsClick(page, '[contenteditable="true"]')
+    await jsType(
+      page,
+      '[contenteditable="true"]',
       'This content should trigger loading states for suggestions.'
     )
 
@@ -341,24 +366,24 @@ test.describe('Smart Note Suggestions Feature', () => {
 
     // Should show appropriate empty states
     const smartTab = page.getByText('Smart')
-    await smartTab.click()
+    await jsClick(page, 'text=Smart')
 
     const emptyMessage = page.getByText(
       'Start writing to get smart suggestions'
     )
     await expect(emptyMessage).toBeVisible()
 
-    // Check search tab
+    // Check search tab using jsClick
     const searchTab = page.getByText('Search')
-    await searchTab.click()
+    await jsClick(page, 'text=Search')
 
     // Should also have empty state
     const searchEmpty = page.getByText('Add content to get search suggestions')
     await expect(searchEmpty).toBeVisible()
 
-    // Check related tab
+    // Check related tab using jsClick
     const relatedTab = page.getByText('Related')
-    await relatedTab.click()
+    await jsClick(page, 'text=Related')
 
     // Should have empty state
     const relatedEmpty = page.getByText('No related notes found yet')
@@ -389,11 +414,15 @@ test.describe('Smart Note Suggestions Feature', () => {
 
     // Action buttons should be focusable
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Accessibility Test')
+    await jsType(page, 'input[placeholder*="Untitled"]', 'Accessibility Test')
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
-    await editor.fill('Testing accessibility features.')
+    await jsClick(page, '[contenteditable="true"]')
+    await jsType(
+      page,
+      '[contenteditable="true"]',
+      'Testing accessibility features.'
+    )
     await page.waitForTimeout(2000)
 
     // Any action buttons should be keyboard accessible
@@ -437,7 +466,11 @@ test.describe('Smart Note Suggestions Feature', () => {
 
     // Should be properly scrollable if content is long
     const titleInput = page.locator('input[placeholder*="Untitled"]')
-    await titleInput.fill('Layout Integration Test')
+    await jsType(
+      page,
+      'input[placeholder*="Untitled"]',
+      'Layout Integration Test'
+    )
 
     const editor2 = page.locator('[contenteditable="true"]').first()
     await editor2.click()
@@ -447,7 +480,7 @@ test.describe('Smart Note Suggestions Feature', () => {
       'This is a very long piece of content that should test the layout integration and scrolling behavior of the smart suggestions panel. '.repeat(
         10
       )
-    await editor2.fill(longContent)
+    await jsType(page, '[contenteditable="true"]', longContent)
     await page.waitForTimeout(2000)
 
     // Both components should remain visible and functional
