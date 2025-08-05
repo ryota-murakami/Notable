@@ -26,7 +26,7 @@ test.describe('Bi-directional Linking', () => {
       'Source Note',
       'This is the source note.'
     )
-    const note2 = await createTestNote(
+    const _note2 = await createTestNote(
       page,
       'Target Note',
       'This is the target note.'
@@ -39,7 +39,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     // Click to focus the editor using jsClick to avoid timeout issues
-    const editor = page.locator('[contenteditable="true"]').first()
+    const _editor = page.locator('[contenteditable="true"]').first()
     await jsClick(page, '[contenteditable="true"]')
     await page.waitForTimeout(200) // Wait for focus
 
@@ -104,7 +104,7 @@ test.describe('Bi-directional Linking', () => {
       'Source Note',
       'This is the source note.'
     )
-    const note2 = await createTestNote(
+    const _note2 = await createTestNote(
       page,
       'Target Note',
       'This is the target note.'
@@ -114,7 +114,7 @@ test.describe('Bi-directional Linking', () => {
     await page.goto(`/notes/${note1.id}`)
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
-    const editor = page.locator('[contenteditable="true"]').first()
+    const _editor = page.locator('[contenteditable="true"]').first()
     await jsClick(page, '[contenteditable="true"]')
 
     // Clear content and insert wiki link
@@ -194,7 +194,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     // Create multiple wiki links
-    const editor = page.locator('[contenteditable="true"]').first()
+    const _editor = page.locator('[contenteditable="true"]').first()
     await jsClick(page, '[contenteditable="true"]')
 
     // Clear content and insert multiple wiki links
@@ -267,7 +267,7 @@ test.describe('Bi-directional Linking', () => {
     await page.goto(`/notes/${note1.id}`)
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
-    const editor = page.locator('[contenteditable="true"]').first()
+    const _editor = page.locator('[contenteditable="true"]').first()
     await jsClick(page, '[contenteditable="true"]')
 
     // Insert wiki link
@@ -327,7 +327,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     // Create link to non-existent note
-    const editor = page.locator('[contenteditable="true"]').first()
+    const _editor = page.locator('[contenteditable="true"]').first()
     await jsClick(page, '[contenteditable="true"]')
 
     // Use keyboard simulation
@@ -364,7 +364,7 @@ test.describe('Bi-directional Linking', () => {
     await page.goto(`/notes/${note1.id}`)
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
-    const editor = page.locator('[contenteditable="true"]').first()
+    const _editor = page.locator('[contenteditable="true"]').first()
     await jsClick(page, '[contenteditable="true"]')
 
     // Wait for editor to be ready
@@ -387,7 +387,7 @@ test.describe('Bi-directional Linking', () => {
       { timeout: 10000 }
     )
 
-    const titleInput = page
+    const _titleInput = page
       .locator(
         '[data-testid="note-title-input"], input[placeholder="Untitled Note"]'
       )

@@ -331,7 +331,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       await briefSummary.click()
 
       // Should show loading spinner (very briefly)
-      const loadingSpinner = page.locator('.animate-spin')
+      const _loadingSpinner = page.locator('.animate-spin')
 
       // Wait briefly to see if loading state appears
       await page.waitForTimeout(100)
