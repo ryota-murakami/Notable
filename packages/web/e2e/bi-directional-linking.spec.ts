@@ -266,7 +266,7 @@ test.describe('Bi-directional Linking', () => {
   test('should show link count in backlinks panel', async ({ page }) => {
     // Simplified test - just create one link and check if badge exists
     const note1 = await createTestNote(page, 'Source Note', 'Source content.')
-    const note2 = await createTestNote(page, 'Target Note', 'Target content.')
+    const _note2 = await createTestNote(page, 'Target Note', 'Target content.')
 
     // Create a single link
     await page.goto(`/notes/${note1.id}`)
@@ -440,7 +440,10 @@ test.describe('Bi-directional Linking', () => {
       }
     } else {
       // Wiki links not implemented yet, just verify content was inserted
-      const content = await editor.textContent()
+      const content = await page
+        .locator('[contenteditable="true"]')
+        .first()
+        .textContent()
       console.log('Editor content:', content)
 
       if (content?.includes('[[Original Title]]')) {
