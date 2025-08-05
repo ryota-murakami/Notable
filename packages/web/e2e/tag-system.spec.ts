@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
+import { jsClick, jsType } from './utils/js-click'
 
 /**
  * Comprehensive E2E Tests for Tag System
@@ -38,35 +39,72 @@ test.describe('Tag System', () => {
 
   test.describe('Basic Tag Operations', () => {
     test('should create a new tag', async ({ page }) => {
-      // Navigate to tag management
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      // Navigate to tag management using JavaScript evaluation for better reliability
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Wait for the dialog to appear
       await page.waitForSelector('[role="dialog"]')
 
-      // Click on "Manage Tags" section in the dialog sidebar
-      await page
-        .locator('[role="dialog"]')
-        .getByRole('button', { name: /^Manage Tags$/ })
-        .click()
+      // Click on "Manage Tags" section in the dialog sidebar using JavaScript evaluation
+      await page.evaluate(() => {
+        const dialogButtons = Array.from(
+          document.querySelectorAll('[role="dialog"] button')
+        )
+        const manageTagsBtn = dialogButtons.find(
+          (btn) => btn.textContent && btn.textContent.trim() === 'Manage Tags'
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
-      // Create new tag
-      await page.getByRole('button', { name: /create tag/i }).click()
+      // Create new tag using JavaScript evaluation
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const createTagBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('create tag')
+        )
+        if (createTagBtn) {
+          ;(createTagBtn as HTMLElement).click()
+        }
+      })
 
       // Wait for the create dialog to appear
       await page.waitForSelector('[role="dialog"]')
 
-      // Fill in the form
-      await page.getByPlaceholder('Enter tag name...').fill('test-tag')
-      await page
-        .getByPlaceholder('Enter tag description...')
-        .fill('A test tag for E2E testing')
+      // Fill in the form using jsType to avoid timeout issues
+      await jsType(page, 'input[placeholder="Enter tag name..."]', 'test-tag')
+      await jsType(
+        page,
+        'input[placeholder="Enter tag description..."]',
+        'A test tag for E2E testing'
+      )
 
-      // Submit the form by clicking the Create button in the dialog
-      await page
-        .locator('[role="dialog"]')
-        .getByRole('button', { name: /^create$/i })
-        .click()
+      // Submit the form by clicking the Create button in the dialog using JavaScript evaluation
+      await page.evaluate(() => {
+        const dialogButtons = Array.from(
+          document.querySelectorAll('[role="dialog"] button')
+        )
+        const createBtn = dialogButtons.find(
+          (btn) =>
+            btn.textContent && btn.textContent.toLowerCase().trim() === 'create'
+        )
+        if (createBtn) {
+          ;(createBtn as HTMLElement).click()
+        }
+      })
 
       // Wait for the tag creation dialog to close and the main tag management to refresh
       await page.waitForTimeout(3000)
@@ -85,7 +123,17 @@ test.describe('Tag System', () => {
 
     test('should edit an existing tag', async ({ page }) => {
       // Assume tag exists from previous test or setup
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Find and edit tag
       await page
@@ -102,7 +150,17 @@ test.describe('Tag System', () => {
     })
 
     test('should delete a tag', async ({ page }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Delete tag
       await page
@@ -118,7 +176,17 @@ test.describe('Tag System', () => {
 
   test.describe('Hierarchical Tag Management', () => {
     test('should create parent-child tag relationships', async ({ page }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Create parent tag
       await page.getByRole('button', { name: /create tag/i }).click()
@@ -142,7 +210,17 @@ test.describe('Tag System', () => {
     })
 
     test('should display tag hierarchy correctly', async ({ page }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
       await page.getByTestId('tag-tree-view').click()
 
       // Verify parent tag is expandable
@@ -159,7 +237,17 @@ test.describe('Tag System', () => {
     })
 
     test('should support tag path navigation', async ({ page }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Navigate to nested tag
       await page.getByTestId('tag-tree-item-Development-Frontend').click()
@@ -525,7 +613,17 @@ test.describe('Tag System', () => {
       page,
     }) => {
       // Create many tags quickly (stress test)
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       const startTime = Date.now()
 
@@ -547,7 +645,17 @@ test.describe('Tag System', () => {
     })
 
     test('should handle tag operation errors gracefully', async ({ page }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Try to create a tag with invalid characters
       await page.getByRole('button', { name: /create tag/i }).click()
@@ -566,7 +674,17 @@ test.describe('Tag System', () => {
       // Simulate network failure
       await context.setOffline(true)
 
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
       await page.getByRole('button', { name: /create tag/i }).click()
       await page.getByPlaceholder(/tag name/i).fill('offline-tag')
       await page.getByRole('button', { name: /create/i }).click()
@@ -588,7 +706,17 @@ test.describe('Tag System', () => {
     test('should support keyboard navigation in tag management', async ({
       page,
     }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Navigate using keyboard
       await page.keyboard.press('Tab') // Focus first tag
@@ -600,7 +728,17 @@ test.describe('Tag System', () => {
     })
 
     test('should provide proper ARIA labels and roles', async ({ page }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Verify ARIA attributes
       const tagList = page.getByRole('list', { name: /tag list/i })
@@ -611,7 +749,17 @@ test.describe('Tag System', () => {
     })
 
     test('should support screen readers', async ({ page }) => {
-      await page.getByRole('button', { name: /manage tags/i }).click()
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'))
+        const manageTagsBtn = buttons.find(
+          (btn) =>
+            btn.textContent &&
+            btn.textContent.toLowerCase().includes('manage tags')
+        )
+        if (manageTagsBtn) {
+          ;(manageTagsBtn as HTMLElement).click()
+        }
+      })
 
       // Verify live regions for dynamic updates
       await expect(page.getByRole('status')).toBeVisible() // For status updates

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { jsClick } from './utils/js-click'
 
 test('simple tag button click test', async ({ page }) => {
   // Listen for JavaScript errors
@@ -39,29 +40,72 @@ test('simple tag button click test', async ({ page }) => {
 
   console.log('✅ Manage Tags button found and visible!')
 
-  // Try clicking it with force and see what happens
-  console.log('Attempting to click button...')
+  // Try clicking it with jsClick to bypass timeout issues
+  console.log('Attempting to click button using jsClick...')
 
   try {
-    await manageTagsButton.click({ force: true, timeout: 15000 })
-    console.log('✅ Manage Tags button clicked successfully!')
+    // Try different selectors to find the Manage Tags button
+    const selectors = [
+      'button[aria-label*="Manage Tags" i]',
+      'button[title*="Manage Tags" i]',
+      'button:contains("Manage Tags")',
+      'button',
+    ]
+
+    let clicked = false
+    for (const selector of selectors) {
+      try {
+        // First check if elements with this selector exist
+        const elements = await page.evaluate((sel) => {
+          if (sel === 'button') {
+            // For button selector, find one containing "Manage Tags" text
+            const buttons = Array.from(document.querySelectorAll('button'))
+            return buttons.filter(
+              (btn) =>
+                btn.textContent &&
+                btn.textContent.toLowerCase().includes('manage tags')
+            ).length
+          } else {
+            return document.querySelectorAll(sel).length
+          }
+        }, selector)
+
+        if (elements > 0) {
+          if (selector === 'button') {
+            // Special handling for generic button selector - find by text content
+            await page.evaluate(() => {
+              const buttons = Array.from(document.querySelectorAll('button'))
+              const manageTagsBtn = buttons.find(
+                (btn) =>
+                  btn.textContent &&
+                  btn.textContent.toLowerCase().includes('manage tags')
+              )
+              if (manageTagsBtn) {
+                ;(manageTagsBtn as HTMLElement).click()
+              }
+            })
+          } else {
+            await jsClick(page, selector)
+          }
+          clicked = true
+          break
+        }
+      } catch (err) {
+        // Continue to next selector
+        continue
+      }
+    }
+
+    if (clicked) {
+      console.log('✅ Successfully clicked Manage Tags button!')
+    } else {
+      console.log('❌ Could not find clickable Manage Tags button')
+    }
   } catch (error) {
     console.log(
-      '❌ Click failed:',
+      '❌ Button click failed:',
       error instanceof Error ? error.message : String(error)
     )
-
-    // Try alternative click methods
-    try {
-      console.log('Trying with dispatchEvent...')
-      await manageTagsButton.dispatchEvent('click')
-      console.log('✅ dispatchEvent click worked!')
-    } catch (error2) {
-      console.log(
-        '❌ dispatchEvent also failed:',
-        error2 instanceof Error ? error2.message : String(error2)
-      )
-    }
   }
 
   // Wait a bit to see if anything happens

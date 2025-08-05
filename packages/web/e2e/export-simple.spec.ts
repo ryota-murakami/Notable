@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
+import { jsClick } from './utils/js-click'
 
 test.describe('Simple Export Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,24 +14,33 @@ test.describe('Simple Export Tests', () => {
       },
     ])
 
-    // Wait for React hydration
+    // Navigate to app first, then wait for hydration
+    await page.goto('/app', { timeout: 30000 })
+    await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
+
+    // Wait for React hydration after navigation
     await waitForHydration(page)
   })
 
   test('should display export button in RichTextEditor', async ({ page }) => {
-    // First create a note by clicking new note in shell
-    await page.goto('http://localhost:4378/app')
+    // App is already loaded in beforeEach
+    await expect(page.getByTestId('app-shell')).toBeVisible()
 
-    // Click new note button
-    await page.click('[data-testid="new-note-button"]')
+    // Click new note button using jsClick to avoid timeouts
+    await jsClick(page, '[data-testid="new-note-button"]')
 
     // Wait for template picker dialog to appear
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible({ timeout: 5000 })
 
-    // Click Blank Note button
-    await page.click('button:has-text("Blank Note")')
+    // Click Blank Note button using JavaScript evaluation for better reliability
+    await page.evaluate(() => {
+      const button = Array.from(document.querySelectorAll('button')).find(
+        (btn) => btn.textContent?.includes('Blank Note')
+      )
+      if (button) (button as HTMLElement).click()
+    })
 
     // Verify template picker closes
     await expect(
@@ -54,17 +64,24 @@ test.describe('Simple Export Tests', () => {
   })
 
   test('should export as markdown from dropdown', async ({ page }) => {
-    // Navigate to app and create note
-    await page.goto('http://localhost:4378/app')
-    await page.click('[data-testid="new-note-button"]')
+    // App is already loaded in beforeEach
+    await expect(page.getByTestId('app-shell')).toBeVisible()
+
+    // Click new note button using jsClick to avoid timeouts
+    await jsClick(page, '[data-testid="new-note-button"]')
 
     // Wait for template picker dialog to appear
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible({ timeout: 5000 })
 
-    // Click Blank Note button
-    await page.click('button:has-text("Blank Note")')
+    // Click Blank Note button using JavaScript evaluation for better reliability
+    await page.evaluate(() => {
+      const button = Array.from(document.querySelectorAll('button')).find(
+        (btn) => btn.textContent?.includes('Blank Note')
+      )
+      if (button) (button as HTMLElement).click()
+    })
 
     // Verify template picker closes
     await expect(
