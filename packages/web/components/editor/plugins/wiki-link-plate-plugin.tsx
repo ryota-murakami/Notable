@@ -32,29 +32,6 @@ export const WikiLinkPlugin = createPlatePlugin({
       },
     },
   },
-  handlers: {
-    // Handle inserting text to detect [[Note]] pattern
-    onKeyDown: ({ editor, event }) => {
-      if (event.key === ']') {
-        // Check if we're completing a wiki link pattern
-        const { selection } = editor
-        if (selection) {
-          // TODO: Get text node at selection properly
-          const text = ''
-
-          // Check if the current text ends with '[[something]'
-          const match = text.match(/\[\[([^\]]+)\]$/)
-          if (match) {
-            event.preventDefault()
-            const _noteTitle = match[1]
-
-            // Replace the pattern with a wiki-link node
-            // TODO: Implement proper transforms
-            // editor.deleteBackward and editor.insertNode need proper implementation
-            return true
-          }
-        }
-      }
-    },
-  },
+  // Note: Wiki-link autoformatting is handled by the AutoformatKit
+  // which provides more robust text pattern matching and transformation
 })
