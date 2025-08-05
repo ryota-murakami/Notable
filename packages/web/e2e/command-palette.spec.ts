@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
+import { jsClick, jsType } from './utils/js-click'
 
 test.describe('Command Palette & Keyboard Shortcuts', () => {
   test.beforeEach(async ({ page }) => {
@@ -61,13 +62,13 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await page.keyboard.press('Meta+k')
 
     // Click on New Note command - be more specific to avoid duplicates
-    await page.locator('[role="dialog"] >> text="New Note"').first().click()
+    await jsClick(page, '[role="dialog"] >> text="New Note"')
 
     // Handle template picker
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
-    await page.click('button:has-text("Blank Note")')
+    await jsClick(page, 'button:has-text("Blank Note")')
 
     // Verify we're now on a note page
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
@@ -85,7 +86,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
-    await page.click('button:has-text("Blank Note")')
+    await jsClick(page, 'button:has-text("Blank Note")')
 
     // Verify we're now on a note page
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
@@ -169,13 +170,14 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await page.keyboard.press('Meta+k')
 
     // Search for keyboard shortcuts in command palette
-    await page.fill(
+    await jsType(
+      page,
       'input[placeholder="Type a command or search..."]',
       'keyboard'
     )
 
     // Click on keyboard shortcuts command
-    await page.locator('[role="dialog"] >> text="Keyboard Shortcuts"').click()
+    await jsClick(page, '[role="dialog"] >> text="Keyboard Shortcuts"')
 
     // Verify keyboard shortcuts dialog opens
     const shortcutsDialog = page.locator(

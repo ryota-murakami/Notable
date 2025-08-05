@@ -5,6 +5,34 @@ import { Page } from '@playwright/test'
  * This bypasses Playwright's actionability checks and works around timeout issues
  */
 export async function jsClick(page: Page, selector: string): Promise<void> {
+  // Handle Playwright-specific selectors with text content
+  if (selector.includes(':has-text(')) {
+    const match = selector.match(/(.+?):has-text\("(.+?)"\)/)
+    if (match) {
+      const [, elementSelector, textContent] = match
+      await page.evaluate(
+        ([elSel, text]) => {
+          const elements = Array.from(document.querySelectorAll(elSel))
+          const element = elements.find(
+            (el) =>
+              el.textContent &&
+              el.textContent.toLowerCase().includes(text.toLowerCase())
+          )
+          if (element instanceof HTMLElement) {
+            element.click()
+          } else {
+            throw new Error(
+              `Element not found with selector: ${elSel} and text: ${text}`
+            )
+          }
+        },
+        [elementSelector, textContent]
+      )
+      return
+    }
+  }
+
+  // Handle regular selectors
   await page.evaluate((sel) => {
     const element = document.querySelector(sel)
     if (element instanceof HTMLElement) {

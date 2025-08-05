@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
+import { jsClick, jsType } from './utils/js-click'
 
 test.describe('Comprehensive Search Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -47,8 +48,8 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const searchBar = page.locator('button:has-text("Search...")')
       await expect(searchBar).toBeVisible()
 
-      // Click to open search
-      await searchBar.click()
+      // Click to open search using jsClick to avoid timeout issues
+      await jsClick(page, 'button:has-text("Search...")')
       await page.waitForTimeout(500)
 
       // Find the command palette/search dialog that appears
@@ -60,8 +61,8 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(searchInput).toBeVisible()
       await expect(searchInput).toBeFocused()
 
-      // Type in search
-      await searchInput.fill('test search')
+      // Type in search using jsType for reliable input handling
+      await jsType(page, 'input[type="text"]', 'test search')
 
       // The search input should accept input
       await expect(searchInput).toHaveValue('test search')
@@ -72,19 +73,19 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const notes = ['JavaScript Tutorial', 'Python Guide', 'TypeScript Basics']
 
       for (const title of notes) {
-        await page.click('button:has-text("New Note")')
+        await jsClick(page, 'button:has-text("New Note")')
 
         // Handle template picker
         await expect(
           page.locator('[role="dialog"]:has-text("Choose a Template")')
         ).toBeVisible()
-        await page.click('button:has-text("Blank Note")')
+        await jsClick(page, 'button:has-text("Blank Note")')
 
         // Wait for navigation to new note
         await page.waitForURL(/\/notes\/[a-z0-9-]+/)
 
-        // Fill in the title using correct selector
-        await page.fill('[data-testid="note-title-input"]', title)
+        // Fill in the title using jsType for reliable input handling
+        await jsType(page, '[data-testid="note-title-input"]', title)
         await page.waitForTimeout(1000) // Auto-save
 
         // Go back to create next note

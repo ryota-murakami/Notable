@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
+import { jsClick, jsType } from './utils/js-click'
 
 test.describe('Keyboard Shortcuts', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured
