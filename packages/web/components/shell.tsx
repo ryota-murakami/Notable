@@ -61,7 +61,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   const router = useRouter()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current: _current, title: _title, navigate: _navigate } = useRouting()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   // Note organization state
   const [noteOrganization, setNoteOrganization] = useState({
