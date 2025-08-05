@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { test } from '@playwright/test'
 
 test('debug note loading issue', async ({ page }) => {
   // Capture all console messages and errors
