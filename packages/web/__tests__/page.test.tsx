@@ -1,14 +1,14 @@
 import { render } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import { describe, expect, it, vi } from 'vitest'
 
 // Mock Next.js modules
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter() {
     return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      prefetch: jest.fn(),
-      back: jest.fn(),
+      push: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+      back: vi.fn(),
     }
   },
   useSearchParams() {

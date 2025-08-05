@@ -1,6 +1,7 @@
 import type { Descendant } from 'slate'
 import type { BulkExportOptions, ExportMetadata } from '../types'
 import { exportService } from '../export-service'
+import { describe, it } from 'vitest'
 
 // Test data
 interface CustomText {

@@ -1,7 +1,7 @@
 /**
  * Version History utility tests
  *
- * Note: This test suite has limited functionality due to Jest mock hoisting issues
+ * Note: This test suite has limited functionality due to Vitest mock hoisting issues
  * with static class properties that are initialized at module load time.
  * Specifically, the VersionHistory.supabase static property is initialized before
  * mocks can be applied, causing circular dependency issues when attempting to
@@ -9,34 +9,34 @@
  * The VersionHistory utility is working correctly in the application.
  */
 
+import { describe, expect, it, vi } from 'vitest'
+
 // Mock external dependencies to avoid runtime errors
-jest.mock('@/utils/supabase/client', () => ({
-  createClient: jest.fn(() => ({
-    rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn().mockResolvedValue({ data: null, error: null }),
+vi.mock('@/utils/supabase/client', () => ({
+  createClient: vi.fn(() => ({
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn().mockResolvedValue({ data: null, error: null }),
           })),
         })),
       })),
-      update: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          eq: jest.fn().mockResolvedValue({ error: null }),
+      update: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          eq: vi.fn().mockResolvedValue({ error: null }),
         })),
       })),
     })),
     auth: {
-      getUser: jest
-        .fn()
-        .mockResolvedValue({ data: { user: null }, error: null }),
+      getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
     },
   })),
 }))
 
-jest.mock('@/hooks/use-toast', () => ({
-  toast: jest.fn(),
+vi.mock('@/hooks/use-toast', () => ({
+  toast: vi.fn(),
 }))
 
 describe('VersionHistory', () => {
