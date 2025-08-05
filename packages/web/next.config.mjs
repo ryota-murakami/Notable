@@ -35,9 +35,13 @@ const nextConfig = {
       }
     }
 
-    // Handle MSW imports - exclude from production builds
-    if (!dev && !isServer) {
-      // In production, replace MSW imports with empty modules
+    // Handle MSW imports - exclude from production builds (but allow in test environment)
+    if (
+      !dev &&
+      !isServer &&
+      process.env.NEXT_PUBLIC_API_MOCKING !== 'enabled'
+    ) {
+      // In production, replace MSW imports with empty modules (except during E2E tests)
       config.resolve.alias = {
         ...config.resolve.alias,
         '../mocks/browser': false,

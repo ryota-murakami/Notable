@@ -37,7 +37,8 @@ export const isProduction = (): boolean => {
 
 /**
  * Check if running in test environment
- * For client-side, checks for test auth bypass cookie or API mocking env var
+ * For client-side, checks for test auth bypass cookie
+ * For server-side, checks NODE_ENV or API mocking env var
  */
 export const isTest = (): boolean => {
   if (!isBrowser) {
@@ -48,23 +49,25 @@ export const isTest = (): boolean => {
     )
   }
 
-  // Client-side: check for test auth bypass cookie or API mocking
-  // Use try-catch to prevent errors during SSR/hydration
+  // Client-side: primarily check for test auth bypass cookie
+  // This is more reliable than env vars in production builds
   try {
-    return (
-      document.cookie.includes('dev-auth-bypass=true') ||
-      (typeof window !== 'undefined' &&
-        (window as any).__NEXT_PUBLIC_API_MOCKING === 'enabled') ||
-      (typeof process !== 'undefined' &&
-        process.env.NEXT_PUBLIC_API_MOCKING === 'enabled')
-    )
+    const hasTestCookie = document.cookie.includes('dev-auth-bypass=true')
+
+    // If we have the test cookie, we're in test mode
+    if (hasTestCookie) {
+      return true
+    }
+
+    // Fallback to checking window object (for dev environments)
+    const hasApiMocking =
+      typeof window !== 'undefined' &&
+      (window as any).__NEXT_PUBLIC_API_MOCKING === 'enabled'
+
+    return hasApiMocking
   } catch (error) {
-    // Fallback during SSR/hydration phase
-    return (
-      (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') ||
-      (typeof process !== 'undefined' &&
-        process.env.NEXT_PUBLIC_API_MOCKING === 'enabled')
-    )
+    // During SSR/hydration, be conservative
+    return false
   }
 }
 

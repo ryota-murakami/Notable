@@ -7,7 +7,9 @@ const isCI = process.env.CI === 'true'
 const isVercelPreview =
   process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'production'
 // In test environments, we need to allow builds without all env vars
-const isTest = process.env.NODE_ENV === 'test'
+const isTest =
+  process.env.NODE_ENV === 'test' ||
+  process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
 
 export const env = createEnv({
   /**

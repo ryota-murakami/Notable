@@ -113,11 +113,20 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       setIsTestMode(testMode)
     }
 
-    // Set hydration flag for tests
+    // Set hydration flag for tests - always set it to ensure E2E tests work
     if (typeof window !== 'undefined') {
       ;(window as any).__NOTABLE_HYDRATED = true
+      // Hydration flag set for E2E tests
     }
   }, [isTestMode])
+
+  // Set hydration flag immediately on mount for E2E tests
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      ;(window as any).__NOTABLE_HYDRATED = true
+      // Hydration flag set immediately on mount
+    }
+  }, [])
 
   // Command handlers
   const handleNewNote = useCallback(async () => {
