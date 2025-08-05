@@ -43,8 +43,7 @@ test.describe('Bi-directional Linking', () => {
     await jsClick(page, '[contenteditable="true"]')
     await page.waitForTimeout(200) // Wait for focus
 
-    // Ensure editor is focused
-    await editor.focus()
+    // Editor focus will be handled by page interactions
 
     // Try keyboard simulation approach for better Slate.js compatibility
     await page.keyboard.press('Control+a') // Select all
@@ -80,7 +79,10 @@ test.describe('Bi-directional Linking', () => {
 
     // If wiki link wasn't created, check if the text was inserted at least
     if (wikiLinkCount === 0) {
-      const editorContent = await editor.textContent()
+      const editorContent = await page
+        .locator('[contenteditable="true"]')
+        .first()
+        .textContent()
       console.log('Editor content after insertion:', editorContent)
 
       // Verify text was inserted even if wiki link wasn't processed
@@ -148,7 +150,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForTimeout(2000)
 
     // Navigate to target note
-    await page.goto(`/notes/${note2.id}`)
+    await page.goto(`/notes/${_note2.id}`)
 
     // Verify backlinks panel shows the link
     const backlinksPanel = page.locator('[data-testid="backlinks-panel"]')
@@ -248,7 +250,10 @@ test.describe('Bi-directional Linking', () => {
       console.log('✅ Multiple wiki links created successfully!')
     } else {
       // Verify text was at least inserted
-      const editorContent = await editor.textContent()
+      const editorContent = await page
+        .locator('[contenteditable="true"]')
+        .first()
+        .textContent()
       expect(editorContent).toContain('[[First Target]]')
       expect(editorContent).toContain('[[Second Target]]')
       console.log('✅ Wiki link text inserted successfully')
@@ -276,7 +281,7 @@ test.describe('Bi-directional Linking', () => {
     await page.keyboard.type('Links to [[Target Note]].')
 
     // Navigate directly to target note without waiting
-    await page.goto(`/notes/${note2.id}`)
+    await page.goto(`/notes/${_note2.id}`)
 
     // Just verify the backlinks panel exists
     const backlinksPanelExists = await page
@@ -379,7 +384,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForTimeout(300)
 
     // Change title of target note
-    await page.goto(`/notes/${note2.id}`)
+    await page.goto(`/notes/${_note2.id}`)
 
     // Use the correct selector - either data-testid or the updated placeholder
     await page.waitForSelector(

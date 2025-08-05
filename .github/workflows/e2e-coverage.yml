@@ -2,7 +2,7 @@ name: E2E Tests with Coverage
 
 on:
   push:
-    branches: [main, feature/issue-279-e2e-coverage]
+    branches: [main, develop]
   pull_request:
 
 jobs:

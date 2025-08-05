@@ -1,5 +1,4 @@
 import { expect, test } from './fixtures/coverage'
-import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Block Editor', () => {
   test.beforeEach(async ({ page }) => {
