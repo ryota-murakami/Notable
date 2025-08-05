@@ -48,7 +48,15 @@ export function useNotes(options: UseNotesOptions = {}) {
     } finally {
       setLoading(false)
     }
-  }, [enabled, queryParams])
+  }, [
+    enabled,
+    queryParams.folder_id,
+    queryParams.search,
+    queryParams.sort_by,
+    queryParams.sort_order,
+    queryParams.limit,
+    queryParams.offset,
+  ])
 
   useEffect(() => {
     fetchNotes()

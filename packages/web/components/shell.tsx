@@ -118,7 +118,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       ;(window as any).__NOTABLE_HYDRATED = true
       // Hydration flag set for E2E tests
     }
-  }, [isTestMode])
+  }, []) // Remove isTestMode from dependencies to prevent infinite loop
 
   // Set hydration flag immediately on mount for E2E tests
   useEffect(() => {
