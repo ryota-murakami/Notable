@@ -431,7 +431,7 @@ test.describe('Bi-directional Linking', () => {
 
         // Verify it still navigates to correct note using jsClick
         await jsClick(page, 'a[data-wiki-link="true"]')
-        await expect(page).toHaveURL(`/notes/${note2.id}`)
+        await expect(page).toHaveURL(`/notes/${_note2.id}`)
         console.log('✅ Wiki link navigates to correct note after title change')
       } else {
         console.log(
