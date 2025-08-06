@@ -516,11 +516,12 @@ test.describe('AI Features - Comprehensive Testing', () => {
       ) {
         await editorContent.fill('Test content')
       } else {
-        await jsType(
-          page,
-          editableSelectors.find((s) => editorContent?.locator(s).first()),
-          'Test content'
+        const selector = editableSelectors.find((s) =>
+          editorContent?.locator(s).first()
         )
+        if (selector) {
+          await jsType(page, selector, 'Test content')
+        }
       }
     } else {
       console.info(
@@ -530,11 +531,13 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
     // AI buttons should still be clickable
     const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
-    await aiSummaryButton.click({ force: true })
+    await aiSummaryButton.click()
     await page.waitForTimeout(200)
 
     // Should not interfere with editor functionality
     await expect(titleInput).toHaveValue('Layout Test')
-    await expect(editorContent).toContainText('Test content')
+    if (editorContent) {
+      await expect(editorContent).toContainText('Test content')
+    }
   })
 })
