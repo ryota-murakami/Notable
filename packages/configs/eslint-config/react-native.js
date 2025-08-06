@@ -1,7 +1,10 @@
 import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
-import reactNativePlugin from 'eslint-plugin-react-native'
+import { createRequire } from 'module'
 import baseConfig from './index.js'
+
+const require = createRequire(import.meta.url)
+const reactNativePlugin = require('eslint-plugin-react-native')
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
