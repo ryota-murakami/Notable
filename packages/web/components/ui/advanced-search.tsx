@@ -5,7 +5,6 @@ import {
   Calendar,
   ChevronRight,
   Clock,
-  FileText,
   Filter,
   Loader2,
   Search,
@@ -14,12 +13,7 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -302,7 +296,7 @@ export function AdvancedSearch({
               {!isLoading && query && results.length === 0 && (
                 <div className='text-center py-8'>
                   <p className='text-muted-foreground'>
-                    No results found for "{query}"
+                    No results found for &quot;{query}&quot;
                   </p>
                   <p className='text-sm text-muted-foreground mt-2'>
                     Try adjusting your search terms or filters

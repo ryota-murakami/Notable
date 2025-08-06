@@ -256,10 +256,10 @@ export function PluginManagementPanel({
       const mockCode = `
         // Mock plugin code for ${plugin.name}
         export function activate(context) {
-          console.log('${plugin.name} activated');
+          console.info('${plugin.name} activated');
         }
         export function deactivate() {
-          console.log('${plugin.name} deactivated');
+          console.info('${plugin.name} deactivated');
         }
       `
 

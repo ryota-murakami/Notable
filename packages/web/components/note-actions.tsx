@@ -23,7 +23,7 @@ interface NoteActionsProps {
 }
 
 export function NoteActions({
-  noteId,
+  noteId: _noteId,
   isFavorite = false,
   isPinned = false,
   isArchived = false,

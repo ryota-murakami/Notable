@@ -143,7 +143,7 @@ export class NotablePluginSystem {
       // Check if already installed
       const existing = this.pluginManager.getPlugin('hello-world')
       if (existing) {
-        console.log('Hello World plugin already installed')
+        console.info('Hello World plugin already installed')
         return
       }
 
@@ -153,7 +153,7 @@ export class NotablePluginSystem {
         'example-plugin-code'
       )
 
-      console.log('📦 Example "Hello World" plugin installed')
+      console.info('📦 Example "Hello World" plugin installed')
     } catch (error) {
       console.warn('Failed to install example plugin:', error)
     }
@@ -163,7 +163,7 @@ export class NotablePluginSystem {
     // TODO: Integrate with Notable's command palette system
     // This would register plugin commands in the global command palette
 
-    console.log('🎯 Plugin commands integrated with global command system')
+    console.info('🎯 Plugin commands integrated with global command system')
   }
 
   private groupPluginsByCategory(plugins: any[]): Record<string, number> {
@@ -193,7 +193,7 @@ export class NotablePluginSystem {
   ): void {
     // TODO: Integrate with Notable's notification system
     const emoji = type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌'
-    console.log(`${emoji} ${title}: ${message}`)
+    console.info(`${emoji} ${title}: ${message}`)
   }
 }
 

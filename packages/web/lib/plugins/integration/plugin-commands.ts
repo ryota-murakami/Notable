@@ -35,7 +35,7 @@ export class PluginCommandIntegration {
     // Register commands from active plugins
     await this.registerPluginCommands()
 
-    console.log('🎯 Plugin command integration initialized')
+    console.info('🎯 Plugin command integration initialized')
   }
 
   /**
@@ -62,7 +62,7 @@ export class PluginCommandIntegration {
       })
     }
 
-    console.log(`Registered plugin command: ${command.id}`)
+    console.info(`Registered plugin command: ${command.id}`)
   }
 
   /**
@@ -79,7 +79,7 @@ export class PluginCommandIntegration {
       this.commandPaletteIntegration.unregisterCommand(commandId)
     }
 
-    console.log(`Unregistered plugin command: ${commandId}`)
+    console.info(`Unregistered plugin command: ${commandId}`)
   }
 
   /**
@@ -127,7 +127,7 @@ export class PluginCommandIntegration {
         icon: 'puzzle',
         handler: () => {
           // This would trigger opening the plugin management panel
-          console.log('Opening plugin manager...')
+          console.info('Opening plugin manager...')
           // In a real implementation, this would dispatch an event or call a function
           // that opens the PluginManagementPanel component
         },
@@ -148,7 +148,7 @@ export class PluginCommandIntegration {
               await manager.activatePlugin(plugin.manifest.id)
             }
 
-            console.log(`Reloaded ${activePlugins.length} plugins`)
+            console.info(`Reloaded ${activePlugins.length} plugins`)
           } catch (error) {
             console.error('Failed to reload plugins:', error)
           }
@@ -171,7 +171,7 @@ export class PluginCommandIntegration {
               }
             }
 
-            console.log(`Enabled ${plugins.length} plugins`)
+            console.info(`Enabled ${plugins.length} plugins`)
           } catch (error) {
             console.error('Failed to enable all plugins:', error)
           }
@@ -192,7 +192,7 @@ export class PluginCommandIntegration {
               await manager.deactivatePlugin(plugin.manifest.id)
             }
 
-            console.log(`Disabled ${activePlugins.length} plugins`)
+            console.info(`Disabled ${activePlugins.length} plugins`)
           } catch (error) {
             console.error('Failed to disable all plugins:', error)
           }
@@ -206,7 +206,7 @@ export class PluginCommandIntegration {
         icon: 'bar-chart',
         handler: () => {
           const stats = notablePluginSystem.getStats()
-          console.log('Plugin System Statistics:', stats)
+          console.info('Plugin System Statistics:', stats)
 
           // In a real implementation, this would show a notification or modal
           // with the statistics

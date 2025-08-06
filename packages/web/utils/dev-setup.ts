@@ -9,12 +9,12 @@ export function setupDevMode() {
     // Set the dev auth bypass cookie
     if (!document.cookie.includes('dev-auth-bypass=true')) {
       document.cookie = 'dev-auth-bypass=true; path=/; max-age=86400'
-      console.log('✅ Dev auth bypass enabled')
+      console.info('✅ Dev auth bypass enabled')
     }
 
     // Log mock mode status
-    console.log('🛠️ Mock API mode is active')
-    console.log('🏷️ Tag system using in-memory data store')
+    console.info('🛠️ Mock API mode is active')
+    console.info('🏷️ Tag system using in-memory data store')
   }
 }
 
@@ -38,12 +38,12 @@ export function toggleDevMode(): boolean {
     // Disable dev mode
     document.cookie =
       'dev-auth-bypass=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC'
-    console.log('❌ Dev auth bypass disabled')
+    console.info('❌ Dev auth bypass disabled')
     return false
   } else {
     // Enable dev mode
     document.cookie = 'dev-auth-bypass=true; path=/; max-age=86400'
-    console.log('✅ Dev auth bypass enabled')
+    console.info('✅ Dev auth bypass enabled')
     return true
   }
 }

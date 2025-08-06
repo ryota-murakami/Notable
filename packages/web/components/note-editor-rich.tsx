@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNote } from '@/hooks/use-note'
 import { RichTextEditorClient } from '@/components/rich-text-editor-client'
 import { TestNoteEditor } from '@/components/test-note-editor'
@@ -17,7 +17,7 @@ interface NoteEditorRichProps {
 
 export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
   const { note, loading, updateNote } = useNote(noteId)
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [_isInitialized, _setIsInitialized] = useState(false)
 
   // Direct fallback for mock notes to avoid state propagation issues
   const isTestMode = isTest()
@@ -70,7 +70,8 @@ export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
         <div className='text-center'>
           <h3 className='text-lg font-semibold mb-2'>Note not found</h3>
           <p className='text-muted-foreground'>
-            The note you're looking for doesn't exist or has been deleted.
+            The note you&apos;re looking for doesn&apos;t exist or has been
+            deleted.
           </p>
         </div>
       </div>

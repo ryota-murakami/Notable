@@ -177,7 +177,7 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('[MSW] GET /api/folders - returning empty folders list')
+    console.info('[MSW] GET /api/folders - returning empty folders list')
     return HttpResponse.json({
       data: [],
       total: 0,
@@ -281,8 +281,8 @@ export const handlers = [
   // Mock other API endpoints that return 401
   // Graph API handler for enhanced graph view
   http.get('*/api/graph', ({ cookies }) => {
-    console.log('MSW Graph API handler called!')
-    console.log('Cookies:', cookies)
+    console.info('MSW Graph API handler called!')
+    console.info('Cookies:', cookies)
 
     return HttpResponse.json({
       success: true,

@@ -340,7 +340,7 @@ class Analytics {
 
     // Log for development
     if (isDevelopment()) {
-      console.log('Analytics event:', event)
+      console.info('Analytics event:', event)
     }
   }
 

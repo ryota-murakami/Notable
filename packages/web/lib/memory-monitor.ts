@@ -297,8 +297,7 @@ class MemoryMonitor {
       const duration = performance.now() - startTime
       const memoryDelta = endMetrics.heapUsed - startMetrics.heapUsed
 
-      // eslint-disable-next-line no-console
-      console.log(
+      console.info(
         `[MemoryMonitor] Operation "${name}" - Duration: ${duration.toFixed(2)}ms, Memory delta: ${this.formatBytes(memoryDelta)}`
       )
 
@@ -321,15 +320,14 @@ class MemoryMonitor {
    */
   forceGarbageCollection() {
     if (typeof global !== 'undefined' && (global as any).gc) {
-      // eslint-disable-next-line no-console
-      console.log('[MemoryMonitor] Forcing garbage collection...')
+      console.info('[MemoryMonitor] Forcing garbage collection...')
       const before = this.getCurrentMetrics()
 
       ;(global as any).gc()
       const after = this.getCurrentMetrics()
       const freed = before.heapUsed - after.heapUsed
-      // eslint-disable-next-line no-console
-      console.log(
+
+      console.info(
         `[MemoryMonitor] Garbage collection freed ${this.formatBytes(freed)}`
       )
     } else {

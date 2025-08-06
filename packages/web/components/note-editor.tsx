@@ -47,7 +47,8 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
         <div className='text-center'>
           <h3 className='text-lg font-semibold mb-2'>Note not found</h3>
           <p className='text-muted-foreground'>
-            The note you're looking for doesn't exist or has been deleted.
+            The note you&apos;re looking for doesn&apos;t exist or has been
+            deleted.
           </p>
         </div>
       </div>

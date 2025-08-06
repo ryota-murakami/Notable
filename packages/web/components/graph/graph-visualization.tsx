@@ -9,10 +9,8 @@ import { Input } from '@/design-system/components/input'
 import {
   BarChart3,
   Filter,
-  Info,
   RotateCcw,
   Search,
-  Settings,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
@@ -76,7 +74,7 @@ export function GraphVisualization({
   >('connections')
 
   // Compute graph analytics
-  const computeAnalytics = (nodes: GraphNode[], edges: GraphEdge[]) => {
+  const computeAnalytics = (nodes: GraphNode[], _edges: GraphEdge[]) => {
     // Calculate centrality scores
     const centralityScores = new Map<string, number>()
     nodes.forEach((node) => {
@@ -177,10 +175,7 @@ export function GraphVisualization({
 
     // Apply advanced filters
     const filteredNodes = applyFilters(data.nodes, data.edges)
-    const { centralityScores, hubs, isolated } = computeAnalytics(
-      data.nodes,
-      data.edges
-    )
+    const { hubs, isolated } = computeAnalytics(data.nodes, data.edges)
 
     const filteredNodeIds = new Set(filteredNodes.map((node) => node.id))
     const filteredEdges = data.edges.filter(
@@ -207,7 +202,7 @@ export function GraphVisualization({
           .force('center', d3.forceCenter(width / 2, height / 2))
           .force('collision', d3.forceCollide().radius(30))
         break
-      case 'circular':
+      case 'circular': {
         const radius = Math.min(width, height) / 3
         filteredNodes.forEach((node, i) => {
           const angle = (i / filteredNodes.length) * 2 * Math.PI
@@ -215,7 +210,8 @@ export function GraphVisualization({
           node.fy = height / 2 + radius * Math.sin(angle)
         })
         break
-      case 'hierarchical':
+      }
+      case 'hierarchical': {
         // Hierarchical layout based on connection count
         const levels = Math.ceil(Math.sqrt(filteredNodes.length))
         filteredNodes.sort((a, b) => b.connections - a.connections)
@@ -228,7 +224,8 @@ export function GraphVisualization({
             (level + 1)
         })
         break
-      case 'radial':
+      }
+      case 'radial': {
         // Radial layout with hubs in center
         const centerNodes = [...filteredNodes].filter((n) => hubs.has(n.id))
         const peripheryNodes = [...filteredNodes].filter((n) => !hubs.has(n.id))
@@ -249,6 +246,7 @@ export function GraphVisualization({
           node.fy = height / 2 + outerRadius * Math.sin(angle)
         })
         break
+      }
     }
 
     // Create links
@@ -290,22 +288,23 @@ export function GraphVisualization({
       })
       .attr('fill', (d) => {
         switch (nodeColorBy) {
-          case 'connections':
+          case 'connections': {
             const connectionIntensity = Math.min(d.connections / 10, 1)
             return `hsl(${240 - connectionIntensity * 120}, 70%, ${60 + connectionIntensity * 20}%)`
-
-          case 'date':
+          }
+          case 'date': {
             const nodeAge = Date.now() - new Date(d.created_at).getTime()
             const maxAge = 365 * 24 * 60 * 60 * 1000 // 1 year
             const ageRatio = Math.min(nodeAge / maxAge, 1)
             return `hsl(${120 - ageRatio * 60}, 70%, 60%)`
-
+          }
           case 'cluster':
-          default:
+          default: {
             if (hubs.has(d.id)) return '#ef4444' // Red for hubs
             if (isolated.has(d.id)) return '#94a3b8' // Gray for isolated
             const hue = Math.abs(d.id.charCodeAt(0) * 137.5) % 360
             return `hsl(${hue}, 70%, 60%)`
+          }
         }
       })
       .attr('stroke', (d) => {
@@ -339,7 +338,7 @@ export function GraphVisualization({
           .attr('stroke-width', 3)
 
         // Show tooltip
-        const tooltip = d3
+        const _tooltip = d3
           .select('body')
           .append('div')
           .attr('class', 'graph-tooltip')
@@ -364,7 +363,7 @@ export function GraphVisualization({
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY - 10}px`)
       })
-      .on('mouseout', function (event, d) {
+      .on('mouseout', function (_event, _d) {
         d3.select(this)
           .select('circle')
           .transition()
@@ -426,7 +425,15 @@ export function GraphVisualization({
       simulation.stop()
       d3.selectAll('.graph-tooltip').remove()
     }
-  }, [data, searchTerm, selectedLayout, selectedFilters, nodeColorBy])
+  }, [
+    data,
+    searchTerm,
+    selectedLayout,
+    selectedFilters,
+    nodeColorBy,
+    applyFilters,
+    onNodeClick,
+  ])
 
   const handleZoomIn = () => {
     if (svgRef.current) {
@@ -459,7 +466,7 @@ export function GraphVisualization({
   }
 
   const analytics = computeAnalytics(data.nodes, data.edges)
-  const filteredAnalytics = computeAnalytics(
+  const _filteredAnalytics = computeAnalytics(
     applyFilters(data.nodes, data.edges),
     data.edges
   )

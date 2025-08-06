@@ -8,8 +8,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest --passWithNoTests",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix --max-warnings 0",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

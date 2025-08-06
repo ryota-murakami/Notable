@@ -3,9 +3,8 @@
 import * as React from 'react'
 
 import type { VariantProps } from 'class-variance-authority'
-import type { PlateContentProps, PlateViewProps } from 'platejs/react'
-
 import { cva } from 'class-variance-authority'
+import type { PlateContentProps, PlateViewProps } from 'platejs/react'
 import { PlateContainer, PlateContent, PlateView } from 'platejs/react'
 
 import { cn } from '@/lib/utils'

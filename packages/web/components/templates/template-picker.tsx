@@ -28,7 +28,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -60,7 +59,7 @@ export function TemplatePicker({
   const [templates, setTemplates] = React.useState<Template[]>([])
   const [categories, setCategories] = React.useState<TemplateCategory[]>([])
   const [isLoading, setIsLoading] = React.useState(false)
-  const [selectedTemplate, setSelectedTemplate] =
+  const [_selectedTemplate, _setSelectedTemplate] =
     React.useState<Template | null>(null)
 
   // Fetch templates and categories
@@ -68,7 +67,7 @@ export function TemplatePicker({
     if (open) {
       fetchTemplatesAndCategories()
     }
-  }, [open, selectedCategory, sortBy, searchQuery])
+  }, [open, selectedCategory, sortBy, searchQuery, fetchTemplatesAndCategories])
 
   const fetchTemplatesAndCategories = async () => {
     setIsLoading(true)
@@ -105,7 +104,7 @@ export function TemplatePicker({
   }
 
   const handleTemplateSelect = (template: Template) => {
-    setSelectedTemplate(template)
+    _setSelectedTemplate(template)
     onTemplateSelect(template)
     onOpenChange(false)
   }
@@ -398,6 +397,15 @@ function TemplateCard({
   return (
     <div
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.()
+        }
+      }}
+      tabIndex={0}
+      role='button'
+      aria-label={`Select template: ${template.name}`}
       className='group relative p-4 rounded-lg border border-border bg-card hover:bg-accent/50 cursor-pointer transition-all duration-200 hover:shadow-md'
       data-testid={`template-card-${template.id}`}
       data-template-name={template.name}

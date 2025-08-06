@@ -196,6 +196,15 @@ const TagTreeNode: React.FC<TagTreeNodeProps> = ({
         )}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={handleNodeClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleNodeClick()
+          }
+        }}
+        tabIndex={clickable ? 0 : -1}
+        role={clickable ? 'treeitem' : 'none'}
+        aria-label={`Tag: ${tag.name}`}
       >
         {/* Expand/collapse button */}
         <button
@@ -276,7 +285,7 @@ const TagTreeNode: React.FC<TagTreeNodeProps> = ({
       {/* Child nodes */}
       {canExpand && isExpanded && hasChildren && (
         <div className='space-y-1'>
-          {tag.children!.map((childTag) => (
+          {(tag.children ?? []).map((childTag) => (
             <TagTreeNode
               key={childTag.id}
               tag={childTag}

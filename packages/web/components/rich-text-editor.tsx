@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { Download, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { EnhancedPlateEditorClient } from '@/components/editor/enhanced-plate-editor-client'
@@ -16,7 +16,6 @@ import { EnhancedAIToolbar } from '@/components/ai/enhanced-ai-toolbar'
 import { VersionHistoryButton } from '@/components/ui/version-history-button'
 import { TemplateEngine } from '@/lib/templates/engine'
 import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
-import { plateToMarkdown } from '@/lib/plate/plate-to-markdown'
 import {
   useAddTagsToNote,
   useNoteTags,
@@ -24,7 +23,7 @@ import {
 } from '@/hooks/use-tags'
 import type { Value } from 'platejs'
 import type { EnhancedTag } from '@/types/tags'
-import type { Template, TemplateVariable } from '@/types/templates'
+import type { Template } from '@/types/templates'
 
 interface RichTextEditorProps {
   noteId: string

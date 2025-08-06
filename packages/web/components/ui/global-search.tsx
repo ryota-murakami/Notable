@@ -387,7 +387,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
             {hasSearched && !isSearching && results.length === 0 && !error && (
               <div className='p-4 text-center text-sm text-muted-foreground'>
                 <Search className='mx-auto mb-2 h-8 w-8 opacity-50' />
-                <p>No notes found for "{query}"</p>
+                <p>No notes found for &quot;{query}&quot;</p>
                 <p className='mt-1 text-xs'>
                   Try adjusting your search terms or filters
                 </p>

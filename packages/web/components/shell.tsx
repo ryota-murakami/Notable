@@ -13,15 +13,7 @@ import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
-import {
-  Archive,
-  BarChart3,
-  FileText,
-  FolderIcon,
-  Plus,
-  Star,
-  Tags,
-} from 'lucide-react'
+import { Archive, BarChart3, FileText, Plus, Star, Tags } from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import { NoteActions } from '@/components/note-actions'
 import {
@@ -57,7 +49,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   } = useNotes({
     folder_id: selectedFolderId,
   })
-  const { moveNotesToFolder } = useFolders()
+  const { moveNotesToFolder: _moveNotesToFolder } = useFolders()
   const router = useRouter()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
   const { current: _current, title: _title, navigate: _navigate } = useRouting()
@@ -603,7 +595,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   const mockUser: SupabaseUser | null =
     isTestMode && !user ? createMockUser() : null
 
-  const currentUser = user || mockUser
+  const _currentUser = user || mockUser
 
   const shouldShowLoading = notesLoading && !isTestMode
 

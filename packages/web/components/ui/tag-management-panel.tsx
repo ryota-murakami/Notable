@@ -302,7 +302,8 @@ const TagManagementPanel: React.FC<TagManagementPanelProps> = ({
           <DialogHeader>
             <DialogTitle>Delete Tag</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the tag "{selectedTag?.name}"?
+              Are you sure you want to delete the tag &quot;{selectedTag?.name}
+              &quot;?
               {selectedTag?.usage_count && selectedTag.usage_count > 0 && (
                 <> This tag is used in {selectedTag.usage_count} notes.</>
               )}

@@ -167,10 +167,10 @@ class MockDataStore {
 
   // Debug methods
   debug(): void {
-    console.log('Mock Data Store Contents:')
-    console.log('Tags:', Array.from(this.tags.values()))
-    console.log('Notes:', Array.from(this.notes.values()))
-    console.log('Note Links:', Array.from(this.noteLinks.entries()))
+    console.info('Mock Data Store Contents:')
+    console.info('Tags:', Array.from(this.tags.values()))
+    console.info('Notes:', Array.from(this.notes.values()))
+    console.info('Note Links:', Array.from(this.noteLinks.entries()))
   }
 }
 

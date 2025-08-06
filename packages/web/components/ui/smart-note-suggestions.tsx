@@ -499,6 +499,15 @@ export function SmartNoteSuggestions({
                             onClick={() =>
                               onSearchQuery?.(suggestion.suggestion)
                             }
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                onSearchQuery?.(suggestion.suggestion)
+                              }
+                            }}
+                            tabIndex={0}
+                            role='button'
+                            aria-label={`Apply search suggestion: ${suggestion.suggestion}`}
                             data-testid={`search-suggestion-${index}`}
                           >
                             <div className='flex items-center justify-between'>
@@ -610,6 +619,15 @@ export function SmartNoteSuggestions({
                           key={note.id}
                           className='p-2 rounded border hover:bg-accent/50 transition-colors cursor-pointer'
                           onClick={() => onNoteSelect?.(note.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              onNoteSelect?.(note.id)
+                            }
+                          }}
+                          tabIndex={0}
+                          role='button'
+                          aria-label={`Select related note: ${note.title}`}
                         >
                           <div className='flex items-center justify-between'>
                             <div className='flex items-center gap-2'>

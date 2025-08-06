@@ -161,6 +161,15 @@ const TagInput: React.FC<TagInputProps> = ({
           className
         )}
         onClick={() => !disabled && inputRef.current?.focus()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            !disabled && inputRef.current?.focus()
+          }
+        }}
+        tabIndex={0}
+        role='textbox'
+        aria-label='Tag input field'
       >
         {/* Selected tags */}
         {tags.map((tag) => (
@@ -213,7 +222,7 @@ const TagInput: React.FC<TagInputProps> = ({
               disabled={isLoading}
             >
               <Hash className='h-3 w-3' />
-              <span>Create "{inputValue.trim()}"</span>
+              <span>Create &quot;{inputValue.trim()}&quot;</span>
             </button>
           ) : (
             <div className='px-2 py-1.5 text-sm text-muted-foreground'>

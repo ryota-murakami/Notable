@@ -88,7 +88,7 @@ test.describe('Tag System', () => {
       await jsType(page, 'input[placeholder="Enter tag name..."]', 'test-tag')
       await jsType(
         page,
-        'input[placeholder="Enter tag description..."]',
+        'textarea[placeholder="Enter tag description..."]',
         'A test tag for E2E testing'
       )
 

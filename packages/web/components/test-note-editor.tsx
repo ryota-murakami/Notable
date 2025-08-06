@@ -17,9 +17,9 @@ interface TestNoteEditorProps {
 }
 
 export function TestNoteEditor({
-  noteId,
+  noteId: _noteId,
   initialTitle = 'Untitled',
-  initialContent,
+  initialContent: _initialContent,
   onTitleChange,
   onContentChange,
 }: TestNoteEditorProps) {

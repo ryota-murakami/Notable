@@ -638,7 +638,7 @@ export function SearchCommandPalette({
               <CommandEmpty>
                 <div className='text-center py-4'>
                   <SearchIcon className='h-8 w-8 mx-auto opacity-50 mb-2' />
-                  <div>No notes found matching "{search.query}"</div>
+                  <div>No notes found matching &quot;{search.query}&quot;</div>
                   <div className='text-xs text-muted-foreground mt-1'>
                     Try different keywords or check your filters
                   </div>
