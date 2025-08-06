@@ -63,13 +63,7 @@ export function TemplatePicker({
     React.useState<Template | null>(null)
 
   // Fetch templates and categories
-  React.useEffect(() => {
-    if (open) {
-      fetchTemplatesAndCategories()
-    }
-  }, [open, selectedCategory, sortBy, searchQuery, fetchTemplatesAndCategories])
-
-  const fetchTemplatesAndCategories = async () => {
+  const fetchTemplatesAndCategories = React.useCallback(async () => {
     setIsLoading(true)
     try {
       // Fetch categories
@@ -101,7 +95,13 @@ export function TemplatePicker({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [selectedCategory, searchQuery, sortBy])
+
+  React.useEffect(() => {
+    if (open) {
+      fetchTemplatesAndCategories()
+    }
+  }, [open, fetchTemplatesAndCategories])
 
   const handleTemplateSelect = (template: Template) => {
     _setSelectedTemplate(template)

@@ -604,7 +604,7 @@ export function CanvasView({
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
-              handleBackgroundClick(e as any)
+              handleBackgroundClick()
             }
           }}
           tabIndex={0}

@@ -87,7 +87,7 @@ export async function triggerMenuItem(
 /**
  * Get all windows
  */
-export async function getAllWindows(app: ElectronApplication): Promise<Page[]> {
+export function getAllWindows(app: ElectronApplication): Page[] {
   return app.windows()
 }
 
@@ -346,6 +346,7 @@ export function cleanupTempFiles(filePaths: string[]): void {
   filePaths.forEach((filePath) => {
     try {
       if (fs.existsSync(filePath)) {
+         
         fs.unlinkSync(filePath) // eslint-disable-line no-sync
       }
     } catch (error) {
