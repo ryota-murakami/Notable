@@ -18,9 +18,9 @@ module.exports = {
       name: 'mobile-dev',
       description: 'Open Notable mobile development menu',
       func: () => {
-        require('./scripts/mobile-dev.js');
+        require('./scripts/mobile-dev.js')
       },
     },
   ],
   assets: ['./assets/fonts/'],
-};
+}

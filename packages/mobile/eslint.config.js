@@ -65,7 +65,12 @@ export default [
     },
   },
   {
-    files: ['jest.setup.js', '**/__tests__/**/*', '**/*.test.*', '**/*.spec.*'],
+    files: [
+      'jest.setup.cjs',
+      '**/__tests__/**/*',
+      '**/*.test.*',
+      '**/*.spec.*',
+    ],
     languageOptions: {
       globals: {
         // Jest globals
@@ -78,7 +83,7 @@ export default [
         afterEach: 'readonly',
         beforeAll: 'readonly',
         afterAll: 'readonly',
-        // CommonJS globals for jest.setup.js
+        // CommonJS globals for jest.setup.cjs
         require: 'readonly',
         module: 'readonly',
         exports: 'readonly',
