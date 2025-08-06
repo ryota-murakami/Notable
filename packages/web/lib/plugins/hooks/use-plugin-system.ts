@@ -85,7 +85,7 @@ export function usePluginSystem(): UsePluginSystemReturn {
   }, [isInitialized])
 
   // Refresh plugin data
-  const refreshPlugins = useCallback(() => {
+  const refreshPlugins = useCallback(async () => {
     if (!isInitialized) return
 
     try {

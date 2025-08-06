@@ -23,7 +23,7 @@ function TestComponent() {
         setData(data)
         setLoading(false)
       })
-      .catch((err) => {
+      .catch(() => {
         setLoading(false)
       })
   }, [])
