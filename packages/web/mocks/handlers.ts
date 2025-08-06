@@ -45,6 +45,28 @@ const mockNoteStore: Array<{
   },
 ]
 
+// Dynamic search history storage for tests
+const mockSearchHistory: Array<{
+  id: string
+  query: string
+  timestamp: string
+  results_count: number
+  filters?: any
+}> = [
+  {
+    id: 'search-1',
+    query: 'typescript',
+    timestamp: new Date(Date.now() - 60000).toISOString(),
+    results_count: 5,
+  },
+  {
+    id: 'search-2',
+    query: 'react hooks',
+    timestamp: new Date(Date.now() - 120000).toISOString(),
+    results_count: 3,
+  },
+]
+
 // Mock template data with all required fields
 const MOCK_TEMPLATES = [
   {
@@ -434,21 +456,8 @@ export const handlers = [
 
     // Return mock search history
     return HttpResponse.json({
-      data: [
-        {
-          id: 'search-1',
-          query: 'typescript',
-          timestamp: new Date(Date.now() - 60000).toISOString(),
-          results_count: 5,
-        },
-        {
-          id: 'search-2',
-          query: 'react hooks',
-          timestamp: new Date(Date.now() - 120000).toISOString(),
-          results_count: 3,
-        },
-      ],
-      total: 2,
+      data: mockSearchHistory,
+      total: mockSearchHistory.length,
     })
   }),
 
@@ -1618,14 +1627,26 @@ export const handlers = [
 
     const body = (await request.json()) as any
 
+    // Add new search to the dynamic history
+    const newSearchEntry = {
+      id: `search-${Date.now()}`,
+      query: body.query,
+      timestamp: new Date().toISOString(),
+      results_count: body.results_count || 0,
+      filters: body.filters,
+    }
+
+    // Add to the beginning of the array (most recent first)
+    mockSearchHistory.unshift(newSearchEntry)
+
+    // Keep only the last 20 search entries
+    if (mockSearchHistory.length > 20) {
+      mockSearchHistory.splice(20)
+    }
+
     return HttpResponse.json({
       success: true,
-      history: {
-        id: `search-${Date.now()}`,
-        query: body.query,
-        timestamp: new Date().toISOString(),
-        results_count: body.results_count || 0,
-      },
+      history: newSearchEntry,
     })
   }),
 

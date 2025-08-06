@@ -5,8 +5,9 @@
  * Bypasses dynamic imports that cause issues in test environment
  */
 
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
+import { EnhancedAIToolbar } from '@/components/ai/enhanced-ai-toolbar'
 
 interface TestNoteEditorProps {
   noteId: string
@@ -38,6 +39,20 @@ export function TestNoteEditor({
     onContentChange?.(newContent)
   }
 
+  // Handle AI content updates
+  const handleAIContentUpdate = useCallback(
+    (newContent: string) => {
+      setContent(newContent)
+      onContentChange?.(newContent)
+    },
+    [onContentChange]
+  )
+
+  // Convert content to text for AI processing (already text in this case)
+  const getContentAsText = useCallback((): string => {
+    return content
+  }, [content])
+
   return (
     <div className='flex-1 flex flex-col' data-testid='note-editor'>
       {/* Title Input */}
@@ -48,6 +63,15 @@ export function TestNoteEditor({
           placeholder='Untitled'
           className='text-3xl font-bold border-none p-0 focus-visible:ring-0 bg-transparent'
           data-testid='note-title-input'
+        />
+      </div>
+
+      {/* AI Toolbar Section */}
+      <div className='border-b bg-background/30 px-6 py-2'>
+        <EnhancedAIToolbar
+          content={getContentAsText()}
+          onContentUpdate={handleAIContentUpdate}
+          className='justify-start'
         />
       </div>
 

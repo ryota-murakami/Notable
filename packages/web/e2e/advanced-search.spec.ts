@@ -246,7 +246,7 @@ test.describe('Advanced Search System', () => {
 
     // Clear search input using keyboard simulation (reliable for React controlled inputs)
     const searchInput = page.locator('input[placeholder="Search notes..."]')
-    await searchInput.click({ force: true }) // Focus the input
+    await searchInput.click() // Focus the input
     await page.keyboard.press('Control+A') // Select all text
     await page.keyboard.press('Backspace') // Clear the selected text
     await page.waitForTimeout(300)
@@ -261,8 +261,8 @@ test.describe('Advanced Search System', () => {
       page.locator('[role="dialog"] button:has-text("test search query")')
     ).toBeVisible()
 
-    // Click to rerun search
-    await page.click('[role="dialog"] button:has-text("test search query")')
+    // Click to rerun search using jsClick for better reliability
+    await jsClick(page, '[role="dialog"] button:has-text("test search query")')
     await expect(page.locator('[data-testid="search-input"]')).toHaveValue(
       'test search query'
     )
