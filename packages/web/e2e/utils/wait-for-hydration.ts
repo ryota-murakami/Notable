@@ -38,8 +38,8 @@ export async function clickWithHydration(page: Page, selector: string) {
   await waitForHydration(page)
 
   const element = page.locator(selector)
-  await element.waitFor({ state: 'visible' })
-  await element.waitFor({ state: 'attached' })
+  await element.waitFor({ state: 'visible', timeout: 10000 })
+  await element.waitFor({ state: 'attached', timeout: 5000 })
 
   // Wait for element to be enabled
   await page.waitForFunction(

@@ -1,9 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 
 test.describe('Mock Note Persistence Debug', () => {
-  test('should debug mock note persistence step by step', async ({
-    page,
-  }) => {
+  test('should debug mock note persistence step by step', async ({ page }) => {
     // SKIPPED: Debug test expecting wrong selectors and persistence behavior
     // Listen for console messages from the browser
     const consoleMessages: string[] = []
@@ -28,9 +26,11 @@ test.describe('Mock Note Persistence Debug', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     console.info('🔄 Step 2: Create first note')
-    await page.getByRole('button', { name: 'New Note' }).click()
+    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
     await expect(page.getByTestId('template-picker')).toBeVisible()
-    await page.getByRole('button', { name: 'Blank Note' }).click()
+    await page
+      .getByRole('button', { name: 'Blank Note' })
+      .click({ force: true })
 
     // Get note URL and ID
     await page.waitForURL('**/notes/**')

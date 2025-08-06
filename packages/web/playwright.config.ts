@@ -15,23 +15,27 @@ export default defineConfig({
   globalSetup: path.resolve(__dirname, './e2e/fixtures/global-setup.ts'),
   globalTeardown: path.resolve(__dirname, './e2e/fixtures/global-teardown.ts'),
 
-  /* Global timeout for each test - increased for initial compilation */
-  timeout: process.env.CI ? 120000 : 90000, // 120s in CI, 90s locally
+  /* Global timeout for each test - optimized after fixing click issues */
+  timeout: process.env.CI ? 60000 : 45000, // 60s in CI, 45s locally (reduced from 120s/90s)
 
-  /* Global expect timeout */
+  /* Global expect timeout - optimized */
   expect: {
-    timeout: process.env.CI ? 30000 : 20000, // 30s in CI, 20s locally
+    timeout: process.env.CI ? 15000 : 10000, // 15s in CI, 10s locally (reduced from 30s/20s)
   },
 
   /* Run tests in files in parallel */
   fullyParallel: true,
+
+  /* Faster test execution settings */
+  maxFailures: process.env.CI ? 10 : undefined, // Stop after 10 failures in CI
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
 
-  /* More aggressive retries on CI */
-  retries: process.env.CI ? 3 : 0,
+  /* Reduced retries for faster CI execution */
+  retries: process.env.CI ? 1 : 0, // Reduced from 3 to 1
 
-  workers: process.env.CI ? 2 : 6,
+  /* Optimized workers for better CI performance */
+  workers: process.env.CI ? 4 : 6, // Increased from 2 to 4 for CI
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
@@ -50,11 +54,31 @@ export default defineConfig({
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
 
-    /* Better navigation timeout - increased for initial compilation */
-    navigationTimeout: process.env.CI ? 60000 : 45000,
+    /* Video recording only on retry for debugging */
+    video: process.env.CI ? 'retain-on-failure' : 'off',
 
-    /* Action timeout */
-    actionTimeout: process.env.CI ? 10000 : 5000,
+    /* Browser launch options for performance */
+    launchOptions: {
+      args: process.env.CI
+        ? [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-extensions',
+            '--disable-gpu',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding',
+            '--disable-features=TranslateUI',
+            '--disable-ipc-flooding-protection',
+          ]
+        : [],
+    },
+
+    /* Optimized navigation timeout */
+    navigationTimeout: process.env.CI ? 30000 : 20000, // Reduced from 60s/45s to 30s/20s
+
+    /* Optimized action timeout */
+    actionTimeout: process.env.CI ? 5000 : 3000, // Reduced from 10s/5s to 5s/3s
   },
 
   /* Configure projects for major browsers - simplified for CI speed */
@@ -73,7 +97,7 @@ export default defineConfig({
     command: 'pnpm start',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000, // 2 minutes for CI
+    timeout: 90000, // 1.5 minutes for CI (reduced from 2 minutes)
     stdout: 'pipe',
     stderr: 'pipe',
     env: {

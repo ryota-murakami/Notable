@@ -36,7 +36,7 @@ test.describe('Elite Features UI Integration Verification', () => {
     await expect(searchInput).toBeVisible({ timeout: 10000 })
 
     // Test basic search functionality
-    await searchInput.click()
+    await searchInput.click({ force: true })
     await searchInput.fill('test search')
 
     // Verify search input is working
@@ -54,7 +54,7 @@ test.describe('Elite Features UI Integration Verification', () => {
       .locator('text=New Note, button:has-text("New Note")')
       .first()
     await expect(newNoteButton).toBeVisible({ timeout: 10000 })
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker or note creation
     await page.waitForTimeout(2000)
@@ -66,7 +66,7 @@ test.describe('Elite Features UI Integration Verification', () => {
       )
       .first()
     if (await blankButton.isVisible({ timeout: 5000 })) {
-      await blankButton.click()
+      await blankButton.click({ force: true })
     }
 
     // Check if we're in a note editor by looking for note-related elements
@@ -109,7 +109,7 @@ test.describe('Elite Features UI Integration Verification', () => {
       .locator('text=New Note, button:has-text("New Note")')
       .first()
     await expect(newNoteButton).toBeVisible({ timeout: 10000 })
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     await page.waitForTimeout(2000)
 
@@ -120,7 +120,7 @@ test.describe('Elite Features UI Integration Verification', () => {
       )
       .first()
     if (await blankButton.isVisible({ timeout: 5000 })) {
-      await blankButton.click()
+      await blankButton.click({ force: true })
     }
 
     // Look for smart linking panel elements

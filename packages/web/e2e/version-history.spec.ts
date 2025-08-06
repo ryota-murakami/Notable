@@ -261,7 +261,7 @@ test.describe('Version History Feature', () => {
       if (await milestoneDialog.isVisible()) {
         await jsType(page, '#milestone-name', 'Test Milestone')
         await jsClick(page, 'button:has-text("Save Milestone")')
-        await milestoneDialog.waitFor({ state: 'hidden' })
+        await milestoneDialog.waitFor({ state: 'hidden', timeout: 5000 })
       }
     }
 

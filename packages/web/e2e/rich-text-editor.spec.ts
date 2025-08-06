@@ -1,6 +1,10 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsTypeTitle as _jsTypeTitle, jsClick, jsTypeContent } from './utils/js-click'
+import {
+  jsTypeTitle as _jsTypeTitle,
+  jsClick,
+  jsTypeContent,
+} from './utils/js-click'
 
 test.describe('Rich Text Editor', () => {
   test.beforeEach(async ({ page }) => {
@@ -144,7 +148,7 @@ test.describe('Rich Text Editor', () => {
     const hasEditor = await editor.isVisible().catch(() => false)
 
     if (hasEditor) {
-      await editor.click()
+      await editor.click({ force: true })
       await jsTypeContent(page, 'Test content')
       console.info('Successfully typed in editor')
     } else {

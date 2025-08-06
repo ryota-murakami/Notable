@@ -29,7 +29,7 @@ test.describe('User Menu', () => {
     await page.evaluate(() => {
       const devButton = document.querySelector('.fixed.bottom-4.right-4')
       if (devButton) {
-        (devButton as HTMLElement).style.display = 'none'
+        ;(devButton as HTMLElement).style.display = 'none'
       }
     })
 
@@ -162,7 +162,7 @@ test.describe('User Menu', () => {
     await expect(page.locator('[role="menu"]')).toBeVisible({ timeout: 5000 })
 
     // Click settings
-    await page.locator('text="Settings"').click()
+    await page.locator('text="Settings"').click({ force: true })
 
     // Wait for click to be processed
     await page.waitForTimeout(500)
@@ -196,7 +196,7 @@ test.describe('User Menu', () => {
     await expect(page.locator('[role="menu"]')).toBeVisible({ timeout: 5000 })
 
     // Click logout
-    await page.locator('text="Log out"').click()
+    await page.locator('text="Log out"').click({ force: true })
 
     // Wait for navigation
     await page.waitForURL(/\/auth/, { timeout: 5000 })

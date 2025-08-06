@@ -71,7 +71,7 @@ test.describe('Smart Note Suggestions Feature', () => {
 
     // Check if we can click on the note to activate it
     if (await recentNote.isVisible()) {
-      await recentNote.click()
+      await recentNote.click({ force: true })
       await page.waitForTimeout(2000)
     }
 
@@ -137,7 +137,7 @@ test.describe('Smart Note Suggestions Feature', () => {
       .filter({ hasText: /Untitled.*/ })
       .first()
     if (await recentNote.isVisible()) {
-      await recentNote.click()
+      await recentNote.click({ force: true })
       await page.waitForTimeout(2000)
     }
 

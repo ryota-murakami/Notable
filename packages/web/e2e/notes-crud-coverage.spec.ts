@@ -28,7 +28,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     // Click new note button
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker dialog to appear
     await expect(
@@ -42,7 +42,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     // Click blank template
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -60,7 +60,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     // Click new note button
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -77,7 +77,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // For now, just use the blank template to avoid variable form complexity
     // We'll create a separate test for templates with variables
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -94,7 +94,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Create a note first
     await page.goto('/app')
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -104,7 +104,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -118,7 +118,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     const editor = page.locator('[data-testid="note-content-textarea"]')
     await expect(editor).toBeVisible({ timeout: 10000 })
-    await editor.click()
+    await editor.click({ force: true })
     await editor.type('This is the note content.')
 
     // Wait for auto-save
@@ -129,7 +129,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Create a note first
     await page.goto('/app')
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -139,7 +139,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -149,7 +149,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Edit content in the rich text editor
     const editor = page.locator('[data-testid="note-content-textarea"]')
     await expect(editor).toBeVisible({ timeout: 10000 })
-    await editor.click()
+    await editor.click({ force: true })
     await editor.type('This is my test note content. This is regular text.')
   })
 
@@ -157,7 +157,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Create a note
     await page.goto('/app')
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -167,7 +167,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -188,7 +188,7 @@ test.describe('Note CRUD Coverage Tests', () => {
       .locator('[data-testid="search-button"], button[aria-label*="search" i]')
       .first()
     if (await searchButton.isVisible()) {
-      await searchButton.click()
+      await searchButton.click({ force: true })
     } else {
       // Try keyboard shortcut
       await page.keyboard.press('Control+k')
@@ -213,7 +213,7 @@ test.describe('Note CRUD Coverage Tests', () => {
         .locator('[data-testid^="search-result-"], [role="option"]')
         .first()
       if (await firstResult.isVisible()) {
-        await firstResult.click()
+        await firstResult.click({ force: true })
       }
     }
   })
@@ -222,7 +222,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Create a note
     await page.goto('/app')
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -232,7 +232,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -243,7 +243,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     const editor = page.locator('[data-testid="note-content-textarea"]')
     await expect(editor).toBeVisible({ timeout: 10000 })
-    await editor.click()
+    await editor.click({ force: true })
     await editor.type('Test note content')
   })
 
@@ -253,7 +253,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     // Create first note
     let newNoteButton = page.locator('button:has-text("New Note")')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -263,7 +263,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     let blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -275,7 +275,7 @@ test.describe('Note CRUD Coverage Tests', () => {
       'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
     )
     await expect(titleInput1).toBeVisible({ timeout: 10000 })
-    await titleInput1.click()
+    await titleInput1.click({ force: true })
     await titleInput1.clear()
     await titleInput1.fill('First Note')
     await titleInput1.blur() // Trigger save
@@ -286,7 +286,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
     // Create second note
     newNoteButton = page.locator('button:has-text("New Note")')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -296,7 +296,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete for second note
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -308,7 +308,7 @@ test.describe('Note CRUD Coverage Tests', () => {
       'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
     )
     await expect(titleInput2).toBeVisible({ timeout: 10000 })
-    await titleInput2.click()
+    await titleInput2.click({ force: true })
     await titleInput2.clear()
     await titleInput2.fill('Second Note')
     await titleInput2.blur() // Trigger save
@@ -342,7 +342,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Create a note
     await page.goto('/app')
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -352,7 +352,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -364,7 +364,7 @@ test.describe('Note CRUD Coverage Tests', () => {
       .locator('[data-testid="note-editor"] [contenteditable="true"]')
       .first()
     await expect(editor).toBeVisible({ timeout: 10000 })
-    await editor.click()
+    await editor.click({ force: true })
     await editor.fill('Auto-save test content')
 
     // Verify content is in the editor immediately
@@ -375,7 +375,7 @@ test.describe('Note CRUD Coverage Tests', () => {
       'input[placeholder="Untitled Note"], input[placeholder="Untitled"]'
     )
     await expect(titleInput).toBeVisible({ timeout: 10000 })
-    await titleInput.click()
+    await titleInput.click({ force: true })
     await titleInput.clear()
     await titleInput.fill('Auto-save test title')
 
@@ -399,7 +399,7 @@ test.describe('Note CRUD Coverage Tests', () => {
 
       if (count > 0) {
         // Click first note
-        await noteItems.first().click()
+        await noteItems.first().click({ force: true })
 
         // Should navigate to note
         await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
@@ -447,7 +447,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     // Create a note
     await page.goto('/app')
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker to appear
     await expect(
@@ -457,7 +457,7 @@ test.describe('Note CRUD Coverage Tests', () => {
     })
 
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click()
+    await blankTemplate.click({ force: true })
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })

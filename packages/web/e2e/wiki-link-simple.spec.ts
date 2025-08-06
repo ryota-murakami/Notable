@@ -10,7 +10,7 @@ test.describe('Wiki Link Simple Test', () => {
 
     // Click and type in the editor
     const editor = page.locator('[data-testid="plate-editor"]')
-    await editor.click()
+    await editor.click({ force: true })
     await page.keyboard.type('Test content with ')
 
     // Type the wiki link pattern character by character

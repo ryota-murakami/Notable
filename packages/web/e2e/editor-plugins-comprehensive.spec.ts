@@ -70,7 +70,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
 
       // Wait for editor to be ready
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Test bold mark (Control+b)
       await editor.fill('Bold text')
@@ -102,7 +102,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Type text and select it
       await editor.fill('Toggle test')
@@ -136,7 +136,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Type text and select it
       await editor.fill('Toolbar marks test')
@@ -179,7 +179,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Clear marks test')
       await page.keyboard.press('Control+a') // Select all text
 
@@ -207,7 +207,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Test markdown-style heading syntax
       await editor.fill('# Heading 1')
@@ -241,7 +241,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Test bullet list syntax
       await editor.fill('- First item')
@@ -276,7 +276,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Test blockquote syntax
       await editor.fill('> This is a quote')
@@ -310,10 +310,12 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Test code block syntax
-      await editor.fill('```\nconst hello = "world";\nconsole.info(hello);\n```')
+      await editor.fill(
+        '```\nconst hello = "world";\nconsole.info(hello);\n```'
+      )
       await page.keyboard.press('Enter')
       await page.waitForTimeout(100)
 
@@ -341,7 +343,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .first()
 
       await expect(editor).toBeVisible()
-      await editor.click()
+      await editor.click({ force: true })
 
       // Test horizontal rule syntax
       await editor.fill('Text above\n---\nText below')
@@ -370,7 +372,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Advanced blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
       await page.click('[data-testid="slash-command-callout"]')
@@ -379,7 +381,9 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(page.locator('[data-testid="callout-block"]')).toBeVisible()
 
       // Type in callout
-      await page.locator('[data-testid="callout-content"]').click()
+      await page
+        .locator('[data-testid="callout-content"]')
+        .click({ force: true })
       await page
         .locator('[data-testid="callout-content"]')
         .type('This is an important callout')
@@ -397,7 +401,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Toggle blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
       await page.click('[data-testid="slash-command-toggle"]')
@@ -407,18 +411,18 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
 
       // Add content
       const toggleContent = page.locator('[data-testid="toggle-content"]')
-      await toggleContent.click()
+      await toggleContent.click({ force: true })
       await toggleContent.type('Hidden content here')
 
       // Test toggle functionality
       const toggleButton = page.locator('[data-testid="toggle-button"]')
 
       // Collapse
-      await toggleButton.click()
+      await toggleButton.click({ force: true })
       await expect(toggleContent).not.toBeVisible()
 
       // Expand
-      await toggleButton.click()
+      await toggleButton.click({ force: true })
       await expect(toggleContent).toBeVisible()
     })
 
@@ -426,7 +430,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Table blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
       await page.click('[data-testid="slash-command-table"]')
@@ -441,7 +445,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
 
       // Type in cells
       const firstCell = page.locator('td').first()
-      await firstCell.click()
+      await firstCell.click({ force: true })
       await firstCell.type('Cell 1')
 
       // Navigate with Tab
@@ -461,7 +465,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Todo blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
       await page.click('[data-testid="slash-command-todo"]')
@@ -476,7 +480,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(checkboxes).toHaveCount(2)
 
       // Check first item
-      await checkboxes.first().click()
+      await checkboxes.first().click({ force: true })
       await expect(checkboxes.first()).toBeChecked()
 
       // Verify strikethrough on checked item
@@ -489,7 +493,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Column layout not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
       await page.click('[data-testid="slash-command-columns"]')
@@ -505,12 +509,12 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
 
       // Type in first column
       const firstColumn = page.locator('[data-testid="column"]').first()
-      await firstColumn.click()
+      await firstColumn.click({ force: true })
       await firstColumn.type('Left column content')
 
       // Type in second column
       const secondColumn = page.locator('[data-testid="column"]').last()
-      await secondColumn.click()
+      await secondColumn.click({ force: true })
       await secondColumn.type('Right column content')
     })
   })
@@ -520,7 +524,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Link plugin not fully implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('Visit our website')
 
       // Select "website"
@@ -548,7 +552,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('[Example](https://example.com)')
       await editor.press('Space')
 
@@ -562,7 +566,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Link editing not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('[Old Link](https://old.com)')
       await editor.press('Space')
 
@@ -584,7 +588,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Link removal not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('[Remove Me](https://remove.com)')
       await editor.press('Space')
 
@@ -603,7 +607,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Link context menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('[External](https://external.com)')
       await editor.press('Space')
 
@@ -627,7 +631,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Find and replace not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('Find this text. This text should be found.')
 
       // Open find and replace
@@ -662,7 +666,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Emoji picker not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('Hello ')
 
       // Open emoji picker
@@ -682,7 +686,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Word count feature not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('This is a test sentence with seven words.')
 
       // Verify word count is displayed
@@ -700,13 +704,11 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       ).toContainText('8 words selected')
     })
 
-    test('should support export to different formats', async ({
-      page,
-    }) => {
+    test('should support export to different formats', async ({ page }) => {
       // SKIPPED: Export functionality not implemented in editor
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('# Export Test')
       await editor.press('Enter')
       await editor.type('This content will be exported.')
@@ -736,7 +738,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SKIPPED: Print preview not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('# Print Preview Test')
       await editor.press('Enter')
       await editor.type('This document will be printed.')
@@ -769,7 +771,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
 
       // Verify menu appears
@@ -787,7 +789,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
 
@@ -815,7 +817,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       // SIMPLIFIED TEST: Just test typing "/" to see what happens
       console.info('🚨 SIMPLIFIED TEST: Testing basic "/" behavior...')
 
-      await editor.click()
+      await editor.click({ force: true })
       console.info('🚨 Clicked editor')
 
       // First, try just typing "/" without any complex menu interactions
@@ -870,7 +872,10 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
 
       // Final HTML check
       editorHTML = await editor.innerHTML()
-      console.info('🚨 Final editor HTML:', `${editorHTML.substring(0, 300)}...`)
+      console.info(
+        '🚨 Final editor HTML:',
+        `${editorHTML.substring(0, 300)}...`
+      )
 
       // Type some content to see where it goes
       await editor.type('Test heading content')
@@ -898,7 +903,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
 
@@ -927,7 +932,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.type('/')
       await page.waitForSelector('[data-testid="slash-command-menu"]')
 
@@ -967,7 +972,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
 
       // Verify plugin is disabled
       const editor = page.locator('[data-testid="block-editor"]')
-      await editor.click()
+      await editor.click({ force: true })
       await page.keyboard.press('Control+Shift+e')
 
       // Emoji picker should not appear
@@ -982,7 +987,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Simulate plugin error
       await page.evaluate(() => {

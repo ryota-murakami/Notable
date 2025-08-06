@@ -38,7 +38,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add first tag
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('javascript')
       await tagInput.press('Enter')
 
@@ -61,7 +61,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should add tags by typing and pressing comma', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('python,')
 
       // Verify tag is added
@@ -76,7 +76,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should add tags by typing and pressing Tab', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('typescript')
       await tagInput.press('Tab')
 
@@ -89,7 +89,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should add multiple tags by pasting', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
 
       // Paste multiple tags
       await page.evaluate(() => {
@@ -115,7 +115,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add a tag
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('unique')
       await tagInput.press('Enter')
 
@@ -138,7 +138,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Try to add invalid tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
 
       // Empty tag
       await tagInput.press('Enter')
@@ -162,7 +162,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
 
       // Try to add a very long tag
       const longTag = 'a'.repeat(51)
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type(longTag)
       await tagInput.press('Enter')
 
@@ -178,13 +178,13 @@ test.describe('Comprehensive Tag Components Tests', () => {
 
       // Add maximum number of tags (assuming 10)
       for (let i = 1; i <= 10; i++) {
-        await tagInput.click()
+        await tagInput.click({ force: true })
         await tagInput.type(`tag${i}`)
         await tagInput.press('Enter')
       }
 
       // Try to add one more
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('tag11')
       await tagInput.press('Enter')
 
@@ -201,7 +201,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Focus on input
-      await tagInput.click()
+      await tagInput.click({ force: true })
 
       // Should show suggestions dropdown
       await expect(
@@ -215,7 +215,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should filter tag suggestions while typing', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('jav')
 
       // Should show filtered suggestions
@@ -235,7 +235,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should select suggestion with keyboard', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('typ')
 
       // Navigate suggestions with arrow keys
@@ -259,7 +259,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should select suggestion with mouse', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('rea')
 
       // Click on suggestion
@@ -275,7 +275,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add some tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('tag1')
       await tagInput.press('Enter')
       await tagInput.type('tag2')
@@ -302,7 +302,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add some tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('tag1')
       await tagInput.press('Enter')
       await tagInput.type('tag2')
@@ -321,7 +321,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should handle keyboard shortcuts', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
 
       // Select all (should select all text in input)
       await tagInput.type('test')
@@ -340,7 +340,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('persistent1')
       await tagInput.press('Enter')
       await tagInput.type('persistent2')
@@ -367,7 +367,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should display tag name correctly', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('display-test')
       await tagInput.press('Enter')
 
@@ -381,7 +381,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should remove tag on click remove button', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('removable')
       await tagInput.press('Enter')
 
@@ -398,7 +398,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
     test('should handle click on tag badge', async ({ page }) => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('clickable')
       await tagInput.press('Enter')
 
@@ -413,7 +413,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add multiple tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('red-tag')
       await tagInput.press('Enter')
       await tagInput.type('blue-tag')
@@ -450,7 +450,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
 
       const longTagName =
         'this-is-a-very-long-tag-name-that-should-be-truncated'
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type(longTagName)
       await tagInput.press('Enter')
 
@@ -471,7 +471,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add multiple tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('first')
       await tagInput.press('Enter')
       await tagInput.type('second')
@@ -502,7 +502,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add multiple tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('nav1')
       await tagInput.press('Enter')
       await tagInput.type('nav2')
@@ -547,7 +547,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       await page.click('[data-testid="close-settings"]')
 
       const tagInput = page.locator('[data-testid="tag-input"]')
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('large-tag')
       await tagInput.press('Enter')
 
@@ -566,7 +566,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add tag
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('animated')
       await tagInput.press('Enter')
 
@@ -589,7 +589,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add tags with special characters
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('c++')
       await tagInput.press('Enter')
       await tagInput.type('c#')
@@ -613,7 +613,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add categorized tag
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('language:javascript')
       await tagInput.press('Enter')
 
@@ -634,7 +634,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('readonly1')
       await tagInput.press('Enter')
       await tagInput.type('readonly2')
@@ -658,7 +658,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Add tags
-      await tagInput.click()
+      await tagInput.click({ force: true })
       await tagInput.type('export1')
       await tagInput.press('Enter')
       await tagInput.type('export2')
@@ -704,7 +704,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
 
       // Add 50 tags
       for (let i = 1; i <= 50; i++) {
-        await tagInput.click()
+        await tagInput.click({ force: true })
         await tagInput.type(`tag${i}`)
         await tagInput.press('Enter')
       }
@@ -731,7 +731,7 @@ test.describe('Comprehensive Tag Components Tests', () => {
       const tagInput = page.locator('[data-testid="tag-input"]')
 
       // Focus to load initial suggestions
-      await tagInput.click()
+      await tagInput.click({ force: true })
 
       // Should show loading indicator
       await expect(

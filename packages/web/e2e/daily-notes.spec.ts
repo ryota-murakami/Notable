@@ -166,7 +166,7 @@ test.describe('Daily Notes Feature', () => {
     const dailyNotesButton = page.locator(
       '[data-testid="daily-notes-today-button"]'
     )
-    await dailyNotesButton.waitFor({ state: 'visible' })
+    await dailyNotesButton.waitFor({ state: 'visible', timeout: 5000 })
 
     // Button should be accessible
     await expect(dailyNotesButton).toBeEnabled()

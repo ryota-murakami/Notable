@@ -41,7 +41,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(editor).toBeVisible()
 
       // Type text
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Bold text')
 
       // Select text
@@ -73,7 +73,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Rich text formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Combined formatting')
 
       // Select and apply multiple formats
@@ -90,7 +90,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Rich text formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Toggle test')
 
       // Apply bold
@@ -111,7 +111,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       const editor = page.locator('textarea').first()
 
       // Test H1
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('# Heading 1')
       await editor.press('Enter')
       await expect(page.locator('h1')).toContainText('Heading 1')
@@ -142,13 +142,11 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('h6')).toContainText('Heading 6')
     })
 
-    test('should convert text to heading via toolbar', async ({
-      page,
-    }) => {
+    test('should convert text to heading via toolbar', async ({ page }) => {
       // SKIPPED: Toolbar heading dropdown not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Convert to heading')
       await editor.press('Control+a')
 
@@ -165,7 +163,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: List formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('- First item')
       await editor.press('Enter')
       await editor.fill('Second item')
@@ -179,7 +177,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: List formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('1. First item')
       await editor.press('Enter')
       await editor.fill('Second item')
@@ -193,7 +191,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Task lists not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('- [ ] Unchecked task')
       await editor.press('Enter')
       await editor.fill('- [x] Checked task')
@@ -208,7 +206,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: List indentation not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('- Parent item')
       await editor.press('Enter')
       await editor.press('Tab')
@@ -228,7 +226,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Link dialog not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Click here')
       await editor.press('Control+a')
 
@@ -248,7 +246,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Link editing not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('[Example](https://example.com)')
       await editor.press('Enter')
 
@@ -269,7 +267,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Link removal not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('[Example](https://example.com)')
       await editor.press('Enter')
 
@@ -290,7 +288,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Blockquote formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('> This is a quote')
       await editor.press('Enter')
 
@@ -301,7 +299,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Blockquote formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('> Level 1')
       await editor.press('Enter')
       await editor.fill('> > Level 2')
@@ -317,7 +315,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Code block formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('```')
       await editor.press('Enter')
       await editor.fill('const hello = "world";')
@@ -333,7 +331,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Code block formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('```javascript')
       await editor.press('Enter')
       await editor.fill('function greet() { return "Hello"; }')
@@ -353,7 +351,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Table toolbar not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Insert table via toolbar
       await page.click('[data-testid="table-button"]')
@@ -369,7 +367,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Table manipulation not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Insert table
       await page.click('[data-testid="table-button"]')
@@ -393,7 +391,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Image embeds not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('![Alt text](https://example.com/image.jpg)')
       await editor.press('Enter')
 
@@ -406,7 +404,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Video embeds not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Insert video via toolbar
       await page.click('[data-testid="media-button"]')
@@ -429,7 +427,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Mentions not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('@')
 
       // Wait for mention dropdown
@@ -446,7 +444,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Hashtags not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('#important')
       await editor.press('Space')
 
@@ -469,7 +467,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
 
       await expect(editor).toBeVisible()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Test basic typing and editing
       await editor.fill('Content to test shortcuts')
@@ -510,7 +508,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
 
       await expect(editor).toBeVisible()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Test text for formatting')
 
       // Test basic keyboard shortcuts work
@@ -530,7 +528,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Toolbar buttons not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('Toolbar test')
       await editor.press('Control+a')
 
@@ -547,7 +545,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Toolbar buttons not implemented
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('**Bold text**')
 
       // Click inside bold text
@@ -565,7 +563,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
     test('should paste plain text', async ({ page }) => {
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Copy text to clipboard
       await page.evaluate(() => {
@@ -582,7 +580,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // SKIPPED: Rich text paste not supported in textarea
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Copy HTML to clipboard
       await page.evaluate(() => {
@@ -614,7 +612,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
     test('should handle large documents', async ({ page }) => {
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Type a large amount of content
       const content = 'Lorem ipsum dolor sit amet. '.repeat(100)
@@ -633,7 +631,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
     test('should handle rapid typing', async ({ page }) => {
       const editor = page.locator('textarea').first()
 
-      await editor.click()
+      await editor.click({ force: true })
 
       // Type rapidly
       const text = 'abcdefghijklmnopqrstuvwxyz'

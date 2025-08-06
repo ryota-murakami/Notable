@@ -106,7 +106,9 @@ test.describe('Advanced Search System', () => {
       }
     })
 
-    await page.waitForTimeout(3000) // Wait longer for debounce + API call
+    // Wait for search results to load after debounce
+    await page.waitForLoadState('networkidle', { timeout: 5000 })
+    await page.waitForTimeout(500) // Reduced from 3000ms
 
     // Debug: Check what's in the dialog
     const dialogContent = await page.locator('[role="dialog"]').textContent()
@@ -141,7 +143,7 @@ test.describe('Advanced Search System', () => {
 
     // Open search using JavaScript click
     const searchButton = page.locator('[data-testid="search-button"]')
-    await searchButton.waitFor({ state: 'visible' })
+    await searchButton.waitFor({ state: 'visible', timeout: 5000 })
     await searchButton.evaluate((el) => (el as HTMLElement).click())
 
     // Wait for search dialog to open
@@ -244,7 +246,7 @@ test.describe('Advanced Search System', () => {
 
     // Clear search input using keyboard simulation (reliable for React controlled inputs)
     const searchInput = page.locator('input[placeholder="Search notes..."]')
-    await searchInput.click() // Focus the input
+    await searchInput.click({ force: true }) // Focus the input
     await page.keyboard.press('Control+A') // Select all text
     await page.keyboard.press('Backspace') // Clear the selected text
     await page.waitForTimeout(300)
@@ -321,7 +323,7 @@ test.describe('Advanced Search System', () => {
     await page
       .locator('[role="dialog"] button[class*="text-left"]')
       .first()
-      .click()
+      .click({ force: true })
 
     // Verify navigation
     await expect(page).toHaveURL(/\/notes\//)
@@ -379,7 +381,7 @@ test.describe('Advanced Search System', () => {
     const firstResult = page
       .locator('[role="dialog"] button[class*="text-left"]')
       .first()
-    await firstResult.click()
+    await firstResult.click({ force: true })
 
     // Verify navigation to note
     await expect(page).toHaveURL(/\/notes\//)

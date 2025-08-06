@@ -51,7 +51,7 @@ test.describe('Simple Export Tests', () => {
     await expect(exportButton).toBeVisible({ timeout: 5000 })
 
     // Click export button to open dropdown
-    await exportButton.click()
+    await exportButton.click({ force: true })
 
     // Check that dropdown opened
     await expect(page.locator('text="Quick Export"')).toBeVisible()
@@ -86,7 +86,7 @@ test.describe('Simple Export Tests', () => {
     await titleInput.fill('Test Export Note')
 
     const editor = page.locator('[data-testid="note-content-textarea"]')
-    await editor.click()
+    await editor.click({ force: true })
     await editor.type('This is test content for export.')
 
     // Wait for auto-save

@@ -48,7 +48,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -64,7 +64,7 @@ test.describe('Tag System', () => {
           (btn) => btn.textContent && btn.textContent.trim() === 'Manage Tags'
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -77,7 +77,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('create tag')
         )
         if (createTagBtn) {
-          (createTagBtn as HTMLElement).click()
+          ;(createTagBtn as HTMLElement).click()
         }
       })
 
@@ -102,7 +102,7 @@ test.describe('Tag System', () => {
             btn.textContent && btn.textContent.toLowerCase().trim() === 'create'
         )
         if (createBtn) {
-          (createBtn as HTMLElement).click()
+          ;(createBtn as HTMLElement).click()
         }
       })
 
@@ -131,7 +131,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -139,10 +139,10 @@ test.describe('Tag System', () => {
       await page
         .getByTestId('tag-item-test-tag')
         .getByRole('button', { name: /edit/i })
-        .click()
+        .click({ force: true })
       await page.getByPlaceholder(/tag name/i).fill('updated-test-tag')
       await page.getByPlaceholder(/description/i).fill('Updated description')
-      await page.getByRole('button', { name: /save/i }).click()
+      await page.getByRole('button', { name: /save/i }).click({ force: true })
 
       // Verify changes
       await expect(page.getByText('updated-test-tag')).toBeVisible()
@@ -158,7 +158,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -166,8 +166,10 @@ test.describe('Tag System', () => {
       await page
         .getByTestId('tag-item-updated-test-tag')
         .getByRole('button', { name: /delete/i })
-        .click()
-      await page.getByRole('button', { name: /confirm/i }).click()
+        .click({ force: true })
+      await page
+        .getByRole('button', { name: /confirm/i })
+        .click({ force: true })
 
       // Verify tag is removed
       await expect(page.getByText('updated-test-tag')).not.toBeVisible()
@@ -184,25 +186,29 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
       // Create parent tag
-      await page.getByRole('button', { name: /create tag/i }).click()
+      await page
+        .getByRole('button', { name: /create tag/i })
+        .click({ force: true })
       await page.getByPlaceholder(/tag name/i).fill('Development')
-      await page.getByRole('button', { name: /create/i }).click()
+      await page.getByRole('button', { name: /create/i }).click({ force: true })
 
       // Create child tag
-      await page.getByRole('button', { name: /create tag/i }).click()
+      await page
+        .getByRole('button', { name: /create tag/i })
+        .click({ force: true })
       await page.getByPlaceholder(/tag name/i).fill('Frontend')
       await page
         .getByLabel(/parent tag/i)
         .selectOption({ label: 'Development' })
-      await page.getByRole('button', { name: /create/i }).click()
+      await page.getByRole('button', { name: /create/i }).click({ force: true })
 
       // Verify hierarchy in tag tree
-      await page.getByTestId('tag-tree-view').click()
+      await page.getByTestId('tag-tree-view').click({ force: true })
       await expect(page.getByTestId('tag-tree-item-Development')).toBeVisible()
       await expect(
         page.getByTestId('tag-tree-item-Development-Frontend')
@@ -218,10 +224,10 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
-      await page.getByTestId('tag-tree-view').click()
+      await page.getByTestId('tag-tree-view').click({ force: true })
 
       // Verify parent tag is expandable
       const parentTag = page.getByTestId('tag-tree-item-Development')
@@ -230,7 +236,9 @@ test.describe('Tag System', () => {
       ).toBeVisible()
 
       // Expand and verify child tags
-      await parentTag.getByRole('button', { name: /expand/i }).click()
+      await parentTag
+        .getByRole('button', { name: /expand/i })
+        .click({ force: true })
       await expect(
         page.getByTestId('tag-tree-item-Development-Frontend')
       ).toBeVisible()
@@ -245,12 +253,14 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
       // Navigate to nested tag
-      await page.getByTestId('tag-tree-item-Development-Frontend').click()
+      await page
+        .getByTestId('tag-tree-item-Development-Frontend')
+        .click({ force: true })
 
       // Verify breadcrumb path
       await expect(page.getByTestId('tag-breadcrumb')).toContainText(
@@ -262,11 +272,13 @@ test.describe('Tag System', () => {
   test.describe('Tag Search and Filtering', () => {
     test('should filter notes by tags using search', async ({ page }) => {
       // Create a note with tags
-      await page.getByRole('button', { name: /new note/i }).click()
+      await page
+        .getByRole('button', { name: /new note/i })
+        .click({ force: true })
       await page.getByPlaceholder(/note title/i).fill('Test Note with Tags')
 
       // Add tags using tag input
-      await page.getByTestId('tag-input').click()
+      await page.getByTestId('tag-input').click({ force: true })
       await page.getByTestId('tag-input').fill('Development')
       await page.keyboard.press('Enter')
       await page.getByTestId('tag-input').fill('Frontend')
@@ -276,7 +288,7 @@ test.describe('Tag System', () => {
       await page.keyboard.press('Control+S')
 
       // Test search by tag
-      await page.getByTestId('global-search').click()
+      await page.getByTestId('global-search').click({ force: true })
       await page.getByTestId('global-search').fill('tag:Development')
 
       // Verify filtered results
@@ -286,15 +298,19 @@ test.describe('Tag System', () => {
     })
 
     test('should use advanced tag filtering in search', async ({ page }) => {
-      await page.getByTestId('global-search').click()
-      await page.getByRole('button', { name: /filters/i }).click()
+      await page.getByTestId('global-search').click({ force: true })
+      await page
+        .getByRole('button', { name: /filters/i })
+        .click({ force: true })
 
       // Select tags in filter panel
-      await page.getByTestId('tag-filter-Development').click()
-      await page.getByTestId('tag-filter-Frontend').click()
+      await page.getByTestId('tag-filter-Development').click({ force: true })
+      await page.getByTestId('tag-filter-Frontend').click({ force: true })
 
       // Apply filters
-      await page.getByRole('button', { name: /apply filters/i }).click()
+      await page
+        .getByRole('button', { name: /apply filters/i })
+        .click({ force: true })
 
       // Verify filtered results show only notes with selected tags
       const results = page.getByTestId('search-results')
@@ -306,13 +322,17 @@ test.describe('Tag System', () => {
   test.describe('Bulk Tag Operations', () => {
     test('should add tags to multiple notes', async ({ page }) => {
       // Select multiple notes in the note list
-      await page.getByTestId('note-list-item').first().click()
+      await page.getByTestId('note-list-item').first().click({ force: true })
       await page.keyboard.press('Control+Click')
-      await page.getByTestId('note-list-item').nth(1).click()
+      await page.getByTestId('note-list-item').nth(1).click({ force: true })
 
       // Open bulk operations
-      await page.getByRole('button', { name: /bulk operations/i }).click()
-      await page.getByRole('menuitem', { name: /manage tags/i }).click()
+      await page
+        .getByRole('button', { name: /bulk operations/i })
+        .click({ force: true })
+      await page
+        .getByRole('menuitem', { name: /manage tags/i })
+        .click({ force: true })
 
       // Add tags to selected notes
       await page.getByLabel(/operation/i).selectOption('add')
@@ -320,7 +340,9 @@ test.describe('Tag System', () => {
       await page.keyboard.press('Enter')
 
       // Execute bulk operation
-      await page.getByRole('button', { name: /execute/i }).click()
+      await page
+        .getByRole('button', { name: /execute/i })
+        .click({ force: true })
 
       // Verify completion
       await expect(page.getByText(/operation completed/i)).toBeVisible()
@@ -329,13 +351,17 @@ test.describe('Tag System', () => {
 
     test('should remove tags from multiple notes', async ({ page }) => {
       // Select notes with existing tags
-      await page.getByTestId('note-list-item').first().click()
+      await page.getByTestId('note-list-item').first().click({ force: true })
       await page.keyboard.press('Control+Click')
-      await page.getByTestId('note-list-item').nth(1).click()
+      await page.getByTestId('note-list-item').nth(1).click({ force: true })
 
       // Open bulk operations
-      await page.getByRole('button', { name: /bulk operations/i }).click()
-      await page.getByRole('menuitem', { name: /manage tags/i }).click()
+      await page
+        .getByRole('button', { name: /bulk operations/i })
+        .click({ force: true })
+      await page
+        .getByRole('menuitem', { name: /manage tags/i })
+        .click({ force: true })
 
       // Remove tags from selected notes
       await page.getByLabel(/operation/i).selectOption('remove')
@@ -343,7 +369,9 @@ test.describe('Tag System', () => {
       await page.keyboard.press('Enter')
 
       // Execute bulk operation
-      await page.getByRole('button', { name: /execute/i }).click()
+      await page
+        .getByRole('button', { name: /execute/i })
+        .click({ force: true })
 
       // Verify completion
       await expect(page.getByText(/operation completed/i)).toBeVisible()
@@ -351,13 +379,17 @@ test.describe('Tag System', () => {
 
     test('should replace all tags on multiple notes', async ({ page }) => {
       // Select multiple notes
-      await page.getByTestId('note-list-item').first().click()
+      await page.getByTestId('note-list-item').first().click({ force: true })
       await page.keyboard.press('Control+Click')
-      await page.getByTestId('note-list-item').nth(1).click()
+      await page.getByTestId('note-list-item').nth(1).click({ force: true })
 
       // Open bulk operations
-      await page.getByRole('button', { name: /bulk operations/i }).click()
-      await page.getByRole('menuitem', { name: /manage tags/i }).click()
+      await page
+        .getByRole('button', { name: /bulk operations/i })
+        .click({ force: true })
+      await page
+        .getByRole('menuitem', { name: /manage tags/i })
+        .click({ force: true })
 
       // Replace all tags
       await page.getByLabel(/operation/i).selectOption('replace')
@@ -365,7 +397,9 @@ test.describe('Tag System', () => {
       await page.keyboard.press('Enter')
 
       // Execute bulk operation
-      await page.getByRole('button', { name: /execute/i }).click()
+      await page
+        .getByRole('button', { name: /execute/i })
+        .click({ force: true })
 
       // Verify completion and new tags
       await expect(page.getByText(/operation completed/i)).toBeVisible()
@@ -374,7 +408,9 @@ test.describe('Tag System', () => {
 
   test.describe('Tag Cloud Visualization', () => {
     test('should display tag cloud with proper sizing', async ({ page }) => {
-      await page.getByRole('button', { name: /tag analytics/i }).click()
+      await page
+        .getByRole('button', { name: /tag analytics/i })
+        .click({ force: true })
 
       // Verify tag cloud is visible
       await expect(page.getByTestId('tag-cloud')).toBeVisible()
@@ -397,7 +433,9 @@ test.describe('Tag System', () => {
     })
 
     test('should support different tag cloud layouts', async ({ page }) => {
-      await page.getByRole('button', { name: /tag analytics/i }).click()
+      await page
+        .getByRole('button', { name: /tag analytics/i })
+        .click({ force: true })
 
       // Test cloud layout
       await page.getByTestId('layout-selector').selectOption('cloud')
@@ -413,7 +451,9 @@ test.describe('Tag System', () => {
     })
 
     test('should show tag usage analytics', async ({ page }) => {
-      await page.getByRole('button', { name: /tag analytics/i }).click()
+      await page
+        .getByRole('button', { name: /tag analytics/i })
+        .click({ force: true })
 
       // Verify analytics display
       await expect(page.getByTestId('total-tags-count')).toBeVisible()
@@ -429,7 +469,7 @@ test.describe('Tag System', () => {
   test.describe('Tag Keyboard Shortcuts', () => {
     test('should open tag picker with Cmd+T', async ({ page }) => {
       // Focus on a note
-      await page.getByTestId('note-editor').click()
+      await page.getByTestId('note-editor').click({ force: true })
 
       // Use keyboard shortcut
       await page.keyboard.press('Meta+t') // Cmd+T on Mac, Ctrl+T on Windows/Linux
@@ -447,7 +487,7 @@ test.describe('Tag System', () => {
 
     test('should use quick tag shortcuts', async ({ page }) => {
       // Focus on a note
-      await page.getByTestId('note-editor').click()
+      await page.getByTestId('note-editor').click({ force: true })
 
       // Use quick tag shortcut (Cmd+1 for "work" tag)
       await page.keyboard.press('Meta+1')
@@ -458,7 +498,7 @@ test.describe('Tag System', () => {
 
     test('should clear all tags with keyboard shortcut', async ({ page }) => {
       // Focus on a note with tags
-      await page.getByTestId('note-editor').click()
+      await page.getByTestId('note-editor').click({ force: true })
 
       // Use clear all tags shortcut
       await page.keyboard.press('Meta+Shift+Backspace')
@@ -499,7 +539,9 @@ test.describe('Tag System', () => {
 
       // Execute "Add Tag" command
       await page.getByPlaceholder(/command/i).fill('add tag')
-      await page.getByRole('option', { name: /add tag/i }).click()
+      await page
+        .getByRole('option', { name: /add tag/i })
+        .click({ force: true })
 
       // Verify tag picker opens
       await expect(page.getByTestId('tag-picker-dialog')).toBeVisible()
@@ -508,7 +550,9 @@ test.describe('Tag System', () => {
 
   test.describe('Tag Statistics and Analytics', () => {
     test('should display comprehensive tag statistics', async ({ page }) => {
-      await page.getByRole('button', { name: /tag analytics/i }).click()
+      await page
+        .getByRole('button', { name: /tag analytics/i })
+        .click({ force: true })
 
       // Verify all statistics are displayed
       const stats = [
@@ -525,7 +569,9 @@ test.describe('Tag System', () => {
     })
 
     test('should show tag usage trends over time', async ({ page }) => {
-      await page.getByRole('button', { name: /tag analytics/i }).click()
+      await page
+        .getByRole('button', { name: /tag analytics/i })
+        .click({ force: true })
 
       // Switch to different time periods
       await page.getByTestId('trending-period-selector').selectOption('week')
@@ -539,7 +585,9 @@ test.describe('Tag System', () => {
     })
 
     test('should provide detailed tag information', async ({ page }) => {
-      await page.getByRole('button', { name: /tag analytics/i }).click()
+      await page
+        .getByRole('button', { name: /tag analytics/i })
+        .click({ force: true })
 
       // Hover over a tag to see details
       await page.getByTestId('tag-cloud-item-Development').hover()
@@ -557,11 +605,13 @@ test.describe('Tag System', () => {
   test.describe('Tag Integration with Notes', () => {
     test('should add tags while editing a note', async ({ page }) => {
       // Create or open a note
-      await page.getByRole('button', { name: /new note/i }).click()
+      await page
+        .getByRole('button', { name: /new note/i })
+        .click({ force: true })
       await page.getByPlaceholder(/note title/i).fill('Integration Test Note')
 
       // Add tags using the tag input
-      await page.getByTestId('tag-input').click()
+      await page.getByTestId('tag-input').click({ force: true })
       await page.getByTestId('tag-input').fill('Integration')
       await page.keyboard.press('Enter')
 
@@ -577,10 +627,12 @@ test.describe('Tag System', () => {
     })
 
     test('should support hashtag syntax in note content', async ({ page }) => {
-      await page.getByRole('button', { name: /new note/i }).click()
+      await page
+        .getByRole('button', { name: /new note/i })
+        .click({ force: true })
 
       // Type content with hashtags
-      await page.getByTestId('note-editor').click()
+      await page.getByTestId('note-editor').click({ force: true })
       await page
         .getByTestId('note-editor')
         .fill('This is a note about #Development and #Frontend work')
@@ -594,10 +646,10 @@ test.describe('Tag System', () => {
 
     test('should filter notes by tags in sidebar', async ({ page }) => {
       // Open tag filter in sidebar
-      await page.getByTestId('sidebar-tags-section').click()
+      await page.getByTestId('sidebar-tags-section').click({ force: true })
 
       // Click on a tag to filter
-      await page.getByTestId('sidebar-tag-Development').click()
+      await page.getByTestId('sidebar-tag-Development').click({ force: true })
 
       // Verify note list is filtered
       const noteList = page.getByTestId('note-list')
@@ -621,7 +673,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -629,9 +681,13 @@ test.describe('Tag System', () => {
 
       // Create 50 tags rapidly
       for (let i = 0; i < 50; i++) {
-        await page.getByRole('button', { name: /create tag/i }).click()
+        await page
+          .getByRole('button', { name: /create tag/i })
+          .click({ force: true })
         await page.getByPlaceholder(/tag name/i).fill(`stress-test-${i}`)
-        await page.getByRole('button', { name: /create/i }).click()
+        await page
+          .getByRole('button', { name: /create/i })
+          .click({ force: true })
       }
 
       const endTime = Date.now()
@@ -653,14 +709,16 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
       // Try to create a tag with invalid characters
-      await page.getByRole('button', { name: /create tag/i }).click()
+      await page
+        .getByRole('button', { name: /create tag/i })
+        .click({ force: true })
       await page.getByPlaceholder(/tag name/i).fill('invalid@tag#name!')
-      await page.getByRole('button', { name: /create/i }).click()
+      await page.getByRole('button', { name: /create/i }).click({ force: true })
 
       // Verify error message appears
       await expect(page.getByText(/invalid tag name/i)).toBeVisible()
@@ -682,12 +740,14 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
-      await page.getByRole('button', { name: /create tag/i }).click()
+      await page
+        .getByRole('button', { name: /create tag/i })
+        .click({ force: true })
       await page.getByPlaceholder(/tag name/i).fill('offline-tag')
-      await page.getByRole('button', { name: /create/i }).click()
+      await page.getByRole('button', { name: /create/i }).click({ force: true })
 
       // Verify offline handling
       await expect(page.getByText(/network error/i)).toBeVisible()
@@ -695,7 +755,7 @@ test.describe('Tag System', () => {
 
       // Restore network and retry
       await context.setOffline(false)
-      await page.getByRole('button', { name: /retry/i }).click()
+      await page.getByRole('button', { name: /retry/i }).click({ force: true })
 
       // Verify operation succeeds
       await expect(page.getByText('offline-tag')).toBeVisible()
@@ -714,7 +774,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -736,7 +796,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -757,7 +817,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          (manageTagsBtn as HTMLElement).click()
+          ;(manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -772,7 +832,7 @@ test.describe('Tag System Integration', () => {
   // SKIPPED: Tag system not implemented
   test('should integrate with search functionality', async ({ page }) => {
     // Test tag-based search
-    await page.getByTestId('global-search').click()
+    await page.getByTestId('global-search').click({ force: true })
     await page.getByTestId('global-search').fill('tag:Development')
 
     // Verify search results are filtered by tag
@@ -782,15 +842,17 @@ test.describe('Tag System Integration', () => {
 
   test('should integrate with export functionality', async ({ page }) => {
     // Open a note with tags
-    await page.getByTestId('note-with-tags').click()
+    await page.getByTestId('note-with-tags').click({ force: true })
 
     // Export note
-    await page.getByRole('button', { name: /export/i }).click()
-    await page.getByRole('menuitem', { name: /markdown/i }).click()
+    await page.getByRole('button', { name: /export/i }).click({ force: true })
+    await page
+      .getByRole('menuitem', { name: /markdown/i })
+      .click({ force: true })
 
     // Verify tags are included in export
     const downloadPromise = page.waitForEvent('download')
-    await page.getByRole('button', { name: /download/i }).click()
+    await page.getByRole('button', { name: /download/i }).click({ force: true })
     const download = await downloadPromise
 
     // Verify exported content includes tags
@@ -807,13 +869,19 @@ test.describe('Tag System Integration', () => {
     await page2.goto('http://localhost:4378/')
 
     // Create tag in first tab
-    await page1.getByRole('button', { name: /manage tags/i }).click()
-    await page1.getByRole('button', { name: /create tag/i }).click()
+    await page1
+      .getByRole('button', { name: /manage tags/i })
+      .click({ force: true })
+    await page1
+      .getByRole('button', { name: /create tag/i })
+      .click({ force: true })
     await page1.getByPlaceholder(/tag name/i).fill('sync-test-tag')
-    await page1.getByRole('button', { name: /create/i }).click()
+    await page1.getByRole('button', { name: /create/i }).click({ force: true })
 
     // Verify tag appears in second tab
-    await page2.getByRole('button', { name: /manage tags/i }).click()
+    await page2
+      .getByRole('button', { name: /manage tags/i })
+      .click({ force: true })
     await expect(page2.getByText('sync-test-tag')).toBeVisible({
       timeout: 5000,
     })

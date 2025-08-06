@@ -128,7 +128,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill(
         'useEffect is a powerful hook for handling side effects'
       )
@@ -166,7 +166,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
-      await editor.click()
+      await editor.click({ force: true })
       await editor.fill('This is a test of search highlighting functionality')
 
       // Search
@@ -617,9 +617,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Search Performance', () => {
-    test('should handle large search results efficiently', async ({
-      page,
-    }) => {
+    test('should handle large search results efficiently', async ({ page }) => {
       // SKIPPED: Search performance features not implemented
       // Create many notes
       for (let i = 0; i < 50; i++) {
@@ -698,9 +696,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(page.locator('[data-testid="search-dialog"]')).toBeVisible()
     })
 
-    test('should update search index on note changes', async ({
-      page,
-    }) => {
+    test('should update search index on note changes', async ({ page }) => {
       // SKIPPED: Search index updates not implemented
       // Create a note
       await page.click('[data-testid="new-note-button"]')

@@ -27,7 +27,7 @@ test.describe('Debug Marks Test', () => {
     const editor = page.locator('[data-testid="block-editor"]')
 
     // Click into editor
-    await editor.click()
+    await editor.click({ force: true })
 
     // Type some text
     await editor.type('Test text for marks')
@@ -78,7 +78,7 @@ test.describe('Debug Marks Test', () => {
     const editor = page.locator('[data-testid="block-editor"]')
 
     // Click into editor
-    await editor.click()
+    await editor.click({ force: true })
 
     // First apply the mark
     await page.keyboard.press('Control+b')

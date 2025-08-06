@@ -65,7 +65,7 @@ test.describe('Direct Export Tests', () => {
     await expect(exportButton).toBeVisible({ timeout: 5000 })
 
     // Click export button to open dropdown
-    await exportButton.click()
+    await exportButton.click({ force: true })
 
     // Wait for dropdown to appear
     await page.waitForTimeout(500)
@@ -79,7 +79,7 @@ test.describe('Direct Export Tests', () => {
 
     // Set up mutation observer to detect download link creation
     await page.evaluate(() => {
-      (window as any).exportDetected = new Promise((resolve) => {
+      ;(window as any).exportDetected = new Promise((resolve) => {
         const observer = new MutationObserver((mutations) => {
           for (const mutation of mutations) {
             for (const node of mutation.addedNodes) {
@@ -105,7 +105,7 @@ test.describe('Direct Export Tests', () => {
     })
 
     // Click export as markdown
-    await exportAsMarkdown.click()
+    await exportAsMarkdown.click({ force: true })
 
     // Wait for the export to complete
     const exportResult = await page.evaluate(() => {

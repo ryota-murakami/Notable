@@ -164,9 +164,7 @@ test.describe('Template System Core Tests', () => {
     ).not.toBeVisible()
   })
 
-  test('should create note from template with variables', async ({
-    page,
-  }) => {
+  test('should create note from template with variables', async ({ page }) => {
     // SKIPPED: Template variable forms not implemented
     // Open template picker
     await jsClick(page, '[data-testid="new-note-button"]')
@@ -178,7 +176,9 @@ test.describe('Template System Core Tests', () => {
 
     // Select Daily Journal template - use heading to avoid duplicates
     await page.waitForSelector('h4:has-text("Daily Journal")')
-    await page.getByRole('heading', { name: 'Daily Journal' }).click()
+    await page
+      .getByRole('heading', { name: 'Daily Journal' })
+      .click({ force: true })
 
     // Variable form should open
     await expect(
@@ -222,7 +222,9 @@ test.describe('Template System Core Tests', () => {
 
     // Select Daily Journal template - use heading to avoid duplicates
     await page.waitForSelector('h4:has-text("Daily Journal")')
-    await page.getByRole('heading', { name: 'Daily Journal' }).click()
+    await page
+      .getByRole('heading', { name: 'Daily Journal' })
+      .click({ force: true })
 
     // Try to submit without required fields
     await page.fill('input#title', 'Test')

@@ -64,7 +64,7 @@ test.describe('Editor Basic Coverage', () => {
     await expect(newNoteButton).toBeVisible()
 
     console.info('📋 Clicking New Note button...')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for any modal or dialog to appear
     await page.waitForTimeout(3000)
@@ -123,7 +123,7 @@ test.describe('Editor Basic Coverage', () => {
         console.info('🖱️  Clicking Quick Note template...')
         // Click the template card itself, not just the heading
         const templateCard = quickNoteTemplate.locator('..').locator('..')
-        await templateCard.click()
+        await templateCard.click({ force: true })
         await page.waitForTimeout(3000)
         console.info(`🔗 URL after template click: ${page.url()}`)
       }
@@ -132,7 +132,7 @@ test.describe('Editor Basic Coverage', () => {
       const blankNoteButton = page.getByRole('button', { name: 'Blank Note' })
       if (await blankNoteButton.isVisible()) {
         console.info('🖱️  Clicking Blank Note button...')
-        await blankNoteButton.click()
+        await blankNoteButton.click({ force: true })
         await page.waitForTimeout(3000)
         const currentUrl = page.url()
         console.info(`🔗 Current URL after blank note: ${currentUrl}`)

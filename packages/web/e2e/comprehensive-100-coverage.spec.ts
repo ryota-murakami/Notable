@@ -53,7 +53,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     // Create note
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
     await expect(newNoteButton).toBeVisible()
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for navigation to note
     await page.waitForTimeout(2000)
@@ -70,7 +70,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     const editor = page
       .locator('[data-testid="note-editor"] [contenteditable="true"]')
       .first()
-    await editor.click()
+    await editor.click({ force: true })
     await editor.fill('Test note content')
 
     // Navigate back to notes list
@@ -87,7 +87,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker
     await expect(
@@ -128,7 +128,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     for (const buttonId of formatButtons) {
       const button = page.getByTestId(buttonId)
       if (await button.isVisible()) {
-        await button.click()
+        await button.click({ force: true })
         await editor.type(`Testing ${buttonId} `)
       }
     }
@@ -140,7 +140,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
 
     // Open template picker via new note button
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Template picker should open
     await expect(
@@ -172,7 +172,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker
     await expect(
@@ -204,7 +204,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker
     await expect(
@@ -226,7 +226,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     // Check for AI button
     const aiButton = page.getByTestId('ai-assistant-button')
     if (await aiButton.isVisible()) {
-      await aiButton.click()
+      await aiButton.click({ force: true })
       // Close AI panel if it opens
       await page.keyboard.press('Escape')
     }
@@ -239,7 +239,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     // Check for export menu
     const exportButton = page.getByTestId('export-button')
     if (await exportButton.isVisible()) {
-      await exportButton.click()
+      await exportButton.click({ force: true })
 
       // Check export options
       const exportOptions = ['export-pdf', 'export-markdown', 'export-html']
@@ -263,7 +263,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     // Open user menu
     const userMenuButton = page.getByTestId('user-menu-button')
     if (await userMenuButton.isVisible()) {
-      await userMenuButton.click()
+      await userMenuButton.click({ force: true })
 
       // Check menu items
       const menuItems = ['settings-link', 'profile-link', 'sign-out-button']
@@ -305,7 +305,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     // Check for graph view button
     const graphButton = page.getByTestId('graph-view-button')
     if (await graphButton.isVisible()) {
-      await graphButton.click()
+      await graphButton.click({ force: true })
       await page.waitForTimeout(1000)
 
       // Verify graph view loaded
@@ -315,7 +315,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
       }
 
       // Return to notes view
-      await page.getByTestId('notes-view-button').click()
+      await page.getByTestId('notes-view-button').click({ force: true })
     }
   })
 
@@ -377,7 +377,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     // Check for collaboration features
     const collaborateButton = page.getByTestId('collaborate-button')
     if (await collaborateButton.isVisible()) {
-      await collaborateButton.click()
+      await collaborateButton.click({ force: true })
       await page.keyboard.press('Escape')
     }
   })

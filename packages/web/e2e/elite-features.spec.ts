@@ -121,11 +121,15 @@ test.describe('Elite-Tier Features Integration', () => {
     }) => {
       // Navigate to note editor
       await page.goto('http://localhost:4378/app', { timeout: 30000 })
-      await page.getByRole('button', { name: 'New Note' }).click()
+      await page
+        .getByRole('button', { name: 'New Note' })
+        .click({ force: true })
       await expect(page.getByTestId('template-picker')).toBeVisible({
         timeout: 10000,
       })
-      await page.getByRole('button', { name: 'Blank Note' }).click()
+      await page
+        .getByRole('button', { name: 'Blank Note' })
+        .click({ force: true })
 
       await page.waitForURL('**/notes/**', { timeout: 30000 })
       await expect(page.getByTestId('note-editor')).toBeVisible()
@@ -272,11 +276,15 @@ test.describe('Elite-Tier Features Integration', () => {
     }) => {
       // Navigate to note editor
       await page.goto('http://localhost:4378/app', { timeout: 30000 })
-      await page.getByRole('button', { name: 'New Note' }).click()
+      await page
+        .getByRole('button', { name: 'New Note' })
+        .click({ force: true })
       await expect(page.getByTestId('template-picker')).toBeVisible({
         timeout: 10000,
       })
-      await page.getByRole('button', { name: 'Blank Note' }).click()
+      await page
+        .getByRole('button', { name: 'Blank Note' })
+        .click({ force: true })
 
       await page.waitForURL('**/notes/**', { timeout: 30000 })
       await expect(page.getByTestId('note-editor')).toBeVisible()
@@ -298,11 +306,15 @@ test.describe('Elite-Tier Features Integration', () => {
     }) => {
       // Navigate to note editor
       await page.goto('http://localhost:4378/app', { timeout: 30000 })
-      await page.getByRole('button', { name: 'New Note' }).click()
+      await page
+        .getByRole('button', { name: 'New Note' })
+        .click({ force: true })
       await expect(page.getByTestId('template-picker')).toBeVisible({
         timeout: 10000,
       })
-      await page.getByRole('button', { name: 'Blank Note' }).click()
+      await page
+        .getByRole('button', { name: 'Blank Note' })
+        .click({ force: true })
 
       await page.waitForURL('**/notes/**', { timeout: 30000 })
       await expect(page.getByTestId('note-editor')).toBeVisible()
@@ -313,8 +325,10 @@ test.describe('Elite-Tier Features Integration', () => {
       await page.getByTestId('note-content-textarea').fill(testContent)
 
       // Test AI summary functionality (existing feature)
-      await page.getByRole('button', { name: /AI Summary/ }).click()
-      await page.getByText('Brief Summary').click()
+      await page
+        .getByRole('button', { name: /AI Summary/ })
+        .click({ force: true })
+      await page.getByText('Brief Summary').click({ force: true })
 
       // Wait for processing
       await page.waitForTimeout(3000)

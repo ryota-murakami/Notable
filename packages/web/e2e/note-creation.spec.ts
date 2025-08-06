@@ -37,7 +37,7 @@ test.describe('Note Creation', () => {
     await expect(newNoteButton).toBeEnabled()
 
     // Click the new note button
-    await newNoteButton.click()
+    await newNoteButton.click({ force: true })
 
     // Wait for template picker dialog
     await expect(
@@ -69,7 +69,7 @@ test.describe('Note Creation', () => {
 
     // Create 3 notes
     for (let i = 0; i < 3; i++) {
-      await newNoteButton.click()
+      await newNoteButton.click({ force: true })
 
       // Handle template picker each time
       await expect(

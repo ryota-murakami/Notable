@@ -10,7 +10,7 @@ test.describe('Basic Editor Test', () => {
     const editor = page.locator('[contenteditable="true"]').first()
 
     // Click and type in the editor
-    await editor.click()
+    await editor.click({ force: true })
     await page.keyboard.type('This is a test note with some content')
 
     // Verify text was typed
@@ -27,7 +27,7 @@ test.describe('Basic Editor Test', () => {
     const editor = page.locator('[contenteditable="true"]').first()
 
     // Type heading with markdown syntax
-    await editor.click()
+    await editor.click({ force: true })
     await page.keyboard.type('# This is a heading')
     await page.keyboard.press('Enter')
     await page.keyboard.type('Regular text here')

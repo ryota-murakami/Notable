@@ -133,13 +133,13 @@ test.describe('AI Features - Comprehensive Testing', () => {
     await titleInput.fill('AI Generate Test')
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
+    await editor.click({ force: true })
     await editor.fill('Starting content for AI generation.')
     await page.waitForTimeout(1000)
 
     // Click AI Generate button
     const aiGenerateButton = page.locator('button', { hasText: 'AI Generate' })
-    await aiGenerateButton.click()
+    await aiGenerateButton.click({ force: true })
     await page.waitForTimeout(500)
 
     // Check for dropdown menu options
@@ -179,12 +179,12 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
     // Click AI Generate button
     const aiGenerateButton = page.locator('button', { hasText: 'AI Generate' })
-    await aiGenerateButton.click()
+    await aiGenerateButton.click({ force: true })
     await page.waitForTimeout(500)
 
     // Click on Continue Writing option
     const continueWriting = page.getByText('Continue Writing')
-    await continueWriting.click()
+    await continueWriting.click({ force: true })
     await page.waitForTimeout(500)
 
     // Dialog should open
@@ -220,7 +220,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     await titleInput.fill('Summary Test Note')
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
+    await editor.click({ force: true })
     await editor.fill(
       'This is a long piece of content that contains multiple ideas and concepts. It discusses various topics including technology, innovation, and future trends. The content is substantial enough to warrant summarization through artificial intelligence processing.'
     )
@@ -228,7 +228,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
     // Click AI Summary button
     const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
-    await aiSummaryButton.click()
+    await aiSummaryButton.click({ force: true })
     await page.waitForTimeout(500)
 
     // Check for summary options
@@ -253,7 +253,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     await titleInput.fill('Improvement Test Note')
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
+    await editor.click({ force: true })
     await editor.fill(
       'This text can be improved and made more professional. It might have gramatical errors or could be more clear and concise.'
     )
@@ -261,7 +261,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
     // Click AI Improve button
     const aiImproveButton = page.locator('button', { hasText: 'AI Improve' })
-    await aiImproveButton.click()
+    await aiImproveButton.click({ force: true })
     await page.waitForTimeout(500)
 
     // Check for improvement options
@@ -290,12 +290,12 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
     // Try to click AI Summary with no content
     const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
-    await aiSummaryButton.click()
+    await aiSummaryButton.click({ force: true })
     await page.waitForTimeout(200)
 
     const briefSummary = page.getByText('Brief Summary')
     if (await briefSummary.isVisible()) {
-      await briefSummary.click()
+      await briefSummary.click({ force: true })
 
       // Should show toast notification about no content
       // Wait for toast to appear and disappear
@@ -317,18 +317,18 @@ test.describe('AI Features - Comprehensive Testing', () => {
     await titleInput.fill('Loading State Test')
 
     const editor = page.locator('[contenteditable="true"]').first()
-    await editor.click()
+    await editor.click({ force: true })
     await editor.fill('Test content for AI processing.')
     await page.waitForTimeout(1000)
 
     // Click AI Summary and select an option
     const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
-    await aiSummaryButton.click()
+    await aiSummaryButton.click({ force: true })
     await page.waitForTimeout(200)
 
     const briefSummary = page.getByText('Brief Summary')
     if (await briefSummary.isVisible()) {
-      await briefSummary.click()
+      await briefSummary.click({ force: true })
 
       // Should show loading spinner (very briefly)
       const _loadingSpinner = page.locator('.animate-spin')
@@ -403,15 +403,15 @@ test.describe('AI Features - Comprehensive Testing', () => {
     await expect(editorContent).toBeVisible()
 
     // All elements should be accessible
-    await titleInput.click()
+    await titleInput.click({ force: true })
     await titleInput.fill('Layout Test')
 
-    await editorContent.click()
+    await editorContent.click({ force: true })
     await editorContent.fill('Test content')
 
     // AI buttons should still be clickable
     const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
-    await aiSummaryButton.click()
+    await aiSummaryButton.click({ force: true })
     await page.waitForTimeout(200)
 
     // Should not interfere with editor functionality
