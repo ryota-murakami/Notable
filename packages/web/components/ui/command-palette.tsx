@@ -39,7 +39,10 @@ import {
   TagIcon,
   TrashIcon,
 } from 'lucide-react'
-import { useSearch as _useSearch, useSearchHistory as _useSearchHistory } from '../../lib/search'
+import {
+  useSearch as _useSearch,
+  useSearchHistory as _useSearchHistory,
+} from '../../lib/search'
 import { useServerSearch as _useServerSearch } from '@/hooks/use-server-search'
 import { useSearchHistory as _useServerSearchHistory } from '@/hooks/use-search-history'
 import type { SearchableNote, SearchResult } from '../../lib/search/types'
@@ -428,20 +431,34 @@ export function SearchCommandPalette({
 
   // Use server-side search for better performance and features
   // TODO: Implement useServerSearch and useServerSearchHistory hooks
-  const search = React.useMemo(() => ({
-    query: '',
-    results: [],
-    isSearching: false,
-    hasSearched: false,
-    stats: null,
-    hasActiveFilters: false,
-    filterSummary: [],
-    search: (query: string) => console.info('Search:', query)
-  }), [])
+  const search = React.useMemo(
+    () => ({
+      query: '',
+      results: [] as SearchResult[],
+      isSearching: false,
+      hasSearched: false,
+      stats: null as { searchTime: number } | null,
+      hasActiveFilters: false,
+      filterSummary: [] as string[],
+      search: (query: string) => console.info('Search:', query),
+    }),
+    []
+  )
 
   const searchHistory = {
-    getRecentSearches: (_limit: number) => [],
-    getSearchSuggestions: (_query: string, _limit: number) => []
+    getRecentSearches: (_limit: number) =>
+      [] as Array<{
+        id: string
+        query: string
+        results_count: number
+        created_at: string
+      }>,
+    getSearchSuggestions: (_query: string, _limit: number) =>
+      [] as Array<{
+        query: string
+        count: number
+        avgResultCount: number
+      }>,
   }
 
   // Handle modal navigation shortcuts (Escape, /, Ctrl+H)

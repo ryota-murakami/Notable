@@ -144,7 +144,7 @@ export class PluginAPIFactory {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Delete note from database
         console.info(`[Plugin ${manifest.id}] Delete note:`, id)
-        return Promise.resolve(true)
+        return Promise.resolve()
       },
     }
   }
@@ -184,7 +184,10 @@ export class PluginAPIFactory {
     }
   }
 
-  private createUIAPI(manifest: PluginManifest, _context: PluginContext): UIAPI {
+  private createUIAPI(
+    manifest: PluginManifest,
+    _context: PluginContext
+  ): UIAPI {
     this.requireAPIAccess(manifest, PluginAPIAccess.UI)
 
     return {

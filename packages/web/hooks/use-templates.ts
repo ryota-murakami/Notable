@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 interface Template {
   id: string
@@ -30,7 +30,11 @@ export function useTemplateActions() {
   const [error, setError] = useState<string | null>(null)
 
   const useTemplate = useCallback(
-    async (templateId: string, title: string, variables: Record<string, any>) => {
+    async (
+      templateId: string,
+      title: string,
+      variables: Record<string, any>
+    ) => {
       try {
         setLoading(true)
         setError(null)
@@ -44,10 +48,10 @@ export function useTemplateActions() {
         }
 
         const template = templateResult.data
-        
+
         // Process template content with variables
         let content = template.content || ''
-        
+
         // Replace variables in content
         Object.entries(variables).forEach(([key, value]) => {
           const placeholder = `{{${key}}}`
@@ -69,12 +73,15 @@ export function useTemplateActions() {
         const noteResult = await noteResponse.json()
 
         if (!noteResponse.ok) {
-          throw new Error(noteResult.error || 'Failed to create note from template')
+          throw new Error(
+            noteResult.error || 'Failed to create note from template'
+          )
         }
 
         return { noteId: noteResult.id, note: noteResult }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to use template'
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to use template'
         setError(errorMessage)
         throw err
       } finally {
@@ -98,7 +105,8 @@ export function useTemplateActions() {
 
       return result.data
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch template'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to fetch template'
       setError(errorMessage)
       throw err
     } finally {
@@ -137,7 +145,8 @@ export function useTemplateActions() {
           pagination: result.pagination,
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch templates'
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to fetch templates'
         setError(errorMessage)
         throw err
       } finally {
@@ -181,7 +190,8 @@ export function useTemplateActions() {
 
         return result.data
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to create template'
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to create template'
         setError(errorMessage)
         throw err
       } finally {
@@ -209,7 +219,7 @@ export function useTemplates(options?: {
   offset?: number
 }) {
   const [templates, setTemplates] = useState<Template[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, _setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
     total: 0,

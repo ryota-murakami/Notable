@@ -20,7 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useEditorRef, usePlateStore } from 'platejs/react'
+import { useEditorRef } from 'platejs/react'
 import { MarkToolbarButton } from '@/components/ui/mark-toolbar-button'
 
 interface FloatingToolbarProps {
@@ -29,7 +29,7 @@ interface FloatingToolbarProps {
 
 export function FloatingToolbar({ className }: FloatingToolbarProps) {
   const editor = useEditorRef()
-  
+
   const formatButtons = [
     { icon: Bold, tooltip: 'Bold (Ctrl+B)', format: 'bold' },
     { icon: Italic, tooltip: 'Italic (Ctrl+I)', format: 'italic' },
@@ -47,7 +47,7 @@ export function FloatingToolbar({ className }: FloatingToolbarProps) {
 
   const handleBlockFormat = (format: string) => {
     if (!editor) return
-    
+
     switch (format) {
       case 'blockquote':
         editor.tf.setNodes({ type: 'blockquote' })
@@ -83,7 +83,7 @@ export function FloatingToolbar({ className }: FloatingToolbarProps) {
         {/* Format buttons */}
         <div className='flex items-center gap-0.5'>
           {formatButtons.map((button) => (
-            <MarkToolbarButton 
+            <MarkToolbarButton
               key={button.format}
               nodeType={button.format}
               tooltip={button.tooltip}

@@ -23,7 +23,7 @@ import {
 } from '@/hooks/use-tags'
 import type { Value } from 'platejs'
 import type { EnhancedTag } from '@/types/tags'
-import type { Template } from '@/types/templates'
+import type { Template } from '@/components/ui/template-picker'
 
 interface RichTextEditorProps {
   noteId: string
@@ -149,19 +149,6 @@ export function RichTextEditor({
     [noteId, removeTagFromNote]
   )
 
-  // Handle template selection
-  const handleTemplateSelect = useCallback((template: Template) => {
-    setSelectedTemplate(template)
-    setIsTemplatePickerOpen(false)
-
-    // If template has no variables, process immediately
-    if (!template.variables || template.variables.length === 0) {
-      handleTemplateSubmit(template.name, {})
-    } else {
-      setIsVariableFormOpen(true)
-    }
-  }, [handleTemplateSubmit])
-
   // Handle template variable form submission
   const handleTemplateSubmit = useCallback(
     async (noteTitle: string, variables: Record<string, any>) => {
@@ -237,6 +224,22 @@ export function RichTextEditor({
       }
     },
     [selectedTemplate, noteId, onTitleChange, onContentChange, onTemplateUsed]
+  )
+
+  // Handle template selection
+  const handleTemplateSelect = useCallback(
+    (template: Template) => {
+      setSelectedTemplate(template)
+      setIsTemplatePickerOpen(false)
+
+      // If template has no variables, process immediately
+      if (!template.variables || template.variables.length === 0) {
+        handleTemplateSubmit(template.name, {})
+      } else {
+        setIsVariableFormOpen(true)
+      }
+    },
+    [handleTemplateSubmit]
   )
 
   // Handle creating blank note

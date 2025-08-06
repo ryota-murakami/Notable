@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -12,16 +12,16 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
-  History,
   Clock,
-  User,
-  Plus,
-  Minus,
-  Edit,
-  RotateCcw,
   Download,
+  Edit,
   Eye,
   GitBranch,
+  History,
+  Minus,
+  Plus,
+  RotateCcw,
+  User,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
@@ -69,18 +69,12 @@ export function VersionHistory({
   const [selectedVersion, setSelectedVersion] = useState<Version | null>(null)
   const [showDiff, setShowDiff] = useState(false)
 
-  useEffect(() => {
-    if (open && noteId) {
-      fetchVersions()
-    }
-  }, [open, noteId])
-
-  const fetchVersions = async () => {
+  const fetchVersions = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/notes/${noteId}/versions`)
       const result = await response.json()
-      
+
       if (result.success) {
         setVersions(result.data || [])
       }
@@ -90,7 +84,13 @@ export function VersionHistory({
     } finally {
       setLoading(false)
     }
-  }
+  }, [noteId])
+
+  useEffect(() => {
+    if (open && noteId) {
+      fetchVersions()
+    }
+  }, [open, noteId, fetchVersions])
 
   const handleRestoreVersion = (version: Version) => {
     if (onRestoreVersion) {
@@ -121,18 +121,18 @@ export function VersionHistory({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+        <DialogContent className='max-w-4xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <History className="h-5 w-5" />
+            <DialogTitle className='flex items-center gap-2'>
+              <History className='h-5 w-5' />
               Version History
             </DialogTitle>
-            <p className="text-sm text-muted-foreground">
-              View and restore previous versions of "{noteTitle}"
+            <p className='text-sm text-muted-foreground'>
+              View and restore previous versions of &quot;{noteTitle}&quot;
             </p>
           </DialogHeader>
 
-          <div className="flex-1 overflow-hidden">
+          <div className='flex-1 overflow-hidden'>
             {showDiff && selectedVersion ? (
               <VersionDiffView
                 version={selectedVersion}
@@ -183,14 +183,14 @@ function VersionListView({
 }) {
   if (loading) {
     return (
-      <div className="space-y-4 p-4">
+      <div className='space-y-4 p-4'>
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="flex items-center gap-4 p-4 border rounded-lg">
-              <div className="h-10 w-10 bg-muted rounded-full"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-muted rounded w-1/4"></div>
-                <div className="h-3 bg-muted rounded w-1/2"></div>
+          <div key={i} className='animate-pulse'>
+            <div className='flex items-center gap-4 p-4 border rounded-lg'>
+              <div className='h-10 w-10 bg-muted rounded-full'></div>
+              <div className='flex-1 space-y-2'>
+                <div className='h-4 bg-muted rounded w-1/4'></div>
+                <div className='h-3 bg-muted rounded w-1/2'></div>
               </div>
             </div>
           </div>
@@ -201,24 +201,24 @@ function VersionListView({
 
   if (versions.length === 0) {
     return (
-      <div className="text-center py-8">
-        <History className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No Version History</h3>
-        <p className="text-muted-foreground">
-          This note doesn't have any saved versions yet.
+      <div className='text-center py-8'>
+        <History className='h-12 w-12 mx-auto text-muted-foreground mb-4' />
+        <h3 className='text-lg font-semibold mb-2'>No Version History</h3>
+        <p className='text-muted-foreground'>
+          This note doesn&apos;t have any saved versions yet.
         </p>
       </div>
     )
   }
 
   return (
-    <div className="flex h-full">
-      <div className="w-1/3 border-r">
-        <ScrollArea className="h-full">
-          <div className="p-4 space-y-3">
-            <div className="flex items-center gap-2 mb-4">
-              <GitBranch className="h-4 w-4" />
-              <span className="text-sm font-medium">
+    <div className='flex h-full'>
+      <div className='w-1/3 border-r'>
+        <ScrollArea className='h-full'>
+          <div className='p-4 space-y-3'>
+            <div className='flex items-center gap-2 mb-4'>
+              <GitBranch className='h-4 w-4' />
+              <span className='text-sm font-medium'>
                 {versions.length} version{versions.length !== 1 ? 's' : ''}
               </span>
             </div>
@@ -236,7 +236,7 @@ function VersionListView({
         </ScrollArea>
       </div>
 
-      <div className="flex-1 p-4">
+      <div className='flex-1 p-4'>
         {selectedVersion ? (
           <VersionDetailsView
             version={selectedVersion}
@@ -246,9 +246,9 @@ function VersionListView({
             onShowDiff={() => onShowDiff(selectedVersion)}
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            <div className="text-center">
-              <Clock className="h-8 w-8 mx-auto mb-3" />
+          <div className='flex items-center justify-center h-full text-muted-foreground'>
+            <div className='text-center'>
+              <Clock className='h-8 w-8 mx-auto mb-3' />
               <p>Select a version to view details</p>
             </div>
           </div>
@@ -272,62 +272,72 @@ function VersionListItem({
   return (
     <div
       className={cn(
-        "p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm",
-        isSelected ? "border-primary bg-primary/5" : "hover:border-muted-foreground/20"
+        'p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm',
+        isSelected
+          ? 'border-primary bg-primary/5'
+          : 'hover:border-muted-foreground/20'
       )}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      tabIndex={0}
+      role='button'
     >
-      <div className="flex items-center gap-3">
-        <div className="relative">
-          <div className={cn(
-            "h-3 w-3 rounded-full",
-            isLatest ? "bg-green-500" : "bg-muted-foreground/30"
-          )} />
+      <div className='flex items-center gap-3'>
+        <div className='relative'>
+          <div
+            className={cn(
+              'h-3 w-3 rounded-full',
+              isLatest ? 'bg-green-500' : 'bg-muted-foreground/30'
+            )}
+          />
           {isLatest && (
-            <div className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse" />
+            <div className='absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse' />
           )}
         </div>
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-medium">
-              v{version.id}
-            </span>
+
+        <div className='flex-1 min-w-0'>
+          <div className='flex items-center gap-2 mb-1'>
+            <span className='text-sm font-medium'>v{version.id}</span>
             {isLatest && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant='secondary' className='text-xs'>
                 Current
               </Badge>
             )}
           </div>
-          
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <User className="h-3 w-3" />
+
+          <div className='flex items-center gap-2 text-xs text-muted-foreground mb-1'>
+            <User className='h-3 w-3' />
             <span>{version.author.name || version.author.email}</span>
           </div>
-          
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
+
+          <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+            <Clock className='h-3 w-3' />
             <span>{formatDistanceToNow(new Date(version.createdAt))} ago</span>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 mt-2 text-xs">
+      <div className='flex items-center gap-3 mt-2 text-xs'>
         {version.changes.added > 0 && (
-          <div className="flex items-center gap-1 text-green-600">
-            <Plus className="h-3 w-3" />
+          <div className='flex items-center gap-1 text-green-600'>
+            <Plus className='h-3 w-3' />
             <span>{version.changes.added}</span>
           </div>
         )}
         {version.changes.modified > 0 && (
-          <div className="flex items-center gap-1 text-blue-600">
-            <Edit className="h-3 w-3" />
+          <div className='flex items-center gap-1 text-blue-600'>
+            <Edit className='h-3 w-3' />
             <span>{version.changes.modified}</span>
           </div>
         )}
         {version.changes.deleted > 0 && (
-          <div className="flex items-center gap-1 text-red-600">
-            <Minus className="h-3 w-3" />
+          <div className='flex items-center gap-1 text-red-600'>
+            <Minus className='h-3 w-3' />
             <span>{version.changes.deleted}</span>
           </div>
         )}
@@ -350,41 +360,41 @@ function VersionDetailsView({
   onShowDiff: () => void
 }) {
   return (
-    <div className="h-full flex flex-col">
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-2">Version {version.id}</h3>
-        
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm">
-            <User className="h-4 w-4 text-muted-foreground" />
+    <div className='h-full flex flex-col'>
+      <div className='mb-6'>
+        <h3 className='text-lg font-semibold mb-2'>Version {version.id}</h3>
+
+        <div className='space-y-3'>
+          <div className='flex items-center gap-2 text-sm'>
+            <User className='h-4 w-4 text-muted-foreground' />
             <span>{version.author.name || version.author.email}</span>
           </div>
-          
-          <div className="flex items-center gap-2 text-sm">
-            <Clock className="h-4 w-4 text-muted-foreground" />
+
+          <div className='flex items-center gap-2 text-sm'>
+            <Clock className='h-4 w-4 text-muted-foreground' />
             <span>{new Date(version.createdAt).toLocaleString()}</span>
           </div>
 
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground">Changes:</span>
+          <div className='flex items-center gap-4 text-sm'>
+            <div className='flex items-center gap-1'>
+              <span className='text-muted-foreground'>Changes:</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className='flex items-center gap-3'>
               {version.changes.added > 0 && (
-                <div className="flex items-center gap-1 text-green-600">
-                  <Plus className="h-3 w-3" />
+                <div className='flex items-center gap-1 text-green-600'>
+                  <Plus className='h-3 w-3' />
                   <span>{version.changes.added} added</span>
                 </div>
               )}
               {version.changes.modified > 0 && (
-                <div className="flex items-center gap-1 text-blue-600">
-                  <Edit className="h-3 w-3" />
+                <div className='flex items-center gap-1 text-blue-600'>
+                  <Edit className='h-3 w-3' />
                   <span>{version.changes.modified} modified</span>
                 </div>
               )}
               {version.changes.deleted > 0 && (
-                <div className="flex items-center gap-1 text-red-600">
-                  <Minus className="h-3 w-3" />
+                <div className='flex items-center gap-1 text-red-600'>
+                  <Minus className='h-3 w-3' />
                   <span>{version.changes.deleted} deleted</span>
                 </div>
               )}
@@ -395,34 +405,34 @@ function VersionDetailsView({
 
       <Separator />
 
-      <div className="flex-1 py-6">
-        <div className="mb-4">
-          <h4 className="text-sm font-medium mb-2">Content Preview</h4>
+      <div className='flex-1 py-6'>
+        <div className='mb-4'>
+          <h4 className='text-sm font-medium mb-2'>Content Preview</h4>
         </div>
-        
-        <ScrollArea className="h-64 border rounded-lg p-4 bg-muted/30">
-          <pre className="text-sm whitespace-pre-wrap font-mono">
+
+        <ScrollArea className='h-64 border rounded-lg p-4 bg-muted/30'>
+          <pre className='text-sm whitespace-pre-wrap font-mono'>
             {version.content.slice(0, 1000)}
             {version.content.length > 1000 && '...'}
           </pre>
         </ScrollArea>
       </div>
 
-      <div className="flex gap-2 pt-4 border-t">
-        <Button onClick={onShowDiff} variant="outline" className="flex-1">
-          <GitBranch className="h-4 w-4 mr-2" />
+      <div className='flex gap-2 pt-4 border-t'>
+        <Button onClick={onShowDiff} variant='outline' className='flex-1'>
+          <GitBranch className='h-4 w-4 mr-2' />
           View Diff
         </Button>
-        <Button onClick={onPreview} variant="outline">
-          <Eye className="h-4 w-4 mr-2" />
+        <Button onClick={onPreview} variant='outline'>
+          <Eye className='h-4 w-4 mr-2' />
           Preview
         </Button>
-        <Button onClick={onExport} variant="outline">
-          <Download className="h-4 w-4 mr-2" />
+        <Button onClick={onExport} variant='outline'>
+          <Download className='h-4 w-4 mr-2' />
           Export
         </Button>
         <Button onClick={onRestore}>
-          <RotateCcw className="h-4 w-4 mr-2" />
+          <RotateCcw className='h-4 w-4 mr-2' />
           Restore
         </Button>
       </div>
@@ -443,53 +453,56 @@ function VersionDiffView({
 }) {
   // This would normally show a detailed diff
   // For now, showing simplified version
-  
+
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={onBack}>
+    <div className='h-full flex flex-col'>
+      <div className='flex items-center justify-between mb-4'>
+        <div className='flex items-center gap-2'>
+          <Button variant='ghost' size='sm' onClick={onBack}>
             ← Back
           </Button>
-          <h3 className="text-lg font-semibold">
+          <h3 className='text-lg font-semibold'>
             Diff for Version {version.id}
           </h3>
         </div>
-        
-        <div className="flex gap-2">
-          <Button onClick={onExport} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+
+        <div className='flex gap-2'>
+          <Button onClick={onExport} variant='outline' size='sm'>
+            <Download className='h-4 w-4 mr-2' />
             Export
           </Button>
-          <Button onClick={onRestore} size="sm">
-            <RotateCcw className="h-4 w-4 mr-2" />
+          <Button onClick={onRestore} size='sm'>
+            <RotateCcw className='h-4 w-4 mr-2' />
             Restore
           </Button>
         </div>
       </div>
 
-      <div className="flex-1 border rounded-lg overflow-hidden">
-        <ScrollArea className="h-full">
-          <div className="p-4 space-y-4">
-            <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded">
-              <div className="flex items-center gap-2 mb-2">
-                <Plus className="h-4 w-4 text-green-600" />
-                <span className="text-sm font-medium text-green-800">
+      <div className='flex-1 border rounded-lg overflow-hidden'>
+        <ScrollArea className='h-full'>
+          <div className='p-4 space-y-4'>
+            <div className='bg-green-50 border-l-4 border-green-400 p-4 rounded'>
+              <div className='flex items-center gap-2 mb-2'>
+                <Plus className='h-4 w-4 text-green-600' />
+                <span className='text-sm font-medium text-green-800'>
                   {version.changes.added} lines added
                 </span>
               </div>
-              <pre className="text-sm text-green-700 font-mono">
-                {version.content.split('\n').slice(0, 5).map((line, i) => (
-                  <div key={i}>+ {line}</div>
-                ))}
+              <pre className='text-sm text-green-700 font-mono'>
+                {version.content
+                  .split('\n')
+                  .slice(0, 5)
+                  .map((line, i) => (
+                    <div key={i}>+ {line}</div>
+                  ))}
               </pre>
             </div>
 
             {version.changes.modified > 0 && (
-              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                <div className="flex items-center gap-2 mb-2">
-                  <Edit className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">
+              <div className='bg-blue-50 border-l-4 border-blue-400 p-4 rounded'>
+                <div className='flex items-center gap-2 mb-2'>
+                  <Edit className='h-4 w-4 text-blue-600' />
+                  <span className='text-sm font-medium text-blue-800'>
                     {version.changes.modified} lines modified
                   </span>
                 </div>
@@ -497,10 +510,10 @@ function VersionDiffView({
             )}
 
             {version.changes.deleted > 0 && (
-              <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded">
-                <div className="flex items-center gap-2 mb-2">
-                  <Minus className="h-4 w-4 text-red-600" />
-                  <span className="text-sm font-medium text-red-800">
+              <div className='bg-red-50 border-l-4 border-red-400 p-4 rounded'>
+                <div className='flex items-center gap-2 mb-2'>
+                  <Minus className='h-4 w-4 text-red-600' />
+                  <span className='text-sm font-medium text-red-800'>
                     {version.changes.deleted} lines deleted
                   </span>
                 </div>
@@ -522,16 +535,16 @@ export function useVersionHistory(noteId: string) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchVersions = async () => {
+  const fetchVersions = useCallback(async () => {
     if (!noteId) return
 
     try {
       setLoading(true)
       setError(null)
-      
+
       const response = await fetch(`/api/notes/${noteId}/versions`)
       const result = await response.json()
-      
+
       if (result.success) {
         setVersions(result.data || [])
       } else {
@@ -543,11 +556,11 @@ export function useVersionHistory(noteId: string) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [noteId])
 
   useEffect(() => {
     fetchVersions()
-  }, [noteId])
+  }, [noteId, fetchVersions])
 
   return {
     versions,

@@ -10,6 +10,7 @@
  */
 
 import { describe, expect, it, vi } from 'vitest'
+import { VersionHistory } from '../version-history'
 
 // Mock external dependencies to avoid runtime errors
 vi.mock('@/utils/supabase/client', () => ({
@@ -42,14 +43,11 @@ vi.mock('@/hooks/use-toast', () => ({
 describe('VersionHistory', () => {
   it('should export the VersionHistory class', () => {
     // Test that the module can be imported without errors
-    const { VersionHistory } = require('../version-history')
     expect(VersionHistory).toBeDefined()
     expect(typeof VersionHistory).toBe('function')
   })
 
   it('should have all expected static methods', () => {
-    const { VersionHistory } = require('../version-history')
-
     expect(typeof VersionHistory.getHistory).toBe('function')
     expect(typeof VersionHistory.getVersion).toBe('function')
     expect(typeof VersionHistory.compareVersions).toBe('function')
@@ -63,8 +61,6 @@ describe('VersionHistory', () => {
   })
 
   it('should calculate basic differences correctly', () => {
-    const { VersionHistory } = require('../version-history')
-
     const oldContent = {
       title: 'Old Title',
       content: { type: 'doc', content: [] },
@@ -88,8 +84,6 @@ describe('VersionHistory', () => {
   })
 
   it('should detect no changes when content is identical', () => {
-    const { VersionHistory } = require('../version-history')
-
     const content = {
       title: 'Same Title',
       content: { type: 'doc', content: [] },
@@ -100,8 +94,6 @@ describe('VersionHistory', () => {
   })
 
   it('should detect content changes', () => {
-    const { VersionHistory } = require('../version-history')
-
     const oldContent = {
       title: 'Same Title',
       content: {

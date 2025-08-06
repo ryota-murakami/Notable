@@ -5,7 +5,7 @@ const isRequestAllowed = (cookies: Record<string, string>) => {
   const isMockingEnabled = process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
   const hasAuthBypass = cookies['dev-auth-bypass'] === 'true'
   const isTestEnv = process.env.NODE_ENV === 'test'
-  
+
   return hasAuthBypass || isTestEnv || isMockingEnabled
 }
 
@@ -23,13 +23,26 @@ const mockNoteStore: Array<{
   {
     id: 'note-default-1',
     title: 'Welcome to Notable',
-    content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Welcome to Notable! This is your first note.' }] }] },
+    content: {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'Welcome to Notable! This is your first note.',
+            },
+          ],
+        },
+      ],
+    },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     user_id: '11111111-1111-1111-1111-111111111111',
     folder_id: null,
     is_public: false,
-  }
+  },
 ]
 
 // Mock template data with all required fields
@@ -230,7 +243,6 @@ const MOCK_FOLDERS = [
 
 // Define mock handlers for your API endpoints
 export const handlers = [
-
   // Folders API
   http.get('*/api/folders', ({ cookies }) => {
     // Allow access in test environment with dev-auth-bypass cookie
@@ -251,8 +263,11 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json() as { name: string; parent_id?: string | null }
-    
+    const body = (await request.json()) as {
+      name: string
+      parent_id?: string | null
+    }
+
     const newFolder = {
       id: `folder-${Date.now()}`,
       name: body.name,
@@ -263,7 +278,7 @@ export const handlers = [
     }
 
     MOCK_FOLDERS.push(newFolder)
-    
+
     console.info('[MSW] POST /api/folders - created folder:', newFolder)
     return HttpResponse.json({
       success: true,
@@ -276,10 +291,13 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json() as { name?: string; parent_id?: string | null }
+    const body = (await request.json()) as {
+      name?: string
+      parent_id?: string | null
+    }
     const folderId = params.id as string
-    
-    const folderIndex = MOCK_FOLDERS.findIndex(f => f.id === folderId)
+
+    const folderIndex = MOCK_FOLDERS.findIndex((f) => f.id === folderId)
     if (folderIndex === -1) {
       return HttpResponse.json({ error: 'Folder not found' }, { status: 404 })
     }
@@ -292,7 +310,7 @@ export const handlers = [
     }
 
     MOCK_FOLDERS[folderIndex] = updatedFolder
-    
+
     console.info('[MSW] PUT /api/folders/:id - updated folder:', updatedFolder)
     return HttpResponse.json({
       success: true,
@@ -306,14 +324,14 @@ export const handlers = [
     }
 
     const folderId = params.id as string
-    const folderIndex = MOCK_FOLDERS.findIndex(f => f.id === folderId)
-    
+    const folderIndex = MOCK_FOLDERS.findIndex((f) => f.id === folderId)
+
     if (folderIndex === -1) {
       return HttpResponse.json({ error: 'Folder not found' }, { status: 404 })
     }
 
     MOCK_FOLDERS.splice(folderIndex, 1)
-    
+
     console.info('[MSW] DELETE /api/folders/:id - deleted folder:', folderId)
     return HttpResponse.json({
       success: true,
@@ -327,8 +345,8 @@ export const handlers = [
     }
 
     const folderId = params.id as string
-    const folder = MOCK_FOLDERS.find(f => f.id === folderId)
-    
+    const folder = MOCK_FOLDERS.find((f) => f.id === folderId)
+
     if (!folder) {
       return HttpResponse.json({ error: 'Folder not found' }, { status: 404 })
     }
@@ -509,16 +527,18 @@ export const handlers = [
     if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
+
     // Import mockStore dynamically to avoid circular import
+
+    // eslint-disable-next-line no-undef
     const { mockStore } = require('../utils/mock-data-store')
     const mockUserId = '11111111-1111-1111-1111-111111111111'
     const tags = mockStore.tags.getAll(mockUserId)
-    
+
     console.info('[MSW] GET /api/tags - returning tags:', tags)
-    return HttpResponse.json({ 
-      data: tags, 
-      total: tags.length 
+    return HttpResponse.json({
+      data: tags,
+      total: tags.length,
     })
   }),
 
@@ -528,23 +548,30 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // eslint-disable-next-line no-undef
     const { mockStore } = require('../utils/mock-data-store')
-    const body = await request.json() as any
+    const body = (await request.json()) as any
     const mockUserId = '11111111-1111-1111-1111-111111111111'
 
     // Validate required fields
     if (!body.name) {
-      return HttpResponse.json({ 
-        error: 'Tag name is required' 
-      }, { status: 400 })
+      return HttpResponse.json(
+        {
+          error: 'Tag name is required',
+        },
+        { status: 400 }
+      )
     }
 
     // Check if tag name already exists
     const existingTag = mockStore.tags.findByName(body.name, mockUserId)
     if (existingTag) {
-      return HttpResponse.json({ 
-        error: 'Tag with this name already exists' 
-      }, { status: 409 })
+      return HttpResponse.json(
+        {
+          error: 'Tag with this name already exists',
+        },
+        { status: 409 }
+      )
     }
 
     const newTag = mockStore.tags.create({
@@ -556,8 +583,8 @@ export const handlers = [
     })
 
     console.info('[MSW] POST /api/tags - created tag:', newTag)
-    return HttpResponse.json({ 
-      data: newTag 
+    return HttpResponse.json({
+      data: newTag,
     })
   }),
 
@@ -566,21 +593,25 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // eslint-disable-next-line no-undef
     const { mockStore } = require('../utils/mock-data-store')
-    const body = await request.json() as any
+    const body = (await request.json()) as any
     const tagId = params.id as string
 
     const updatedTag = mockStore.tags.update(tagId, body)
-    
+
     if (!updatedTag) {
-      return HttpResponse.json({ 
-        error: 'Tag not found' 
-      }, { status: 404 })
+      return HttpResponse.json(
+        {
+          error: 'Tag not found',
+        },
+        { status: 404 }
+      )
     }
 
     console.info('[MSW] PUT /api/tags/:id - updated tag:', updatedTag)
-    return HttpResponse.json({ 
-      data: updatedTag 
+    return HttpResponse.json({
+      data: updatedTag,
     })
   }),
 
@@ -589,20 +620,24 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // eslint-disable-next-line no-undef
     const { mockStore } = require('../utils/mock-data-store')
     const tagId = params.id as string
     const deleted = mockStore.tags.delete(tagId)
 
     if (!deleted) {
-      return HttpResponse.json({ 
-        error: 'Tag not found' 
-      }, { status: 404 })
+      return HttpResponse.json(
+        {
+          error: 'Tag not found',
+        },
+        { status: 404 }
+      )
     }
 
     console.info('[MSW] DELETE /api/tags/:id - deleted tag:', tagId)
-    return HttpResponse.json({ 
+    return HttpResponse.json({
       success: true,
-      message: 'Tag deleted successfully' 
+      message: 'Tag deleted successfully',
     })
   }),
 
@@ -611,19 +646,23 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // eslint-disable-next-line no-undef
     const { mockStore } = require('../utils/mock-data-store')
     const tagId = params.id as string
     const tag = mockStore.tags.get(tagId)
 
     if (!tag) {
-      return HttpResponse.json({ 
-        error: 'Tag not found' 
-      }, { status: 404 })
+      return HttpResponse.json(
+        {
+          error: 'Tag not found',
+        },
+        { status: 404 }
+      )
     }
 
     console.info('[MSW] GET /api/tags/:id - returning tag:', tag)
-    return HttpResponse.json({ 
-      data: tag 
+    return HttpResponse.json({
+      data: tag,
     })
   }),
 
@@ -1119,18 +1158,18 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       noteId?: string
       format: 'markdown' | 'html' | 'pdf' | 'react'
       options?: Record<string, any>
     }
 
     // Simulate export processing
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     const mockFileContent = `# Export Test\n\nThis is mock exported content in ${body.format.toUpperCase()} format.`
     const filename = `note-export.${body.format === 'react' ? 'tsx' : body.format}`
-    
+
     // Return download URL and metadata
     return HttpResponse.json({
       success: true,
@@ -1141,7 +1180,7 @@ export const handlers = [
         format: body.format,
         downloadUrl: `/api/export/download/${Date.now()}`,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
-      }
+      },
     })
   }),
 
@@ -1152,7 +1191,7 @@ export const handlers = [
 
     // Return file content as blob
     const mockContent = `# Mock Export File\n\nThis is mock exported content from download ID: ${params.id}`
-    
+
     return new HttpResponse(mockContent, {
       headers: {
         'Content-Type': 'text/markdown',
@@ -1166,14 +1205,14 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       noteIds: string[]
       format: string
       options?: Record<string, any>
     }
 
     // Simulate batch export processing
-    await new Promise(resolve => setTimeout(resolve, 200))
+    await new Promise((resolve) => setTimeout(resolve, 200))
 
     return HttpResponse.json({
       success: true,
@@ -1184,7 +1223,7 @@ export const handlers = [
         downloadUrl: `/api/export/batch/download/batch-${Date.now()}`,
         expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
         totalFiles: body.noteIds.length,
-      }
+      },
     })
   }),
 
@@ -1196,7 +1235,7 @@ export const handlers = [
 
     const url = new URL(request.url)
     const context = url.searchParams.get('context') || 'general'
-    
+
     return HttpResponse.json({
       success: true,
       data: {
@@ -1226,7 +1265,7 @@ export const handlers = [
           },
         ],
         context,
-      }
+      },
     })
   }),
 
@@ -1269,7 +1308,7 @@ export const handlers = [
             deleted: 0,
           },
         },
-      ]
+      ],
     })
   }),
 
@@ -1306,7 +1345,7 @@ export const handlers = [
   }),
 
   // Temporarily disable MSW Notes API endpoints to test built-in API route mocking
-  /* 
+  // /*
   http.get('*/api/notes', ({ request, cookies }) => {
     if (!isRequestAllowed(cookies)) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -1323,9 +1362,8 @@ export const handlers = [
       total: mockNoteStore.length,
     })
   }),
-  */
+  // */
 
-  /*
   http.get('*/api/notes/:id', ({ params, cookies }) => {
     if (!isRequestAllowed(cookies)) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -1350,15 +1388,12 @@ export const handlers = [
     }
 
     // Find the note in the store
-    const note = mockNoteStore.find(n => n.id === id)
+    const note = mockNoteStore.find((n) => n.id === id)
     if (note) {
       return HttpResponse.json({ note })
     }
 
-    return HttpResponse.json(
-      { error: 'Note not found' },
-      { status: 404 }
-    )
+    return HttpResponse.json({ error: 'Note not found' }, { status: 404 })
   }),
 
   http.post('*/api/notes', async ({ request, cookies }) => {
@@ -1395,24 +1430,27 @@ export const handlers = [
     const body = (await request.json()) as any
 
     // Find and update the note in the store
-    const noteIndex = mockNoteStore.findIndex(n => n.id === id)
+    const noteIndex = mockNoteStore.findIndex((n) => n.id === id)
     if (noteIndex !== -1) {
       mockNoteStore[noteIndex] = {
         ...mockNoteStore[noteIndex],
         title: body.title || mockNoteStore[noteIndex].title,
         content: body.content || mockNoteStore[noteIndex].content,
         updated_at: new Date().toISOString(),
-        folder_id: body.folder_id !== undefined ? body.folder_id : mockNoteStore[noteIndex].folder_id,
-        is_public: body.is_public !== undefined ? body.is_public : mockNoteStore[noteIndex].is_public,
+        folder_id:
+          body.folder_id !== undefined
+            ? body.folder_id
+            : mockNoteStore[noteIndex].folder_id,
+        is_public:
+          body.is_public !== undefined
+            ? body.is_public
+            : mockNoteStore[noteIndex].is_public,
       }
 
       return HttpResponse.json({ note: mockNoteStore[noteIndex] })
     }
 
-    return HttpResponse.json(
-      { error: 'Note not found' },
-      { status: 404 }
-    )
+    return HttpResponse.json({ error: 'Note not found' }, { status: 404 })
   }),
 
   http.delete('*/api/notes/:id', ({ params, cookies }) => {
@@ -1421,9 +1459,9 @@ export const handlers = [
     }
 
     const { id } = params
-    
+
     // Find and remove the note from the store
-    const noteIndex = mockNoteStore.findIndex(n => n.id === id)
+    const noteIndex = mockNoteStore.findIndex((n) => n.id === id)
     if (noteIndex !== -1) {
       mockNoteStore.splice(noteIndex, 1)
       return HttpResponse.json({
@@ -1432,12 +1470,9 @@ export const handlers = [
       })
     }
 
-    return HttpResponse.json(
-      { error: 'Note not found' },
-      { status: 404 }
-    )
+    return HttpResponse.json({ error: 'Note not found' }, { status: 404 })
   }),
-  */
+  // */
 
   // Comprehensive search API mocks
   http.get('*/api/search', ({ request, cookies }) => {

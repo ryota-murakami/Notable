@@ -30,10 +30,13 @@ export class PluginCommandIntegration {
     this.commandPaletteIntegration = commandPalette
 
     // Register core plugin system commands
-    await this.registerCoreCommands()
+    this.registerCoreCommands()
 
     // Register commands from active plugins
-    await this.registerPluginCommands()
+    this.registerPluginCommands()
+
+    // Future: May need to await plugin system initialization
+    await Promise.resolve()
 
     console.info('🎯 Plugin command integration initialized')
   }
@@ -116,7 +119,7 @@ export class PluginCommandIntegration {
   /**
    * Register core plugin system commands
    */
-  private registerCoreCommands(): Promise<void> {
+  private registerCoreCommands(): void {
     const coreCommands: Omit<PluginCommand, 'pluginId'>[] = [
       {
         id: 'plugins.openManager',
@@ -225,21 +228,19 @@ export class PluginCommandIntegration {
   /**
    * Register commands from all active plugins
    */
-  private async registerPluginCommands(): Promise<void> {
+  private registerPluginCommands(): void {
     const manager = notablePluginSystem.getPluginManager()
     const activePlugins = manager.getActivePlugins()
 
     for (const plugin of activePlugins) {
-      await this.registerPluginSpecificCommands(plugin.manifest.id)
+      this.registerPluginSpecificCommands(plugin.manifest.id)
     }
   }
 
   /**
    * Register commands for a specific plugin
    */
-  private registerPluginSpecificCommands(
-    pluginId: string
-  ): Promise<void> {
+  private registerPluginSpecificCommands(pluginId: string): void {
     // This would query the plugin for its available commands
     // For now, we'll use the Hello World plugin as an example
 

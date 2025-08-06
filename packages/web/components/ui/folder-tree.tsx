@@ -1,17 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   ChevronDown,
   ChevronRight,
+  Edit,
+  FileText,
   Folder,
   FolderOpen,
   FolderPlus,
+  GripVertical,
   MoreVertical,
-  Edit,
   Trash,
-  FileText,
-  DragHandleDots2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -25,13 +25,13 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { useDrag, useDrop, DndProvider } from 'react-dnd'
+import { DndProvider, useDrag, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
 interface FolderNode {
@@ -79,7 +79,9 @@ export function FolderTree({
   onFolderMove,
   className,
 }: FolderTreeProps) {
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(expandedFolders))
+  const [expanded, setExpanded] = useState<Set<string>>(
+    new Set(expandedFolders)
+  )
   const [editingFolder, setEditingFolder] = useState<string | null>(null)
   const [editingName, setEditingName] = useState('')
   const [showCreateDialog, setShowCreateDialog] = useState(false)
@@ -89,25 +91,33 @@ export function FolderTree({
   const [deletingFolder, setDeletingFolder] = useState<FolderNode | null>(null)
 
   // Build folder tree with hierarchy
-  const buildTree = (folders: FolderNode[], parentId: string | null = null, depth = 0): FolderNode[] => {
+  const buildTree = (
+    folders: FolderNode[],
+    parentId: string | null = null,
+    depth = 0
+  ): FolderNode[] => {
     return folders
-      .filter(folder => folder.parentId === parentId)
-      .map(folder => {
+      .filter((folder) => folder.parentId === parentId)
+      .map((folder) => {
         const children = buildTree(folders, folder.id, depth + 1)
-        const noteCount = notes.filter(note => note.folder_id === folder.id).length
+        const noteCount = notes.filter(
+          (note) => note.folder_id === folder.id
+        ).length
         return {
           ...folder,
           children,
           noteCount,
           depth,
-          path: parentId ? `${folders.find(f => f.id === parentId)?.name}/${folder.name}` : folder.name,
+          path: parentId
+            ? `${folders.find((f) => f.id === parentId)?.name}/${folder.name}`
+            : folder.name,
         }
       })
       .sort((a, b) => a.name.localeCompare(b.name))
   }
 
   const folderTree = buildTree(folders)
-  const rootNotes = notes.filter(note => !note.folder_id)
+  const rootNotes = notes.filter((note) => !note.folder_id)
 
   const toggleExpanded = (folderId: string) => {
     const newExpanded = new Set(expanded)
@@ -158,7 +168,7 @@ export function FolderTree({
   }
 
   const renderFolderNode = (folder: FolderNode) => {
-    const hasChildren = folder.children && folder.children.length > 0
+    const hasChildren = Boolean(folder.children && folder.children.length > 0)
     const isExpanded = expanded.has(folder.id)
     const isSelected = selectedFolderId === folder.id
     const isEditing = editingFolder === folder.id
@@ -195,23 +205,23 @@ export function FolderTree({
                   cancelEditing()
                 }
               }}
-              className="h-6 text-sm"
+              className='h-6 text-sm'
               autoFocus
             />
           ) : (
-            <div className="flex items-center gap-2 flex-1 truncate">
+            <div className='flex items-center gap-2 flex-1 truncate'>
               {hasChildren ? (
                 isExpanded ? (
-                  <FolderOpen className="h-4 w-4 text-blue-600" />
+                  <FolderOpen className='h-4 w-4 text-blue-600' />
                 ) : (
-                  <Folder className="h-4 w-4 text-blue-600" />
+                  <Folder className='h-4 w-4 text-blue-600' />
                 )
               ) : (
-                <Folder className="h-4 w-4 text-gray-500" />
+                <Folder className='h-4 w-4 text-gray-500' />
               )}
-              <span className="truncate">{folder.name}</span>
+              <span className='truncate'>{folder.name}</span>
               {folder.noteCount !== undefined && folder.noteCount > 0 && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant='secondary' className='text-xs'>
                   {folder.noteCount}
                 </Badge>
               )}
@@ -220,7 +230,7 @@ export function FolderTree({
         </DraggableFolderItem>
 
         {hasChildren && isExpanded && (
-          <div className="ml-4 border-l border-border pl-2">
+          <div className='ml-4 border-l border-border pl-2'>
             {folder.children?.map(renderFolderNode)}
           </div>
         )}
@@ -230,39 +240,39 @@ export function FolderTree({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={cn("h-full flex flex-col", className)}>
+      <div className={cn('h-full flex flex-col', className)}>
         {/* Header */}
-        <div className="flex items-center justify-between p-3 border-b">
-          <h3 className="font-semibold text-sm">Folders</h3>
+        <div className='flex items-center justify-between p-3 border-b'>
+          <h3 className='font-semibold text-sm'>Folders</h3>
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={() => setShowCreateDialog(true)}
-            data-testid="new-folder-button"
+            data-testid='new-folder-button'
           >
-            <FolderPlus className="h-4 w-4" />
+            <FolderPlus className='h-4 w-4' />
           </Button>
         </div>
 
         {/* Folder Tree */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-2 space-y-1">
+        <div className='flex-1 overflow-auto'>
+          <div className='p-2 space-y-1'>
             {/* All Notes / Root */}
             <DroppableArea
               folderId={null}
               onDrop={onNoteMove}
               className={cn(
-                "flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors",
+                'flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors',
                 selectedFolderId === null
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-accent"
+                  ? 'bg-primary text-primary-foreground'
+                  : 'hover:bg-accent'
               )}
               onClick={() => handleFolderSelect(null)}
             >
-              <FileText className="h-4 w-4" />
+              <FileText className='h-4 w-4' />
               <span>All Notes</span>
               {rootNotes.length > 0 && (
-                <Badge variant="secondary" className="text-xs ml-auto">
+                <Badge variant='secondary' className='text-xs ml-auto'>
                   {rootNotes.length}
                 </Badge>
               )}
@@ -272,10 +282,12 @@ export function FolderTree({
             {folderTree.map(renderFolderNode)}
 
             {folderTree.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <Folder className="h-8 w-8 mx-auto mb-2" />
-                <p className="text-sm">No folders yet</p>
-                <p className="text-xs">Create your first folder to organize notes</p>
+              <div className='text-center py-8 text-muted-foreground'>
+                <Folder className='h-8 w-8 mx-auto mb-2' />
+                <p className='text-sm'>No folders yet</p>
+                <p className='text-xs'>
+                  Create your first folder to organize notes
+                </p>
               </div>
             )}
           </div>
@@ -287,14 +299,15 @@ export function FolderTree({
             <DialogHeader>
               <DialogTitle>Create New Folder</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className='space-y-4'>
               {createParentId && (
-                <div className="text-sm text-muted-foreground">
-                  Creating subfolder in: {folders.find(f => f.id === createParentId)?.name}
+                <div className='text-sm text-muted-foreground'>
+                  Creating subfolder in:{' '}
+                  {folders.find((f) => f.id === createParentId)?.name}
                 </div>
               )}
               <Input
-                placeholder="Folder name"
+                placeholder='Folder name'
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
                 onKeyDown={(e) => {
@@ -302,15 +315,21 @@ export function FolderTree({
                     handleCreateFolder()
                   }
                 }}
-                data-testid="folder-name-input"
+                data-testid='folder-name-input'
                 autoFocus
               />
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+              <Button
+                variant='outline'
+                onClick={() => setShowCreateDialog(false)}
+              >
                 Cancel
               </Button>
-              <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
+              <Button
+                onClick={handleCreateFolder}
+                disabled={!newFolderName.trim()}
+              >
                 Create Folder
               </Button>
             </DialogFooter>
@@ -323,22 +342,29 @@ export function FolderTree({
             <DialogHeader>
               <DialogTitle>Delete Folder</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <p>Are you sure you want to delete the folder "{deletingFolder?.name}"?</p>
+            <div className='space-y-4'>
+              <p>
+                Are you sure you want to delete the folder &quot;
+                {deletingFolder?.name}&quot;?
+              </p>
               {deletingFolder?.noteCount && deletingFolder.noteCount > 0 && (
-                <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                  <p className="text-sm text-yellow-800">
-                    This folder contains {deletingFolder.noteCount} note{deletingFolder.noteCount !== 1 ? 's' : ''}. 
-                    {' '}They will be moved to "All Notes".
+                <div className='bg-yellow-50 p-3 rounded-lg border border-yellow-200'>
+                  <p className='text-sm text-yellow-800'>
+                    This folder contains {deletingFolder.noteCount} note
+                    {deletingFolder.noteCount !== 1 ? 's' : ''}. They will be
+                    moved to &quot;All Notes&quot;.
                   </p>
                 </div>
               )}
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+              <Button
+                variant='outline'
+                onClick={() => setShowDeleteDialog(false)}
+              >
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={handleDeleteFolder}>
+              <Button variant='destructive' onClick={handleDeleteFolder}>
                 Delete Folder
               </Button>
             </DialogFooter>
@@ -395,49 +421,64 @@ function DraggableFolderItem({
     }),
   })
 
-  const ref = drop(dragPreview(null))
+  const divRef = useRef<HTMLDivElement>(null)
+
+  // Combine refs properly
+  const combinedRef = (el: HTMLDivElement | null) => {
+    divRef.current = el
+    drop(el)
+    dragPreview(el)
+  }
 
   return (
     <div
-      ref={ref}
+      ref={combinedRef}
       className={cn(
-        "flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors",
-        isSelected ? "bg-primary text-primary-foreground" : "hover:bg-accent",
-        isDragging && "opacity-50",
-        isOver && canDrop && "bg-blue-50 border-2 border-blue-300 border-dashed"
+        'flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors',
+        isSelected ? 'bg-primary text-primary-foreground' : 'hover:bg-accent',
+        isDragging && 'opacity-50',
+        isOver && canDrop && 'bg-blue-50 border-2 border-blue-300 border-dashed'
       )}
       data-testid={`folder-${folder.name.toLowerCase().replace(/\s+/g, '-')}`}
     >
       {/* Expand/Collapse Button */}
       {hasChildren ? (
         <Button
-          variant="ghost"
-          size="sm"
-          className="h-4 w-4 p-0"
+          variant='ghost'
+          size='sm'
+          className='h-4 w-4 p-0'
           onClick={(e) => {
             e.stopPropagation()
             onToggleExpand()
           }}
         >
           {isExpanded ? (
-            <ChevronDown className="h-3 w-3" />
+            <ChevronDown className='h-3 w-3' />
           ) : (
-            <ChevronRight className="h-3 w-3" />
+            <ChevronRight className='h-3 w-3' />
           )}
         </Button>
       ) : (
-        <div className="h-4 w-4" />
+        <div className='h-4 w-4' />
       )}
 
       {/* Drag Handle */}
-      <div ref={drag} className="cursor-grab active:cursor-grabbing">
-        <DragHandleDots2 className="h-3 w-3 text-muted-foreground" />
+      <div ref={drag as any} className='cursor-grab active:cursor-grabbing'>
+        <GripVertical className='h-3 w-3 text-muted-foreground' />
       </div>
 
       {/* Folder Content */}
       <div
-        className="flex-1 flex items-center gap-2 cursor-pointer"
+        className='flex-1 flex items-center gap-2 cursor-pointer'
         onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onSelect?.()
+          }
+        }}
+        tabIndex={0}
+        role='button'
       >
         {children}
       </div>
@@ -446,26 +487,26 @@ function DraggableFolderItem({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="ghost"
-            size="sm"
-            className="h-4 w-4 p-0 opacity-0 group-hover:opacity-100"
+            variant='ghost'
+            size='sm'
+            className='h-4 w-4 p-0 opacity-0 group-hover:opacity-100'
             onClick={(e) => e.stopPropagation()}
           >
-            <MoreVertical className="h-3 w-3" />
+            <MoreVertical className='h-3 w-3' />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuContent align='end' className='w-48'>
           <DropdownMenuItem onClick={onCreateSubfolder}>
-            <FolderPlus className="h-4 w-4 mr-2" />
+            <FolderPlus className='h-4 w-4 mr-2' />
             New Subfolder
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onEdit}>
-            <Edit className="h-4 w-4 mr-2" />
+            <Edit className='h-4 w-4 mr-2' />
             Rename
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={onDelete} className="text-destructive">
-            <Trash className="h-4 w-4 mr-2" />
+          <DropdownMenuItem onClick={onDelete} className='text-destructive'>
+            <Trash className='h-4 w-4 mr-2' />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -502,12 +543,20 @@ function DroppableArea({
 
   return (
     <div
-      ref={drop}
+      ref={drop as any}
       className={cn(
         className,
-        isOver && canDrop && "bg-blue-50 border-2 border-blue-300 border-dashed"
+        isOver && canDrop && 'bg-blue-50 border-2 border-blue-300 border-dashed'
       )}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      tabIndex={onClick ? 0 : undefined}
+      role={onClick ? 'button' : undefined}
     >
       {children}
     </div>
@@ -524,10 +573,10 @@ export function useFolders() {
     try {
       setLoading(true)
       setError(null)
-      
+
       const response = await fetch('/api/folders')
       const result = await response.json()
-      
+
       if (response.ok) {
         setFolders(result.data || [])
       } else {
@@ -548,9 +597,9 @@ export function useFolders() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, parent_id: parentId }),
       })
-      
+
       const result = await response.json()
-      
+
       if (response.ok) {
         await fetchFolders() // Refresh the list
         return result.data
@@ -570,9 +619,9 @@ export function useFolders() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName }),
       })
-      
+
       const result = await response.json()
-      
+
       if (response.ok) {
         await fetchFolders() // Refresh the list
         return result.data
@@ -590,7 +639,7 @@ export function useFolders() {
       const response = await fetch(`/api/folders/${folderId}`, {
         method: 'DELETE',
       })
-      
+
       if (response.ok) {
         await fetchFolders() // Refresh the list
       } else {
@@ -603,16 +652,19 @@ export function useFolders() {
     }
   }
 
-  const moveFolder = async (folderId: string, targetParentId: string | null) => {
+  const moveFolder = async (
+    folderId: string,
+    targetParentId: string | null
+  ) => {
     try {
       const response = await fetch(`/api/folders/${folderId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ parent_id: targetParentId }),
       })
-      
+
       const result = await response.json()
-      
+
       if (response.ok) {
         await fetchFolders() // Refresh the list
         return result.data

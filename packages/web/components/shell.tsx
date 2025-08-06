@@ -26,17 +26,19 @@ import {
   AdvancedSearch,
   GlobalSearchTrigger,
 } from '@/components/ui/advanced-search'
-import { TemplatePicker } from '@/components/templates/template-picker'
+import {
+  type Template,
+  TemplatePicker,
+} from '@/components/templates/template-picker'
 import { TemplateVariableForm } from '@/components/templates/template-variable-form'
 import { useTemplateActions } from '@/hooks/use-templates'
-import type { Template } from '@/types/templates'
 import { TagManagementPanel } from '@/components/ui/tag-management-panel'
 import { DailyNotes } from '@/components/ui/daily-notes'
 import { SmartNoteSuggestions } from '@/components/ui/smart-note-suggestions'
 import { FolderTree } from '@/components/folders/folder-tree'
 import { NewFolderButton } from '@/components/folders/new-folder-button'
 import { useFolders } from '@/hooks/use-folders'
-import { ExportDialog, ExportDropdown } from '@/components/ui/export-dialog'
+import { ExportDialog } from '@/components/ui/export-dialog'
 import { VersionHistory } from '@/components/ui/version-history'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
@@ -113,7 +115,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
     // Set hydration flag for tests - always set it to ensure E2E tests work
     if (typeof window !== 'undefined') {
-      (window as any).__NOTABLE_HYDRATED = true
+      ;(window as any).__NOTABLE_HYDRATED = true
       // Hydration flag set for E2E tests
     }
   }, [isTestMode])
@@ -121,7 +123,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   // Set hydration flag immediately on mount for E2E tests
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as any).__NOTABLE_HYDRATED = true
+      ;(window as any).__NOTABLE_HYDRATED = true
       // Hydration flag set immediately on mount
     }
   }, [])
@@ -772,7 +774,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
             <FolderTree
               selectedFolderId={selectedFolderId}
               onFolderSelect={setSelectedFolderId}
-              onNoteCreate={async (folderId) => {
+              _onNoteCreate={async (folderId) => {
                 setSelectedFolderId(folderId)
                 await handleNewNote()
               }}
@@ -1061,7 +1063,6 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         onOpenChange={setShowExportDialog}
         noteId={selectedNote?.id || ''}
         noteTitle={selectedNote?.title || 'Untitled'}
-        noteContent={selectedNote?.content}
       />
 
       {/* Version History Dialog */}
