@@ -39,7 +39,7 @@ const mockNoteStore: Array<{
     },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    user_id: '11111111-1111-1111-1111-111111111111',
+    user_id: 'mock-user-id',
     folder_id: null,
     is_public: false,
   },
@@ -192,7 +192,7 @@ const MOCK_CATEGORIES = [
 
 // Test user data
 const TEST_USER = {
-  id: '11111111-1111-1111-1111-111111111111',
+  id: 'mock-user-id',
   email: 'test@example.com',
   email_confirmed_at: new Date().toISOString(),
   phone: null,
@@ -532,7 +532,7 @@ export const handlers = [
 
     // eslint-disable-next-line no-undef
     const { mockStore } = require('../utils/mock-data-store')
-    const mockUserId = '11111111-1111-1111-1111-111111111111'
+    const mockUserId = 'mock-user-id'
     const tags = mockStore.tags.getAll(mockUserId)
 
     console.info('[MSW] GET /api/tags - returning tags:', tags)
@@ -551,7 +551,7 @@ export const handlers = [
     // eslint-disable-next-line no-undef
     const { mockStore } = require('../utils/mock-data-store')
     const body = (await request.json()) as any
-    const mockUserId = '11111111-1111-1111-1111-111111111111'
+    const mockUserId = 'mock-user-id'
 
     // Validate required fields
     if (!body.name) {
@@ -771,7 +771,7 @@ export const handlers = [
     return HttpResponse.json([
       {
         id: 'n1111111-1111-1111-1111-111111111111',
-        title: 'Welcome to Notable',
+        title: 'Test Note 1',
         content:
           '{"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Welcome to Notable! This is your first note."}]}]}',
         user_id: TEST_USER.id,
@@ -781,7 +781,7 @@ export const handlers = [
       },
       {
         id: 'n2222222-2222-2222-2222-222222222222',
-        title: 'Meeting Notes',
+        title: 'Test Note 2',
         content:
           '{"type": "doc", "content": [{"type": "heading", "attrs": {"level": 2}, "content": [{"type": "text", "text": "Team Meeting"}]}, {"type": "paragraph", "content": [{"type": "text", "text": "Discussed project roadmap and upcoming features."}]}]}',
         user_id: TEST_USER.id,
@@ -800,23 +800,21 @@ export const handlers = [
       ? `dn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       : `n${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-    return HttpResponse.json([
-      {
-        id: noteId,
-        ...body,
-        user_id: TEST_USER.id,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        deleted_at: null,
-        is_pinned: false,
-        is_favorited: false,
-        is_archived: false,
-        is_daily_note: body.is_daily_note || false,
-        custom_id: body.custom_id || null,
-        folder_id: null,
-        tags: [],
-      },
-    ])
+    return HttpResponse.json({
+      id: noteId,
+      ...body,
+      user_id: TEST_USER.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      deleted_at: null,
+      is_pinned: false,
+      is_favorited: false,
+      is_archived: false,
+      is_daily_note: body.is_daily_note || false,
+      custom_id: body.custom_id || null,
+      folder_id: null,
+      tags: [],
+    })
   }),
 
   http.patch('*/rest/v1/notes', async ({ request }) => {
@@ -1380,7 +1378,7 @@ export const handlers = [
           content: '', // Empty content for testing
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          user_id: '11111111-1111-1111-1111-111111111111',
+          user_id: 'mock-user-id',
           folder_id: null,
           is_public: false,
         },
@@ -1410,7 +1408,7 @@ export const handlers = [
       content: body.content || { type: 'doc', content: [] },
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      user_id: '11111111-1111-1111-1111-111111111111',
+      user_id: 'mock-user-id',
       folder_id: body.folder_id || null,
       is_public: body.is_public || false,
     }

@@ -10,13 +10,22 @@ function TestComponent() {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
-    fetch('/auth/v1/user')
-      .then((res) => res.json())
+    fetch('/auth/v1/user', {
+      headers: {
+        Authorization: 'Bearer test-token',
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
       .then((data) => {
         setData(data)
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch((err) => {
+        setLoading(false)
+      })
   }, [])
 
   if (loading) return <div>Loading...</div>

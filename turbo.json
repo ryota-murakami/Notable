@@ -38,7 +38,9 @@
     },
     "lint": {},
     "lint:fix": {},
-    "typecheck": {},
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
     "e2e": {
       "dependsOn": ["^build"],
       "outputs": ["test-results/**", "playwright-report/**"]
