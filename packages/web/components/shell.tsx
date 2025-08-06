@@ -36,6 +36,8 @@ import { SmartNoteSuggestions } from '@/components/ui/smart-note-suggestions'
 import { FolderTree } from '@/components/folders/folder-tree'
 import { NewFolderButton } from '@/components/folders/new-folder-button'
 import { useFolders } from '@/hooks/use-folders'
+import { ExportDialog, ExportDropdown } from '@/components/ui/export-dialog'
+import { VersionHistory } from '@/components/ui/version-history'
 
 export function Shell({ children }: { children?: React.ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
@@ -82,6 +84,10 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   // Tag management state
   const [showTagManagement, setShowTagManagement] = useState(false)
   const [showVariableForm, setShowVariableForm] = useState(false)
+
+  // Export and version history state
+  const [showExportDialog, setShowExportDialog] = useState(false)
+  const [showVersionHistory, setShowVersionHistory] = useState(false)
   const templateActions = useTemplateActions()
 
   // Tag management
@@ -107,15 +113,15 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
     // Set hydration flag for tests - always set it to ensure E2E tests work
     if (typeof window !== 'undefined') {
-      ;(window as any).__NOTABLE_HYDRATED = true
+      (window as any).__NOTABLE_HYDRATED = true
       // Hydration flag set for E2E tests
     }
-  }, []) // Remove isTestMode from dependencies to prevent infinite loop
+  }, [isTestMode])
 
   // Set hydration flag immediately on mount for E2E tests
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      ;(window as any).__NOTABLE_HYDRATED = true
+      (window as any).__NOTABLE_HYDRATED = true
       // Hydration flag set immediately on mount
     }
   }, [])
@@ -224,12 +230,16 @@ export function Shell({ children }: { children?: React.ReactNode }) {
   }, [])
 
   const handleExportNote = useCallback(() => {
-    // TODO: Implement export functionality
-    toast({
-      title: 'Export',
-      description: 'Export functionality will be implemented soon.',
-    })
-  }, [])
+    if (!selectedNote) {
+      toast({
+        title: 'No Note Selected',
+        description: 'Please select a note first',
+        variant: 'destructive',
+      })
+      return
+    }
+    setShowExportDialog(true)
+  }, [selectedNote])
 
   const handleEditNote = useCallback(() => {
     // TODO: Implement edit mode toggle
@@ -379,6 +389,10 @@ export function Shell({ children }: { children?: React.ReactNode }) {
             setShowTagManagement(false)
           } else if (showVariableForm) {
             setShowVariableForm(false)
+          } else if (showExportDialog) {
+            setShowExportDialog(false)
+          } else if (showVersionHistory) {
+            setShowVersionHistory(false)
           } else if (commandPalette.open) {
             commandPalette.close()
           }
@@ -412,12 +426,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         id: 'open-version-history',
         action: () => {
           if (selectedNote) {
-            // TODO: Open version history dialog
-            console.info('Opening version history for note:', selectedNote.id)
-            toast({
-              title: 'Version History',
-              description: 'Opening version history...',
-            })
+            setShowVersionHistory(true)
           } else {
             toast({
               title: 'No Note Selected',
@@ -435,9 +444,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         id: 'open-export',
         action: () => {
           if (selectedNote) {
-            // TODO: Open export dialog
-            console.info('Opening export for note:', selectedNote.id)
-            toast({ title: 'Export', description: 'Opening export dialog...' })
+            setShowExportDialog(true)
           } else {
             toast({
               title: 'No Note Selected',
@@ -570,14 +577,14 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     [
       handleNewNote,
       handleDeleteCurrentNote,
-      commandPalette.toggle,
-      commandPalette.close,
-      commandPalette.open,
+      commandPalette,
       showKeyboardShortcuts,
       showAdvancedSearch,
       showTemplatePicker,
       showTagManagement,
       showVariableForm,
+      showExportDialog,
+      showVersionHistory,
       selectedNote,
       handleToggleFavorite,
       handleTogglePin,
@@ -1046,6 +1053,23 @@ export function Shell({ children }: { children?: React.ReactNode }) {
         onOpenChange={setShowVariableForm}
         template={selectedTemplate}
         onSubmit={handleCreateNoteFromTemplate}
+      />
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        noteId={selectedNote?.id || ''}
+        noteTitle={selectedNote?.title || 'Untitled'}
+        noteContent={selectedNote?.content}
+      />
+
+      {/* Version History Dialog */}
+      <VersionHistory
+        open={showVersionHistory}
+        onOpenChange={setShowVersionHistory}
+        noteId={selectedNote?.id || ''}
+        noteTitle={selectedNote?.title || 'Untitled'}
       />
     </div>
   )

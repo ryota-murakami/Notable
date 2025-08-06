@@ -15,11 +15,11 @@ test('API tag creation and cache refresh', async ({ page }) => {
   await page.goto('http://localhost:4378/app')
   await page.waitForLoadState('networkidle')
 
-  console.log('🚀 Starting API tag creation test...')
+  console.info('🚀 Starting API tag creation test...')
 
   // Verify the app is loaded
   await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 10000 })
-  console.log('✅ App shell loaded')
+  console.info('✅ App shell loaded')
 
   // Check environment variables
   const envCheck = await page.evaluate(() => {
@@ -32,7 +32,7 @@ test('API tag creation and cache refresh', async ({ page }) => {
           : 'not available',
     }
   })
-  console.log('Client-side environment check:', envCheck)
+  console.info('Client-side environment check:', envCheck)
 
   // Check server-side environment variables via debug API
   const serverEnvCheck = await page.evaluate(async () => {
@@ -44,7 +44,7 @@ test('API tag creation and cache refresh', async ({ page }) => {
       return { error: error instanceof Error ? error.message : String(error) }
     }
   })
-  console.log('Server-side environment check:', serverEnvCheck)
+  console.info('Server-side environment check:', serverEnvCheck)
 
   // Test 1: Create a tag directly via API
   const testTagName = `api-test-tag-${Date.now()}`
@@ -78,13 +78,13 @@ test('API tag creation and cache refresh', async ({ page }) => {
     }
   }, testTagName)
 
-  console.log(`API Response:`, apiResponse)
+  console.info(`API Response:`, apiResponse)
 
   if (apiResponse.success && apiResponse.status === 201) {
-    console.log(`✅ Tag created successfully via API: ${testTagName}`)
-    console.log(`Created tag ID: ${apiResponse.data.id}`)
+    console.info(`✅ Tag created successfully via API: ${testTagName}`)
+    console.info(`Created tag ID: ${apiResponse.data.id}`)
   } else {
-    console.log(`❌ API tag creation failed:`, apiResponse.error)
+    console.info(`❌ API tag creation failed:`, apiResponse.error)
   }
 
   // Test 2: Verify the tag appears in the API response
@@ -109,23 +109,23 @@ test('API tag creation and cache refresh', async ({ page }) => {
     }
   })
 
-  console.log(`Get all tags response:`, getAllTagsResponse)
+  console.info(`Get all tags response:`, getAllTagsResponse)
 
   if (getAllTagsResponse.success) {
     const createdTag = getAllTagsResponse.data.find(
       (tag: any) => tag.name === testTagName
     )
     if (createdTag) {
-      console.log(`✅ Tag found in API response: ${createdTag.name}`)
+      console.info(`✅ Tag found in API response: ${createdTag.name}`)
     } else {
-      console.log(`❌ Tag not found in API response`)
-      console.log(
+      console.info(`❌ Tag not found in API response`)
+      console.info(
         `Available tags:`,
         getAllTagsResponse.data.map((t: any) => t.name)
       )
     }
   } else {
-    console.log(`❌ Failed to get tags:`, getAllTagsResponse.error)
+    console.info(`❌ Failed to get tags:`, getAllTagsResponse.error)
   }
 
   // Test 3: Open tag management and check if React Query cache has the tag
@@ -144,31 +144,31 @@ test('API tag creation and cache refresh', async ({ page }) => {
   const dialogVisible = await page.locator('[role="dialog"]').isVisible()
 
   if (dialogVisible) {
-    console.log('✅ Tag management dialog opened')
+    console.info('✅ Tag management dialog opened')
 
     // Take a screenshot to see the current state
     await page.screenshot({
       path: 'api-tag-creation-final.png',
       fullPage: true,
     })
-    console.log('✅ Screenshot taken')
+    console.info('✅ Screenshot taken')
 
     // Check if the tag is visible in the UI
     const tagVisibleInUI = await page.locator(`text=${testTagName}`).isVisible()
-    console.log(`Tag "${testTagName}" visible in UI: ${tagVisibleInUI}`)
+    console.info(`Tag "${testTagName}" visible in UI: ${tagVisibleInUI}`)
 
     if (tagVisibleInUI) {
-      console.log(
+      console.info(
         '🎉 SUCCESS: Tag created via API and visible in React Query cache!'
       )
     } else {
-      console.log(
+      console.info(
         '⚠️  Tag created via API but not visible in UI - cache invalidation issue'
       )
     }
   } else {
-    console.log('❌ Could not open tag management dialog')
+    console.info('❌ Could not open tag management dialog')
   }
 
-  console.log('🏁 API tag creation test finished')
+  console.info('🏁 API tag creation test finished')
 })

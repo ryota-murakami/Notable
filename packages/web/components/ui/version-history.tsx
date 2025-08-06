@@ -1,615 +1,558 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { format, formatDistanceToNow } from 'date-fns'
-import {
-  Calendar,
-  ChevronRight,
-  Clock,
-  Eye,
-  FileText,
-  GitBranch,
-  Milestone,
-  RotateCcw,
-  Star,
-  Trash2,
-  User,
-} from 'lucide-react'
-import { VersionHistory } from '@/utils/version-history'
-import type {
-  NoteVersion,
-  VersionComparisonResult,
-  VersionHistoryResponse,
-} from '@/types/version'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { toast } from '@/hooks/use-toast'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  History,
+  Clock,
+  User,
+  Plus,
+  Minus,
+  Edit,
+  RotateCcw,
+  Download,
+  Eye,
+  GitBranch,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { formatDistanceToNow } from 'date-fns'
+
+interface VersionChange {
+  added: number
+  modified: number
+  deleted: number
+}
+
+interface Version {
+  id: string
+  noteId: string
+  content: string
+  createdAt: string
+  author: {
+    id: string
+    email: string
+    name?: string
+  }
+  changes: VersionChange
+  size?: number
+  diff?: string
+}
 
 interface VersionHistoryProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
   noteId: string
-  currentVersion?: number
-  className?: string
+  noteTitle?: string
+  onRestoreVersion?: (version: Version) => void
+  onPreviewVersion?: (version: Version) => void
 }
 
-interface VersionListItemProps {
-  version: VersionHistoryResponse
-  isSelected: boolean
-  isCurrent: boolean
-  onSelect: (version: VersionHistoryResponse) => void
-  onRestore: (version: VersionHistoryResponse) => void
-  onMarkMilestone: (version: VersionHistoryResponse) => void
-  onRemoveMilestone: (version: VersionHistoryResponse) => void
-}
+export function VersionHistory({
+  open,
+  onOpenChange,
+  noteId,
+  noteTitle = 'Untitled',
+  onRestoreVersion,
+  onPreviewVersion,
+}: VersionHistoryProps) {
+  const [versions, setVersions] = useState<Version[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selectedVersion, setSelectedVersion] = useState<Version | null>(null)
+  const [showDiff, setShowDiff] = useState(false)
 
-interface VersionComparisonProps {
-  noteId: string
-  version1: number
-  version2: number
-}
-
-interface MilestoneDialogProps {
-  version: VersionHistoryResponse
-  onSave: (name: string, message: string) => void
-  onCancel: () => void
-}
-
-const VersionListItem: React.FC<VersionListItemProps> = ({
-  version,
-  isSelected,
-  isCurrent,
-  onSelect,
-  onRestore,
-  onMarkMilestone,
-  onRemoveMilestone,
-}) => {
-  const [showMilestoneDialog, setShowMilestoneDialog] = useState(false)
-
-  const handleMilestoneAction = useCallback(() => {
-    if (version.isMilestone) {
-      onRemoveMilestone(version)
-    } else {
-      setShowMilestoneDialog(true)
+  useEffect(() => {
+    if (open && noteId) {
+      fetchVersions()
     }
-  }, [version, onRemoveMilestone])
+  }, [open, noteId])
 
-  const handleMilestoneSave = useCallback(
-    (name: string, message: string) => {
-      onMarkMilestone({
-        ...version,
-        versionName: name,
-        versionMessage: message,
-      })
-      setShowMilestoneDialog(false)
-    },
-    [version, onMarkMilestone]
-  )
+  const fetchVersions = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/notes/${noteId}/versions`)
+      const result = await response.json()
+      
+      if (result.success) {
+        setVersions(result.data || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch versions:', error)
+      setVersions([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRestoreVersion = (version: Version) => {
+    if (onRestoreVersion) {
+      onRestoreVersion(version)
+      onOpenChange(false)
+    }
+  }
+
+  const handlePreviewVersion = (version: Version) => {
+    setSelectedVersion(version)
+    if (onPreviewVersion) {
+      onPreviewVersion(version)
+    }
+  }
+
+  const handleExportVersion = (version: Version) => {
+    const blob = new Blob([version.content], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${noteTitle}-v${version.id}.md`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <>
-      <Card
-        className={cn(
-          'cursor-pointer transition-all hover:shadow-md',
-          isSelected && 'ring-2 ring-primary',
-          isCurrent && 'border-green-500 bg-green-50 dark:bg-green-950'
-        )}
-        onClick={() => onSelect(version)}
-        data-testid={`version-item-${version.versionNumber}`}
-      >
-        <CardHeader className='pb-2'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-2'>
-              <Badge variant={isCurrent ? 'default' : 'secondary'}>
-                v{version.versionNumber}
-              </Badge>
-              {version.isMilestone && (
-                <Badge variant='outline' className='text-yellow-600'>
-                  <Star className='h-3 w-3 mr-1' />
-                  {version.versionName || 'Milestone'}
-                </Badge>
-              )}
-              {isCurrent && (
-                <Badge variant='default' className='bg-green-500'>
-                  Current
-                </Badge>
-              )}
-            </div>
-            <div className='flex items-center gap-1'>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleMilestoneAction()
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Version History
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground">
+              View and restore previous versions of "{noteTitle}"
+            </p>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-hidden">
+            {showDiff && selectedVersion ? (
+              <VersionDiffView
+                version={selectedVersion}
+                onBack={() => setShowDiff(false)}
+                onRestore={() => handleRestoreVersion(selectedVersion)}
+                onExport={() => handleExportVersion(selectedVersion)}
+              />
+            ) : (
+              <VersionListView
+                versions={versions}
+                loading={loading}
+                selectedVersion={selectedVersion}
+                onSelectVersion={setSelectedVersion}
+                onPreviewVersion={handlePreviewVersion}
+                onRestoreVersion={handleRestoreVersion}
+                onExportVersion={handleExportVersion}
+                onShowDiff={(version) => {
+                  setSelectedVersion(version)
+                  setShowDiff(true)
                 }}
-                data-testid={`milestone-button-${version.versionNumber}`}
-              >
-                <Star
-                  className={cn(
-                    'h-4 w-4',
-                    version.isMilestone && 'fill-yellow-400 text-yellow-400'
-                  )}
-                />
-              </Button>
-              {!isCurrent && (
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onRestore(version)
-                  }}
-                  data-testid={`restore-button-${version.versionNumber}`}
-                >
-                  <RotateCcw className='h-4 w-4' />
-                </Button>
-              )}
-            </div>
-          </div>
-          <CardTitle className='text-sm font-medium truncate'>
-            {version.title || 'Untitled'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='pt-0'>
-          <div className='flex items-center justify-between text-xs text-muted-foreground'>
-            <div className='flex items-center gap-1'>
-              <Calendar className='h-3 w-3' />
-              {formatDistanceToNow(new Date(version.createdAt), {
-                addSuffix: true,
-              })}
-            </div>
-            {version.wordCount && (
-              <div className='flex items-center gap-1'>
-                <FileText className='h-3 w-3' />
-                {version.wordCount} words
-              </div>
+              />
             )}
           </div>
-          {version.versionMessage && (
-            <p className='text-xs text-muted-foreground mt-2 line-clamp-2'>
-              {version.versionMessage}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      {showMilestoneDialog && (
-        <MilestoneDialog
-          version={version}
-          onSave={handleMilestoneSave}
-          onCancel={() => setShowMilestoneDialog(false)}
-        />
-      )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
 
-const MilestoneDialog: React.FC<MilestoneDialogProps> = ({
-  version,
-  onSave,
-  onCancel,
-}) => {
-  const [name, setName] = useState(version.versionName || '')
-  const [message, setMessage] = useState(version.versionMessage || '')
-
-  const handleSave = () => {
-    onSave(name, message)
-  }
-
-  return (
-    <Dialog open onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className='sm:max-w-md'>
-        <DialogHeader>
-          <DialogTitle>Mark as Milestone</DialogTitle>
-          <DialogDescription>
-            Add a name and description to mark version {version.versionNumber}{' '}
-            as a milestone.
-          </DialogDescription>
-        </DialogHeader>
-        <div className='space-y-4'>
-          <div>
-            <Label htmlFor='milestone-name'>Name</Label>
-            <Input
-              id='milestone-name'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder='e.g., First Draft, Review Ready'
-            />
-          </div>
-          <div>
-            <Label htmlFor='milestone-message'>Description</Label>
-            <Textarea
-              id='milestone-message'
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder='Optional description of this milestone...'
-              rows={3}
-            />
-          </div>
-          <div className='flex justify-end gap-2'>
-            <Button variant='outline' onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Save Milestone</Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-const VersionComparison: React.FC<VersionComparisonProps> = ({
-  noteId,
-  version1,
-  version2,
-}) => {
-  const { data: comparison, isLoading } = useQuery({
-    queryKey: ['version-comparison', noteId, version1, version2],
-    queryFn: () => VersionHistory.compareVersions(noteId, version1, version2),
-    enabled: !!noteId && !!version1 && !!version2,
-  })
-
-  if (isLoading) {
-    return <div className='p-4 text-center'>Loading comparison...</div>
-  }
-
-  if (!comparison) {
+function VersionListView({
+  versions,
+  loading,
+  selectedVersion,
+  onSelectVersion,
+  onPreviewVersion,
+  onRestoreVersion,
+  onExportVersion,
+  onShowDiff,
+}: {
+  versions: Version[]
+  loading: boolean
+  selectedVersion: Version | null
+  onSelectVersion: (version: Version | null) => void
+  onPreviewVersion: (version: Version) => void
+  onRestoreVersion: (version: Version) => void
+  onExportVersion: (version: Version) => void
+  onShowDiff: (version: Version) => void
+}) {
+  if (loading) {
     return (
-      <div className='p-4 text-center text-muted-foreground'>
-        No comparison data available
+      <div className="space-y-4 p-4">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="flex items-center gap-4 p-4 border rounded-lg">
+              <div className="h-10 w-10 bg-muted rounded-full"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-muted rounded w-1/4"></div>
+                <div className="h-3 bg-muted rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (versions.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <History className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold mb-2">No Version History</h3>
+        <p className="text-muted-foreground">
+          This note doesn't have any saved versions yet.
+        </p>
       </div>
     )
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='grid grid-cols-2 gap-4'>
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-sm'>
-              Version {comparison.version1Data.versionNumber}
-            </CardTitle>
-            <CardDescription>
-              {format(new Date(comparison.version1Data.createdAt), 'PPpp')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <h4 className='font-medium mb-2'>
-              {comparison.version1Data.title}
-            </h4>
-            <ScrollArea className='h-48 border rounded p-2'>
-              <pre className='text-xs whitespace-pre-wrap'>
-                {JSON.stringify(comparison.version1Data.content, null, 2)}
-              </pre>
-            </ScrollArea>
-          </CardContent>
-        </Card>
+    <div className="flex h-full">
+      <div className="w-1/3 border-r">
+        <ScrollArea className="h-full">
+          <div className="p-4 space-y-3">
+            <div className="flex items-center gap-2 mb-4">
+              <GitBranch className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                {versions.length} version{versions.length !== 1 ? 's' : ''}
+              </span>
+            </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-sm'>
-              Version {comparison.version2Data.versionNumber}
-            </CardTitle>
-            <CardDescription>
-              {format(new Date(comparison.version2Data.createdAt), 'PPpp')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <h4 className='font-medium mb-2'>
-              {comparison.version2Data.title}
-            </h4>
-            <ScrollArea className='h-48 border rounded p-2'>
-              <pre className='text-xs whitespace-pre-wrap'>
-                {JSON.stringify(comparison.version2Data.content, null, 2)}
-              </pre>
-            </ScrollArea>
-          </CardContent>
-        </Card>
+            {versions.map((version, index) => (
+              <VersionListItem
+                key={version.id}
+                version={version}
+                isLatest={index === 0}
+                isSelected={selectedVersion?.id === version.id}
+                onClick={() => onSelectVersion(version)}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+
+      <div className="flex-1 p-4">
+        {selectedVersion ? (
+          <VersionDetailsView
+            version={selectedVersion}
+            onPreview={() => onPreviewVersion(selectedVersion)}
+            onRestore={() => onRestoreVersion(selectedVersion)}
+            onExport={() => onExportVersion(selectedVersion)}
+            onShowDiff={() => onShowDiff(selectedVersion)}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full text-muted-foreground">
+            <div className="text-center">
+              <Clock className="h-8 w-8 mx-auto mb-3" />
+              <p>Select a version to view details</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
-export const VersionHistoryPanel: React.FC<VersionHistoryProps> = ({
-  noteId,
-  currentVersion,
-  className,
-}) => {
-  const [selectedVersion, setSelectedVersion] =
-    useState<VersionHistoryResponse | null>(null)
-  const [compareVersion, setCompareVersion] =
-    useState<VersionHistoryResponse | null>(null)
-  const [activeTab, setActiveTab] = useState<
-    'history' | 'compare' | 'milestones'
-  >('history')
-  const queryClient = useQueryClient()
-
-  // Fetch version history
-  const { data: versions = [], isLoading } = useQuery({
-    queryKey: ['version-history', noteId],
-    queryFn: () => VersionHistory.getHistory(noteId),
-    enabled: !!noteId,
-  })
-
-  // Fetch milestones
-  const { data: milestones = [] } = useQuery({
-    queryKey: ['version-milestones', noteId],
-    queryFn: () => VersionHistory.getMilestones(noteId),
-    enabled: !!noteId,
-  })
-
-  // Restore version mutation
-  const restoreMutation = useMutation({
-    mutationFn: (version: VersionHistoryResponse) =>
-      VersionHistory.restoreVersion({
-        noteId,
-        versionNumber: version.versionNumber,
-        createBackup: true,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['version-history', noteId] })
-      toast({
-        title: 'Version Restored',
-        description: 'The note has been restored to the selected version.',
-      })
-    },
-  })
-
-  // Mark milestone mutation
-  const markMilestoneMutation = useMutation({
-    mutationFn: ({
-      version,
-      name,
-      message,
-    }: {
-      version: VersionHistoryResponse
-      name: string
-      message: string
-    }) =>
-      VersionHistory.markAsMilestone(
-        noteId,
-        version.versionNumber,
-        name,
-        message
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['version-history', noteId] })
-      queryClient.invalidateQueries({
-        queryKey: ['version-milestones', noteId],
-      })
-    },
-  })
-
-  // Remove milestone mutation
-  const removeMilestoneMutation = useMutation({
-    mutationFn: (version: VersionHistoryResponse) =>
-      VersionHistory.removeMilestone(noteId, version.versionNumber),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['version-history', noteId] })
-      queryClient.invalidateQueries({
-        queryKey: ['version-milestones', noteId],
-      })
-    },
-  })
-
-  const handleVersionSelect = useCallback(
-    (version: VersionHistoryResponse) => {
-      if (activeTab === 'compare') {
-        if (!selectedVersion) {
-          setSelectedVersion(version)
-        } else if (
-          !compareVersion &&
-          version.versionNumber !== selectedVersion.versionNumber
-        ) {
-          setCompareVersion(version)
-        } else {
-          // Reset selection
-          setSelectedVersion(version)
-          setCompareVersion(null)
-        }
-      } else {
-        setSelectedVersion(version)
-      }
-    },
-    [activeTab, selectedVersion, compareVersion]
-  )
-
-  const handleRestore = useCallback(
-    (version: VersionHistoryResponse) => {
-      restoreMutation.mutate(version)
-    },
-    [restoreMutation]
-  )
-
-  const handleMarkMilestone = useCallback(
-    (versionWithNames: VersionHistoryResponse) => {
-      markMilestoneMutation.mutate({
-        version: versionWithNames,
-        name: versionWithNames.versionName || '',
-        message: versionWithNames.versionMessage || '',
-      })
-    },
-    [markMilestoneMutation]
-  )
-
-  const handleRemoveMilestone = useCallback(
-    (version: VersionHistoryResponse) => {
-      removeMilestoneMutation.mutate(version)
-    },
-    [removeMilestoneMutation]
-  )
-
-  const resetComparison = useCallback(() => {
-    setSelectedVersion(null)
-    setCompareVersion(null)
-  }, [])
-
-  if (isLoading) {
-    return (
-      <div className={cn('p-4', className)}>
-        <div className='flex items-center justify-center h-32'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
-        </div>
-      </div>
-    )
-  }
-
+function VersionListItem({
+  version,
+  isLatest,
+  isSelected,
+  onClick,
+}: {
+  version: Version
+  isLatest: boolean
+  isSelected: boolean
+  onClick: () => void
+}) {
   return (
     <div
-      className={cn('space-y-4', className)}
-      data-testid='version-history-panel'
+      className={cn(
+        "p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm",
+        isSelected ? "border-primary bg-primary/5" : "hover:border-muted-foreground/20"
+      )}
+      onClick={onClick}
     >
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center gap-2'>
-          <Clock className='h-5 w-5' />
-          <h3 className='text-lg font-semibold'>Version History</h3>
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <div className={cn(
+            "h-3 w-3 rounded-full",
+            isLatest ? "bg-green-500" : "bg-muted-foreground/30"
+          )} />
+          {isLatest && (
+            <div className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse" />
+          )}
         </div>
-        <Badge variant='outline'>
-          {versions.length} version{versions.length !== 1 ? 's' : ''}
-        </Badge>
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-sm font-medium">
+              v{version.id}
+            </span>
+            {isLatest && (
+              <Badge variant="secondary" className="text-xs">
+                Current
+              </Badge>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+            <User className="h-3 w-3" />
+            <span>{version.author.name || version.author.email}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Clock className="h-3 w-3" />
+            <span>{formatDistanceToNow(new Date(version.createdAt))} ago</span>
+          </div>
+        </div>
       </div>
 
-      <Tabs
-        value={activeTab}
-        onValueChange={(value) => setActiveTab(value as any)}
-      >
-        <TabsList className='grid w-full grid-cols-3'>
-          <TabsTrigger value='history'>History</TabsTrigger>
-          <TabsTrigger value='compare'>Compare</TabsTrigger>
-          <TabsTrigger value='milestones'>Milestones</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value='history' className='space-y-3'>
-          <ScrollArea className='h-96'>
-            <div className='space-y-3'>
-              {versions.map((version) => (
-                <VersionListItem
-                  key={version.versionId}
-                  version={version}
-                  isSelected={
-                    selectedVersion?.versionNumber === version.versionNumber
-                  }
-                  isCurrent={currentVersion === version.versionNumber}
-                  onSelect={handleVersionSelect}
-                  onRestore={handleRestore}
-                  onMarkMilestone={handleMarkMilestone}
-                  onRemoveMilestone={handleRemoveMilestone}
-                />
-              ))}
-            </div>
-          </ScrollArea>
-        </TabsContent>
-
-        <TabsContent value='compare' className='space-y-3'>
-          <div className='text-sm text-muted-foreground mb-4'>
-            Select two versions to compare them side by side.
-            {selectedVersion && !compareVersion && (
-              <div className='mt-2 p-2 bg-blue-50 dark:bg-blue-950 rounded'>
-                Selected version {selectedVersion.versionNumber}. Select another
-                version to compare.
-              </div>
-            )}
-            {selectedVersion && compareVersion && (
-              <div className='mt-2 p-2 bg-green-50 dark:bg-green-950 rounded flex items-center justify-between'>
-                <span>
-                  Comparing versions {selectedVersion.versionNumber} and{' '}
-                  {compareVersion.versionNumber}
-                </span>
-                <Button variant='outline' size='sm' onClick={resetComparison}>
-                  Reset
-                </Button>
-              </div>
-            )}
+      <div className="flex items-center gap-3 mt-2 text-xs">
+        {version.changes.added > 0 && (
+          <div className="flex items-center gap-1 text-green-600">
+            <Plus className="h-3 w-3" />
+            <span>{version.changes.added}</span>
           </div>
-
-          {selectedVersion && compareVersion ? (
-            <VersionComparison
-              noteId={noteId}
-              version1={selectedVersion.versionNumber}
-              version2={compareVersion.versionNumber}
-            />
-          ) : (
-            <ScrollArea className='h-96'>
-              <div className='space-y-3'>
-                {versions.map((version) => (
-                  <VersionListItem
-                    key={version.versionId}
-                    version={version}
-                    isSelected={
-                      selectedVersion?.versionNumber ===
-                        version.versionNumber ||
-                      compareVersion?.versionNumber === version.versionNumber
-                    }
-                    isCurrent={currentVersion === version.versionNumber}
-                    onSelect={handleVersionSelect}
-                    onRestore={handleRestore}
-                    onMarkMilestone={handleMarkMilestone}
-                    onRemoveMilestone={handleRemoveMilestone}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-          )}
-        </TabsContent>
-
-        <TabsContent value='milestones' className='space-y-3'>
-          <div className='text-sm text-muted-foreground mb-4'>
-            Important versions marked as milestones for easy access.
+        )}
+        {version.changes.modified > 0 && (
+          <div className="flex items-center gap-1 text-blue-600">
+            <Edit className="h-3 w-3" />
+            <span>{version.changes.modified}</span>
           </div>
-          <ScrollArea className='h-96'>
-            <div className='space-y-3'>
-              {milestones.length === 0 ? (
-                <div className='text-center text-muted-foreground py-8'>
-                  <Milestone className='h-12 w-12 mx-auto mb-2 opacity-50' />
-                  <p>No milestones yet</p>
-                  <p className='text-xs'>
-                    Mark important versions as milestones from the History tab
-                  </p>
-                </div>
-              ) : (
-                milestones.map((version) => (
-                  <VersionListItem
-                    key={version.versionId}
-                    version={version}
-                    isSelected={
-                      selectedVersion?.versionNumber === version.versionNumber
-                    }
-                    isCurrent={currentVersion === version.versionNumber}
-                    onSelect={handleVersionSelect}
-                    onRestore={handleRestore}
-                    onMarkMilestone={handleMarkMilestone}
-                    onRemoveMilestone={handleRemoveMilestone}
-                  />
-                ))
-              )}
-            </div>
-          </ScrollArea>
-        </TabsContent>
-      </Tabs>
+        )}
+        {version.changes.deleted > 0 && (
+          <div className="flex items-center gap-1 text-red-600">
+            <Minus className="h-3 w-3" />
+            <span>{version.changes.deleted}</span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
-export default VersionHistoryPanel
+function VersionDetailsView({
+  version,
+  onPreview,
+  onRestore,
+  onExport,
+  onShowDiff,
+}: {
+  version: Version
+  onPreview: () => void
+  onRestore: () => void
+  onExport: () => void
+  onShowDiff: () => void
+}) {
+  return (
+    <div className="h-full flex flex-col">
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">Version {version.id}</h3>
+        
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-sm">
+            <User className="h-4 w-4 text-muted-foreground" />
+            <span>{version.author.name || version.author.email}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <span>{new Date(version.createdAt).toLocaleString()}</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-1">
+              <span className="text-muted-foreground">Changes:</span>
+            </div>
+            <div className="flex items-center gap-3">
+              {version.changes.added > 0 && (
+                <div className="flex items-center gap-1 text-green-600">
+                  <Plus className="h-3 w-3" />
+                  <span>{version.changes.added} added</span>
+                </div>
+              )}
+              {version.changes.modified > 0 && (
+                <div className="flex items-center gap-1 text-blue-600">
+                  <Edit className="h-3 w-3" />
+                  <span>{version.changes.modified} modified</span>
+                </div>
+              )}
+              {version.changes.deleted > 0 && (
+                <div className="flex items-center gap-1 text-red-600">
+                  <Minus className="h-3 w-3" />
+                  <span>{version.changes.deleted} deleted</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="flex-1 py-6">
+        <div className="mb-4">
+          <h4 className="text-sm font-medium mb-2">Content Preview</h4>
+        </div>
+        
+        <ScrollArea className="h-64 border rounded-lg p-4 bg-muted/30">
+          <pre className="text-sm whitespace-pre-wrap font-mono">
+            {version.content.slice(0, 1000)}
+            {version.content.length > 1000 && '...'}
+          </pre>
+        </ScrollArea>
+      </div>
+
+      <div className="flex gap-2 pt-4 border-t">
+        <Button onClick={onShowDiff} variant="outline" className="flex-1">
+          <GitBranch className="h-4 w-4 mr-2" />
+          View Diff
+        </Button>
+        <Button onClick={onPreview} variant="outline">
+          <Eye className="h-4 w-4 mr-2" />
+          Preview
+        </Button>
+        <Button onClick={onExport} variant="outline">
+          <Download className="h-4 w-4 mr-2" />
+          Export
+        </Button>
+        <Button onClick={onRestore}>
+          <RotateCcw className="h-4 w-4 mr-2" />
+          Restore
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function VersionDiffView({
+  version,
+  onBack,
+  onRestore,
+  onExport,
+}: {
+  version: Version
+  onBack: () => void
+  onRestore: () => void
+  onExport: () => void
+}) {
+  // This would normally show a detailed diff
+  // For now, showing simplified version
+  
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            ← Back
+          </Button>
+          <h3 className="text-lg font-semibold">
+            Diff for Version {version.id}
+          </h3>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button onClick={onExport} variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Button onClick={onRestore} size="sm">
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Restore
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex-1 border rounded-lg overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-4 space-y-4">
+            <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded">
+              <div className="flex items-center gap-2 mb-2">
+                <Plus className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium text-green-800">
+                  {version.changes.added} lines added
+                </span>
+              </div>
+              <pre className="text-sm text-green-700 font-mono">
+                {version.content.split('\n').slice(0, 5).map((line, i) => (
+                  <div key={i}>+ {line}</div>
+                ))}
+              </pre>
+            </div>
+
+            {version.changes.modified > 0 && (
+              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                <div className="flex items-center gap-2 mb-2">
+                  <Edit className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">
+                    {version.changes.modified} lines modified
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {version.changes.deleted > 0 && (
+              <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                <div className="flex items-center gap-2 mb-2">
+                  <Minus className="h-4 w-4 text-red-600" />
+                  <span className="text-sm font-medium text-red-800">
+                    {version.changes.deleted} lines deleted
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+      </div>
+    </div>
+  )
+}
+
+// Hook for version history
+// Export alias for compatibility
+export const VersionHistoryPanel = VersionHistory
+
+export function useVersionHistory(noteId: string) {
+  const [versions, setVersions] = useState<Version[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchVersions = async () => {
+    if (!noteId) return
+
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const response = await fetch(`/api/notes/${noteId}/versions`)
+      const result = await response.json()
+      
+      if (result.success) {
+        setVersions(result.data || [])
+      } else {
+        throw new Error(result.error || 'Failed to fetch versions')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch versions')
+      setVersions([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchVersions()
+  }, [noteId])
+
+  return {
+    versions,
+    loading,
+    error,
+    refetch: fetchVersions,
+  }
+}

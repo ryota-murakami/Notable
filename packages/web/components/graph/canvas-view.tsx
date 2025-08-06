@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+const { useCallback, useEffect, useMemo, useRef, useState } = React
 import {
   BookOpen,
   Copy,

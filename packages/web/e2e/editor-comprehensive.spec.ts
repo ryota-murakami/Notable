@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures/coverage'
-import { waitForHydration } from './utils/wait-for-hydration'
+import { waitForHydration as _waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Comprehensive Editor Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -69,7 +69,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(editor).toContainText('Text formatting test completed')
     })
 
-    test.skip('should combine multiple formats', async ({ page }) => {
+    test('should combine multiple formats', async ({ page }) => {
       // SKIPPED: Rich text formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -86,7 +86,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(formattedText).toContainText('Combined formatting')
     })
 
-    test.skip('should toggle formats on and off', async ({ page }) => {
+    test('should toggle formats on and off', async ({ page }) => {
       // SKIPPED: Rich text formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -106,7 +106,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Headings', () => {
-    test.skip('should create all heading levels', async ({ page }) => {
+    test('should create all heading levels', async ({ page }) => {
       // SKIPPED: Markdown headings not rendered in textarea
       const editor = page.locator('textarea').first()
 
@@ -142,7 +142,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('h6')).toContainText('Heading 6')
     })
 
-    test.skip('should convert text to heading via toolbar', async ({
+    test('should convert text to heading via toolbar', async ({
       page,
     }) => {
       // SKIPPED: Toolbar heading dropdown not implemented
@@ -161,7 +161,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Lists', () => {
-    test.skip('should create bullet list', async ({ page }) => {
+    test('should create bullet list', async ({ page }) => {
       // SKIPPED: List formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -175,7 +175,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('ul li')).toHaveCount(3)
     })
 
-    test.skip('should create numbered list', async ({ page }) => {
+    test('should create numbered list', async ({ page }) => {
       // SKIPPED: List formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -189,7 +189,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('ol li')).toHaveCount(3)
     })
 
-    test.skip('should create task list', async ({ page }) => {
+    test('should create task list', async ({ page }) => {
       // SKIPPED: Task lists not implemented
       const editor = page.locator('textarea').first()
 
@@ -204,7 +204,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(checkboxes.last()).toBeChecked()
     })
 
-    test.skip('should indent and outdent lists', async ({ page }) => {
+    test('should indent and outdent lists', async ({ page }) => {
       // SKIPPED: List indentation not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -224,7 +224,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Links', () => {
-    test.skip('should create link from selection', async ({ page }) => {
+    test('should create link from selection', async ({ page }) => {
       // SKIPPED: Link dialog not implemented
       const editor = page.locator('textarea').first()
 
@@ -244,7 +244,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(link).toContainText('Click here')
     })
 
-    test.skip('should edit existing link', async ({ page }) => {
+    test('should edit existing link', async ({ page }) => {
       // SKIPPED: Link editing not implemented
       const editor = page.locator('textarea').first()
 
@@ -265,7 +265,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(link).toContainText('Example')
     })
 
-    test.skip('should remove link', async ({ page }) => {
+    test('should remove link', async ({ page }) => {
       // SKIPPED: Link removal not implemented
       const editor = page.locator('textarea').first()
 
@@ -286,7 +286,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Blockquotes', () => {
-    test.skip('should create blockquote', async ({ page }) => {
+    test('should create blockquote', async ({ page }) => {
       // SKIPPED: Blockquote formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -297,7 +297,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('blockquote')).toContainText('This is a quote')
     })
 
-    test.skip('should create nested blockquote', async ({ page }) => {
+    test('should create nested blockquote', async ({ page }) => {
       // SKIPPED: Blockquote formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -313,7 +313,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Code Blocks', () => {
-    test.skip('should create code block', async ({ page }) => {
+    test('should create code block', async ({ page }) => {
       // SKIPPED: Code block formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -329,7 +329,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       )
     })
 
-    test.skip('should create code block with language', async ({ page }) => {
+    test('should create code block with language', async ({ page }) => {
       // SKIPPED: Code block formatting not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -349,7 +349,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Tables', () => {
-    test.skip('should create table', async ({ page }) => {
+    test('should create table', async ({ page }) => {
       // SKIPPED: Table toolbar not implemented
       const editor = page.locator('textarea').first()
 
@@ -365,7 +365,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('td')).toHaveCount(9)
     })
 
-    test.skip('should add table rows and columns', async ({ page }) => {
+    test('should add table rows and columns', async ({ page }) => {
       // SKIPPED: Table manipulation not implemented
       const editor = page.locator('textarea').first()
 
@@ -389,7 +389,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Media Embeds', () => {
-    test.skip('should embed images', async ({ page }) => {
+    test('should embed images', async ({ page }) => {
       // SKIPPED: Image embeds not implemented
       const editor = page.locator('textarea').first()
 
@@ -402,7 +402,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(image).toHaveAttribute('alt', 'Alt text')
     })
 
-    test.skip('should embed videos', async ({ page }) => {
+    test('should embed videos', async ({ page }) => {
       // SKIPPED: Video embeds not implemented
       const editor = page.locator('textarea').first()
 
@@ -425,7 +425,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Advanced Features', () => {
-    test.skip('should support mentions', async ({ page }) => {
+    test('should support mentions', async ({ page }) => {
       // SKIPPED: Mentions not implemented
       const editor = page.locator('textarea').first()
 
@@ -442,7 +442,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('.mention')).toBeVisible()
     })
 
-    test.skip('should support hashtags', async ({ page }) => {
+    test('should support hashtags', async ({ page }) => {
       // SKIPPED: Hashtags not implemented
       const editor = page.locator('textarea').first()
 
@@ -526,7 +526,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(editor).toContainText('Editor functionality works')
     })
 
-    test.skip('should toggle format via toolbar buttons', async ({ page }) => {
+    test('should toggle format via toolbar buttons', async ({ page }) => {
       // SKIPPED: Toolbar buttons not implemented
       const editor = page.locator('textarea').first()
 
@@ -543,7 +543,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(page.locator('em')).toContainText('Toolbar test')
     })
 
-    test.skip('should show active format states', async ({ page }) => {
+    test('should show active format states', async ({ page }) => {
       // SKIPPED: Toolbar buttons not implemented
       const editor = page.locator('textarea').first()
 
@@ -560,7 +560,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
     })
   })
 
-  test.describe.skip('Copy/Paste', () => {
+  test.describe('Copy/Paste', () => {
     // SKIPPED: Clipboard functionality not working in test environment
     test('should paste plain text', async ({ page }) => {
       const editor = page.locator('textarea').first()
@@ -578,7 +578,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       await expect(editor).toContainText('Pasted text')
     })
 
-    test.skip('should paste formatted text', async ({ page }) => {
+    test('should paste formatted text', async ({ page }) => {
       // SKIPPED: Rich text paste not supported in textarea
       const editor = page.locator('textarea').first()
 
@@ -609,7 +609,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
     })
   })
 
-  test.describe.skip('Performance', () => {
+  test.describe('Performance', () => {
     // SKIPPED: Performance tests not applicable to simple textarea
     test('should handle large documents', async ({ page }) => {
       const editor = page.locator('textarea').first()
@@ -647,7 +647,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   test.describe('Accessibility', () => {
-    test.skip('should have proper ARIA labels', async ({ page }) => {
+    test('should have proper ARIA labels', async ({ page }) => {
       // SKIPPED: ARIA attributes not implemented
       const editor = page.locator('textarea').first()
 
@@ -665,7 +665,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       ).toHaveAttribute('aria-label', 'Italic')
     })
 
-    test.skip('should be keyboard navigable', async ({ page }) => {
+    test('should be keyboard navigable', async ({ page }) => {
       // SKIPPED: Toolbar navigation not implemented
       const editor = page.locator('textarea').first()
 

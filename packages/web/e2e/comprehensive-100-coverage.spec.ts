@@ -44,7 +44,7 @@ test.describe('Comprehensive 100% Coverage Tests', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
   })
 
-  test.skip('should cover note CRUD operations', async ({ page }) => {
+  test('should cover note CRUD operations', async ({ page }) => {
     // SKIPPED: Test expects direct note creation without template picker
     await setupAuth(page)
     await page.goto('/app', { waitUntil: 'networkidle' })

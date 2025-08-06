@@ -11,19 +11,19 @@ test('direct route navigation test', async ({ page }) => {
     },
   ])
 
-  console.log('🚀 Testing direct route navigation...')
+  console.info('🚀 Testing direct route navigation...')
 
   // Try to navigate directly to a note URL
   const testNoteId = 'test-note-direct'
   const noteUrl = `http://localhost:4378/notes/${testNoteId}`
 
-  console.log(`📍 Navigating directly to: ${noteUrl}`)
+  console.info(`📍 Navigating directly to: ${noteUrl}`)
 
   try {
     await page.goto(noteUrl)
     await page.waitForLoadState('networkidle')
 
-    console.log(`✅ Successfully navigated to: ${page.url()}`)
+    console.info(`✅ Successfully navigated to: ${page.url()}`)
 
     // Check if we get the note editor or an error page
     const hasNoteEditor = await page
@@ -32,27 +32,27 @@ test('direct route navigation test', async ({ page }) => {
     const hasNotFound = await page.locator('text="Note not found"').isVisible()
     const hasError = await page.locator('text="404"').isVisible()
 
-    console.log(`Note editor visible: ${hasNoteEditor}`)
-    console.log(`Not found message: ${hasNotFound}`)
-    console.log(`404 error: ${hasError}`)
+    console.info(`Note editor visible: ${hasNoteEditor}`)
+    console.info(`Not found message: ${hasNotFound}`)
+    console.info(`404 error: ${hasError}`)
 
     // Take screenshot
     await page.screenshot({ path: 'direct-route-test.png', fullPage: true })
-    console.log('📸 Screenshot taken')
+    console.info('📸 Screenshot taken')
 
     if (hasNoteEditor) {
-      console.log('🎉 SUCCESS: Note editor loaded!')
+      console.info('🎉 SUCCESS: Note editor loaded!')
     } else if (hasNotFound) {
-      console.log(
+      console.info(
         "✅ EXPECTED: Note not found (route works, but note doesn't exist)"
       )
     } else if (hasError) {
-      console.log('❌ FAILURE: 404 error - route not working')
+      console.info('❌ FAILURE: 404 error - route not working')
     } else {
-      console.log('❓ UNKNOWN: Unexpected page state')
+      console.info('❓ UNKNOWN: Unexpected page state')
     }
   } catch (error) {
-    console.log(
+    console.info(
       `❌ Navigation failed: ${error instanceof Error ? error.message : String(error)}`
     )
     await page.screenshot({
@@ -61,5 +61,5 @@ test('direct route navigation test', async ({ page }) => {
     })
   }
 
-  console.log('🏁 Direct route test finished')
+  console.info('🏁 Direct route test finished')
 })

@@ -155,7 +155,7 @@ test.describe('Application Shell', () => {
     }
   })
 
-  test.skip('should create a new note via sidebar button', async ({ page }) => {
+  test('should create a new note via sidebar button', async ({ page }) => {
     // SKIPPED: Note title extraction not working
     // Use sidebar button
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
@@ -207,7 +207,7 @@ test.describe('Application Shell', () => {
     await expect(page.getByText('Welcome to Notable')).toBeVisible()
   })
 
-  test.skip('should display notes in sidebar after creation', async ({
+  test('should display notes in sidebar after creation', async ({
     page,
   }) => {
     // SKIPPED: Note saving/sidebar refresh not working
@@ -251,7 +251,7 @@ test.describe('Application Shell', () => {
     ).not.toBeVisible()
   })
 
-  test.skip('should navigate to note when clicking note in sidebar', async ({
+  test('should navigate to note when clicking note in sidebar', async ({
     page,
   }) => {
     // SKIPPED: Notes not appearing in sidebar
@@ -339,7 +339,7 @@ test.describe('Application Shell', () => {
     }
   })
 
-  test.skip('should handle keyboard navigation', async ({ page }) => {
+  test('should handle keyboard navigation', async ({ page }) => {
     // SKIPPED: Keyboard navigation to create new note expects different behavior
     // Create a note first
     await page.locator('[data-testid="new-note-button"]').click()

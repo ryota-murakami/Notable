@@ -1,6 +1,6 @@
 const { getDefaultConfig } = require('expo/metro-config')
 
-module.exports = (async () => {
+module.exports = (() => {
   const config = getDefaultConfig(__dirname)
 
   // Optimize asset resolution

@@ -4,6 +4,7 @@
   "description": "Notable mobile application built with React Native/Expo",
   "//": "Trigger mobile e2e workflows for PR #177 - restart after infrastructure timeout v2",
   "private": true,
+  "type": "module",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -18,8 +19,8 @@
     "build:preview": "eas build --profile preview --platform all --non-interactive",
     "build:production": "eas build --profile production --platform all --non-interactive",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
     "test": "jest",
     "e2e": "detox test",
     "e2e:build": "detox build",

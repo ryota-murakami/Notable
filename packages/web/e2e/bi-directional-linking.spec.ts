@@ -65,14 +65,14 @@ test.describe('Bi-directional Linking', () => {
     // Debug: Check if wiki link was created
     const wikiLinkCount = await page.evaluate(() => {
       const links = document.querySelectorAll('a[data-wiki-link="true"]')
-      console.log('Found wiki links:', links.length)
+      console.info('Found wiki links:', links.length)
       links.forEach((link, i) => {
-        console.log(`Link ${i}:`, link.textContent, link.getAttribute('href'))
+        console.info(`Link ${i}:`, link.textContent, link.getAttribute('href'))
       })
       return links.length
     })
 
-    console.log('Wiki links found:', wikiLinkCount)
+    console.info('Wiki links found:', wikiLinkCount)
 
     // Verify wiki link was created
     const wikiLink = page.locator('a[data-wiki-link="true"]')
@@ -83,19 +83,19 @@ test.describe('Bi-directional Linking', () => {
         .locator('[contenteditable="true"]')
         .first()
         .textContent()
-      console.log('Editor content after insertion:', editorContent)
+      console.info('Editor content after insertion:', editorContent)
 
       // Verify text was inserted even if wiki link wasn't processed
       expect(editorContent).toContain('[[Target Note]]')
-      console.log('✅ Wiki link text inserted successfully')
-      console.log(
+      console.info('✅ Wiki link text inserted successfully')
+      console.info(
         '⚠️  Wiki link element not created - may need plugin implementation'
       )
     } else {
       // Verify wiki link element exists
       await expect(wikiLink).toBeVisible()
       await expect(wikiLink).toHaveText('Target Note')
-      console.log('✅ Wiki link created successfully!')
+      console.info('✅ Wiki link created successfully!')
     }
   })
 
@@ -162,7 +162,7 @@ test.describe('Bi-directional Linking', () => {
       return panel?.textContent || ''
     })
 
-    console.log('Backlinks panel content:', hasBacklinks)
+    console.info('Backlinks panel content:', hasBacklinks)
 
     if (hasBacklinks.includes('Source Note')) {
       const backlinkItem = backlinksPanel.locator('text=Source Note')
@@ -171,9 +171,9 @@ test.describe('Bi-directional Linking', () => {
       // Verify backlink is clickable using jsClick to avoid timeout issues
       await jsClick(page, 'text=Source Note')
       await expect(page).toHaveURL(`/notes/${note1.id}`)
-      console.log('✅ Backlinks working correctly!')
+      console.info('✅ Backlinks working correctly!')
     } else {
-      console.log(
+      console.info(
         '⚠️  Backlinks not showing - implementation may be incomplete'
       )
       // Test passes if backlinks panel exists even if empty
@@ -235,7 +235,7 @@ test.describe('Bi-directional Linking', () => {
       return links.length
     })
 
-    console.log('Wiki links created:', wikiLinkCount)
+    console.info('Wiki links created:', wikiLinkCount)
 
     if (wikiLinkCount === 2) {
       // Verify both links are created
@@ -247,7 +247,7 @@ test.describe('Bi-directional Linking', () => {
 
       await expect(firstLink).toHaveText('First Target')
       await expect(secondLink).toHaveText('Second Target')
-      console.log('✅ Multiple wiki links created successfully!')
+      console.info('✅ Multiple wiki links created successfully!')
     } else {
       // Verify text was at least inserted
       const editorContent = await page
@@ -256,8 +256,8 @@ test.describe('Bi-directional Linking', () => {
         .textContent()
       expect(editorContent).toContain('[[First Target]]')
       expect(editorContent).toContain('[[Second Target]]')
-      console.log('✅ Wiki link text inserted successfully')
-      console.log(
+      console.info('✅ Wiki link text inserted successfully')
+      console.info(
         '⚠️  Wiki link elements not created - may need plugin implementation'
       )
     }
@@ -291,7 +291,7 @@ test.describe('Bi-directional Linking', () => {
       await expect(
         page.locator('[data-testid="backlinks-panel"]')
       ).toBeVisible()
-      console.log('✅ Backlinks panel is visible')
+      console.info('✅ Backlinks panel is visible')
 
       // Check if badge exists
       const badge = page.locator('[data-testid="backlinks-panel"] .badge')
@@ -299,20 +299,20 @@ test.describe('Bi-directional Linking', () => {
 
       if (badgeCount > 0) {
         const badgeText = await badge.textContent()
-        console.log('Badge text:', badgeText)
+        console.info('Badge text:', badgeText)
         if (badgeText === '1' || badgeText === '0') {
-          console.log(
+          console.info(
             '⚠️  Backlinks feature partially implemented - badge shows',
             badgeText
           )
         }
       } else {
-        console.log(
+        console.info(
           '⚠️  Backlinks badge not found - feature may not be fully implemented'
         )
       }
     } else {
-      console.log('❌ Backlinks panel not found')
+      console.info('❌ Backlinks panel not found')
       // Test should still pass as feature might not be implemented
       expect(true).toBe(true)
     }
@@ -424,17 +424,17 @@ test.describe('Bi-directional Linking', () => {
       await expect(wikiLink).toBeVisible()
 
       const linkText = await wikiLink.textContent()
-      console.log('Wiki link text:', linkText)
+      console.info('Wiki link text:', linkText)
 
       if (linkText === 'Original Title') {
-        console.log('✅ Wiki link shows original title as expected')
+        console.info('✅ Wiki link shows original title as expected')
 
         // Verify it still navigates to correct note using jsClick
         await jsClick(page, 'a[data-wiki-link="true"]')
         await expect(page).toHaveURL(`/notes/${_note2.id}`)
-        console.log('✅ Wiki link navigates to correct note after title change')
+        console.info('✅ Wiki link navigates to correct note after title change')
       } else {
-        console.log(
+        console.info(
           '⚠️  Wiki link text not as expected - implementation may be incomplete'
         )
       }
@@ -444,15 +444,15 @@ test.describe('Bi-directional Linking', () => {
         .locator('[contenteditable="true"]')
         .first()
         .textContent()
-      console.log('Editor content:', content)
+      console.info('Editor content:', content)
 
       if (content?.includes('[[Original Title]]')) {
-        console.log('✅ Wiki link text inserted successfully')
-        console.log(
+        console.info('✅ Wiki link text inserted successfully')
+        console.info(
           '⚠️  Wiki link elements not created - feature may not be implemented'
         )
       } else {
-        console.log('❌ Wiki link text not found in editor')
+        console.info('❌ Wiki link text not found in editor')
       }
     }
   })

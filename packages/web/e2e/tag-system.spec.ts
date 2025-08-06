@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+import { jsClick as _jsClick, jsType } from './utils/js-click'
 
 /**
  * Comprehensive E2E Tests for Tag System
@@ -48,7 +48,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -64,7 +64,7 @@ test.describe('Tag System', () => {
           (btn) => btn.textContent && btn.textContent.trim() === 'Manage Tags'
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -77,7 +77,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('create tag')
         )
         if (createTagBtn) {
-          ;(createTagBtn as HTMLElement).click()
+          (createTagBtn as HTMLElement).click()
         }
       })
 
@@ -102,7 +102,7 @@ test.describe('Tag System', () => {
             btn.textContent && btn.textContent.toLowerCase().trim() === 'create'
         )
         if (createBtn) {
-          ;(createBtn as HTMLElement).click()
+          (createBtn as HTMLElement).click()
         }
       })
 
@@ -131,7 +131,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -158,7 +158,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -184,7 +184,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -218,7 +218,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
       await page.getByTestId('tag-tree-view').click()
@@ -245,7 +245,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -621,7 +621,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -653,7 +653,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -682,7 +682,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
       await page.getByRole('button', { name: /create tag/i }).click()
@@ -714,7 +714,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -736,7 +736,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -757,7 +757,7 @@ test.describe('Tag System', () => {
             btn.textContent.toLowerCase().includes('manage tags')
         )
         if (manageTagsBtn) {
-          ;(manageTagsBtn as HTMLElement).click()
+          (manageTagsBtn as HTMLElement).click()
         }
       })
 
@@ -768,7 +768,7 @@ test.describe('Tag System', () => {
   })
 })
 
-test.describe.skip('Tag System Integration', () => {
+test.describe('Tag System Integration', () => {
   // SKIPPED: Tag system not implemented
   test('should integrate with search functionality', async ({ page }) => {
     // Test tag-based search

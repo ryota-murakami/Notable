@@ -160,7 +160,7 @@ export function RichTextEditor({
     } else {
       setIsVariableFormOpen(true)
     }
-  }, [])
+  }, [handleTemplateSubmit])
 
   // Handle template variable form submission
   const handleTemplateSubmit = useCallback(

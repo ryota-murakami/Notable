@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { waitForHydration } from './utils/wait-for-hydration'
 
-test.describe.skip('Debug Marks Test', () => {
+test.describe('Debug Marks Test', () => {
   // SKIPPED: Debug test for rich text marks not applicable to textarea
   test.beforeEach(async ({ page }) => {
     // Set dev auth bypass cookie
@@ -34,7 +34,7 @@ test.describe.skip('Debug Marks Test', () => {
 
     // Debug: check the HTML structure after typing
     const htmlAfterTyping = await editor.innerHTML()
-    console.log('HTML after typing:', htmlAfterTyping)
+    console.info('HTML after typing:', htmlAfterTyping)
 
     // Select all text - try triple click instead
     await editor.click({ clickCount: 3 })
@@ -50,17 +50,17 @@ test.describe.skip('Debug Marks Test', () => {
 
     // Debug: check the HTML structure after applying bold
     const htmlAfterBold = await editor.innerHTML()
-    console.log('HTML after bold:', htmlAfterBold)
+    console.info('HTML after bold:', htmlAfterBold)
 
     // Check if strong element exists
     const strongElements = await page.locator('strong').count()
-    console.log('Number of strong elements:', strongElements)
+    console.info('Number of strong elements:', strongElements)
 
     // If strong exists, check its content
     if (strongElements > 0) {
       const strongContent = await page.locator('strong').first().textContent()
-      console.log('Strong element content:', JSON.stringify(strongContent))
-      console.log(
+      console.info('Strong element content:', JSON.stringify(strongContent))
+      console.info(
         'Strong element inner HTML:',
         await page.locator('strong').first().innerHTML()
       )
@@ -68,7 +68,7 @@ test.describe.skip('Debug Marks Test', () => {
 
     // Check the whole editor text content
     const wholeText = await editor.textContent()
-    console.log('Whole editor text:', JSON.stringify(wholeText))
+    console.info('Whole editor text:', JSON.stringify(wholeText))
 
     // Just verify that strong element exists for now
     await expect(page.locator('strong')).toHaveCount(1)

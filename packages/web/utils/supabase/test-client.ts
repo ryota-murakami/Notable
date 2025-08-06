@@ -60,7 +60,7 @@ export function createMockSupabaseClient(): SupabaseClient {
           data: { user: mockUser, session: { user: mockUser } },
           error: null,
         }),
-      onAuthStateChange: (callback: (event: string, session: any) => void) => {
+      onAuthStateChange: (_callback: (event: string, session: any) => void) => {
         // Return a subscription object with unsubscribe method
         return {
           data: {
@@ -78,7 +78,7 @@ export function createMockSupabaseClient(): SupabaseClient {
           error: null,
         }),
     },
-    rpc: (funcName: string, params?: any) => {
+    rpc: (funcName: string, _params?: any) => {
       // Mock RPC responses
       if (funcName === 'search_templates') {
         return Promise.resolve({
@@ -135,9 +135,9 @@ export function createMockSupabaseClient(): SupabaseClient {
       const tableData = mockData[table as keyof typeof mockData] || new Map()
 
       return {
-        select: (columns?: string) => ({
-          or: (query: string) => ({
-            order: (column: string, options?: any) =>
+        select: (_columns?: string) => ({
+          or: (_query: string) => ({
+            order: (_column: string, _options?: any) =>
               Promise.resolve({
                 data: Array.from(tableData.values()),
                 error: null,
@@ -173,7 +173,7 @@ export function createMockSupabaseClient(): SupabaseClient {
                     : { code: 'PGRST116', message: 'Not found' },
                 })
               },
-              order: (column: string, options?: any) => ({
+              order: (_column: string, _options?: any) => ({
                 limit: (count: number) =>
                   Promise.resolve({
                     data: Array.from(tableData.values()).slice(0, count),
@@ -196,7 +196,7 @@ export function createMockSupabaseClient(): SupabaseClient {
 
             return queryBuilder
           },
-          order: (column: string, options?: any) => ({
+          order: (_column: string, _options?: any) => ({
             limit: (count: number) =>
               Promise.resolve({
                 data: Array.from(tableData.values()).slice(0, count),

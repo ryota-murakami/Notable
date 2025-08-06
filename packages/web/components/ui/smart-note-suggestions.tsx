@@ -1,16 +1,19 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import React, { useEffect as _useEffect, useCallback, useMemo, useState } from 'react'
+import { useMutation as _useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  ArrowRight,
+  ArrowRight as _ArrowRight,
+  Calendar as _Calendar,
+  Clock as _Clock,
+  ExternalLink as _ExternalLink,
+  Star as _Star,
+  Tag as _Tag,
+  Zap as _Zap,
   BookOpen,
   Brain,
-  Calendar,
   ChevronDown,
   ChevronUp,
-  Clock,
-  ExternalLink,
   Eye,
   Hash,
   Lightbulb,
@@ -18,15 +21,12 @@ import {
   Plus,
   Search,
   Sparkles,
-  Star,
-  Tag,
   TrendingUp,
-  Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Separator as _Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { toast } from '@/hooks/use-toast'
-import type { SearchSuggestion } from '@/types/search'
+import type { SearchSuggestion as _SearchSuggestion } from '@/types/search'
 
 interface SmartSuggestion {
   id: string
@@ -86,7 +86,7 @@ export function SmartNoteSuggestions({
   const [activeTab, setActiveTab] = useState<'smart' | 'search' | 'related'>(
     'smart'
   )
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   // Fetch smart linking suggestions
   const { data: linkingSuggestions = [], isLoading: isLoadingLinks } = useQuery(
@@ -250,7 +250,7 @@ export function SmartNoteSuggestions({
       })
 
     return suggestions.sort((a, b) => b.confidence - a.confidence)
-  }, [linkingSuggestions, searchSuggestions, relatedNotes, tags, noteId])
+  }, [linkingSuggestions, searchSuggestions, relatedNotes, tags])
 
   // Handle suggestion actions
   const handleSuggestionAction = useCallback(

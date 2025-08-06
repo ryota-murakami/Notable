@@ -46,8 +46,8 @@ export async function jsClick(page: Page, selector: string): Promise<void> {
 /**
  * Check if an element is clickable (not covered by other elements)
  */
-export async function isElementClickable(page: Page, selector: string) {
-  return await page.evaluate((sel) => {
+export function isElementClickable(page: Page, selector: string) {
+  return page.evaluate((sel) => {
     const element = document.querySelector(sel)
     if (!element) return { clickable: false, reason: 'Element not found' }
 
@@ -226,11 +226,11 @@ async function debugPageElements(
   page: Page,
   description: string
 ): Promise<void> {
-  console.log(`\n=== DEBUG: ${description} ===`)
+  console.info(`\n=== DEBUG: ${description} ===`)
 
   // Check if we're on the expected page
   const url = page.url()
-  console.log(`Current URL: ${url}`)
+  console.info(`Current URL: ${url}`)
 
   // Check for key elements
   const elementsToCheck = [
@@ -257,21 +257,21 @@ async function debugPageElements(
             .isVisible()
             .catch(() => false)
         : false
-    console.log(`${selector}: ${count} found, first visible: ${visible}`)
+    console.info(`${selector}: ${count} found, first visible: ${visible}`)
   }
 
   // Get page title and basic info
   const title = await page.title()
-  console.log(`Page title: ${title}`)
+  console.info(`Page title: ${title}`)
 
   // Get main content to see what's actually rendered
   const mainContent = await page
     .locator('main')
     .textContent()
     .catch(() => 'Could not get main content')
-  console.log(`Main content: "${mainContent}"`)
+  console.info(`Main content: "${mainContent}"`)
 
-  console.log('=== END DEBUG ===\n')
+  console.info('=== END DEBUG ===\n')
 }
 
 /**
@@ -319,12 +319,12 @@ export async function jsTypeTitle(
     for (const alt of alternatives) {
       const count = await page.locator(alt).count()
       if (count > 0) {
-        console.log(`Found alternative selector: ${alt} (${count} elements)`)
+        console.info(`Found alternative selector: ${alt} (${count} elements)`)
         try {
           await jsType(page, alt, text)
           return
         } catch (altError) {
-          console.log(`Alternative ${alt} also failed:`, altError)
+          console.info(`Alternative ${alt} also failed:`, altError)
         }
       }
     }

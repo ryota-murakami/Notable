@@ -6,20 +6,26 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-async function globalTeardown(config: FullConfig) {
-  console.log('🧹 Cleaning up E2E test environment...')
+function globalTeardown(_config: FullConfig) {
+  console.info('🧹 Cleaning up E2E test environment...')
 
   const scriptsDir = path.join(__dirname, '../../scripts')
 
   try {
-    // Stop the test database
-    console.log('🛑 Stopping test database...')
-    execSync(`${scriptsDir}/e2e-test-db.sh stop`, {
-      stdio: 'inherit',
-      cwd: path.join(__dirname, '../..'),
-    })
+    // Check if Docker is available before trying to stop the database
+    try {
+      execSync('docker ps', { stdio: 'pipe' })
+      // Stop the test database only if Docker is available
+      console.info('🛑 Stopping test database...')
+      execSync(`${scriptsDir}/e2e-test-db.sh stop`, {
+        stdio: 'inherit',
+        cwd: path.join(__dirname, '../..'),
+      })
+    } catch {
+      console.info('⚠️  Docker not available, skipping database cleanup')
+    }
 
-    console.log('✅ Test environment cleaned up!')
+    console.info('✅ Test environment cleaned up!')
   } catch (error) {
     console.error('❌ Failed to clean up test environment:', error)
     // Don't throw here - we still want the tests to complete

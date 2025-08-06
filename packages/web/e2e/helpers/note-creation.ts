@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test'
+import { type Page } from '@playwright/test'
 
 /**
  * Helper function to create a new note, handling the template picker dialog
@@ -38,7 +38,7 @@ export async function createNewNote(
 
   // Check current URL before waiting for navigation
   const currentUrl = page.url()
-  console.log('Current URL after clicking new note:', currentUrl)
+  console.info('Current URL after clicking new note:', currentUrl)
 
   // Wait for navigation to note page
   await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 5000 })

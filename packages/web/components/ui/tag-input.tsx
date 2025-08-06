@@ -191,6 +191,7 @@ const TagInput: React.FC<TagInputProps> = ({
           disabled={disabled || isLoading || tags.length >= maxTags}
           className='flex-1 border-0 bg-transparent p-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0'
           style={{ minWidth: '120px' }}
+          data-testid="tag-input"
         />
       </div>
 

@@ -345,9 +345,10 @@ export function getTempFilePath(filename: string): string {
 export function cleanupTempFiles(filePaths: string[]): void {
   filePaths.forEach((filePath) => {
     try {
+      // eslint-disable-next-line no-sync
       if (fs.existsSync(filePath)) {
-         
-        fs.unlinkSync(filePath) // eslint-disable-line no-sync
+        // eslint-disable-next-line no-sync
+        fs.unlinkSync(filePath)
       }
     } catch (error) {
       console.warn(`Failed to cleanup temp file: ${filePath}`, error)

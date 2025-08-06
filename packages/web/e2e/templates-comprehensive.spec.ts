@@ -151,7 +151,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await expect(templateCard.locator('text=3 fields')).toBeVisible()
     })
 
-    test.skip('should display template details on click', async ({ page }) => {
+    test('should display template details on click', async ({ page }) => {
       // SKIPPED: Template details panel not implemented
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
@@ -195,7 +195,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should favorite templates', async ({ page }) => {
+    test('should favorite templates', async ({ page }) => {
       // SKIPPED: Template favoriting functionality not implemented
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
@@ -283,7 +283,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should create custom template', async ({ page }) => {
+    test('should create custom template', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -325,7 +325,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should edit existing template', async ({ page }) => {
+    test('should edit existing template', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -354,7 +354,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should delete custom template', async ({ page }) => {
+    test('should delete custom template', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -374,7 +374,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should preview template before use', async ({ page }) => {
+    test('should preview template before use', async ({ page }) => {
       // SKIPPED: Template preview functionality not implemented
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
@@ -470,7 +470,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await expect(page.locator('h3:has-text("Blockers")')).toBeVisible()
     })
 
-    test.skip('should handle different variable types', async ({ page }) => {
+    test('should handle different variable types', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -521,7 +521,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should provide default values for variables', async ({
+    test('should provide default values for variables', async ({
       page,
     }) => {
       await clickNewNoteButton(page)
@@ -556,7 +556,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toHaveValue('draft')
     })
 
-    test.skip('should show variable preview', async ({ page }) => {
+    test('should show variable preview', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -625,7 +625,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await expect(page.locator('text=Weekly Team Meeting')).toBeVisible()
     })
 
-    test.skip('should handle conditional variables', async ({ page }) => {
+    test('should handle conditional variables', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -662,7 +662,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toContainText('⚠️ URGENT: Test Task')
     })
 
-    test.skip('should handle list variables', async ({ page }) => {
+    test('should handle list variables', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -710,7 +710,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
     })
 
-    test.skip('should save variable presets', async ({ page }) => {
+    test('should save variable presets', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -776,7 +776,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await expect(page.locator('h3:has-text("Blockers")')).toBeVisible()
     })
 
-    test.skip('should process date formatting', async ({ page }) => {
+    test('should process date formatting', async ({ page }) => {
       // Skip this test as template creation UI is not implemented yet
       // This test requires creating custom templates with date formatting
 
@@ -807,7 +807,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
     })
 
-    test.skip('should process mathematical expressions', async ({ page }) => {
+    test('should process mathematical expressions', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -843,7 +843,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
     })
 
-    test.skip('should handle string transformations', async ({ page }) => {
+    test('should handle string transformations', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -891,7 +891,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
     })
 
-    test.skip('should handle complex nested templates', async ({ page }) => {
+    test('should handle complex nested templates', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -911,7 +911,7 @@ test.describe('Comprehensive Template System Tests', () => {
       // This demonstrates the engine can handle nested conditionals and loops
     })
 
-    test.skip('should handle template includes', async ({ page }) => {
+    test('should handle template includes', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -964,7 +964,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
     })
 
-    test.skip('should handle template helpers', async ({ page }) => {
+    test('should handle template helpers', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -1013,7 +1013,7 @@ test.describe('Comprehensive Template System Tests', () => {
       )
     })
 
-    test.skip('should handle template errors gracefully', async ({ page }) => {
+    test('should handle template errors gracefully', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -1044,7 +1044,7 @@ test.describe('Comprehensive Template System Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should support template versioning', async ({ page }) => {
+    test('should support template versioning', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 
@@ -1189,7 +1189,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await expect(page.locator('h2:has-text("Daily Standup")')).toBeVisible()
     })
 
-    test.skip('should export and import templates', async ({ page }) => {
+    test('should export and import templates', async ({ page }) => {
       await clickNewNoteButton(page)
       await page.waitForTimeout(1000)
 

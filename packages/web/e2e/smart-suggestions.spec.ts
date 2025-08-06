@@ -59,7 +59,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     })
 
     if (!noteId) {
-      console.log('Note creation may have failed, but continuing test...')
+      console.info('Note creation may have failed, but continuing test...')
     }
 
     // Try to navigate to a note by clicking on it
@@ -214,7 +214,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     await page.waitForTimeout(2000)
 
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 
   test('should show related notes in related tab', async ({ page }) => {
@@ -262,7 +262,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     await page.waitForTimeout(2000)
 
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 
   test('should handle suggestion actions correctly', async ({ page }) => {
@@ -280,10 +280,10 @@ test.describe('Smart Note Suggestions Feature', () => {
       return
     }
 
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(page, 'input[placeholder*="Untitled"]', 'Action Test Note')
 
-    const editor = page.locator('[contenteditable="true"]').first()
+    const _editor = page.locator('[contenteditable="true"]').first()
     await jsClick(page, '[contenteditable="true"]')
     await jsType(
       page,
@@ -291,7 +291,7 @@ test.describe('Smart Note Suggestions Feature', () => {
       'This note is for testing suggestion actions and interactions.'
     )
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 
   test('should collapse and expand suggestions panel', async ({ page }) => {
@@ -310,7 +310,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     }
 
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 
   test('should show loading states appropriately', async ({ page }) => {
@@ -329,7 +329,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     }
 
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 
   test('should handle empty content gracefully', async ({ page }) => {
@@ -348,7 +348,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     }
 
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 
   test('should have proper accessibility features', async ({ page }) => {
@@ -367,7 +367,7 @@ test.describe('Smart Note Suggestions Feature', () => {
     }
 
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 
   test('should integrate properly with note editor layout', async ({
@@ -388,6 +388,6 @@ test.describe('Smart Note Suggestions Feature', () => {
     }
 
     // Test passes since feature not implemented yet
-    console.log('✅ Test completed - graceful handling of missing feature')
+    console.info('✅ Test completed - graceful handling of missing feature')
   })
 })

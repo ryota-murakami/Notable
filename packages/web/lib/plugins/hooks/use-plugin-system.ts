@@ -55,7 +55,7 @@ export function usePluginSystem(): UsePluginSystemReturn {
   const [isInitialized, setIsInitialized] = useState(false)
   const [stats, setStats] = useState<PluginSystemStats | null>(null)
   const [installedPlugins, setInstalledPlugins] = useState<PluginInfo[]>([])
-  const [availablePlugins, setAvailablePlugins] = useState<PluginInfo[]>([])
+  const [availablePlugins, _setAvailablePlugins] = useState<PluginInfo[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
@@ -85,7 +85,7 @@ export function usePluginSystem(): UsePluginSystemReturn {
   }, [isInitialized])
 
   // Refresh plugin data
-  const refreshPlugins = useCallback(async () => {
+  const refreshPlugins = useCallback(() => {
     if (!isInitialized) return
 
     try {

@@ -65,7 +65,7 @@ export const isTest = (): boolean => {
       (window as any).__NEXT_PUBLIC_API_MOCKING === 'enabled'
 
     return hasApiMocking
-  } catch (error) {
+  } catch {
     // During SSR/hydration, be conservative
     return false
   }

@@ -15,11 +15,11 @@ test('complete tag creation end-to-end', async ({ page }) => {
   await page.goto('http://localhost:4378/app')
   await page.waitForLoadState('networkidle')
 
-  console.log('🚀 Starting tag creation test...')
+  console.info('🚀 Starting tag creation test...')
 
   // Verify the app is loaded
   await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 10000 })
-  console.log('✅ App shell loaded')
+  console.info('✅ App shell loaded')
 
   // Open tag management using JavaScript click workaround
   await page.evaluate(() => {
@@ -34,7 +34,7 @@ test('complete tag creation end-to-end', async ({ page }) => {
 
   // Wait for the tag management dialog to appear
   await expect(page.locator('[role="dialog"]')).toBeVisible({ timeout: 5000 })
-  console.log('✅ Tag management dialog opened')
+  console.info('✅ Tag management dialog opened')
 
   // Look for the create tag form within the dialog
   const dialog = page.locator('[role="dialog"]')
@@ -47,12 +47,12 @@ test('complete tag creation end-to-end', async ({ page }) => {
     .first()
 
   if (await tagNameInput.isVisible()) {
-    console.log('✅ Found tag name input field')
+    console.info('✅ Found tag name input field')
 
     // Enter a test tag name
     const testTagName = `test-tag-${Date.now()}`
     await tagNameInput.fill(testTagName)
-    console.log(`✅ Entered tag name: ${testTagName}`)
+    console.info(`✅ Entered tag name: ${testTagName}`)
 
     // Look for create/save button
     const createButton = dialog
@@ -61,12 +61,12 @@ test('complete tag creation end-to-end', async ({ page }) => {
       .first()
 
     if (await createButton.isVisible()) {
-      console.log('✅ Found create button')
+      console.info('✅ Found create button')
 
       // Try clicking the create button
       try {
         await createButton.click({ timeout: 5000 })
-        console.log('✅ Clicked create button')
+        console.info('✅ Clicked create button')
 
         // Wait a bit for the tag to be created
         await page.waitForTimeout(2000)
@@ -75,26 +75,26 @@ test('complete tag creation end-to-end', async ({ page }) => {
         const tagInList = dialog.locator(`text=${testTagName}`).first()
         const isTagVisible = await tagInList.isVisible()
 
-        console.log(`Tag "${testTagName}" visible in list: ${isTagVisible}`)
+        console.info(`Tag "${testTagName}" visible in list: ${isTagVisible}`)
 
         if (isTagVisible) {
-          console.log('🎉 Tag created successfully!')
+          console.info('🎉 Tag created successfully!')
         } else {
-          console.log(
+          console.info(
             '⚠️  Tag creation may have succeeded but not visible in list'
           )
         }
       } catch (error) {
-        console.log(
+        console.info(
           '❌ Failed to click create button:',
           error instanceof Error ? error.message : String(error)
         )
       }
     } else {
-      console.log('❌ Create button not found in dialog')
+      console.info('❌ Create button not found in dialog')
     }
   } else {
-    console.log('❌ Tag name input field not found')
+    console.info('❌ Tag name input field not found')
   }
 
   // Take a screenshot of the final state
@@ -107,9 +107,9 @@ test('complete tag creation end-to-end', async ({ page }) => {
       const inputs = dialog.querySelectorAll('input')
       const buttons = dialog.querySelectorAll('button')
 
-      console.log('Dialog inputs found:', inputs.length)
+      console.info('Dialog inputs found:', inputs.length)
       inputs.forEach((input, i) => {
-        console.log(`Input ${i}:`, {
+        console.info(`Input ${i}:`, {
           type: input.type,
           placeholder: input.placeholder,
           name: input.name,
@@ -117,12 +117,12 @@ test('complete tag creation end-to-end', async ({ page }) => {
         })
       })
 
-      console.log('Dialog buttons found:', buttons.length)
+      console.info('Dialog buttons found:', buttons.length)
       buttons.forEach((button, i) => {
-        console.log(`Button ${i}:`, button.textContent?.trim())
+        console.info(`Button ${i}:`, button.textContent?.trim())
       })
     }
   })
 
-  console.log('✅ Tag creation test completed')
+  console.info('✅ Tag creation test completed')
 })

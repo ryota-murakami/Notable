@@ -125,7 +125,7 @@ export class NotablePluginSystem {
   /**
    * Execute a plugin command
    */
-  async executeCommand(command: string, ...args: any[]): Promise<any> {
+  executeCommand(command: string, ...args: any[]): Promise<any> {
     // This would integrate with Notable's command system
     console.info(`Executing plugin command: ${command}`, args)
 
@@ -136,7 +136,7 @@ export class NotablePluginSystem {
 
   private async installExamplePlugin(): Promise<void> {
     try {
-      const { helloWorldManifest, createHelloWorldPlugin } = await import(
+      const { helloWorldManifest, createHelloWorldPlugin: _createHelloWorldPlugin } = await import(
         './examples/hello-world-plugin'
       )
 
@@ -210,7 +210,7 @@ export const notablePluginSystem = NotablePluginSystem.getInstance()
 
 // Make plugin system available globally for debugging and testing
 if (typeof window !== 'undefined') {
-  ;(window as any).notablePluginSystem = notablePluginSystem
+  (window as any).notablePluginSystem = notablePluginSystem
 }
 
 // Convenience exports for common operations

@@ -3,12 +3,12 @@ import { expect, test } from '@playwright/test'
 test('debug template picker navigation', async ({ page }) => {
   // Capture console messages from the browser
   page.on('console', (msg) => {
-    console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`)
+    console.info(`[BROWSER] ${msg.type()}: ${msg.text()}`)
   })
 
   // Capture page errors
   page.on('pageerror', (error) => {
-    console.log(
+    console.info(
       `[PAGE ERROR] ${error instanceof Error ? error.message : String(error)}`
     )
   })
@@ -27,15 +27,15 @@ test('debug template picker navigation', async ({ page }) => {
   await page.goto('http://localhost:4378/app')
   await page.waitForLoadState('networkidle')
 
-  console.log('🚀 Starting template picker debugging...')
+  console.info('🚀 Starting template picker debugging...')
 
   // Verify the app is loaded
   await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 10000 })
-  console.log('✅ App shell loaded')
+  console.info('✅ App shell loaded')
 
   // Take screenshot before clicking
   await page.screenshot({ path: 'debug-before-click.png', fullPage: true })
-  console.log('📸 Screenshot taken before clicking New Note')
+  console.info('📸 Screenshot taken before clicking New Note')
 
   // Click new note button using JavaScript workaround
   const buttonClicked = await page.evaluate(() => {
@@ -44,7 +44,7 @@ test('debug template picker navigation', async ({ page }) => {
       '[data-testid="new-note-button"]'
     ) as HTMLButtonElement
     if (testIdButton) {
-      console.log('Found New Note button by test-id')
+      console.info('Found New Note button by test-id')
       testIdButton.click()
       return true
     }
@@ -56,12 +56,12 @@ test('debug template picker navigation', async ({ page }) => {
     )
 
     if (newNoteButton) {
-      console.log('Found New Note button by text')
+      console.info('Found New Note button by text')
       newNoteButton.click()
       return true
     }
 
-    console.log('❌ New Note button not found')
+    console.info('❌ New Note button not found')
     return false
   })
 
@@ -69,17 +69,17 @@ test('debug template picker navigation', async ({ page }) => {
     throw new Error('Could not find or click New Note button')
   }
 
-  console.log('✅ New Note button clicked')
+  console.info('✅ New Note button clicked')
 
   // Wait a moment for any UI changes
   await page.waitForTimeout(1000)
 
   // Take screenshot after clicking
   await page.screenshot({ path: 'debug-after-click.png', fullPage: true })
-  console.log('📸 Screenshot taken after clicking New Note')
+  console.info('📸 Screenshot taken after clicking New Note')
 
   // Check if template picker dialog appears
-  console.log('🔍 Checking for template picker dialog...')
+  console.info('🔍 Checking for template picker dialog...')
 
   try {
     // Wait for template picker with shorter timeout
@@ -87,24 +87,24 @@ test('debug template picker navigation', async ({ page }) => {
       '[role="dialog"]:has-text("Choose a Template")'
     )
     await templatePicker.waitFor({ state: 'visible', timeout: 3000 })
-    console.log('✅ Template picker dialog found!')
+    console.info('✅ Template picker dialog found!')
 
     // Take screenshot of template picker
     await page.screenshot({ path: 'debug-template-picker.png', fullPage: true })
-    console.log('📸 Template picker screenshot taken')
+    console.info('📸 Template picker screenshot taken')
 
     // Check what buttons are available in the template picker
     const templateButtons = await page
       .locator('[role="dialog"] button')
       .allTextContents()
-    console.log('Available template buttons:', templateButtons)
+    console.info('Available template buttons:', templateButtons)
 
     // Try to click Blank Note using JavaScript
     const templateButtonClicked = await page.evaluate(() => {
       const buttons = Array.from(
         document.querySelectorAll('[role="dialog"] button')
       )
-      console.log(
+      console.info(
         'Buttons in template picker:',
         buttons.map((b) => b.textContent)
       )
@@ -114,45 +114,45 @@ test('debug template picker navigation', async ({ page }) => {
       )
 
       if (blankNoteButton) {
-        console.log('Clicking Blank Note button')
+        console.info('Clicking Blank Note button')
         ;(blankNoteButton as HTMLElement).click()
         return true
       }
 
-      console.log('❌ Blank Note button not found in template picker')
+      console.info('❌ Blank Note button not found in template picker')
       return false
     })
 
     if (templateButtonClicked) {
-      console.log('✅ Blank Note button clicked')
+      console.info('✅ Blank Note button clicked')
     } else {
-      console.log('❌ Failed to click Blank Note button')
+      console.info('❌ Failed to click Blank Note button')
     }
   } catch (error) {
-    console.log(
+    console.info(
       '❌ Template picker dialog not found:',
       error instanceof Error ? error.message : String(error)
     )
 
     // Check what's actually on screen
     const currentUrl = page.url()
-    console.log('Current URL:', currentUrl)
+    console.info('Current URL:', currentUrl)
 
     // Check if we're already on a note page
     if (currentUrl.includes('/notes/')) {
-      console.log('🎉 Already navigated to note page!')
+      console.info('🎉 Already navigated to note page!')
     } else {
-      console.log('❌ Still on welcome page, checking for any dialogs...')
+      console.info('❌ Still on welcome page, checking for any dialogs...')
 
       // Check for any dialogs that might be present
       const dialogs = await page.locator('[role="dialog"]').count()
-      console.log(`Found ${dialogs} dialog(s) on page`)
+      console.info(`Found ${dialogs} dialog(s) on page`)
 
       if (dialogs > 0) {
         const dialogTexts = await page
           .locator('[role="dialog"]')
           .allTextContents()
-        console.log('Dialog contents:', dialogTexts)
+        console.info('Dialog contents:', dialogTexts)
       }
     }
   }
@@ -160,11 +160,11 @@ test('debug template picker navigation', async ({ page }) => {
   // Wait a bit more and check final state
   await page.waitForTimeout(2000)
   const finalUrl = page.url()
-  console.log('Final URL:', finalUrl)
+  console.info('Final URL:', finalUrl)
 
   // Take final screenshot
   await page.screenshot({ path: 'debug-final-state.png', fullPage: true })
-  console.log('📸 Final state screenshot taken')
+  console.info('📸 Final state screenshot taken')
 
-  console.log('🏁 Template picker debugging finished')
+  console.info('🏁 Template picker debugging finished')
 })

@@ -4,9 +4,6 @@ import * as React from 'react'
 import { cn } from '../../lib/utils'
 import { Button } from '../../design-system/components/button'
 import {
-  AlignCenterIcon,
-  AlignLeftIcon,
-  AlignRightIcon,
   BoldIcon,
   CheckSquareIcon,
   CodeIcon,
@@ -19,13 +16,10 @@ import {
   ListIcon,
   ListOrderedIcon,
   MaximizeIcon,
-  MoreHorizontalIcon,
-  PaletteIcon,
   QuoteIcon,
   RedoIcon,
   StrikethroughIcon,
   TableIcon,
-  TypeIcon,
   UnderlineIcon,
   UndoIcon,
 } from 'lucide-react'
@@ -143,9 +137,9 @@ export function EditorToolbar({
   onImage,
   onTable,
   // Alignment callbacks
-  onAlignLeft,
-  onAlignCenter,
-  onAlignRight,
+  onAlignLeft: _onAlignLeft,
+  onAlignCenter: _onAlignCenter,
+  onAlignRight: _onAlignRight,
   // History callbacks
   onUndo,
   onRedo,

@@ -3,14 +3,14 @@ import { test } from '@playwright/test'
 test('debug note loading issue', async ({ page }) => {
   // Capture all console messages and errors
   page.on('console', (msg) => {
-    console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`)
+    console.info(`[BROWSER] ${msg.type()}: ${msg.text()}`)
   })
 
   page.on('pageerror', (error) => {
-    console.log(
+    console.info(
       `[PAGE ERROR] ${error instanceof Error ? error.message : String(error)}`
     )
-    console.log(`[PAGE ERROR STACK] ${error.stack}`)
+    console.info(`[PAGE ERROR STACK] ${error.stack}`)
   })
 
   // Set dev auth bypass cookie for testing
@@ -23,31 +23,31 @@ test('debug note loading issue', async ({ page }) => {
     },
   ])
 
-  console.log('🚀 Testing note loading directly...')
+  console.info('🚀 Testing note loading directly...')
 
   // Navigate directly to a mock note ID
   const mockNoteId = `mock-note-${Date.now()}`
   await page.goto(`http://localhost:4378/notes/${mockNoteId}`)
   await page.waitForLoadState('networkidle')
 
-  console.log(`📍 Navigated to note: ${mockNoteId}`)
-  console.log(`📍 Current URL: ${page.url()}`)
+  console.info(`📍 Navigated to note: ${mockNoteId}`)
+  console.info(`📍 Current URL: ${page.url()}`)
 
   // Wait a bit for React to render
   await page.waitForTimeout(3000)
 
   // Check what's actually on the page
   const pageContent = await page.content()
-  console.log('📄 Page title:', await page.title())
-  console.log(
+  console.info('📄 Page title:', await page.title())
+  console.info(
     '📄 Page contains "Loading note":',
     pageContent.includes('Loading note')
   )
-  console.log(
+  console.info(
     '📄 Page contains "note-title-input":',
     pageContent.includes('note-title-input')
   )
-  console.log(
+  console.info(
     '📄 Page contains "note-content-textarea":',
     pageContent.includes('note-content-textarea')
   )
@@ -63,11 +63,11 @@ test('debug note loading issue', async ({ page }) => {
   const loadingVisible = await loadingSpinner.isVisible().catch(() => false)
   const editorVisible = await noteEditor.isVisible().catch(() => false)
 
-  console.log(`🔍 Element visibility:`)
-  console.log(`  - Title input: ${titleVisible}`)
-  console.log(`  - Content textarea: ${contentVisible}`)
-  console.log(`  - Loading spinner: ${loadingVisible}`)
-  console.log(`  - Note editor container: ${editorVisible}`)
+  console.info(`🔍 Element visibility:`)
+  console.info(`  - Title input: ${titleVisible}`)
+  console.info(`  - Content textarea: ${contentVisible}`)
+  console.info(`  - Loading spinner: ${loadingVisible}`)
+  console.info(`  - Note editor container: ${editorVisible}`)
 
   // Take screenshot
   await page.screenshot({ path: 'debug-note-loading.png', fullPage: true })
@@ -103,7 +103,7 @@ test('debug note loading issue', async ({ page }) => {
     }
   })
 
-  console.log('🔧 Debug info:', JSON.stringify(debugInfo, null, 2))
+  console.info('🔧 Debug info:', JSON.stringify(debugInfo, null, 2))
 
-  console.log('🏁 Debug test finished')
+  console.info('🏁 Debug test finished')
 })

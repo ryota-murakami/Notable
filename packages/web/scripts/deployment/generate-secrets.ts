@@ -31,37 +31,37 @@ function generateJWT(): string {
 }
 
 async function main() {
-  console.log('\n🔐 Notable Secret Generator\n')
-  console.log(
+  console.info('\n🔐 Notable Secret Generator\n')
+  console.info(
     'This tool will help you generate secure secrets for your production environment.\n'
   )
 
   const secrets: Record<string, string> = {}
 
   // Generate API secrets
-  console.log('🔑 Generating API secrets...')
+  console.info('🔑 Generating API secrets...')
   secrets.API_SECRET_KEY = generateSecret(32)
   secrets.WEBHOOK_SECRET = generateSecret(16)
   secrets.SUPABASE_JWT_SECRET = generateJWT()
 
-  console.log('✅ API secrets generated\n')
+  console.info('✅ API secrets generated\n')
 
   // Ask for service configuration
   const useRedis = await question('Will you use Redis for caching? (y/n): ')
   if (useRedis.toLowerCase() === 'y') {
     const redisPassword = generateSecret(24)
-    console.log(`\n🔐 Redis password: ${redisPassword}`)
-    console.log('Use this password when setting up your Redis instance.\n')
+    console.info(`\n🔐 Redis password: ${redisPassword}`)
+    console.info('Use this password when setting up your Redis instance.\n')
   }
 
   const useSentry = await question(
     'Will you use Sentry for error tracking? (y/n): '
   )
   if (useSentry.toLowerCase() === 'y') {
-    console.log(
+    console.info(
       '\n🔗 Visit https://sentry.io to create a project and get your DSN'
     )
-    console.log(
+    console.info(
       "You'll need: DSN, Organization slug, Project name, and Auth token\n"
     )
   }
@@ -70,13 +70,13 @@ async function main() {
     'Will you use PostHog for analytics? (y/n): '
   )
   if (usePostHog.toLowerCase() === 'y') {
-    console.log(
+    console.info(
       '\n📈 Visit https://posthog.com to create a project and get your API key\n'
     )
   }
 
   // Generate example env file
-  console.log('\n📄 Generating example secrets file...')
+  console.info('\n📄 Generating example secrets file...')
 
   const secretsContent = `# Generated Secrets - Store these securely!
 # Generated on: ${new Date().toISOString()}
@@ -114,11 +114,11 @@ NEXT_PUBLIC_CSP_REPORT_URI=<your-csp-report-endpoint>
   const outputPath = path.join(process.cwd(), '.env.secrets')
   fs.writeFileSync(outputPath, secretsContent)
 
-  console.log(`✅ Secrets file generated at: ${outputPath}`)
-  console.log('\n⚠️  IMPORTANT: This file contains sensitive data!')
-  console.log('   - Add .env.secrets to .gitignore immediately')
-  console.log('   - Copy these values to your password manager')
-  console.log('   - Delete this file after securing the values\n')
+  console.info(`✅ Secrets file generated at: ${outputPath}`)
+  console.info('\n⚠️  IMPORTANT: This file contains sensitive data!')
+  console.info('   - Add .env.secrets to .gitignore immediately')
+  console.info('   - Copy these values to your password manager')
+  console.info('   - Delete this file after securing the values\n')
 
   // Add to .gitignore if not already present
   const gitignorePath = path.join(process.cwd(), '.gitignore')
@@ -126,19 +126,19 @@ NEXT_PUBLIC_CSP_REPORT_URI=<your-csp-report-endpoint>
     const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8')
     if (!gitignoreContent.includes('.env.secrets')) {
       fs.appendFileSync(gitignorePath, '\n# Generated secrets\n.env.secrets\n')
-      console.log('✅ Added .env.secrets to .gitignore\n')
+      console.info('✅ Added .env.secrets to .gitignore\n')
     }
   }
 
   // Vercel deployment instructions
-  console.log('🚀 To deploy to Vercel:\n')
-  console.log('1. Install Vercel CLI: npm i -g vercel')
-  console.log('2. Run: vercel env pull to sync existing variables')
-  console.log('3. Add secrets via dashboard or CLI:')
-  console.log('   vercel env add API_SECRET_KEY production')
-  console.log('   vercel env add WEBHOOK_SECRET production')
-  console.log('   vercel env add SUPABASE_JWT_SECRET production')
-  console.log('\n4. Deploy: vercel --prod\n')
+  console.info('🚀 To deploy to Vercel:\n')
+  console.info('1. Install Vercel CLI: npm i -g vercel')
+  console.info('2. Run: vercel env pull to sync existing variables')
+  console.info('3. Add secrets via dashboard or CLI:')
+  console.info('   vercel env add API_SECRET_KEY production')
+  console.info('   vercel env add WEBHOOK_SECRET production')
+  console.info('   vercel env add SUPABASE_JWT_SECRET production')
+  console.info('\n4. Deploy: vercel --prod\n')
 
   rl.close()
 }

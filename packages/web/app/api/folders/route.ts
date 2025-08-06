@@ -6,6 +6,15 @@ import type { CreateFolderInput } from '@/types/folder'
 // GET /api/folders - Get all folders for the current user
 export async function GET() {
   try {
+    // Check for API mocking FIRST, before any imports or Supabase calls
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      console.info('API mocking enabled - returning empty folders data')
+      return NextResponse.json({
+        data: [],
+        total: 0,
+      })
+    }
+
     const supabase = await createClient()
 
     // Check for dev auth bypass first
@@ -66,6 +75,28 @@ export async function GET() {
 // POST /api/folders - Create a new folder
 export async function POST(request: NextRequest) {
   try {
+    // Check for API mocking FIRST, before any imports or Supabase calls
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      console.info('API mocking enabled - returning mock folder creation')
+      const body = await request.json()
+      const { name, parent_id } = body
+
+      const mockFolder = {
+        id: `mock-folder-${Date.now()}`,
+        name: name || 'New Folder',
+        user_id: 'mock-user-id',
+        parent_id: parent_id || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+
+      return NextResponse.json(
+        { success: true, data: mockFolder },
+        { status: 201 }
+      )
+    }
+
+    // Only initialize Supabase if not in mocking mode
     const supabase = await createClient()
 
     // Check for dev auth bypass first

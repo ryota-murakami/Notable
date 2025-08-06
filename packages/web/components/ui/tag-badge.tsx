@@ -81,6 +81,7 @@ const TagBadge: React.FC<TagBadgeProps> = ({
         color: tag.color || undefined,
       }}
       onClick={handleClick}
+      data-testid={`tag-badge-${tag.name}`}
     >
       {showIcon && <Hash className={iconSizes[size]} />}
       <span className='truncate'>{tag.name}</span>

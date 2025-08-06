@@ -7,7 +7,7 @@ import path from 'path'
  * Tests the implementation of Issue #274
  */
 
-test.describe.skip('Deployment Environment Variable Validation', () => {
+test.describe('Deployment Environment Variable Validation', () => {
   // SKIPPED: Deployment validation requires build environment
   test('build fails when required environment variables are missing in production', async () => {
     // Save original env

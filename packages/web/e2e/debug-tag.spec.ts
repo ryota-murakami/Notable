@@ -54,9 +54,9 @@ test('debug tag management panel', async ({ page }) => {
 
   // Check for errors
   const errors = await page.getByRole('alert').all()
-  console.log(`Found ${errors.length} alerts`)
+  console.info(`Found ${errors.length} alerts`)
   for (const error of errors) {
     const text = await error.textContent()
-    console.log(`Alert: "${text}"`)
+    console.info(`Alert: "${text}"`)
   }
 })

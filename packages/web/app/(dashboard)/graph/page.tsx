@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useState } from 'react'
+const { useCallback, useEffect, useState } = React
 import { useRouter } from 'next/navigation'
 import {
   Activity,

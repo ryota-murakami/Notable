@@ -5,7 +5,6 @@ import {
   BarChart3,
   Download,
   Edit,
-  FileText,
   Hash,
   MoreHorizontal,
   Plus,
@@ -43,7 +42,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { TagTree, TagTreeSearch } from '@/components/ui/tag-tree'
+import { TagTree } from '@/components/ui/tag-tree'
 import { TagBadge } from '@/components/ui/tag-badge'
 import {
   useCreateTag,
@@ -52,8 +51,7 @@ import {
   useTags,
   useUpdateTag,
 } from '@/hooks/use-tags'
-import type { EnhancedTag, TagFormData } from '@/types/tags'
-import { DEFAULT_TAG_COLORS } from '@/types/tags'
+import { DEFAULT_TAG_COLORS, type EnhancedTag, type TagFormData } from '@/types/tags'
 
 export interface TagManagementPanelProps {
   /** Whether the panel is open */
@@ -91,7 +89,7 @@ const TagManagementPanel: React.FC<TagManagementPanelProps> = ({
   const createTagMutation = useCreateTag()
   const updateTagMutation = useUpdateTag()
   const deleteTagMutation = useDeleteTag()
-  const { isLoading: isManaging } = useTagManager()
+  const { isLoading: _isManaging } = useTagManager()
 
   // Filter tags based on search
   const filteredTags = React.useMemo(() => {
@@ -212,7 +210,7 @@ const TagManagementPanel: React.FC<TagManagementPanelProps> = ({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className={cn('max-w-5xl h-[80vh]', className)}>
+        <DialogContent className={cn('max-w-5xl h-[80vh]', className)} data-testid="tag-management-panel">
           <DialogHeader>
             <DialogTitle className='flex items-center gap-2'>
               <Hash className='h-5 w-5' />
@@ -236,6 +234,7 @@ const TagManagementPanel: React.FC<TagManagementPanelProps> = ({
                     activeSection === section.id &&
                       'bg-primary text-primary-foreground'
                   )}
+                  data-testid={`tag-section-${section.id}`}
                 >
                   {section.icon}
                   {section.label}
@@ -519,7 +518,7 @@ const TagManagement: React.FC<TagManagementProps> = ({
             <Download className='h-4 w-4 mr-1' />
             Export
           </Button>
-          <Button onClick={onTagCreate} size='sm'>
+          <Button onClick={onTagCreate} size='sm' data-testid="create-tag-button">
             <Plus className='h-4 w-4 mr-1' />
             Create Tag
           </Button>
@@ -571,6 +570,7 @@ const TagManagement: React.FC<TagManagementProps> = ({
                 onTagDelete={onTagDelete}
                 onTagCreate={() => onTagCreate()}
                 className='max-h-96 overflow-y-auto'
+                data-testid="tag-tree"
               />
             )}
           </CardContent>

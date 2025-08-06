@@ -76,7 +76,7 @@ test.describe('Comprehensive Note Management Tests', () => {
 
       // Wait for editor and fill content
       await page.waitForSelector('[data-testid="note-editor"]')
-      const editor = page.locator('textarea').first()
+      const _editor = page.locator('textarea').first()
       await jsClick(page, 'textarea')
       await jsType(page, 'textarea', '# Existing Note\n\nExisting note content')
 
@@ -126,7 +126,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       await expect(editor).toHaveValue('# Updated Title\n\nUpdated content')
     })
 
-    test.skip('should delete note', async ({ page }) => {
+    test('should delete note', async ({ page }) => {
       // SKIPPED: Delete functionality UI not implemented
       // Create a note
       await jsClick(page, '[data-testid="new-note-button"]')
@@ -181,7 +181,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       ).toContainText('Beta Note')
     })
 
-    test.skip('should search notes by content', async ({ page }) => {
+    test('should search notes by content', async ({ page }) => {
       // SKIPPED: Search by content functionality needs implementation
       // Create notes with specific content
       await page.click('[data-testid="new-note-button"]')
@@ -247,7 +247,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Note Organization', () => {
+  test.describe('Note Organization', () => {
     // SKIPPED: Note organization features not implemented
     test('should favorite a note', async ({ page }) => {
       // Create a note
@@ -402,7 +402,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Note Export', () => {
+  test.describe('Note Export', () => {
     // SKIPPED: Export functionality not implemented
     test('should export note as Markdown', async ({ page }) => {
       // Create a note
@@ -489,7 +489,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Note Import', () => {
+  test.describe('Note Import', () => {
     // SKIPPED: Import functionality not implemented
     test('should import Markdown file', async ({ page }) => {
       // Click import button
@@ -544,7 +544,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Version History', () => {
+  test.describe('Version History', () => {
     // SKIPPED: Version history not implemented
     test('should show version history', async ({ page }) => {
       // Create a note
@@ -601,7 +601,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Note Sharing', () => {
+  test.describe('Note Sharing', () => {
     // SKIPPED: Sharing functionality not implemented
     test('should share note with link', async ({ page }) => {
       // Create a note
@@ -670,7 +670,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Note Metadata', () => {
+  test.describe('Note Metadata', () => {
     // SKIPPED: Metadata features not implemented
     test('should show note creation date', async ({ page }) => {
       // Create a note
@@ -744,7 +744,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Note Performance', () => {
+  test.describe('Note Performance', () => {
     // SKIPPED: Performance tests not applicable without full implementation
     test('should handle large notes efficiently', async ({ page }) => {
       // Create a large note
@@ -805,7 +805,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     })
   })
 
-  test.describe.skip('Note Offline Support', () => {
+  test.describe('Note Offline Support', () => {
     // SKIPPED: Offline support not implemented
     test('should work offline', async ({ page, context }) => {
       // Create a note

@@ -1,5 +1,37 @@
 import { http, HttpResponse } from 'msw'
 
+// Helper function to check if requests should be allowed
+const isRequestAllowed = (cookies: Record<string, string>) => {
+  const isMockingEnabled = process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
+  const hasAuthBypass = cookies['dev-auth-bypass'] === 'true'
+  const isTestEnv = process.env.NODE_ENV === 'test'
+  
+  return hasAuthBypass || isTestEnv || isMockingEnabled
+}
+
+// Stateful note storage for tests
+const mockNoteStore: Array<{
+  id: string
+  title: string
+  content: any
+  created_at: string
+  updated_at: string
+  user_id: string
+  folder_id: string | null
+  is_public: boolean
+}> = [
+  {
+    id: 'note-default-1',
+    title: 'Welcome to Notable',
+    content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Welcome to Notable! This is your first note.' }] }] },
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    user_id: '11111111-1111-1111-1111-111111111111',
+    folder_id: null,
+    is_public: false,
+  }
+]
+
 // Mock template data with all required fields
 const MOCK_TEMPLATES = [
   {
@@ -168,8 +200,37 @@ const TEST_SESSION = {
   user: TEST_USER,
 }
 
+// Mock folder data
+const MOCK_FOLDERS = [
+  {
+    id: 'folder-1',
+    name: 'Projects',
+    parentId: null,
+    user_id: TEST_USER.id,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'folder-2',
+    name: 'Web Development',
+    parentId: 'folder-1',
+    user_id: TEST_USER.id,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'folder-3',
+    name: 'Meeting Notes',
+    parentId: null,
+    user_id: TEST_USER.id,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+]
+
 // Define mock handlers for your API endpoints
 export const handlers = [
+
   // Folders API
   http.get('*/api/folders', ({ cookies }) => {
     // Allow access in test environment with dev-auth-bypass cookie
@@ -177,10 +238,105 @@ export const handlers = [
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.info('[MSW] GET /api/folders - returning empty folders list')
+    console.info('[MSW] GET /api/folders - returning mock folders')
     return HttpResponse.json({
-      data: [],
-      total: 0,
+      success: true,
+      data: MOCK_FOLDERS,
+      total: MOCK_FOLDERS.length,
+    })
+  }),
+
+  http.post('*/api/folders', async ({ request, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json() as { name: string; parent_id?: string | null }
+    
+    const newFolder = {
+      id: `folder-${Date.now()}`,
+      name: body.name,
+      parentId: body.parent_id || null,
+      user_id: TEST_USER.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+
+    MOCK_FOLDERS.push(newFolder)
+    
+    console.info('[MSW] POST /api/folders - created folder:', newFolder)
+    return HttpResponse.json({
+      success: true,
+      data: newFolder,
+    })
+  }),
+
+  http.put('*/api/folders/:id', async ({ request, params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json() as { name?: string; parent_id?: string | null }
+    const folderId = params.id as string
+    
+    const folderIndex = MOCK_FOLDERS.findIndex(f => f.id === folderId)
+    if (folderIndex === -1) {
+      return HttpResponse.json({ error: 'Folder not found' }, { status: 404 })
+    }
+
+    const updatedFolder = {
+      ...MOCK_FOLDERS[folderIndex],
+      ...(body.name && { name: body.name }),
+      ...(body.parent_id !== undefined && { parentId: body.parent_id }),
+      updated_at: new Date().toISOString(),
+    }
+
+    MOCK_FOLDERS[folderIndex] = updatedFolder
+    
+    console.info('[MSW] PUT /api/folders/:id - updated folder:', updatedFolder)
+    return HttpResponse.json({
+      success: true,
+      data: updatedFolder,
+    })
+  }),
+
+  http.delete('*/api/folders/:id', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const folderId = params.id as string
+    const folderIndex = MOCK_FOLDERS.findIndex(f => f.id === folderId)
+    
+    if (folderIndex === -1) {
+      return HttpResponse.json({ error: 'Folder not found' }, { status: 404 })
+    }
+
+    MOCK_FOLDERS.splice(folderIndex, 1)
+    
+    console.info('[MSW] DELETE /api/folders/:id - deleted folder:', folderId)
+    return HttpResponse.json({
+      success: true,
+      message: 'Folder deleted successfully',
+    })
+  }),
+
+  http.get('*/api/folders/:id', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const folderId = params.id as string
+    const folder = MOCK_FOLDERS.find(f => f.id === folderId)
+    
+    if (!folder) {
+      return HttpResponse.json({ error: 'Folder not found' }, { status: 404 })
+    }
+
+    console.info('[MSW] GET /api/folders/:id - returning folder:', folder)
+    return HttpResponse.json({
+      success: true,
+      data: folder,
     })
   }),
 
@@ -353,11 +509,126 @@ export const handlers = [
     if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    return HttpResponse.json({ data: [], total: 0 })
+    
+    // Import mockStore dynamically to avoid circular import
+    const { mockStore } = require('../utils/mock-data-store')
+    const mockUserId = '11111111-1111-1111-1111-111111111111'
+    const tags = mockStore.tags.getAll(mockUserId)
+    
+    console.info('[MSW] GET /api/tags - returning tags:', tags)
+    return HttpResponse.json({ 
+      data: tags, 
+      total: tags.length 
+    })
+  }),
+
+  // Add comprehensive tag CRUD operations for MSW
+  http.post('*/api/tags', async ({ request, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { mockStore } = require('../utils/mock-data-store')
+    const body = await request.json() as any
+    const mockUserId = '11111111-1111-1111-1111-111111111111'
+
+    // Validate required fields
+    if (!body.name) {
+      return HttpResponse.json({ 
+        error: 'Tag name is required' 
+      }, { status: 400 })
+    }
+
+    // Check if tag name already exists
+    const existingTag = mockStore.tags.findByName(body.name, mockUserId)
+    if (existingTag) {
+      return HttpResponse.json({ 
+        error: 'Tag with this name already exists' 
+      }, { status: 409 })
+    }
+
+    const newTag = mockStore.tags.create({
+      name: body.name,
+      color: body.color || '#3b82f6',
+      description: body.description || '',
+      parent_id: body.parent_id || null,
+      user_id: mockUserId,
+    })
+
+    console.info('[MSW] POST /api/tags - created tag:', newTag)
+    return HttpResponse.json({ 
+      data: newTag 
+    })
+  }),
+
+  http.put('*/api/tags/:id', async ({ request, params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { mockStore } = require('../utils/mock-data-store')
+    const body = await request.json() as any
+    const tagId = params.id as string
+
+    const updatedTag = mockStore.tags.update(tagId, body)
+    
+    if (!updatedTag) {
+      return HttpResponse.json({ 
+        error: 'Tag not found' 
+      }, { status: 404 })
+    }
+
+    console.info('[MSW] PUT /api/tags/:id - updated tag:', updatedTag)
+    return HttpResponse.json({ 
+      data: updatedTag 
+    })
+  }),
+
+  http.delete('*/api/tags/:id', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { mockStore } = require('../utils/mock-data-store')
+    const tagId = params.id as string
+    const deleted = mockStore.tags.delete(tagId)
+
+    if (!deleted) {
+      return HttpResponse.json({ 
+        error: 'Tag not found' 
+      }, { status: 404 })
+    }
+
+    console.info('[MSW] DELETE /api/tags/:id - deleted tag:', tagId)
+    return HttpResponse.json({ 
+      success: true,
+      message: 'Tag deleted successfully' 
+    })
+  }),
+
+  http.get('*/api/tags/:id', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { mockStore } = require('../utils/mock-data-store')
+    const tagId = params.id as string
+    const tag = mockStore.tags.get(tagId)
+
+    if (!tag) {
+      return HttpResponse.json({ 
+        error: 'Tag not found' 
+      }, { status: 404 })
+    }
+
+    console.info('[MSW] GET /api/tags/:id - returning tag:', tag)
+    return HttpResponse.json({ 
+      data: tag 
+    })
   }),
 
   // Mock Supabase auth endpoints
-  http.post('*/auth/v1/token', async ({ request }) => {
+  http.post('*/auth/v1/token', ({ request }) => {
     const url = new URL(request.url)
     const grantType = url.searchParams.get('grant_type')
 
@@ -842,6 +1113,166 @@ export const handlers = [
     })
   }),
 
+  // Export API Handlers
+  http.post('*/api/export', async ({ request, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json() as {
+      noteId?: string
+      format: 'markdown' | 'html' | 'pdf' | 'react'
+      options?: Record<string, any>
+    }
+
+    // Simulate export processing
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    const mockFileContent = `# Export Test\n\nThis is mock exported content in ${body.format.toUpperCase()} format.`
+    const filename = `note-export.${body.format === 'react' ? 'tsx' : body.format}`
+    
+    // Return download URL and metadata
+    return HttpResponse.json({
+      success: true,
+      data: {
+        filename,
+        content: mockFileContent,
+        size: mockFileContent.length,
+        format: body.format,
+        downloadUrl: `/api/export/download/${Date.now()}`,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
+      }
+    })
+  }),
+
+  http.get('*/api/export/download/:id', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Return file content as blob
+    const mockContent = `# Mock Export File\n\nThis is mock exported content from download ID: ${params.id}`
+    
+    return new HttpResponse(mockContent, {
+      headers: {
+        'Content-Type': 'text/markdown',
+        'Content-Disposition': 'attachment; filename="note-export.md"',
+      },
+    })
+  }),
+
+  http.post('*/api/export/batch', async ({ request, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json() as {
+      noteIds: string[]
+      format: string
+      options?: Record<string, any>
+    }
+
+    // Simulate batch export processing
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        batchId: `batch-${Date.now()}`,
+        filename: `notable-export-${body.noteIds.length}-notes.zip`,
+        format: 'zip',
+        downloadUrl: `/api/export/batch/download/batch-${Date.now()}`,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
+        totalFiles: body.noteIds.length,
+      }
+    })
+  }),
+
+  // Smart Suggestions API
+  http.get('*/api/suggestions', ({ request, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const url = new URL(request.url)
+    const context = url.searchParams.get('context') || 'general'
+    
+    return HttpResponse.json({
+      success: true,
+      data: {
+        suggestions: [
+          {
+            id: 'suggestion-1',
+            type: 'related_note',
+            title: 'Related Note: Meeting Notes',
+            description: 'This note might be related to your current topic',
+            confidence: 0.85,
+            noteId: 'n2222222-2222-2222-2222-222222222222',
+          },
+          {
+            id: 'suggestion-2',
+            type: 'template',
+            title: 'Use Template: Daily Standup',
+            description: 'Consider using this template for structured notes',
+            confidence: 0.92,
+            templateId: 'daily-standup',
+          },
+          {
+            id: 'suggestion-3',
+            type: 'ai_tip',
+            title: 'Writing Tip',
+            description: 'Try adding more specific details to improve clarity',
+            confidence: 0.78,
+          },
+        ],
+        context,
+      }
+    })
+  }),
+
+  // Version History API
+  http.get('*/api/notes/:id/versions', ({ params, cookies }) => {
+    if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    return HttpResponse.json({
+      success: true,
+      data: [
+        {
+          id: 'v1',
+          noteId: params.id,
+          content: 'Original version of the note',
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+          author: {
+            id: TEST_USER.id,
+            email: TEST_USER.email,
+          },
+          changes: {
+            added: 0,
+            modified: 1,
+            deleted: 0,
+          },
+        },
+        {
+          id: 'v2',
+          noteId: params.id,
+          content: 'Updated version with more content',
+          createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
+          author: {
+            id: TEST_USER.id,
+            email: TEST_USER.email,
+          },
+          changes: {
+            added: 1,
+            modified: 0,
+            deleted: 0,
+          },
+        },
+      ]
+    })
+  }),
+
   // Mock auth callback (GET method for OAuth flow)
   http.get('*/auth/callback', ({ request }) => {
     const url = new URL(request.url)
@@ -874,44 +1305,32 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 })
   }),
 
-  // Mock Notes API endpoints
-  http.get('*/api/notes', ({ request }) => {
+  // Temporarily disable MSW Notes API endpoints to test built-in API route mocking
+  /* 
+  http.get('*/api/notes', ({ request, cookies }) => {
+    if (!isRequestAllowed(cookies)) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const url = new URL(request.url)
     const limit = parseInt(url.searchParams.get('limit') || '10')
     const offset = parseInt(url.searchParams.get('offset') || '0')
 
-    const mockNotes = [
-      {
-        id: 'note-1',
-        title: 'Test Note 1',
-        content: { type: 'doc', content: [] },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        user_id: '11111111-1111-1111-1111-111111111111',
-        folder_id: null,
-        is_public: false,
-      },
-      {
-        id: 'note-2',
-        title: 'Test Note 2',
-        content: { type: 'doc', content: [] },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        user_id: '11111111-1111-1111-1111-111111111111',
-        folder_id: null,
-        is_public: false,
-      },
-    ]
-
-    const paginatedNotes = mockNotes.slice(offset, offset + limit)
+    const paginatedNotes = mockNoteStore.slice(offset, offset + limit)
 
     return HttpResponse.json({
       notes: paginatedNotes,
-      total: mockNotes.length,
+      total: mockNoteStore.length,
     })
   }),
+  */
 
-  http.get('*/api/notes/:id', ({ params }) => {
+  /*
+  http.get('*/api/notes/:id', ({ params, cookies }) => {
+    if (!isRequestAllowed(cookies)) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { id } = params
 
     // Special handling for block editor test note
@@ -930,62 +1349,95 @@ export const handlers = [
       })
     }
 
-    return HttpResponse.json({
-      note: {
-        id: id as string,
-        title: 'Test Note',
-        content: { type: 'doc', content: [] },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        user_id: '11111111-1111-1111-1111-111111111111',
-        folder_id: null,
-        is_public: false,
-      },
-    })
+    // Find the note in the store
+    const note = mockNoteStore.find(n => n.id === id)
+    if (note) {
+      return HttpResponse.json({ note })
+    }
+
+    return HttpResponse.json(
+      { error: 'Note not found' },
+      { status: 404 }
+    )
   }),
 
-  http.post('*/api/notes', async ({ request }) => {
+  http.post('*/api/notes', async ({ request, cookies }) => {
+    if (!isRequestAllowed(cookies)) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = (await request.json()) as any
     const noteId = `mock-note-${Date.now()}`
 
-    return HttpResponse.json({
-      note: {
-        id: noteId,
-        title: body.title || 'Untitled',
-        content: body.content || { type: 'doc', content: [] },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        user_id: '11111111-1111-1111-1111-111111111111',
-        folder_id: body.folder_id || null,
-        is_public: body.is_public || false,
-      },
-    })
+    const newNote = {
+      id: noteId,
+      title: body.title || 'Untitled',
+      content: body.content || { type: 'doc', content: [] },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      user_id: '11111111-1111-1111-1111-111111111111',
+      folder_id: body.folder_id || null,
+      is_public: body.is_public || false,
+    }
+
+    // Add to the stateful store
+    mockNoteStore.push(newNote)
+
+    return HttpResponse.json({ note: newNote })
   }),
 
-  http.put('*/api/notes/:id', async ({ request, params }) => {
+  http.put('*/api/notes/:id', async ({ request, params, cookies }) => {
+    if (!isRequestAllowed(cookies)) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { id } = params
     const body = (await request.json()) as any
 
-    return HttpResponse.json({
-      note: {
-        id: id as string,
-        title: body.title || 'Updated Note',
-        content: body.content || { type: 'doc', content: [] },
-        created_at: new Date().toISOString(),
+    // Find and update the note in the store
+    const noteIndex = mockNoteStore.findIndex(n => n.id === id)
+    if (noteIndex !== -1) {
+      mockNoteStore[noteIndex] = {
+        ...mockNoteStore[noteIndex],
+        title: body.title || mockNoteStore[noteIndex].title,
+        content: body.content || mockNoteStore[noteIndex].content,
         updated_at: new Date().toISOString(),
-        user_id: '11111111-1111-1111-1111-111111111111',
-        folder_id: body.folder_id || null,
-        is_public: body.is_public || false,
-      },
-    })
+        folder_id: body.folder_id !== undefined ? body.folder_id : mockNoteStore[noteIndex].folder_id,
+        is_public: body.is_public !== undefined ? body.is_public : mockNoteStore[noteIndex].is_public,
+      }
+
+      return HttpResponse.json({ note: mockNoteStore[noteIndex] })
+    }
+
+    return HttpResponse.json(
+      { error: 'Note not found' },
+      { status: 404 }
+    )
   }),
 
-  http.delete('*/api/notes/:id', ({ params }) => {
-    return HttpResponse.json({
-      success: true,
-      message: `Note ${params.id} deleted successfully`,
-    })
+  http.delete('*/api/notes/:id', ({ params, cookies }) => {
+    if (!isRequestAllowed(cookies)) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = params
+    
+    // Find and remove the note from the store
+    const noteIndex = mockNoteStore.findIndex(n => n.id === id)
+    if (noteIndex !== -1) {
+      mockNoteStore.splice(noteIndex, 1)
+      return HttpResponse.json({
+        success: true,
+        message: `Note ${id} deleted successfully`,
+      })
+    }
+
+    return HttpResponse.json(
+      { error: 'Note not found' },
+      { status: 404 }
+    )
   }),
+  */
 
   // Comprehensive search API mocks
   http.get('*/api/search', ({ request, cookies }) => {
@@ -1248,7 +1700,7 @@ export const handlers = [
   }),
 
   // Note tags endpoints
-  http.get('*/api/notes/:id/tags', ({ params, cookies }) => {
+  http.get('*/api/notes/:id/tags', ({ cookies }) => {
     if (!cookies['dev-auth-bypass'] && process.env.NODE_ENV !== 'test') {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

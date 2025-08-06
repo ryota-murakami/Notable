@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import {
-  clickWithHydration,
+  clickWithHydration as _clickWithHydration,
   waitForHydration,
 } from './utils/wait-for-hydration'
 
@@ -313,13 +313,13 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await editor.click()
 
       // Test code block syntax
-      await editor.fill('```\nconst hello = "world";\nconsole.log(hello);\n```')
+      await editor.fill('```\nconst hello = "world";\nconsole.info(hello);\n```')
       await page.keyboard.press('Enter')
       await page.waitForTimeout(100)
 
       // Verify the editor can handle code block text
       await expect(editor).toContainText('const hello = "world";')
-      await expect(editor).toContainText('console.log(hello);')
+      await expect(editor).toContainText('console.info(hello);')
 
       // Test code block with language
       await editor.fill(
@@ -366,7 +366,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
   })
 
   test.describe('Advanced Blocks Kit', () => {
-    test.skip('should create callout blocks', async ({ page }) => {
+    test('should create callout blocks', async ({ page }) => {
       // SKIPPED: Advanced blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -393,7 +393,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       )
     })
 
-    test.skip('should create toggle blocks', async ({ page }) => {
+    test('should create toggle blocks', async ({ page }) => {
       // SKIPPED: Toggle blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -422,7 +422,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(toggleContent).toBeVisible()
     })
 
-    test.skip('should create table blocks', async ({ page }) => {
+    test('should create table blocks', async ({ page }) => {
       // SKIPPED: Table blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -457,7 +457,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(page.locator('tr:first-child td')).toHaveCount(4)
     })
 
-    test.skip('should create todo blocks', async ({ page }) => {
+    test('should create todo blocks', async ({ page }) => {
       // SKIPPED: Todo blocks not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -485,7 +485,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       ).toHaveClass(/completed/)
     })
 
-    test.skip('should create column layout', async ({ page }) => {
+    test('should create column layout', async ({ page }) => {
       // SKIPPED: Column layout not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -516,7 +516,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
   })
 
   test.describe('Link Plugin', () => {
-    test.skip('should create links', async ({ page }) => {
+    test('should create links', async ({ page }) => {
       // SKIPPED: Link plugin not fully implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -542,7 +542,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(link).toHaveAttribute('title', 'Example Website')
     })
 
-    test.skip('should create links with markdown syntax', async ({ page }) => {
+    test('should create links with markdown syntax', async ({ page }) => {
       // SKIPPED: Markdown link syntax not implemented
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
@@ -558,7 +558,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       )
     })
 
-    test.skip('should edit existing links', async ({ page }) => {
+    test('should edit existing links', async ({ page }) => {
       // SKIPPED: Link editing not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -580,7 +580,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       )
     })
 
-    test.skip('should remove links', async ({ page }) => {
+    test('should remove links', async ({ page }) => {
       // SKIPPED: Link removal not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -599,7 +599,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(editor).toContainText('Remove Me')
     })
 
-    test.skip('should open link in new tab', async ({ page }) => {
+    test('should open link in new tab', async ({ page }) => {
       // SKIPPED: Link context menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -623,7 +623,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
   })
 
   test.describe('Enhanced Editor Kit', () => {
-    test.skip('should support find and replace', async ({ page }) => {
+    test('should support find and replace', async ({ page }) => {
       // SKIPPED: Find and replace not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -658,7 +658,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       )
     })
 
-    test.skip('should support emoji picker', async ({ page }) => {
+    test('should support emoji picker', async ({ page }) => {
       // SKIPPED: Emoji picker not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -678,7 +678,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(editor).toContainText('Hello 😊')
     })
 
-    test.skip('should support word count', async ({ page }) => {
+    test('should support word count', async ({ page }) => {
       // SKIPPED: Word count feature not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -700,7 +700,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       ).toContainText('8 words selected')
     })
 
-    test.skip('should support export to different formats', async ({
+    test('should support export to different formats', async ({
       page,
     }) => {
       // SKIPPED: Export functionality not implemented in editor
@@ -732,7 +732,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       expect(download.suggestedFilename()).toContain('.pdf')
     })
 
-    test.skip('should support print preview', async ({ page }) => {
+    test('should support print preview', async ({ page }) => {
       // SKIPPED: Print preview not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -763,7 +763,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
   })
 
   test.describe('Slash Command Kit', () => {
-    test.skip('should show slash command menu', async ({ page }) => {
+    test('should show slash command menu', async ({ page }) => {
       // SKIPPED: Slash command menu not implemented
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
@@ -781,7 +781,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       await expect(page.locator('text="Bulleted list"')).toBeVisible()
     })
 
-    test.skip('should filter slash commands', async ({ page }) => {
+    test('should filter slash commands', async ({ page }) => {
       // SKIPPED: Slash command menu not implemented
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
@@ -806,93 +806,93 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       ).not.toBeVisible()
     })
 
-    test.skip('should insert blocks via slash commands', async ({ page }) => {
+    test('should insert blocks via slash commands', async ({ page }) => {
       // SKIPPED: Slash command menu not implemented
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
 
       // SIMPLIFIED TEST: Just test typing "/" to see what happens
-      console.log('🚨 SIMPLIFIED TEST: Testing basic "/" behavior...')
+      console.info('🚨 SIMPLIFIED TEST: Testing basic "/" behavior...')
 
       await editor.click()
-      console.log('🚨 Clicked editor')
+      console.info('🚨 Clicked editor')
 
       // First, try just typing "/" without any complex menu interactions
       await editor.type('/')
-      console.log('🚨 Typed "/"')
+      console.info('🚨 Typed "/"')
 
       await page.waitForTimeout(1000)
 
       // Check what the current HTML looks like
       let editorHTML = await editor.innerHTML()
-      console.log(
+      console.info(
         '🚨 Editor HTML after typing "/":',
         `${editorHTML.substring(0, 200)}...`
       )
 
       // Try typing some text after the slash
       await editor.type('h')
-      console.log('🚨 Typed "h" after "/"')
+      console.info('🚨 Typed "h" after "/"')
 
       await page.waitForTimeout(500)
 
       // Check HTML again
       editorHTML = await editor.innerHTML()
-      console.log(
+      console.info(
         '🚨 Editor HTML after typing "/h":',
         `${editorHTML.substring(0, 200)}...`
       )
 
       // Type "1" to complete "/h1"
       await editor.type('1')
-      console.log('🚨 Typed "1" to complete "/h1"')
+      console.info('🚨 Typed "1" to complete "/h1"')
 
       await page.waitForTimeout(500)
 
       // Check HTML again
       editorHTML = await editor.innerHTML()
-      console.log(
+      console.info(
         '🚨 Editor HTML after typing "/h1":',
         `${editorHTML.substring(0, 200)}...`
       )
 
       // Press space or enter to see if it transforms
       await editor.press('Space')
-      console.log('🚨 Pressed Space')
+      console.info('🚨 Pressed Space')
 
       await page.waitForTimeout(1000)
 
       // Check if h1 element was created
       const h1Elements = page.locator('h1')
       const h1Count = await h1Elements.count()
-      console.log('🚨 Number of h1 elements found after space:', h1Count)
+      console.info('🚨 Number of h1 elements found after space:', h1Count)
 
       // Final HTML check
       editorHTML = await editor.innerHTML()
-      console.log('🚨 Final editor HTML:', `${editorHTML.substring(0, 300)}...`)
+      console.info('🚨 Final editor HTML:', `${editorHTML.substring(0, 300)}...`)
 
       // Type some content to see where it goes
       await editor.type('Test heading content')
-      console.log('🚨 Typed test content')
+      console.info('🚨 Typed test content')
 
       await page.waitForTimeout(500)
 
       // Final verification
       const finalH1Count = await h1Elements.count()
-      console.log('🚨 Final h1 count:', finalH1Count)
+      console.info('🚨 Final h1 count:', finalH1Count)
 
       if (finalH1Count > 0) {
-        console.log('🚨 SUCCESS: H1 element was created!')
+        console.info('🚨 SUCCESS: H1 element was created!')
         await expect(h1Elements.first()).toBeVisible()
       } else {
-        console.log('🚨 FAILED: No H1 element was created')
+        console.info('🚨 FAILED: No H1 element was created')
         // Just verify the text exists somewhere
         await expect(editor).toContainText('Test heading content')
       }
     })
 
-    test.skip('should navigate slash menu with keyboard', async ({ page }) => {
+    test('should navigate slash menu with keyboard', async ({ page }) => {
       // SKIPPED: Slash command menu not implemented
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
@@ -921,7 +921,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       ).not.toBeVisible()
     })
 
-    test.skip('should close slash menu on Escape', async ({ page }) => {
+    test('should close slash menu on Escape', async ({ page }) => {
       // SKIPPED: Slash command menu not implemented
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
@@ -945,7 +945,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
   })
 
   test.describe('Plugin Integration', () => {
-    test.skip('should support plugin settings', async ({ page }) => {
+    test('should support plugin settings', async ({ page }) => {
       // SKIPPED: Plugin settings interface not implemented
       // Open settings
       await page.click('[data-testid="settings-button"]')
@@ -976,7 +976,7 @@ test.describe('Comprehensive Editor Plugins Tests', () => {
       ).not.toBeVisible()
     })
 
-    test.skip('should handle plugin errors gracefully', async ({ page }) => {
+    test('should handle plugin errors gracefully', async ({ page }) => {
       // SKIPPED: Plugin error handling not implemented
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')

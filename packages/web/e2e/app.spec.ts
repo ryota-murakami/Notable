@@ -12,7 +12,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
 
     // Verify server responds (even with errors)
     expect(response).not.toBeNull()
-    expect(response!.status()).toBeLessThan(600) // Any valid HTTP status
+    expect(response?.status()).toBeLessThan(600) // Any valid HTTP status
 
     // Verify HTML document structure exists (more reliable than body visibility)
     await expect(page.locator('html')).toBeAttached()
@@ -22,7 +22,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
     expect(hasContent).toBeGreaterThan(0)
 
     console.info(
-      `✅ E2E Infrastructure working - Server responded with status: ${response!.status()}`
+      `✅ E2E Infrastructure working - Server responded with status: ${response?.status()}`
     )
   })
 
@@ -41,13 +41,13 @@ test.describe('Notable Web App E2E Infrastructure', () => {
 
     // Verify we got a valid HTTP response
     expect(response).not.toBeNull()
-    expect(response!.status()).toBeLessThan(600)
+    expect(response?.status()).toBeLessThan(600)
 
     // Basic HTML structure should be present
     await expect(page.locator('html')).toBeAttached()
 
     console.info(
-      `✅ Server responded in ${loadTime}ms with status ${response!.status()}`
+      `✅ Server responded in ${loadTime}ms with status ${response?.status()}`
     )
   })
 
@@ -67,13 +67,13 @@ test.describe('Notable Web App E2E Infrastructure', () => {
 
     // Page may return 500 status due to server-side errors, but should still have HTML structure
     expect(response).not.toBeNull()
-    expect(response!.status()).toBeLessThan(600) // Accept any valid HTTP status
+    expect(response?.status()).toBeLessThan(600) // Accept any valid HTTP status
 
     // Basic document structure should exist even with errors
     await expect(page.locator('html')).toBeAttached()
 
     console.info(
-      `✅ Page loaded with status ${response!.status()} and ${errors.length} console errors (expected in development)`
+      `✅ Page loaded with status ${response?.status()} and ${errors.length} console errors (expected in development)`
     )
   })
 })

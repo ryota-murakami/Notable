@@ -10,63 +10,29 @@ import {
   SuperscriptPlugin as BaseSuperscriptPlugin,
   UnderlinePlugin as BaseUnderlinePlugin,
 } from '@udecode/plate-basic-marks/react'
-// import { HighlightPlugin as BaseHighlightPlugin } from '@udecode/plate-highlight/react'
-// import { KbdPlugin as BaseKbdPlugin } from '@udecode/plate-kbd/react'
 
 import { CodeLeaf } from '@/components/ui/code-node'
 import { HighlightLeaf } from '@/components/ui/highlight-node'
 import { KbdLeaf } from '@/components/ui/kbd-node'
 
-// Text Mark Plugins with keyboard shortcuts enabled
-const BoldPlugin = BaseBoldPlugin.extend({
-  node: {
-    isLeaf: true,
-    type: 'bold',
-  },
-})
+// Text Mark Plugins - using direct plugin instances with extensions for components
+const BoldPlugin = BaseBoldPlugin
 
-const ItalicPlugin = BaseItalicPlugin.extend({
-  node: {
-    isLeaf: true,
-    type: 'italic',
-  },
-})
+const ItalicPlugin = BaseItalicPlugin
 
-const UnderlinePlugin = BaseUnderlinePlugin.extend({
-  node: {
-    isLeaf: true,
-    type: 'underline',
-  },
-})
+const UnderlinePlugin = BaseUnderlinePlugin
 
 const CodePlugin = BaseCodePlugin.extend({
   node: {
-    isLeaf: true,
-    type: 'code',
     component: CodeLeaf,
   },
 })
 
-const StrikethroughPlugin = BaseStrikethroughPlugin.extend({
-  node: {
-    isLeaf: true,
-    type: 'strikethrough',
-  },
-})
+const StrikethroughPlugin = BaseStrikethroughPlugin
 
-const SubscriptPlugin = BaseSubscriptPlugin.extend({
-  node: {
-    isLeaf: true,
-    type: 'subscript',
-  },
-})
+const SubscriptPlugin = BaseSubscriptPlugin
 
-const SuperscriptPlugin = BaseSuperscriptPlugin.extend({
-  node: {
-    isLeaf: true,
-    type: 'superscript',
-  },
-})
+const SuperscriptPlugin = BaseSuperscriptPlugin
 
 const HighlightPlugin = createPlatePlugin({
   key: 'highlight',

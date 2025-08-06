@@ -49,8 +49,8 @@ export function useFolders() {
 
     // Second pass: build tree structure
     folders.forEach((folder) => {
-      const node = folderMap.get(folder.id)!
-      if (folder.parent_id) {
+      const node = folderMap.get(folder.id)
+      if (node && folder.parent_id) {
         const parent = folderMap.get(folder.parent_id)
         if (parent) {
           parent.children.push(node)
@@ -59,7 +59,7 @@ export function useFolders() {
           // Orphaned folder, add to root
           tree.push(node)
         }
-      } else {
+      } else if (node) {
         // Root level folder
         tree.push(node)
       }
@@ -256,7 +256,7 @@ export function useFolders() {
 
 // Hook for managing a single folder
 export function useFolder(id: string) {
-  const { toast } = useToast()
+  const { toast: _toast } = useToast()
 
   const {
     data: folder,

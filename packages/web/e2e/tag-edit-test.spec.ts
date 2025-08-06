@@ -15,11 +15,11 @@ test('tag editing functionality', async ({ page }) => {
   await page.goto('http://localhost:4378/app')
   await page.waitForLoadState('networkidle')
 
-  console.log('🚀 Starting tag editing test...')
+  console.info('🚀 Starting tag editing test...')
 
   // Verify the app is loaded
   await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 10000 })
-  console.log('✅ App shell loaded')
+  console.info('✅ App shell loaded')
 
   // Step 1: Create a tag first via API
   const originalTagName = `edit-test-tag-${Date.now()}`
@@ -53,15 +53,15 @@ test('tag editing functionality', async ({ page }) => {
     }
   }, originalTagName)
 
-  console.log(`Create API Response:`, createResponse)
+  console.info(`Create API Response:`, createResponse)
 
   if (!createResponse.success) {
-    console.log(`❌ Failed to create test tag: ${createResponse.error}`)
+    console.info(`❌ Failed to create test tag: ${createResponse.error}`)
     return
   }
 
   const tagId = createResponse.data.id
-  console.log(`✅ Created test tag with ID: ${tagId}`)
+  console.info(`✅ Created test tag with ID: ${tagId}`)
 
   // Step 2: Edit the tag via API
   const newTagName = `edited-tag-${Date.now()}`
@@ -99,14 +99,14 @@ test('tag editing functionality', async ({ page }) => {
     { id: tagId, name: newTagName, color: newColor }
   )
 
-  console.log(`Edit API Response:`, editResponse)
+  console.info(`Edit API Response:`, editResponse)
 
   if (editResponse.success) {
-    console.log(`✅ Tag edited successfully`)
-    console.log(`Original name: ${originalTagName} -> New name: ${newTagName}`)
-    console.log(`Original color: #ff6b6b -> New color: ${newColor}`)
+    console.info(`✅ Tag edited successfully`)
+    console.info(`Original name: ${originalTagName} -> New name: ${newTagName}`)
+    console.info(`Original color: #ff6b6b -> New color: ${newColor}`)
   } else {
-    console.log(`❌ Tag editing failed: ${editResponse.error}`)
+    console.info(`❌ Tag editing failed: ${editResponse.error}`)
   }
 
   // Step 3: Verify the edit by fetching the updated tag
@@ -129,21 +129,21 @@ test('tag editing functionality', async ({ page }) => {
     }
   }, tagId)
 
-  console.log(`Fetch updated tag response:`, fetchResponse)
+  console.info(`Fetch updated tag response:`, fetchResponse)
 
   if (fetchResponse.success) {
     const updatedTag = fetchResponse.data
     if (updatedTag.name === newTagName && updatedTag.color === newColor) {
-      console.log(`🎉 SUCCESS: Tag edited and verified!`)
-      console.log(`Updated tag name: ${updatedTag.name}`)
-      console.log(`Updated tag color: ${updatedTag.color}`)
+      console.info(`🎉 SUCCESS: Tag edited and verified!`)
+      console.info(`Updated tag name: ${updatedTag.name}`)
+      console.info(`Updated tag color: ${updatedTag.color}`)
     } else {
-      console.log(`❌ Tag edit verification failed`)
-      console.log(`Expected: name=${newTagName}, color=${newColor}`)
-      console.log(`Actual: name=${updatedTag.name}, color=${updatedTag.color}`)
+      console.info(`❌ Tag edit verification failed`)
+      console.info(`Expected: name=${newTagName}, color=${newColor}`)
+      console.info(`Actual: name=${updatedTag.name}, color=${updatedTag.color}`)
     }
   } else {
-    console.log(`❌ Failed to fetch updated tag: ${fetchResponse.error}`)
+    console.info(`❌ Failed to fetch updated tag: ${fetchResponse.error}`)
   }
 
   // Step 4: Test tag deletion
@@ -169,12 +169,12 @@ test('tag editing functionality', async ({ page }) => {
     }
   }, tagId)
 
-  console.log(`Delete API Response:`, deleteResponse)
+  console.info(`Delete API Response:`, deleteResponse)
 
   if (deleteResponse.success) {
-    console.log(`✅ Tag deleted successfully: ${deleteResponse.message}`)
+    console.info(`✅ Tag deleted successfully: ${deleteResponse.message}`)
   } else {
-    console.log(`❌ Tag deletion failed: ${deleteResponse.error}`)
+    console.info(`❌ Tag deletion failed: ${deleteResponse.error}`)
   }
 
   // Step 5: Verify deletion
@@ -196,13 +196,13 @@ test('tag editing functionality', async ({ page }) => {
     }
   }, tagId)
 
-  console.log(`Verify deletion response:`, verifyDeleteResponse)
+  console.info(`Verify deletion response:`, verifyDeleteResponse)
 
   if (verifyDeleteResponse.status === 404) {
-    console.log(`🎉 SUCCESS: Tag deletion verified - tag not found (404)`)
+    console.info(`🎉 SUCCESS: Tag deletion verified - tag not found (404)`)
   } else {
-    console.log(`❌ Tag deletion verification failed - tag still exists`)
+    console.info(`❌ Tag deletion verification failed - tag still exists`)
   }
 
-  console.log('🏁 Tag editing test finished')
+  console.info('🏁 Tag editing test finished')
 })

@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures/coverage'
-import { createClient } from '@/utils/supabase/client'
+import { createClient as _createClient } from '@/utils/supabase/client'
 import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Direct Export Tests', () => {
@@ -79,7 +79,7 @@ test.describe('Direct Export Tests', () => {
 
     // Set up mutation observer to detect download link creation
     await page.evaluate(() => {
-      ;(window as any).exportDetected = new Promise((resolve) => {
+      (window as any).exportDetected = new Promise((resolve) => {
         const observer = new MutationObserver((mutations) => {
           for (const mutation of mutations) {
             for (const node of mutation.addedNodes) {

@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 
 test.describe('Wiki Link Simple Test', () => {
-  test.skip('should create wiki links in editor', async ({ page }) => {
+  test('should create wiki links in editor', async ({ page }) => {
     // SKIPPED: Wiki-link autoformat not working in BlockEditor yet
     // The autoformat rule needs proper implementation with Plate.js
     // TODO: Fix autoformat pattern matching for [[Note Title]] syntax
@@ -28,7 +28,7 @@ test.describe('Wiki Link Simple Test', () => {
 
     // Debug: Check what's in the editor
     const editorContent = await editor.textContent()
-    console.log('Editor content:', editorContent)
+    console.info('Editor content:', editorContent)
 
     // Try different selectors for wiki link
     const wikiLinkSelectors = [
@@ -43,7 +43,7 @@ test.describe('Wiki Link Simple Test', () => {
       const element = page.locator(selector)
       if (await element.isVisible({ timeout: 1000 }).catch(() => false)) {
         wikiLink = element
-        console.log('Found wiki link with selector:', selector)
+        console.info('Found wiki link with selector:', selector)
         break
       }
     }

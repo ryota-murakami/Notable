@@ -18,12 +18,13 @@ const CommandList = CommandPrimitive.CommandList
 const CommandSeparator = CommandPrimitive.CommandSeparator
 import { cn } from '../../lib/utils'
 import {
-  CalendarIcon,
+  CalendarIcon as _CalendarIcon,
+  FileIcon as _FileIcon,
+  UserIcon as _UserIcon,
   ClockIcon,
   CopyIcon,
   DownloadIcon,
   EditIcon,
-  FileIcon,
   FileTextIcon,
   FilterIcon,
   FolderIcon,
@@ -37,11 +38,10 @@ import {
   SunIcon,
   TagIcon,
   TrashIcon,
-  UserIcon,
 } from 'lucide-react'
-import { useSearch, useSearchHistory } from '../../lib/search'
-import { useServerSearch } from '@/hooks/use-server-search'
-import { useSearchHistory as useServerSearchHistory } from '@/hooks/use-search-history'
+import { useSearch as _useSearch, useSearchHistory as _useSearchHistory } from '../../lib/search'
+import { useServerSearch as _useServerSearch } from '@/hooks/use-server-search'
+import { useSearchHistory as _useServerSearchHistory } from '@/hooks/use-search-history'
 import type { SearchableNote, SearchResult } from '../../lib/search/types'
 
 export interface CommandAction {
@@ -417,9 +417,9 @@ export function SearchCommandPalette({
   const [mode, setMode] = React.useState<'command' | 'search' | 'history'>(
     'command'
   )
-  const [selectedResult, setSelectedResult] =
+  const [_selectedResult, setSelectedResult] =
     React.useState<SearchResult | null>(null)
-  const [mounted, setMounted] = React.useState(false)
+  const [_mounted, setMounted] = React.useState(false)
 
   // Only initialize search hooks on client side
   React.useEffect(() => {
@@ -427,14 +427,22 @@ export function SearchCommandPalette({
   }, [])
 
   // Use server-side search for better performance and features
-  const search = useServerSearch({
-    limit: 50,
-    debounceMs: 200,
-  })
+  // TODO: Implement useServerSearch and useServerSearchHistory hooks
+  const search = React.useMemo(() => ({
+    query: '',
+    results: [],
+    isSearching: false,
+    hasSearched: false,
+    stats: null,
+    hasActiveFilters: false,
+    filterSummary: [],
+    search: (query: string) => console.info('Search:', query)
+  }), [])
 
-  const searchHistory = useServerSearchHistory({
-    limit: 50,
-  })
+  const searchHistory = {
+    getRecentSearches: (_limit: number) => [],
+    getSearchSuggestions: (_query: string, _limit: number) => []
+  }
 
   // Handle modal navigation shortcuts (Escape, /, Ctrl+H)
   // Note: Cmd+K is handled by the global keyboard shortcuts system

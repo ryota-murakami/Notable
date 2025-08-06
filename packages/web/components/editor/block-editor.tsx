@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useRef, useState } from 'react'
+const { useCallback, useRef, useState } = React
 import { createPlatePlugin, Plate, usePlateEditor } from 'platejs/react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -94,7 +94,7 @@ export function BlockEditor({
   // Expose executeCommand for testing
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      ;(window as any).slashCommand = { executeCommand }
+      (window as any).slashCommand = { executeCommand }
       console.info('🚨 Exposed window.slashCommand.executeCommand for testing')
     }
   }, [executeCommand])

@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
 
-test.describe.skip('Elite Features UI Integration Verification', () => {
+test.describe('Elite Features UI Integration Verification', () => {
   // SKIPPED: Elite features not implemented in current version
   test.beforeEach(async ({ page }) => {
     // Set dev auth bypass cookie for testing

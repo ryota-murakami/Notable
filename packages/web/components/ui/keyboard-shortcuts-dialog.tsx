@@ -28,7 +28,7 @@ export function KeyboardShortcutsDialog({
   open,
   onOpenChange,
 }: KeyboardShortcutsDialogProps) {
-  const shortcuts: KeyboardShortcut[] = [
+  const shortcuts: KeyboardShortcut[] = React.useMemo(() => [
     // General shortcuts
     {
       keys: ['Cmd', 'Shift', 'P'],
@@ -244,7 +244,7 @@ export function KeyboardShortcutsDialog({
       description: 'Open graph view',
       category: 'View',
     },
-  ]
+  ], [])
 
   // Group shortcuts by category
   const groupedShortcuts = React.useMemo(() => {
@@ -256,7 +256,7 @@ export function KeyboardShortcutsDialog({
       groups[shortcut.category].push(shortcut)
     })
     return groups
-  }, [])
+  }, [shortcuts])
 
   const categories = Object.keys(groupedShortcuts)
 

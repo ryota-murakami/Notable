@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { Database } from './database'
 import type { EnhancedTag } from './tags'
 

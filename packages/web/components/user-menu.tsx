@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { LogOut, Settings, User } from 'lucide-react'
+import { LogOut, Settings } from 'lucide-react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useRouter } from 'next/navigation'
 import { cn } from '../lib/utils'

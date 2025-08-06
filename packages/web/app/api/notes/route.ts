@@ -1,56 +1,49 @@
 import { createClient } from '@/utils/supabase/server'
 import { type NextRequest, NextResponse } from 'next/server'
 
+// In-memory store for mock notes during testing that persists across module reloads
+// Using global to persist data across Next.js dev server hot reloads
+declare global {
+  var mockNotesStore: any[] | undefined;
+}
+
+// Initialize the store if it doesn't exist
+if (!global.mockNotesStore) {
+  global.mockNotesStore = []
+}
+
+const mockNotesStore = global.mockNotesStore
+
 export async function GET(request: NextRequest) {
   try {
-    // Return mock data when API mocking is enabled
-    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
-      const mockNotes = [
-        {
-          id: `mock-note-${Date.now()}`,
-          title: 'Test Note 1',
-          content: {
-            type: 'doc',
-            content: [
-              {
-                type: 'paragraph',
-                content: [
-                  { type: 'text', text: 'This is a test note content' },
-                ],
-              },
-            ],
-          },
-          user_id: 'mock-user-id',
-          folder_id: null,
-          is_public: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          deleted_at: null,
-        },
-        {
-          id: `mock-note-${Date.now() + 1}`,
-          title: 'Test Note 2',
-          content: {
-            type: 'doc',
-            content: [
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: 'This is another test note' }],
-              },
-            ],
-          },
-          user_id: 'mock-user-id',
-          folder_id: null,
-          is_public: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          deleted_at: null,
-        },
-      ]
+    // Debug environment variables
+    console.info('DEBUG: Environment variables in notes GET:', {
+      NODE_ENV: process.env.NODE_ENV,
+      NEXT_PUBLIC_API_MOCKING: process.env.NEXT_PUBLIC_API_MOCKING,
+      API_MOCKING: process.env.API_MOCKING,
+      CI: process.env.CI,
+      availableKeys: Object.keys(process.env).filter(key => key.includes('MOCK') || key.includes('API')).slice(0, 10)
+    })
 
-      return NextResponse.json({ notes: mockNotes, total: mockNotes.length })
+    // Check for API mocking FIRST, before any imports or Supabase calls
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      // Check for reset flag in query params
+      const { searchParams } = new URL(request.url)
+      const resetStore = searchParams.get('reset') === 'true'
+      
+      if (resetStore) {
+        console.info('Resetting mock notes store')
+        mockNotesStore.length = 0 // Clear the array
+        return NextResponse.json({ notes: [], total: 0 })
+      }
+      
+      console.info('API mocking enabled - returning notes from in-memory store:', mockNotesStore.length, 'notes')
+      
+      // Return notes from in-memory store (initially empty, populated by POST)
+      return NextResponse.json({ notes: mockNotesStore, total: mockNotesStore.length })
     }
 
+    // Only initialize Supabase if not in mocking mode
     const supabase = await createClient()
 
     // Get the current user
@@ -112,20 +105,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Return mock data when API mocking is enabled
+    // Check for API mocking FIRST, before any imports or Supabase calls
     if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      console.info('API mocking enabled - returning mock note creation')
       const body = await request.json()
       const { title, content, folder_id, is_hidden } = body
 
       const mockNote = {
-        id: `mock-note-${Date.now()}`,
+        id: `mock-note-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         title: title || 'Untitled',
         content: content || {
           type: 'doc',
           content: [
             {
               type: 'paragraph',
-              content: [{ type: 'text', text: 'New note content' }],
+              content: [{ type: 'text', text: '' }],
             },
           ],
         },
@@ -138,9 +132,14 @@ export async function POST(request: NextRequest) {
         deleted_at: null,
       }
 
+      // Add note to in-memory store so it appears in GET requests
+      mockNotesStore.push(mockNote)
+      
+      console.info('Mock note created and added to store:', mockNote.id, 'Total notes:', mockNotesStore.length)
       return NextResponse.json({ note: mockNote }, { status: 201 })
     }
 
+    // Only initialize Supabase if not in mocking mode
     const supabase = await createClient()
 
     // Get the current user

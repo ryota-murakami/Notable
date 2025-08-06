@@ -87,9 +87,9 @@ export async function createTestNote(
   // Wait for navigation to note editor
   try {
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 5000 })
-  } catch (error) {
+  } catch {
     // If router.push() fails, try manual navigation as fallback
-    console.log('Router navigation failed, trying manual navigation...')
+    console.info('Router navigation failed, trying manual navigation...')
     const currentUrl = page.url()
     if (!currentUrl.includes('/notes/')) {
       // Try to trigger navigation manually by finding the created note ID

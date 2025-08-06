@@ -26,5 +26,5 @@ test('simple shell test - check new note button', async ({ page }) => {
   // Check the text content
   await expect(newNoteButton).toHaveText('New Note')
 
-  console.log('✅ New Note button found and visible!')
+  console.info('✅ New Note button found and visible!')
 })

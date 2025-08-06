@@ -99,7 +99,7 @@ export function GraphVisualization({
   }
 
   // Apply filters to nodes and edges
-  const applyFilters = (nodes: GraphNode[], edges: GraphEdge[]) => {
+  const applyFilters = React.useCallback((nodes: GraphNode[], edges: GraphEdge[]) => {
     let filteredNodes = nodes.filter((node) => {
       // Search filter
       if (
@@ -144,7 +144,7 @@ export function GraphVisualization({
     }
 
     return filteredNodes
-  }
+  }, [searchTerm, selectedFilters])
 
   useEffect(() => {
     if (!svgRef.current || !data.nodes.length) return

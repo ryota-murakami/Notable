@@ -32,13 +32,13 @@ test.describe('Version History Feature', () => {
     })
 
     // The version history button should be visible in the toolbar
-    const versionHistoryButton = page.locator(
+    const _versionHistoryButton = page.locator(
       '[data-testid="version-history-button"]'
     )
-    await expect(versionHistoryButton).toBeVisible({ timeout: 10000 })
+    await expect(_versionHistoryButton).toBeVisible({ timeout: 10000 })
 
     // Button should have the clock icon
-    await expect(versionHistoryButton.locator('svg')).toBeVisible()
+    await expect(_versionHistoryButton.locator('svg')).toBeVisible()
   })
 
   test('should open version history dialog when clicked', async ({ page }) => {
@@ -49,7 +49,7 @@ test.describe('Version History Feature', () => {
     })
 
     // Add some content to create a version using jsType for reliable input handling
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(
       page,
       'input[placeholder*="Untitled"]',
@@ -60,7 +60,7 @@ test.describe('Version History Feature', () => {
     await page.waitForTimeout(1000)
 
     // Click version history button using jsClick to avoid timeout issues
-    const versionHistoryButton = page.locator(
+    const _versionHistoryButton = page.locator(
       '[data-testid="version-history-button"]'
     )
     await jsClick(page, '[data-testid="version-history-button"]')
@@ -87,7 +87,7 @@ test.describe('Version History Feature', () => {
     })
 
     // Add content to create versions using jsType for reliable input handling
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(page, 'input[placeholder*="Untitled"]', 'Version Test Note')
     await page.waitForTimeout(500)
 
@@ -104,8 +104,8 @@ test.describe('Version History Feature', () => {
     await page.waitForSelector('[data-testid="version-history-panel"]')
 
     // Should show at least one version item
-    const versionItems = page.locator('[data-testid^="version-item-"]')
-    await expect(versionItems.first()).toBeVisible()
+    const _versionItems = page.locator('[data-testid^="version-item-"]')
+    await expect(_versionItems.first()).toBeVisible()
 
     // Version should show version number badge
     await expect(page.locator('text=/v\\d+/')).toBeVisible()
@@ -119,7 +119,7 @@ test.describe('Version History Feature', () => {
     })
 
     // Add content using jsType for reliable input handling
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(page, 'input[placeholder*="Untitled"]', 'Milestone Test Note')
     await page.waitForTimeout(1000)
 
@@ -128,7 +128,7 @@ test.describe('Version History Feature', () => {
     await page.waitForSelector('[data-testid="version-history-panel"]')
 
     // Find first version and click milestone button using jsClick
-    const firstVersionMilestoneButton = page
+    const _firstVersionMilestoneButton = page
       .locator('[data-testid^="milestone-button-"]')
       .first()
     await jsClick(page, '[data-testid^="milestone-button-"]')
@@ -159,7 +159,7 @@ test.describe('Version History Feature', () => {
     })
 
     // Add initial content using jsType for reliable input handling
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(
       page,
       'input[placeholder*="Untitled"]',
@@ -183,7 +183,7 @@ test.describe('Version History Feature', () => {
     await jsClick(page, 'text=Compare')
 
     // Click on first version using jsClick
-    const versionItems = page.locator('[data-testid^="version-item-"]')
+    const _versionItems = page.locator('[data-testid^="version-item-"]')
     await jsClick(page, '[data-testid^="version-item-"]')
 
     // Should show selection message
@@ -204,7 +204,7 @@ test.describe('Version History Feature', () => {
     })
 
     // Add initial content using jsType for reliable input handling
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(page, 'input[placeholder*="Untitled"]', 'Original Title')
     await page.waitForTimeout(1000)
 
@@ -241,7 +241,7 @@ test.describe('Version History Feature', () => {
     })
 
     // Add content using jsType for reliable input handling
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(page, 'input[placeholder*="Untitled"]', 'Milestones Test Note')
     await page.waitForTimeout(1000)
 
@@ -347,7 +347,7 @@ test.describe('Version History Feature', () => {
     })
 
     // Add content using jsType for reliable input handling
-    const titleInput = page.locator('input[placeholder*="Untitled"]')
+    const _titleInput = page.locator('input[placeholder*="Untitled"]')
     await jsType(
       page,
       'input[placeholder*="Untitled"]',

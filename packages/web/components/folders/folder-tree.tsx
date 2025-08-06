@@ -1,28 +1,53 @@
 'use client'
 
-import * as React from 'react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect } from 'react'
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu'
-import { Input } from '@/components/ui/input'
-import { useFolders } from '@/hooks/use-folders'
-import type { FolderTreeNode } from '@/types/folder'
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  FileTextIcon,
-  FolderIcon,
-  FolderOpenIcon,
-  PencilIcon,
-  PlusIcon,
-  TrashIcon,
+  ChevronDown,
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  FolderPlus,
+  MoreVertical,
+  Edit,
+  Trash,
+  FileText,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+
+interface FolderNode {
+  id: string
+  name: string
+  parentId: string | null
+  children?: FolderNode[]
+  noteCount?: number
+  created_at: string
+  updated_at: string
+  path?: string
+  depth?: number
+}
+
+interface Note {
+  id: string
+  title: string
+  folder_id: string | null
+}
 
 interface FolderTreeProps {
   selectedFolderId?: string | null
@@ -31,231 +56,188 @@ interface FolderTreeProps {
   className?: string
 }
 
-interface FolderNodeProps {
-  folder: FolderTreeNode
-  selectedFolderId?: string | null
-  onFolderSelect?: (folderId: string | null) => void
-  onNoteCreate?: (folderId: string | null) => void
-  onFolderCreate?: (parentId: string) => void
-  onFolderRename?: (folderId: string, newName: string) => void
-  onFolderDelete?: (folderId: string) => void
-}
-
-function FolderNode({
-  folder,
-  selectedFolderId,
-  onFolderSelect,
-  onNoteCreate,
-  onFolderCreate,
-  onFolderRename,
-  onFolderDelete,
-}: FolderNodeProps) {
-  const [isExpanded, setIsExpanded] = React.useState(folder.expanded !== false)
-  const [isRenaming, setIsRenaming] = React.useState(false)
-  const [newName, setNewName] = React.useState(folder.name)
-  const inputRef = React.useRef<HTMLInputElement>(null)
-
-  const isSelected = selectedFolderId === folder.id
-
-  React.useEffect(() => {
-    if (isRenaming && inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
-    }
-  }, [isRenaming])
-
-  const handleRename = () => {
-    if (newName.trim() && newName !== folder.name) {
-      onFolderRename?.(folder.id, newName.trim())
-    }
-    setIsRenaming(false)
-    setNewName(folder.name)
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleRename()
-    } else if (e.key === 'Escape') {
-      setIsRenaming(false)
-      setNewName(folder.name)
-    }
-  }
-
-  return (
-    <div className='select-none'>
-      <ContextMenu>
-        <ContextMenuTrigger>
-          <div
-            className={cn(
-              'group flex items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer',
-              isSelected && 'bg-accent text-accent-foreground'
-            )}
-            style={{ paddingLeft: `${folder.level * 16 + 8}px` }}
-            onClick={() => onFolderSelect?.(folder.id)}
-            onKeyDown={(e) => e.key === 'Enter' && onFolderSelect?.(folder.id)}
-            role='button'
-            tabIndex={0}
-            data-testid={`folder-${folder.name}`}
-          >
-            {folder.children.length > 0 && (
-              <Button
-                variant='ghost'
-                size='icon'
-                className='h-4 w-4 p-0'
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setIsExpanded(!isExpanded)
-                }}
-              >
-                {isExpanded ? (
-                  <ChevronDownIcon className='h-3 w-3' />
-                ) : (
-                  <ChevronRightIcon className='h-3 w-3' />
-                )}
-              </Button>
-            )}
-            {folder.children.length === 0 && <div className='w-4' />}
-
-            {isExpanded ? (
-              <FolderOpenIcon className='h-4 w-4' />
-            ) : (
-              <FolderIcon className='h-4 w-4' />
-            )}
-
-            {isRenaming ? (
-              <Input
-                ref={inputRef}
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onBlur={handleRename}
-                onKeyDown={handleKeyDown}
-                className='h-6 px-1 py-0'
-                onClick={(e) => e.stopPropagation()}
-              />
-            ) : (
-              <span className='flex-1 truncate'>{folder.name}</span>
-            )}
-
-            {folder.note_count !== undefined && folder.note_count > 0 && (
-              <span className='text-xs text-muted-foreground'>
-                {folder.note_count}
-              </span>
-            )}
-          </div>
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-          <ContextMenuItem onClick={() => onNoteCreate?.(folder.id)}>
-            <FileTextIcon className='mr-2 h-4 w-4' />
-            New Note
-          </ContextMenuItem>
-          <ContextMenuItem onClick={() => onFolderCreate?.(folder.id)}>
-            <PlusIcon className='mr-2 h-4 w-4' />
-            New Subfolder
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem onClick={() => setIsRenaming(true)}>
-            <PencilIcon className='mr-2 h-4 w-4' />
-            Rename
-          </ContextMenuItem>
-          <ContextMenuItem
-            onClick={() => onFolderDelete?.(folder.id)}
-            className='text-destructive'
-            disabled={
-              folder.children.length > 0 || (folder.note_count || 0) > 0
-            }
-          >
-            <TrashIcon className='mr-2 h-4 w-4' />
-            Delete
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-
-      {isExpanded && folder.children.length > 0 && (
-        <div>
-          {folder.children.map((child) => (
-            <FolderNode
-              key={child.id}
-              folder={child}
-              selectedFolderId={selectedFolderId}
-              onFolderSelect={onFolderSelect}
-              onNoteCreate={onNoteCreate}
-              onFolderCreate={onFolderCreate}
-              onFolderRename={onFolderRename}
-              onFolderDelete={onFolderDelete}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export function FolderTree({
   selectedFolderId,
   onFolderSelect,
   onNoteCreate,
   className,
 }: FolderTreeProps) {
-  const { folderTree, isLoading, createFolder, updateFolder, deleteFolder } =
-    useFolders()
+  const [folders, setFolders] = useState<FolderNode[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const [loading, setLoading] = useState(true)
 
-  if (isLoading) {
+  // Fetch folders and notes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        
+        // Fetch folders
+        const foldersResponse = await fetch('/api/folders')
+        if (foldersResponse.ok) {
+          const foldersResult = await foldersResponse.json()
+          setFolders(foldersResult.data || [])
+        }
+
+        // Fetch notes to count them per folder
+        const notesResponse = await fetch('/api/notes')
+        if (notesResponse.ok) {
+          const notesData = await notesResponse.json()
+          setNotes(Array.isArray(notesData) ? notesData : [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch folder data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  // Build folder tree with hierarchy
+  const buildTree = (folders: FolderNode[], parentId: string | null = null, depth = 0): FolderNode[] => {
+    return folders
+      .filter(folder => folder.parentId === parentId)
+      .map(folder => {
+        const children = buildTree(folders, folder.id, depth + 1)
+        const noteCount = notes.filter(note => note.folder_id === folder.id).length
+        return {
+          ...folder,
+          children,
+          noteCount,
+          depth,
+          path: parentId ? `${folders.find(f => f.id === parentId)?.name}/${folder.name}` : folder.name,
+        }
+      })
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  const folderTree = buildTree(folders)
+  const rootNotes = notes.filter(note => !note.folder_id)
+
+  const toggleExpanded = (folderId: string) => {
+    const newExpanded = new Set(expanded)
+    if (newExpanded.has(folderId)) {
+      newExpanded.delete(folderId)
+    } else {
+      newExpanded.add(folderId)
+    }
+    setExpanded(newExpanded)
+  }
+
+  const handleFolderSelect = (folderId: string | null) => {
+    onFolderSelect?.(folderId)
+  }
+
+  const renderFolderNode = (folder: FolderNode) => {
+    const hasChildren = folder.children && folder.children.length > 0
+    const isExpanded = expanded.has(folder.id)
+    const isSelected = selectedFolderId === folder.id
+
     return (
-      <div className={cn('p-4', className)}>
-        <div className='space-y-2'>
-          <div className='h-6 bg-muted animate-pulse rounded' />
-          <div className='h-6 bg-muted animate-pulse rounded ml-4' />
-          <div className='h-6 bg-muted animate-pulse rounded ml-4' />
+      <div key={folder.id}>
+        <div
+          className={cn(
+            "flex items-center gap-1 px-2 py-1.5 rounded-lg cursor-pointer transition-colors hover:bg-accent",
+            isSelected && "bg-primary text-primary-foreground hover:bg-primary/90"
+          )}
+          onClick={() => handleFolderSelect(folder.id)}
+          data-testid={`folder-${folder.name.toLowerCase().replace(/\s+/g, '-')}`}
+        >
+          {/* Expand/Collapse Button */}
+          {hasChildren ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-4 w-4 p-0"
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleExpanded(folder.id)
+              }}
+            >
+              {isExpanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronRight className="h-3 w-3" />
+              )}
+            </Button>
+          ) : (
+            <div className="h-4 w-4" />
+          )}
+
+          {/* Folder Content */}
+          <div className="flex items-center gap-2 flex-1 truncate">
+            {hasChildren ? (
+              isExpanded ? (
+                <FolderOpen className="h-4 w-4 text-blue-600" />
+              ) : (
+                <Folder className="h-4 w-4 text-blue-600" />
+              )
+            ) : (
+              <Folder className="h-4 w-4 text-gray-500" />
+            )}
+            <span className="truncate">{folder.name}</span>
+            {folder.noteCount !== undefined && folder.noteCount > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {folder.noteCount}
+              </Badge>
+            )}
+          </div>
         </div>
+
+        {hasChildren && isExpanded && (
+          <div className="ml-4 border-l border-border pl-2">
+            {folder.children?.map(renderFolderNode)}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className={cn("space-y-2", className)}>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="animate-pulse flex items-center gap-2 px-2 py-1.5">
+            <div className="h-4 w-4 bg-muted rounded" />
+            <div className="h-4 flex-1 bg-muted rounded" />
+          </div>
+        ))}
       </div>
     )
   }
 
   return (
-    <div className={cn('py-2', className)}>
-      {/* Root level - All Notes */}
+    <div className={cn("space-y-1", className)}>
+      {/* All Notes / Root */}
       <div
         className={cn(
-          'flex items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer mb-1',
-          selectedFolderId === null && 'bg-accent text-accent-foreground'
+          "flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors hover:bg-accent",
+          selectedFolderId === null && "bg-primary text-primary-foreground hover:bg-primary/90"
         )}
-        onClick={() => onFolderSelect?.(null)}
-        onKeyDown={(e) => e.key === 'Enter' && onFolderSelect?.(null)}
-        role='button'
-        tabIndex={0}
-        data-testid='folder-root'
+        onClick={() => handleFolderSelect(null)}
       >
-        <div className='w-4' />
-        <FileTextIcon className='h-4 w-4' />
-        <span className='flex-1'>All Notes</span>
+        <div className="h-4 w-4" />
+        <FileText className="h-4 w-4" />
+        <span>All Notes</span>
+        {rootNotes.length > 0 && (
+          <Badge variant="secondary" className="text-xs ml-auto">
+            {rootNotes.length}
+          </Badge>
+        )}
       </div>
 
-      {/* Folder tree */}
-      {folderTree.map((folder) => (
-        <FolderNode
-          key={folder.id}
-          folder={folder}
-          selectedFolderId={selectedFolderId}
-          onFolderSelect={onFolderSelect}
-          onNoteCreate={onNoteCreate}
-          onFolderCreate={(parentId) => {
-            const name = window.prompt('Enter folder name:')
-            if (name) {
-              createFolder.mutate({ name, parent_id: parentId })
-            }
-          }}
-          onFolderRename={(folderId, newName) => {
-            updateFolder.mutate({ id: folderId, name: newName })
-          }}
-          onFolderDelete={(folderId) => {
-            if (
-              window.confirm('Are you sure you want to delete this folder?')
-            ) {
-              deleteFolder.mutate(folderId)
-            }
-          }}
-        />
-      ))}
+      {/* Folder Tree */}
+      {folderTree.map(renderFolderNode)}
+
+      {folderTree.length === 0 && (
+        <div className="text-center py-4 text-muted-foreground text-sm">
+          <Folder className="h-6 w-6 mx-auto mb-2 opacity-50" />
+          <p>No folders yet</p>
+        </div>
+      )}
     </div>
   )
 }

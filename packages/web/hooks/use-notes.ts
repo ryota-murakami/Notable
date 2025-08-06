@@ -23,12 +23,6 @@ export function useNotes(options: UseNotesOptions = {}) {
   const fetchNotes = useCallback(async () => {
     if (!enabled) return
 
-    // In test environment, preserve existing notes and don't fetch from server
-    if (isTest()) {
-      setLoading(false)
-      return
-    }
-
     setLoading(true)
     setError(null)
 
@@ -40,11 +34,15 @@ export function useNotes(options: UseNotesOptions = {}) {
       const message =
         err instanceof Error ? err.message : 'Failed to fetch notes'
       setError(message)
-      toast({
-        title: 'Error fetching notes',
-        description: message,
-        variant: 'destructive',
-      })
+      
+      // Only show toast in non-test environments to avoid noise
+      if (!isTest()) {
+        toast({
+          title: 'Error fetching notes',
+          description: message,
+          variant: 'destructive',
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -63,30 +61,6 @@ export function useNotes(options: UseNotesOptions = {}) {
   }, [fetchNotes])
 
   const createNote = useCallback(async (data: Omit<NoteInsert, 'user_id'>) => {
-    // In test environment, create mock note
-    if (isTest()) {
-      const mockNote: Note = {
-        id: `mock-note-${Date.now()}`,
-        title: data.title || 'Untitled',
-        content: data.content || '',
-        user_id: 'mock-user-id',
-        folder_id: null,
-        is_hidden: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-
-      setNotes((prev) => [mockNote, ...prev])
-      setTotal((prev) => prev + 1)
-
-      toast({
-        title: 'Note created',
-        description: 'Your note has been created successfully.',
-      })
-
-      return mockNote
-    }
-
     try {
       const response = await notesService.createNote(data)
 
@@ -94,20 +68,27 @@ export function useNotes(options: UseNotesOptions = {}) {
       setNotes((prev) => [response.note, ...prev])
       setTotal((prev) => prev + 1)
 
-      toast({
-        title: 'Note created',
-        description: 'Your note has been created successfully.',
-      })
+      // Only show toast in non-test environments to avoid noise
+      if (!isTest()) {
+        toast({
+          title: 'Note created',
+          description: 'Your note has been created successfully.',
+        })
+      }
 
       return response.note
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to create note'
-      toast({
-        title: 'Error creating note',
-        description: message,
-        variant: 'destructive',
-      })
+      
+      // Only show toast in non-test environments to avoid noise
+      if (!isTest()) {
+        toast({
+          title: 'Error creating note',
+          description: message,
+          variant: 'destructive',
+        })
+      }
       throw err
     }
   }, [])
@@ -122,20 +103,27 @@ export function useNotes(options: UseNotesOptions = {}) {
           prev.map((note) => (note.id === id ? response.note : note))
         )
 
-        toast({
-          title: 'Note updated',
-          description: 'Your note has been updated successfully.',
-        })
+        // Only show toast in non-test environments to avoid noise
+        if (!isTest()) {
+          toast({
+            title: 'Note updated',
+            description: 'Your note has been updated successfully.',
+          })
+        }
 
         return response.note
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update note'
-        toast({
-          title: 'Error updating note',
-          description: message,
-          variant: 'destructive',
-        })
+        
+        // Only show toast in non-test environments to avoid noise
+        if (!isTest()) {
+          toast({
+            title: 'Error updating note',
+            description: message,
+            variant: 'destructive',
+          })
+        }
         throw err
       }
     },
@@ -150,18 +138,25 @@ export function useNotes(options: UseNotesOptions = {}) {
       setNotes((prev) => prev.filter((note) => note.id !== id))
       setTotal((prev) => prev - 1)
 
-      toast({
-        title: 'Note deleted',
-        description: 'Your note has been deleted successfully.',
-      })
+      // Only show toast in non-test environments to avoid noise
+      if (!isTest()) {
+        toast({
+          title: 'Note deleted',
+          description: 'Your note has been deleted successfully.',
+        })
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to delete note'
-      toast({
-        title: 'Error deleting note',
-        description: message,
-        variant: 'destructive',
-      })
+      
+      // Only show toast in non-test environments to avoid noise
+      if (!isTest()) {
+        toast({
+          title: 'Error deleting note',
+          description: message,
+          variant: 'destructive',
+        })
+      }
       throw err
     }
   }, [])

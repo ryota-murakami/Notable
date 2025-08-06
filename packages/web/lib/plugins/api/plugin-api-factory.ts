@@ -109,41 +109,42 @@ export class PluginAPIFactory {
 
   private createNotesAPI(
     manifest: PluginManifest,
-    context: PluginContext
+    _context: PluginContext
   ): NotesAPI {
     this.requireAPIAccess(manifest, PluginAPIAccess.NOTES)
 
     return {
-      getActiveNote: async () => {
+      getActiveNote: () => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
         // TODO: Get actual active note
-        return null
+        return Promise.resolve(null)
       },
 
-      getAllNotes: async () => {
+      getAllNotes: () => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
         // TODO: Get all notes from database
-        return []
+        return Promise.resolve([])
       },
 
-      createNote: async (content: any) => {
+      createNote: (content: any) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Create note in database
         console.info(`[Plugin ${manifest.id}] Create note:`, content)
-        return { id: 'new-note', content }
+        return Promise.resolve({ id: 'new-note', content })
       },
 
-      updateNote: async (id: string, content: any) => {
+      updateNote: (id: string, content: any) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Update note in database
         console.info(`[Plugin ${manifest.id}] Update note ${id}:`, content)
-        return { id, content }
+        return Promise.resolve({ id, content })
       },
 
-      deleteNote: async (id: string) => {
+      deleteNote: (id: string) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Delete note from database
         console.info(`[Plugin ${manifest.id}] Delete note:`, id)
+        return Promise.resolve(true)
       },
     }
   }
@@ -155,11 +156,11 @@ export class PluginAPIFactory {
     this.requireAPIAccess(manifest, PluginAPIAccess.SEARCH)
 
     return {
-      search: async (query: string) => {
+      search: (query: string) => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
         // TODO: Perform actual search
         console.info(`[Plugin ${manifest.id}] Search:`, query)
-        return []
+        return Promise.resolve([])
       },
 
       registerSearchProvider: (provider: any): PluginDisposable => {
@@ -183,27 +184,27 @@ export class PluginAPIFactory {
     }
   }
 
-  private createUIAPI(manifest: PluginManifest, context: PluginContext): UIAPI {
+  private createUIAPI(manifest: PluginManifest, _context: PluginContext): UIAPI {
     this.requireAPIAccess(manifest, PluginAPIAccess.UI)
 
     return {
-      showInformationMessage: async (message: string) => {
+      showInformationMessage: (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
         // TODO: Show actual notification
         console.info(`[Plugin ${manifest.id}] Info:`, message)
-        return undefined
+        return Promise.resolve(undefined)
       },
 
-      showWarningMessage: async (message: string) => {
+      showWarningMessage: (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
         console.info(`[Plugin ${manifest.id}] Warning:`, message)
-        return undefined
+        return Promise.resolve(undefined)
       },
 
-      showErrorMessage: async (message: string) => {
+      showErrorMessage: (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
         console.info(`[Plugin ${manifest.id}] Error:`, message)
-        return undefined
+        return Promise.resolve(undefined)
       },
 
       createPanel: (options: any) => {
@@ -229,12 +230,12 @@ export class PluginAPIFactory {
 
   private createNetworkAPI(
     manifest: PluginManifest,
-    context: PluginContext
+    _context: PluginContext
   ): NetworkAPI {
     this.requireAPIAccess(manifest, PluginAPIAccess.NETWORK)
 
     return {
-      fetch: async (url: string, options?: FetchInit) => {
+      fetch: (url: string, options?: FetchInit) => {
         this.requirePermission(manifest, PluginPermission.NETWORK_ACCESS)
 
         // TODO: Add rate limiting and security checks
@@ -260,7 +261,7 @@ export class PluginAPIFactory {
     return {
       register: (
         command: string,
-        callback: (...args: any[]) => any
+        _callback: (...args: any[]) => any
       ): PluginDisposable => {
         this.requirePermission(manifest, PluginPermission.COMMANDS)
 
@@ -277,10 +278,10 @@ export class PluginAPIFactory {
         return disposable
       },
 
-      execute: async (command: string, ...args: any[]) => {
+      execute: (command: string, ...args: any[]) => {
         // TODO: Execute actual command
         console.info(`[Plugin ${manifest.id}] Execute command:`, command, args)
-        return undefined
+        return Promise.resolve(undefined)
       },
     }
   }
@@ -294,7 +295,7 @@ export class PluginAPIFactory {
     return {
       on: (
         event: string,
-        listener: (...args: any[]) => void
+        _listener: (...args: any[]) => void
       ): PluginDisposable => {
         // TODO: Register with actual event system
         console.info(`[Plugin ${manifest.id}] Listen to event:`, event)
@@ -382,7 +383,7 @@ export class PluginAPIFactory {
     }
   }
 
-  private getRateLimiter(pluginId: string) {
+  private getRateLimiter(_pluginId: string) {
     // TODO: Implement actual rate limiting
     return {
       allow: () => true,

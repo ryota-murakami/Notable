@@ -44,7 +44,7 @@ import {
 } from '@/hooks/use-advanced-search'
 import { useTags } from '@/hooks/use-tags'
 import type {
-  SearchFilters,
+  SearchFilters as _SearchFilters,
   SearchHistoryItem,
   SearchResult,
 } from '@/types/search'
@@ -75,7 +75,7 @@ export function AdvancedSearch({
     loadMore,
   } = useAdvancedSearch()
 
-  const { data: suggestions } = useSearchSuggestions(query)
+  const { data: _suggestions } = useSearchSuggestions(query)
   const { data: searchHistory } = useSearchHistory()
   const { data: savedSearches } = useSavedSearches()
   const { data: tags } = useTags()
@@ -208,7 +208,7 @@ export function AdvancedSearch({
                   <PopoverContent className='w-auto p-0' align='start'>
                     <div className='p-4 space-y-4'>
                       <div>
-                        <label className='text-sm font-medium'>From</label>
+                        <div className='text-sm font-medium'>From</div>
                         <CalendarComponent
                           mode='single'
                           selected={
@@ -224,7 +224,7 @@ export function AdvancedSearch({
                       </div>
                       <Separator />
                       <div>
-                        <label className='text-sm font-medium'>To</label>
+                        <div className='text-sm font-medium'>To</div>
                         <CalendarComponent
                           mode='single'
                           selected={

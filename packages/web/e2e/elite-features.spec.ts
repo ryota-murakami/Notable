@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
 
-test.describe.skip('Elite-Tier Features Integration', () => {
+test.describe('Elite-Tier Features Integration', () => {
   // SKIPPED: Elite features not implemented in current version
   test.beforeEach(async ({ page }) => {
     // Set extended timeout for slow page loads

@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+const { useCallback, useEffect, useRef, useState } = React
 import { cn } from '@/lib/utils'
 import {
   SLASH_COMMANDS,

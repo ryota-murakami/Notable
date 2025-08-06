@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+const { useCallback, useEffect, useRef, useState } = React
 import { Command } from 'cmdk'
 // import { Portal } from '@radix-ui/react-portal' // Temporarily disabled to test event handling
 import { cn } from '@/lib/utils'

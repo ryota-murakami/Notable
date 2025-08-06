@@ -16,6 +16,7 @@ export default [
       'node_modules/**/*',
       'dist/**/*',
       'coverage/**/*',
+      'volumes/**/*',
     ],
   },
   {
@@ -54,12 +55,15 @@ export default [
         HTMLPreElement: 'readonly',
         HTMLSpanElement: 'readonly',
         HTMLSelectElement: 'readonly',
+        HTMLAnchorElement: 'readonly',
         Element: 'readonly',
         Node: 'readonly',
         Event: 'readonly',
         MouseEvent: 'readonly',
         KeyboardEvent: 'readonly',
+        PointerEvent: 'readonly',
         CanvasRenderingContext2D: 'readonly',
+        MutationObserver: 'readonly',
 
         // Node.js globals
         setTimeout: 'readonly',

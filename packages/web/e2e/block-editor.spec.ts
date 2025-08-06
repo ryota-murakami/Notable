@@ -54,7 +54,7 @@ test.describe('Block Editor', () => {
       await expect(editor).toContainText('This is a new paragraph block')
     })
 
-    test.skip('should create heading blocks using autoformat', async ({
+    test('should create heading blocks using autoformat', async ({
       page,
     }) => {
       const editor = page.locator('[contenteditable="true"]').first()
@@ -73,7 +73,7 @@ test.describe('Block Editor', () => {
       await expect(heading).toBeVisible()
     })
 
-    test.skip('should create bulleted list using autoformat', async ({
+    test('should create bulleted list using autoformat', async ({
       page,
     }) => {
       // SKIPPED: Autoformat for lists may not be implemented
@@ -109,7 +109,7 @@ test.describe('Block Editor', () => {
       await expect(listItems.last()).toContainText('Second item')
     })
 
-    test.skip('should create numbered list using autoformat', async ({
+    test('should create numbered list using autoformat', async ({
       page,
     }) => {
       // SKIPPED: Autoformat for numbered lists may not be implemented
@@ -144,7 +144,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Advanced Block Types', () => {
-    test.skip('should create todo blocks with checkboxes', async ({ page }) => {
+    test('should create todo blocks with checkboxes', async ({ page }) => {
       // SKIPPED: Todo blocks functionality not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -173,7 +173,7 @@ test.describe('Block Editor', () => {
       await expect(checkboxes.first()).toHaveAttribute('aria-checked', 'true')
     })
 
-    test.skip('should create code blocks with syntax highlighting', async ({
+    test('should create code blocks with syntax highlighting', async ({
       page,
     }) => {
       // SKIPPED: Code blocks functionality not implemented
@@ -187,7 +187,7 @@ test.describe('Block Editor', () => {
 
       // Type code content
       await editor.type(
-        'function hello() {\n  console.log("Hello, world!");\n}'
+        'function hello() {\n  console.info("Hello, world!");\n}'
       )
 
       // Verify code block is created
@@ -199,7 +199,7 @@ test.describe('Block Editor', () => {
       await expect(codeContent).toContainText('function hello()')
     })
 
-    test.skip('should create callout blocks with different types', async ({
+    test('should create callout blocks with different types', async ({
       page,
     }) => {
       // SKIPPED: Callout blocks functionality not implemented
@@ -226,7 +226,7 @@ test.describe('Block Editor', () => {
       await expect(typeSelector).toHaveValue('warning')
     })
 
-    test.skip('should create toggle blocks with collapsible content', async ({
+    test('should create toggle blocks with collapsible content', async ({
       page,
     }) => {
       // SKIPPED: Toggle blocks functionality not implemented
@@ -268,7 +268,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Slash Command System', () => {
-    test.skip('should open slash command menu when typing /', async ({
+    test('should open slash command menu when typing /', async ({
       page,
     }) => {
       // SKIPPED: Slash command menu not implemented
@@ -287,7 +287,7 @@ test.describe('Block Editor', () => {
       await expect(page.locator('text="Bulleted list"')).toBeVisible()
     })
 
-    test.skip('should filter commands based on search query', async ({
+    test('should filter commands based on search query', async ({
       page,
     }) => {
       // SKIPPED: Slash command menu not implemented
@@ -311,7 +311,7 @@ test.describe('Block Editor', () => {
       await expect(page.locator('text="Bulleted list"')).not.toBeVisible()
     })
 
-    test.skip('should close slash command menu on escape', async ({ page }) => {
+    test('should close slash command menu on escape', async ({ page }) => {
       // SKIPPED: Slash command menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -327,7 +327,7 @@ test.describe('Block Editor', () => {
       await expect(page.locator('.slash-command-menu')).not.toBeVisible()
     })
 
-    test.skip('should navigate commands with arrow keys', async ({ page }) => {
+    test('should navigate commands with arrow keys', async ({ page }) => {
       // SKIPPED: Slash command menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
@@ -349,7 +349,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Block Selection and Interaction', () => {
-    test.skip('should show hover states on blocks', async ({ page }) => {
+    test('should show hover states on blocks', async ({ page }) => {
       // SKIPPED: Block hover states not implemented
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -381,7 +381,7 @@ test.describe('Block Editor', () => {
       await expect(blockElement).toHaveClass(/block-hover/)
     })
 
-    test.skip('should select blocks on click', async ({ page }) => {
+    test('should select blocks on click', async ({ page }) => {
       // SKIPPED: Block selection not implemented
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -415,7 +415,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Keyboard Shortcuts', () => {
-    test.skip('should create new block with Cmd+Enter', async ({ page }) => {
+    test('should create new block with Cmd+Enter', async ({ page }) => {
       // SKIPPED: Block creation shortcuts not implemented
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -447,7 +447,7 @@ test.describe('Block Editor', () => {
       await expect(blocks).toHaveCount(2)
     })
 
-    test.skip('should apply text formatting shortcuts', async ({ page }) => {
+    test('should apply text formatting shortcuts', async ({ page }) => {
       // SKIPPED: Text formatting shortcuts not implemented
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -481,7 +481,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Content Persistence', () => {
-    test.skip('should save and restore editor content', async ({ page }) => {
+    test('should save and restore editor content', async ({ page }) => {
       // SKIPPED: Content persistence not implemented
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -523,7 +523,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Error Handling', () => {
-    test.skip('should handle invalid slash commands gracefully', async ({
+    test('should handle invalid slash commands gracefully', async ({
       page,
     }) => {
       // SKIPPED: Slash command menu not implemented
@@ -556,7 +556,7 @@ test.describe('Block Editor', () => {
       await expect(page.locator('text="No commands found"')).toBeVisible()
     })
 
-    test.skip('should recover from editor errors', async ({ page }) => {
+    test('should recover from editor errors', async ({ page }) => {
       // SKIPPED: Error recovery not testable
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -590,7 +590,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Accessibility', () => {
-    test.skip('should be keyboard navigable', async ({ page }) => {
+    test('should be keyboard navigable', async ({ page }) => {
       // SKIPPED: Keyboard navigation not implemented
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -622,7 +622,7 @@ test.describe('Block Editor', () => {
       await expect(editor).toContainText('Second block - additional text')
     })
 
-    test.skip('should have proper ARIA labels', async ({ page }) => {
+    test('should have proper ARIA labels', async ({ page }) => {
       // SKIPPED: Todo blocks functionality not implemented
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()
@@ -656,7 +656,7 @@ test.describe('Block Editor', () => {
   })
 
   test.describe('Performance', () => {
-    test.skip('should handle large documents efficiently', async ({ page }) => {
+    test('should handle large documents efficiently', async ({ page }) => {
       // SKIPPED: Performance testing needs optimization
       // Try multiple selectors for the editor
       let editor = page.locator('[contenteditable="true"]').first()

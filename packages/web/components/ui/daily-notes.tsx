@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 import {
+  ChevronLeft as _ChevronLeft,
+  ChevronRight as _ChevronRight,
+  Clock as _Clock,
+  Zap as _Zap,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
   Edit3,
   TrendingUp,
-  Zap,
 } from 'lucide-react'
 import { addDays, format, isToday, isYesterday, startOfWeek } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -26,7 +26,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Calendar as CalendarComponent } from '@/components/ui/calendar'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ScrollArea as _ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useDailyNotes } from '@/hooks/use-daily-notes'
 

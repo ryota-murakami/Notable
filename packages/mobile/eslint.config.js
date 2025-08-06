@@ -46,6 +46,11 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      // React Native specific rules
+      'react-native/no-inline-styles': 'warn',
+      'react-native/no-color-literals': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'require-await': 'warn',
     },
   },
   {

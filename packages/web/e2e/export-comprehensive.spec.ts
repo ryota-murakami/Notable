@@ -1,8 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import {
   addTagsToNote,
-  createNewNote,
-  createRichNote,
 } from './helpers/note-creation'
 import { waitForHydration } from './utils/wait-for-hydration'
 
@@ -88,7 +86,7 @@ test.describe('Comprehensive Export Functionality Tests', () => {
       await expect(page.locator('text="Export with Options..."')).toBeVisible()
     })
 
-    test.skip('should show format descriptions', async ({ page }) => {
+    test('should show format descriptions', async ({ page }) => {
       // SKIPPED: Tooltips inside dropdown menus need different implementation
       await page.waitForSelector('button:has-text("Export")', {
         timeout: 10000,

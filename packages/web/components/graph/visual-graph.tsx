@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+const { useCallback, useEffect, useMemo, useRef, useState } = React
 import dynamic from 'next/dynamic'
 import {
   Eye,
@@ -1043,9 +1043,9 @@ function SettingsPanel({
 
       <TabsContent value='visual' className='space-y-4 mt-4'>
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Node Size: {settings.visual.nodeSize}
-          </label>
+          </div>
           <Slider
             value={[settings.visual.nodeSize]}
             onValueChange={([value]) =>
@@ -1061,9 +1061,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Link Width: {settings.visual.linkWidth}
-          </label>
+          </div>
           <Slider
             value={[settings.visual.linkWidth]}
             onValueChange={([value]) =>
@@ -1168,9 +1168,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Force Strength: {settings.physics.strength}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.strength]}
             onValueChange={([value]) =>
@@ -1186,9 +1186,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Link Distance: {settings.physics.distance}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.distance]}
             onValueChange={([value]) =>
@@ -1204,9 +1204,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Collision Radius: {settings.physics.collisionRadius}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.collisionRadius]}
             onValueChange={([value]) =>
@@ -1222,9 +1222,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Damping: {settings.physics.damping}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.damping]}
             onValueChange={([value]) =>

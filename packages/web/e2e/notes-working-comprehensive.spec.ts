@@ -24,7 +24,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     await waitForHydration(page)
   })
 
-  test.describe.skip('Note Creation and Editing', () => {
+  test.describe('Note Creation and Editing', () => {
     // SKIPPED: Note persistence not working correctly
     test('should create and edit a note using template picker', async ({
       page,
@@ -161,7 +161,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     })
   })
 
-  test.describe.skip('Template System', () => {
+  test.describe('Template System', () => {
     // SKIPPED: Template picker selector issues
     test('should show template picker with available templates', async ({
       page,
@@ -199,7 +199,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     })
   })
 
-  test.describe.skip('Navigation and URL Handling', () => {
+  test.describe('Navigation and URL Handling', () => {
     // SKIPPED: Note persistence not working
     test('should handle direct note URL navigation', async ({ page }) => {
       // Create a note first to get a valid ID
@@ -251,7 +251,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     })
   })
 
-  test.describe.skip('Error Handling and Edge Cases', () => {
+  test.describe('Error Handling and Edge Cases', () => {
     // SKIPPED: Note editor selectors not matching
     test('should handle extremely long titles', async ({ page }) => {
       await page.getByRole('button', { name: 'New Note' }).click()
@@ -320,7 +320,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     })
   })
 
-  test.describe.skip('User Experience', () => {
+  test.describe('User Experience', () => {
     // SKIPPED: Complex test flows with persistence issues
     test('should provide smooth user interaction flow', async ({ page }) => {
       // Complete user flow: create → edit → navigate → return

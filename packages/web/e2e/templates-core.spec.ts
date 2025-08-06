@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+import { jsType as _jsType, jsClick } from './utils/js-click'
 
 test.describe('Template System Core Tests', () => {
   test('debug - check API auth', async ({ page }) => {
@@ -16,10 +16,10 @@ test.describe('Template System Core Tests', () => {
 
     // Try to access template API directly
     const response = await page.goto('/api/templates/categories')
-    console.log('Direct API access status:', response?.status())
+    console.info('Direct API access status:', response?.status())
 
     const body = await response?.text()
-    console.log('API response body:', body)
+    console.info('API response body:', body)
   })
   test.beforeEach(async ({ page }) => {
     // Set auth cookie
@@ -106,13 +106,13 @@ test.describe('Template System Core Tests', () => {
     await page.waitForTimeout(2000)
 
     // Log API responses
-    console.log('Template API responses:', apiResponses)
+    console.info('Template API responses:', apiResponses)
 
     // Check if we see "No templates found"
     const noTemplatesVisible = await page
       .locator('text=No templates found')
       .isVisible()
-    console.log('No templates found visible:', noTemplatesVisible)
+    console.info('No templates found visible:', noTemplatesVisible)
 
     // Wait for templates to load - use heading selector to avoid duplicates
     await page.waitForSelector('h4:has-text("Daily Standup")')
@@ -164,7 +164,7 @@ test.describe('Template System Core Tests', () => {
     ).not.toBeVisible()
   })
 
-  test.skip('should create note from template with variables', async ({
+  test('should create note from template with variables', async ({
     page,
   }) => {
     // SKIPPED: Template variable forms not implemented
@@ -210,7 +210,7 @@ test.describe('Template System Core Tests', () => {
     await expect(page.locator('text=Friends')).toBeVisible()
   })
 
-  test.skip('should validate required fields', async ({ page }) => {
+  test('should validate required fields', async ({ page }) => {
     // SKIPPED: Template variable validation not implemented
     // Open template picker
     await jsClick(page, '[data-testid="new-note-button"]')
@@ -237,7 +237,7 @@ test.describe('Template System Core Tests', () => {
     ).toBeVisible()
   })
 
-  test.skip('should cancel template selection', async ({ page }) => {
+  test('should cancel template selection', async ({ page }) => {
     // SKIPPED: Template variable form not implemented
     // Open template picker
     await jsClick(page, '[data-testid="new-note-button"]')
@@ -312,7 +312,7 @@ test.describe('Template System Core Tests', () => {
     ).toBeVisible()
   })
 
-  test.skip('should show popular and recent tabs', async ({ page }) => {
+  test('should show popular and recent tabs', async ({ page }) => {
     // SKIPPED: Tabs UI not implemented
     // Open template picker
     await jsClick(page, '[data-testid="new-note-button"]')

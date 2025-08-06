@@ -125,7 +125,7 @@ test.describe('Templates Coverage Tests', () => {
     }
   })
 
-  test.skip('template preview', async ({ page }) => {
+  test('template preview', async ({ page }) => {
     // SKIPPED: Preview functionality not implemented
     await page.goto('/app')
 
@@ -165,7 +165,7 @@ test.describe('Templates Coverage Tests', () => {
     }
   })
 
-  test.skip('create note from template with variables', async ({ page }) => {
+  test('create note from template with variables', async ({ page }) => {
     // SKIPPED: Template categories and variable forms not implemented
     await page.goto('/app')
 
@@ -214,7 +214,7 @@ test.describe('Templates Coverage Tests', () => {
     await expect(editor).toBeVisible()
   })
 
-  test.skip('template usage tracking', async ({ page }) => {
+  test('template usage tracking', async ({ page }) => {
     // SKIPPED: Template usage tracking not implemented
     await page.goto('/app')
 
@@ -238,7 +238,7 @@ test.describe('Templates Coverage Tests', () => {
     }
   })
 
-  test.skip('template rating system', async ({ page }) => {
+  test('template rating system', async ({ page }) => {
     // SKIPPED: Rating system UI not implemented
     await page.goto('/app')
 
@@ -265,7 +265,7 @@ test.describe('Templates Coverage Tests', () => {
     }
   })
 
-  test.skip('custom template creation', async ({ page }) => {
+  test('custom template creation', async ({ page }) => {
     // SKIPPED: Template creation UI not implemented
     await page.goto('/app')
 
@@ -360,7 +360,7 @@ test.describe('Templates Coverage Tests', () => {
     }
   })
 
-  test.skip('template keyboard navigation', async ({ page }) => {
+  test('template keyboard navigation', async ({ page }) => {
     // SKIPPED: Template picker keyboard navigation not verifiable with current selectors
     await page.goto('/app')
 

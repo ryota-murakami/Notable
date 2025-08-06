@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useTagManager, useTagTree } from '@/hooks/use-tags'
+import { useTagManager as _useTagManager, useTagTree } from '@/hooks/use-tags'
 import type { EnhancedTag } from '@/types/tags'
 
 export interface TagTreeProps {
@@ -205,6 +205,7 @@ const TagTreeNode: React.FC<TagTreeNodeProps> = ({
         tabIndex={clickable ? 0 : -1}
         role={clickable ? 'treeitem' : 'none'}
         aria-label={`Tag: ${tag.name}`}
+        data-testid={`tag-tree-item-${tag.name}`}
       >
         {/* Expand/collapse button */}
         <button

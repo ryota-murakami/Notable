@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
 
-test.describe.skip('Comprehensive Tag Components Tests', () => {
+test.describe('Comprehensive Tag Components Tests', () => {
   // SKIPPED: Tag components not implemented
   test.beforeEach(async ({ page }) => {
     // Set dev auth bypass cookie for testing

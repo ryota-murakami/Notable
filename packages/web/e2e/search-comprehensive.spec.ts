@@ -25,7 +25,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Basic Search', () => {
-    test.skip('should open search with keyboard shortcut', async ({ page }) => {
+    test('should open search with keyboard shortcut', async ({ page }) => {
       // SKIPPED: Keyboard shortcuts not working in test environment
       // Press command palette shortcut (Cmd+K on Mac, Ctrl+K on others)
       const isMac = process.platform === 'darwin'
@@ -311,7 +311,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       )
     })
 
-    test.skip('should filter by note type', async ({ page }) => {
+    test('should filter by note type', async ({ page }) => {
       // SKIPPED: Note type filtering not implemented
       // Create different types of notes
       await page.click('[data-testid="new-note-button"]')
@@ -341,7 +341,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       )
     })
 
-    test.skip('should use boolean operators', async ({ page }) => {
+    test('should use boolean operators', async ({ page }) => {
       // SKIPPED: Boolean search operators not implemented
       // Create notes
       await page.click('[data-testid="new-note-button"]')
@@ -385,7 +385,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       )
     })
 
-    test.skip('should search with regular expressions', async ({ page }) => {
+    test('should search with regular expressions', async ({ page }) => {
       // SKIPPED: Regex search not implemented
       // Create notes
       await page.click('[data-testid="new-note-button"]')
@@ -439,7 +439,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       ).toContainText('First search')
     })
 
-    test.skip('should reuse search from history', async ({ page }) => {
+    test('should reuse search from history', async ({ page }) => {
       // SKIPPED: Search history not implemented
       // Perform a search
       await page.keyboard.press('Control+k')
@@ -460,7 +460,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       )
     })
 
-    test.skip('should clear search history', async ({ page }) => {
+    test('should clear search history', async ({ page }) => {
       // SKIPPED: Search history not implemented
       // Perform searches
       await page.keyboard.press('Control+k')
@@ -484,7 +484,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Saved Searches', () => {
-    test.skip('should save a search', async ({ page }) => {
+    test('should save a search', async ({ page }) => {
       // SKIPPED: Saved searches not implemented
       // Perform advanced search
       await page.keyboard.press('Control+k')
@@ -506,7 +506,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       ).toBeVisible()
     })
 
-    test.skip('should load saved search', async ({ page }) => {
+    test('should load saved search', async ({ page }) => {
       // SKIPPED: Saved searches not implemented
       // Create and save a search first
       await page.keyboard.press('Control+k')
@@ -532,7 +532,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       )
     })
 
-    test.skip('should delete saved search', async ({ page }) => {
+    test('should delete saved search', async ({ page }) => {
       // SKIPPED: Saved searches not implemented
       // Create and save a search
       await page.keyboard.press('Control+k')
@@ -617,7 +617,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Search Performance', () => {
-    test.skip('should handle large search results efficiently', async ({
+    test('should handle large search results efficiently', async ({
       page,
     }) => {
       // SKIPPED: Search performance features not implemented
@@ -698,7 +698,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(page.locator('[data-testid="search-dialog"]')).toBeVisible()
     })
 
-    test.skip('should update search index on note changes', async ({
+    test('should update search index on note changes', async ({
       page,
     }) => {
       // SKIPPED: Search index updates not implemented
@@ -731,7 +731,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(page.locator('[data-testid="search-result"]')).toHaveCount(0)
     })
 
-    test.skip('should search within current folder', async ({ page }) => {
+    test('should search within current folder', async ({ page }) => {
       // SKIPPED: Folder-scoped search not implemented
       // Create folder structure
       await page.click('[data-testid="new-folder-button"]')
@@ -770,7 +770,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Search Export', () => {
-    test.skip('should export search results', async ({ page }) => {
+    test('should export search results', async ({ page }) => {
       // SKIPPED: Search export not implemented
       // Create notes
       for (let i = 1; i <= 3; i++) {
@@ -796,7 +796,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
   })
 
   test.describe('Search Accessibility', () => {
-    test.skip('should have proper ARIA labels', async ({ page }) => {
+    test('should have proper ARIA labels', async ({ page }) => {
       // SKIPPED: Search accessibility features not implemented
       // Open search
       await page.keyboard.press('Control+k')
@@ -816,7 +816,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       ).toHaveAttribute('role', 'listbox')
     })
 
-    test.skip('should announce search results', async ({ page }) => {
+    test('should announce search results', async ({ page }) => {
       // SKIPPED: Search accessibility features not implemented
       // Create a note
       await page.click('[data-testid="new-note-button"]')

@@ -29,7 +29,7 @@ test.describe('User Menu', () => {
     await page.evaluate(() => {
       const devButton = document.querySelector('.fixed.bottom-4.right-4')
       if (devButton) {
-        ;(devButton as HTMLElement).style.display = 'none'
+        (devButton as HTMLElement).style.display = 'none'
       }
     })
 
@@ -67,7 +67,7 @@ test.describe('User Menu', () => {
       }
       return null
     })
-    console.log('Button info:', buttonInfo)
+    console.info('Button info:', buttonInfo)
 
     // Try dispatching a pointer event (Radix UI uses pointer events)
     await page.evaluate(() => {

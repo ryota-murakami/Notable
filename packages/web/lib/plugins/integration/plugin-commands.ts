@@ -116,7 +116,7 @@ export class PluginCommandIntegration {
   /**
    * Register core plugin system commands
    */
-  private async registerCoreCommands(): Promise<void> {
+  private registerCoreCommands(): Promise<void> {
     const coreCommands: Omit<PluginCommand, 'pluginId'>[] = [
       {
         id: 'plugins.openManager',
@@ -237,7 +237,7 @@ export class PluginCommandIntegration {
   /**
    * Register commands for a specific plugin
    */
-  private async registerPluginSpecificCommands(
+  private registerPluginSpecificCommands(
     pluginId: string
   ): Promise<void> {
     // This would query the plugin for its available commands

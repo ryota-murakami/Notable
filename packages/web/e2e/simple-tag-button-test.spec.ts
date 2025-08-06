@@ -4,7 +4,7 @@ import { jsClick } from './utils/js-click'
 test('simple tag button click test', async ({ page }) => {
   // Listen for JavaScript errors
   page.on('pageerror', (error) => {
-    console.log(
+    console.info(
       'JavaScript error:',
       error instanceof Error ? error.message : String(error)
     )
@@ -12,7 +12,7 @@ test('simple tag button click test', async ({ page }) => {
 
   page.on('console', (msg) => {
     if (msg.type() === 'error') {
-      console.log('Console error:', msg.text())
+      console.info('Console error:', msg.text())
     }
   })
 
@@ -38,10 +38,10 @@ test('simple tag button click test', async ({ page }) => {
   // Check if it exists and is visible
   await expect(manageTagsButton).toBeVisible({ timeout: 10000 })
 
-  console.log('✅ Manage Tags button found and visible!')
+  console.info('✅ Manage Tags button found and visible!')
 
   // Try clicking it with jsClick to bypass timeout issues
-  console.log('Attempting to click button using jsClick...')
+  console.info('Attempting to click button using jsClick...')
 
   try {
     // Try different selectors to find the Manage Tags button
@@ -81,7 +81,7 @@ test('simple tag button click test', async ({ page }) => {
                   btn.textContent.toLowerCase().includes('manage tags')
               )
               if (manageTagsBtn) {
-                ;(manageTagsBtn as HTMLElement).click()
+                (manageTagsBtn as HTMLElement).click()
               }
             })
           } else {
@@ -90,19 +90,19 @@ test('simple tag button click test', async ({ page }) => {
           clicked = true
           break
         }
-      } catch (err) {
+      } catch (_error) {
         // Continue to next selector
         continue
       }
     }
 
     if (clicked) {
-      console.log('✅ Successfully clicked Manage Tags button!')
+      console.info('✅ Successfully clicked Manage Tags button!')
     } else {
-      console.log('❌ Could not find clickable Manage Tags button')
+      console.info('❌ Could not find clickable Manage Tags button')
     }
   } catch (error) {
-    console.log(
+    console.info(
       '❌ Button click failed:',
       error instanceof Error ? error.message : String(error)
     )
@@ -113,10 +113,10 @@ test('simple tag button click test', async ({ page }) => {
 
   // Check if any dialogs appeared
   const dialogs = await page.locator('[role="dialog"]').count()
-  console.log(`Found ${dialogs} dialog(s) after clicking`)
+  console.info(`Found ${dialogs} dialog(s) after clicking`)
 
   // Take a screenshot to see the state
   await page.screenshot({ path: 'after-manage-tags-click.png', fullPage: true })
 
-  console.log('✅ Test completed - check screenshot')
+  console.info('✅ Test completed - check screenshot')
 })

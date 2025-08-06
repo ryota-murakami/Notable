@@ -3,11 +3,11 @@ import { expect, test } from '@playwright/test'
 test('programmatic navigation debug test', async ({ page }) => {
   // Capture console messages and errors
   page.on('console', (msg) => {
-    console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`)
+    console.info(`[BROWSER] ${msg.type()}: ${msg.text()}`)
   })
 
   page.on('pageerror', (error) => {
-    console.log(
+    console.info(
       `[PAGE ERROR] ${error instanceof Error ? error.message : String(error)}`
     )
   })
@@ -22,7 +22,7 @@ test('programmatic navigation debug test', async ({ page }) => {
     },
   ])
 
-  console.log('🚀 Testing programmatic navigation from Shell component...')
+  console.info('🚀 Testing programmatic navigation from Shell component...')
 
   // Navigate to the app
   await page.goto('http://localhost:4378/app')
@@ -30,7 +30,7 @@ test('programmatic navigation debug test', async ({ page }) => {
 
   // Verify the app is loaded
   await expect(page.getByTestId('app-shell')).toBeVisible({ timeout: 10000 })
-  console.log('✅ App shell loaded at:', page.url())
+  console.info('✅ App shell loaded at:', page.url())
 
   // Instead of clicking the New Note button, let's test the router directly
   // Inject a test function to simulate router.push()
@@ -43,15 +43,15 @@ test('programmatic navigation debug test', async ({ page }) => {
       return { success: false, error: 'No Next.js router found' }
     }
 
-    console.log('Router found:', !!router)
-    console.log('Current route:', router.asPath || router.pathname)
+    console.info('Router found:', !!router)
+    console.info('Current route:', router.asPath || router.pathname)
 
     // Try to navigate programmatically
     try {
       const testNoteId = 'programmatic-test-note'
       const targetUrl = `/notes/${testNoteId}`
 
-      console.log(`Attempting router.push to: ${targetUrl}`)
+      console.info(`Attempting router.push to: ${targetUrl}`)
 
       // Try the navigation
       if (router.push) {
@@ -74,13 +74,13 @@ test('programmatic navigation debug test', async ({ page }) => {
     }
   })
 
-  console.log('Navigation result:', navigationResult)
+  console.info('Navigation result:', navigationResult)
 
   // Wait a moment for potential navigation
   await page.waitForTimeout(2000)
 
   const finalUrl = page.url()
-  console.log('Final URL after programmatic navigation:', finalUrl)
+  console.info('Final URL after programmatic navigation:', finalUrl)
 
   // Take screenshot
   await page.screenshot({
@@ -90,12 +90,12 @@ test('programmatic navigation debug test', async ({ page }) => {
 
   // Check if navigation worked
   if (finalUrl.includes('/notes/')) {
-    console.log('🎉 SUCCESS: Programmatic navigation worked!')
+    console.info('🎉 SUCCESS: Programmatic navigation worked!')
   } else {
-    console.log('❌ FAILURE: Programmatic navigation did not work')
+    console.info('❌ FAILURE: Programmatic navigation did not work')
 
     // Try alternative approach: manual navigation via window.location
-    console.log('🔄 Trying manual navigation via window.location...')
+    console.info('🔄 Trying manual navigation via window.location...')
 
     await page.evaluate(() => {
       window.location.href = '/notes/manual-test-note'
@@ -103,14 +103,14 @@ test('programmatic navigation debug test', async ({ page }) => {
 
     await page.waitForTimeout(2000)
     const manualUrl = page.url()
-    console.log('Manual navigation result:', manualUrl)
+    console.info('Manual navigation result:', manualUrl)
 
     if (manualUrl.includes('/notes/')) {
-      console.log('✅ Manual navigation worked - suggests router issue')
+      console.info('✅ Manual navigation worked - suggests router issue')
     } else {
-      console.log('❌ Manual navigation also failed - deeper routing issue')
+      console.info('❌ Manual navigation also failed - deeper routing issue')
     }
   }
 
-  console.log('🏁 Programmatic navigation test finished')
+  console.info('🏁 Programmatic navigation test finished')
 })

@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-env node */
+/* eslint-disable no-undef */
 
 const { execSync } = require('child_process')
 const fs = require('fs')
@@ -98,7 +100,7 @@ for (const testFile of testFiles) {
       } else {
         console.log('✗ Failed to run')
       }
-    } catch (parseError) {
+    } catch (_error) {
       console.log('✗ Failed to parse results')
     }
   }

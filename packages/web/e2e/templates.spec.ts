@@ -36,7 +36,7 @@ test.describe('Template System E2E Tests', () => {
     const forceTemplatePickerValue = await page.evaluate(() => {
       return window.sessionStorage.getItem('forceTemplatePicker')
     })
-    console.log('forceTemplatePicker value:', forceTemplatePickerValue)
+    console.info('forceTemplatePicker value:', forceTemplatePickerValue)
 
     // Click the "New Note" button - should open template picker using jsClick
     await jsClick(page, '[data-testid="new-note-button"]')
@@ -46,11 +46,11 @@ test.describe('Template System E2E Tests', () => {
 
     // Debug: Check what's visible on the page
     const dialogExists = await page.locator('[role="dialog"]').count()
-    console.log('Dialog count:', dialogExists)
+    console.info('Dialog count:', dialogExists)
 
     // If no dialog, check if we navigated instead
     const currentUrl = page.url()
-    console.log('Current URL after click:', currentUrl)
+    console.info('Current URL after click:', currentUrl)
 
     // Verify template picker dialog opens
     await expect(
@@ -199,7 +199,7 @@ test.describe('Template System E2E Tests', () => {
     await expect(page.locator('text=Friends')).toBeVisible()
   })
 
-  test.skip('should create note from daily journal template with all variables', async ({
+  test('should create note from daily journal template with all variables', async ({
     page,
   }) => {
     // SKIPPED: Test expects variables that don't exist in actual template
@@ -237,7 +237,7 @@ test.describe('Template System E2E Tests', () => {
     await expect(page.locator('text=Had a great day!')).toBeVisible()
   })
 
-  test.skip('should validate required template variables', async ({ page }) => {
+  test('should validate required template variables', async ({ page }) => {
     // SKIPPED: Template variable validation not implemented
     // Click New Note to open template picker
     await jsClick(page, '[data-testid="new-note-button"]')
@@ -260,7 +260,7 @@ test.describe('Template System E2E Tests', () => {
     ).toBeVisible()
   })
 
-  test.skip('should handle different variable types correctly', async ({
+  test('should handle different variable types correctly', async ({
     page,
   }) => {
     // SKIPPED: Test expects variable types that don't exist in actual templates
@@ -308,7 +308,7 @@ test.describe('Template System E2E Tests', () => {
     await expect(page.locator('.slate-editor')).toContainText('High')
   })
 
-  test.skip('should handle template engine processing correctly', async ({
+  test('should handle template engine processing correctly', async ({
     page,
   }) => {
     // SKIPPED: Test expects template engine features that aren't implemented
@@ -379,7 +379,7 @@ test.describe('Template System E2E Tests', () => {
     await expect(page.locator('text=Recently Added')).toBeVisible()
   })
 
-  test.skip('should cancel template creation', async ({ page }) => {
+  test('should cancel template creation', async ({ page }) => {
     // SKIPPED: Template variable forms with cancel button not implemented
     // Click New Note to open template picker directly
     await jsClick(page, '[data-testid="new-note-button"]')
@@ -419,14 +419,14 @@ test.describe('Template System E2E Tests', () => {
     try {
       await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 10000 })
     } catch (error) {
-      console.log(
+      console.info(
         'Navigation timeout - checking if note was created via sessionStorage'
       )
       const noteId = await page.evaluate(() => {
         return window.sessionStorage.getItem('lastCreatedNoteId')
       })
       if (noteId) {
-        console.log(`Found note ID in sessionStorage: ${noteId}`)
+        console.info(`Found note ID in sessionStorage: ${noteId}`)
         await page.goto(`/notes/${noteId}`)
       } else {
         throw error
@@ -434,7 +434,7 @@ test.describe('Template System E2E Tests', () => {
     }
   })
 
-  test.skip('should show template variable form with proper validation', async ({
+  test('should show template variable form with proper validation', async ({
     page,
   }) => {
     // SKIPPED: Test expects validation features that don't exist
@@ -466,7 +466,7 @@ test.describe('Template System E2E Tests', () => {
 })
 
 // Additional test for template engine functionality
-test.describe.skip('Template Engine Processing', () => {
+test.describe('Template Engine Processing', () => {
   test.beforeEach(async ({ page }) => {
     // Set dev auth bypass cookie for testing
     await page.context().addCookies([

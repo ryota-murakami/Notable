@@ -2,7 +2,7 @@
 
 import { createPlatePlugin } from 'platejs/react'
 import * as React from 'react'
-import { useCallback, useEffect, useState } from 'react'
+const { useCallback, useEffect, useState } = React
 import { ArrowUpRight, Copy, Edit3, Link } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

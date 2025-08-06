@@ -5,14 +5,16 @@ import { getDevAuthBypassUser } from '@/utils/auth-helpers'
 import { createMockSupabaseClient } from './test-client'
 
 export async function createClient() {
-  const cookieStore = await cookies()
-
-  // Check for dev auth bypass first
-  const devBypassUser = await getDevAuthBypassUser()
-  if (devBypassUser && process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
-    // Return mock client for tests
+  // Check for API mocking FIRST, before any other operations
+  if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    console.info('API mocking enabled - returning mock Supabase client')
     return createMockSupabaseClient()
   }
+
+  const cookieStore = await cookies()
+
+  // Check for dev auth bypass
+  const devBypassUser = await getDevAuthBypassUser()
 
   // Handle missing environment variables gracefully
   const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
@@ -59,12 +61,11 @@ export async function createClient() {
   })
 
   // Check for dev auth bypass in test/development/CI environments
-  const devUser = await getDevAuthBypassUser()
-  if (devUser) {
+  if (devBypassUser) {
     // Override the auth.getUser method to return mock user
     client.auth.getUser = () =>
       Promise.resolve({
-        data: { user: devUser },
+        data: { user: devBypassUser },
         error: null,
       })
   }

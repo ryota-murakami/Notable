@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/coverage'
 
 test.describe('Mock Note Persistence Debug', () => {
-  test.skip('should debug mock note persistence step by step', async ({
+  test('should debug mock note persistence step by step', async ({
     page,
   }) => {
     // SKIPPED: Debug test expecting wrong selectors and persistence behavior

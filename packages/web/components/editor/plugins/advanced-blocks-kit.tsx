@@ -11,7 +11,7 @@ import { CalloutElement } from '@/components/ui/callout-block'
 
 // Advanced Block Plugins for Notion-like experience
 
-// List Plugins
+// List Plugins with keyboard shortcuts
 const BulletedListPlugin = createPlatePlugin({
   key: 'ul',
   node: {

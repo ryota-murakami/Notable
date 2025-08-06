@@ -85,7 +85,7 @@ test.describe('Advanced Search System', () => {
     // Debug: Check input state
     const isDisabled = await searchInput.isDisabled()
     const isEditable = await searchInput.isEditable()
-    console.log('Input disabled:', isDisabled, 'Editable:', isEditable)
+    console.info('Input disabled:', isDisabled, 'Editable:', isEditable)
 
     // Try JavaScript approach to set value and trigger React onChange
     await page.evaluate(() => {
@@ -110,17 +110,17 @@ test.describe('Advanced Search System', () => {
 
     // Debug: Check what's in the dialog
     const dialogContent = await page.locator('[role="dialog"]').textContent()
-    console.log('Dialog content:', dialogContent)
+    console.info('Dialog content:', dialogContent)
 
     // Check if there's a "results found" text
     const resultsText = page.locator('text="results found"')
     const hasResultsText = await resultsText.count()
-    console.log('Has results text:', hasResultsText)
+    console.info('Has results text:', hasResultsText)
 
     // Check for any button in the dialog that might be a result
     const dialogButtons = page.locator('[role="dialog"] button')
     const buttonCount = await dialogButtons.count()
-    console.log('Button count in dialog:', buttonCount)
+    console.info('Button count in dialog:', buttonCount)
 
     // If results container exists, verify it
     const resultsContainer = page.locator('[data-testid="search-results"]')
@@ -364,7 +364,7 @@ test.describe('Advanced Search System', () => {
     // Create multiple notes (simplified approach - focus on search functionality)
     // Since note creation seems to have navigation issues in this test environment,
     // let's just verify that search works with existing mock notes
-    console.log(
+    console.info(
       'Skipping note creation due to navigation issues - using existing mock notes for search test'
     )
 

@@ -58,7 +58,7 @@ test.describe('Note Editor Display', () => {
     await expect(editor).toBeVisible({ timeout: 10000 })
   })
 
-  test.skip('should display editor when selecting an existing note', async ({
+  test('should display editor when selecting an existing note', async ({
     page,
   }) => {
     // SKIPPED: Note list navigation not implemented
@@ -93,7 +93,7 @@ test.describe('Note Editor Display', () => {
     await expect(firstNote).toHaveClass(/bg-muted/)
   })
 
-  test.skip('should support keyboard navigation for note selection', async ({
+  test('should support keyboard navigation for note selection', async ({
     page,
   }) => {
     // SKIPPED: Note list keyboard navigation not implemented
@@ -126,7 +126,7 @@ test.describe('Note Editor Display', () => {
     await expect(page.locator('[data-slate-editor="true"]')).toBeVisible()
   })
 
-  test.skip('should maintain editor content when switching between notes', async ({
+  test('should maintain editor content when switching between notes', async ({
     page,
   }) => {
     // SKIPPED: Note list navigation and persistence not implemented

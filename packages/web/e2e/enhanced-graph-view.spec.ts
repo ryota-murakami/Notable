@@ -5,9 +5,9 @@ import { jsClick, jsType } from './utils/js-click'
 test.describe('Enhanced Graph View', () => {
   test.beforeEach(async ({ page }) => {
     // Enable console logging
-    page.on('console', (msg) => console.log('BROWSER CONSOLE:', msg.text()))
+    page.on('console', (msg) => console.info('BROWSER CONSOLE:', msg.text()))
     page.on('pageerror', (error) =>
-      console.log(
+      console.info(
         'PAGE ERROR:',
         error instanceof Error ? error.message : String(error)
       )
@@ -168,7 +168,7 @@ test.describe('Enhanced Graph View', () => {
     await expect(dateSelect).toHaveValue('30days')
 
     // Adjust connection filter using jsType for reliable slider handling
-    const connectionSlider = page.locator('input[type="range"]')
+    const _connectionSlider = page.locator('input[type="range"]')
     await jsType(page, 'input[type="range"]', '2')
 
     // Toggle hub filter using jsClick for reliable checkbox interaction
@@ -210,7 +210,7 @@ test.describe('Enhanced Graph View', () => {
 
   test('should show proper empty state messages', async ({ page }) => {
     // Filter to show no results using jsType for reliable slider handling
-    const connectionSlider = page.locator('input[type="range"]')
+    const _connectionSlider = page.locator('input[type="range"]')
     await jsType(page, 'input[type="range"]', '10') // Very high number to filter out all nodes
 
     // Should show "no matches" message
