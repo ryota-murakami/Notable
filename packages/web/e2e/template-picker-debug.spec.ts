@@ -47,7 +47,7 @@ test.describe('Template Picker Debug', () => {
     console.info(`📍 Template picker visible before click: ${isPickerVisible}`)
 
     console.info('🔄 Step 6: Click New Note button')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     console.info('🔄 Step 7: Wait a moment for any animations')
     await page.waitForTimeout(1000)

@@ -119,10 +119,10 @@ test('debug tag UI interaction', async ({ page }) => {
   // If found, try clicking the button
   if (count2 > 0) {
     console.info('Clicking Manage Tags button...')
-    await manageTagsButton2.click({ force: true })
+    await manageTagsButton2.click()
   } else if (count1 > 0) {
     console.info('Clicking Manage Tags button (regex)...')
-    await manageTagsButton1.click({ force: true })
+    await manageTagsButton1.click()
   } else {
     console.info('Manage Tags button not found!')
   }

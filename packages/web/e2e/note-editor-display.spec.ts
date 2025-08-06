@@ -42,7 +42,7 @@ test.describe('Note Editor Display', () => {
     await expect(page.locator('text=Welcome to Notable')).toBeVisible()
 
     // Click the New Note button
-    await page.locator('[data-testid="new-note-button"]').click({ force: true })
+    await page.locator('[data-testid="new-note-button"]').click()
 
     // Handle template picker
     await expect(
@@ -63,7 +63,7 @@ test.describe('Note Editor Display', () => {
   }) => {
     // SKIPPED: Note list navigation not implemented
     // Create first note
-    await page.locator('[data-testid="new-note-button"]').click({ force: true })
+    await page.locator('[data-testid="new-note-button"]').click()
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
@@ -73,7 +73,7 @@ test.describe('Note Editor Display', () => {
     // Type some content in the first note
     const editor = page.locator('textarea[placeholder="Start writing..."]')
     await expect(editor).toBeVisible()
-    await editor.click({ force: true })
+    await editor.click()
     await editor.fill('# First Note\n\nThis is the first note content')
 
     // Note: Cannot test navigation between notes as note list doesn't update
@@ -84,7 +84,7 @@ test.describe('Note Editor Display', () => {
       .locator('[role="button"]')
       .filter({ hasText: 'Untitled' })
       .first()
-    await firstNote.click({ force: true })
+    await firstNote.click()
 
     // The editor should still be visible
     await expect(editor).toBeVisible()
@@ -98,7 +98,7 @@ test.describe('Note Editor Display', () => {
   }) => {
     // SKIPPED: Note list keyboard navigation not implemented
     // Create a note
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
 
     // The note should be focusable with keyboard
     const noteItem = page
@@ -114,7 +114,7 @@ test.describe('Note Editor Display', () => {
     await expect(page.locator('[data-slate-editor="true"]')).toBeVisible()
 
     // Try Space key as well
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
     const secondNote = page
       .locator('[role="button"]')
       .filter({ hasText: 'Untitled' })
@@ -131,14 +131,14 @@ test.describe('Note Editor Display', () => {
   }) => {
     // SKIPPED: Note list navigation and persistence not implemented
     // Create first note and add content
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
     const editor = page.locator('[data-slate-editor="true"]')
-    await editor.click({ force: true })
+    await editor.click()
     await page.keyboard.type('First note content')
 
     // Create second note and add different content
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
-    await editor.click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
+    await editor.click()
     await page.keyboard.press('Control+A') // Select all
     await page.keyboard.type('Second note content')
 
@@ -147,7 +147,7 @@ test.describe('Note Editor Display', () => {
       .locator('[role="button"]')
       .filter({ hasText: 'Untitled' })
       .first()
-    await firstNote.click({ force: true })
+    await firstNote.click()
 
     // Verify content persisted (note: actual content verification would require checking the editor's internal state)
     await expect(editor).toBeVisible()
@@ -157,7 +157,7 @@ test.describe('Note Editor Display', () => {
       .locator('[role="button"]')
       .filter({ hasText: 'Untitled' })
       .nth(1)
-    await secondNote.click({ force: true })
+    await secondNote.click()
 
     // Editor should still be visible
     await expect(editor).toBeVisible()

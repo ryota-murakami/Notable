@@ -128,7 +128,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill(
         'useEffect is a powerful hook for handling side effects'
       )
@@ -166,7 +166,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const editor = page
         .locator('[data-testid="note-editor"] [contenteditable="true"]')
         .first()
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('This is a test of search highlighting functionality')
 
       // Search

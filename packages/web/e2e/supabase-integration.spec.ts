@@ -80,9 +80,7 @@ test.describe('Supabase Integration Tests', () => {
     expect(hasHydrationErrors).toBe(false)
 
     // Verify OAuth redirect URLs are set correctly
-    await page
-      .getByRole('button', { name: 'Sign in with Google' })
-      .click({ force: true })
+    await page.getByRole('button', { name: 'Sign in with Google' }).click()
 
     // Should attempt to redirect to OAuth provider (will fail without real Supabase setup)
     // But we can verify no JavaScript errors occurred
@@ -107,9 +105,7 @@ test.describe('Supabase Integration Tests', () => {
     // Test sign in with invalid credentials
     await page.getByPlaceholder('Your email address').fill('test@example.com')
     await page.getByPlaceholder('Your password').fill('wrongpassword')
-    await page
-      .getByRole('button', { name: 'Sign in', exact: true })
-      .click({ force: true })
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click()
 
     // Should show error toast (implementation dependent)
     // For now, just verify no page crash

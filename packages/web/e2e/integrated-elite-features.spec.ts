@@ -34,7 +34,7 @@ test.describe('Integrated Elite Features', () => {
     await expect(searchInput).toBeVisible()
 
     // Test different search modes
-    await searchInput.click({ force: true })
+    await searchInput.click()
 
     // Test search mode selector is visible
     const searchModeButton = page.locator(
@@ -43,8 +43,8 @@ test.describe('Integrated Elite Features', () => {
     await expect(searchModeButton).toBeVisible()
 
     // Test semantic search mode
-    await searchModeButton.click({ force: true })
-    await page.locator('text=AI Semantic Search').click({ force: true })
+    await searchModeButton.click()
+    await page.locator('text=AI Semantic Search').click()
 
     // Perform semantic search
     await searchInput.fill('machine learning concepts')
@@ -60,8 +60,8 @@ test.describe('Integrated Elite Features', () => {
     await expect(page.locator('[class*="text-purple"]')).toBeVisible()
 
     // Test hybrid search mode
-    await searchModeButton.click({ force: true })
-    await page.locator('text=Hybrid Search').click({ force: true })
+    await searchModeButton.click()
+    await page.locator('text=Hybrid Search').click()
 
     await searchInput.fill('project management')
 
@@ -79,7 +79,7 @@ test.describe('Integrated Elite Features', () => {
         '[role="button"]:has(svg[data-testid*="filter" i], svg[class*="filter" i], svg[stroke*="filter" i])'
       )
       .first()
-    await filterButton.click({ force: true })
+    await filterButton.click()
 
     // Verify filters panel opens
     await expect(page.locator('text=Tags')).toBeVisible()
@@ -90,8 +90,8 @@ test.describe('Integrated Elite Features', () => {
     page,
   }) => {
     // Create a new note first
-    await page.locator('text=New Note').click({ force: true })
-    await page.locator('text=Create Blank Note').click({ force: true })
+    await page.locator('text=New Note').click()
+    await page.locator('text=Create Blank Note').click()
 
     // Wait for note editor to load
     await expect(page.locator('[data-testid="note-editor"]')).toBeVisible()
@@ -121,12 +121,10 @@ test.describe('Integrated Elite Features', () => {
 
     for (const { button, expectedText } of generationTypes) {
       // Open content generation dialog
-      await page
-        .locator('button', { hasText: 'Generate Content' })
-        .click({ force: true })
+      await page.locator('button', { hasText: 'Generate Content' }).click()
 
       // Select generation type
-      await page.locator('button', { hasText: button }).click({ force: true })
+      await page.locator('button', { hasText: button }).click()
 
       // Add a prompt
       await page
@@ -134,9 +132,7 @@ test.describe('Integrated Elite Features', () => {
         .fill('Help me understand AI concepts better')
 
       // Generate content
-      await page
-        .locator('button', { hasText: 'Generate' })
-        .click({ force: true })
+      await page.locator('button', { hasText: 'Generate' }).click()
 
       // Wait for generation to complete
       await expect(page.locator(`text=${expectedText}`)).toBeVisible({
@@ -144,9 +140,7 @@ test.describe('Integrated Elite Features', () => {
       })
 
       // Insert generated content
-      await page
-        .locator('button', { hasText: 'Insert Content' })
-        .click({ force: true })
+      await page.locator('button', { hasText: 'Insert Content' }).click()
 
       // Verify content was inserted
       const updatedContent = await contentTextarea.inputValue()
@@ -156,18 +150,16 @@ test.describe('Integrated Elite Features', () => {
       await page
         .locator('button:has-text("Close"), [aria-label="Close"]')
         .first()
-        .click({ force: true })
+        .click()
     }
 
     // Test traditional AI features still work
-    await page
-      .locator('button', { hasText: 'Summarize' })
-      .click({ force: true })
+    await page.locator('button', { hasText: 'Summarize' }).click()
     await expect(page.locator('text=This is a concise summary')).toBeVisible({
       timeout: 10000,
     })
 
-    await page.locator('button', { hasText: 'Rewrite' }).click({ force: true })
+    await page.locator('button', { hasText: 'Rewrite' }).click()
     await expect(
       page.locator('text=This is the rewritten version')
     ).toBeVisible({ timeout: 10000 })
@@ -177,8 +169,8 @@ test.describe('Integrated Elite Features', () => {
     page,
   }) => {
     // Create a new note first
-    await page.locator('text=New Note').click({ force: true })
-    await page.locator('text=Create Blank Note').click({ force: true })
+    await page.locator('text=New Note').click()
+    await page.locator('text=Create Blank Note').click()
 
     // Wait for note editor to load
     await expect(page.locator('[data-testid="note-editor"]')).toBeVisible()
@@ -217,9 +209,7 @@ test.describe('Integrated Elite Features', () => {
       .first()
 
     // Create link to first suggestion
-    await firstSuggestion
-      .locator('button', { hasText: 'Link' })
-      .click({ force: true })
+    await firstSuggestion.locator('button', { hasText: 'Link' }).click()
 
     // Verify link was added to content
     const updatedContent = await contentTextarea.inputValue()
@@ -228,9 +218,7 @@ test.describe('Integrated Elite Features', () => {
     )
 
     // Test navigation to related note
-    await firstSuggestion
-      .locator('button', { hasText: 'Open' })
-      .click({ force: true })
+    await firstSuggestion.locator('button', { hasText: 'Open' }).click()
 
     // Should navigate to the linked note (in real app, this would change the URL)
     // For now, just verify the click was registered
@@ -261,8 +249,8 @@ test.describe('Integrated Elite Features', () => {
     const searchModeButton = page.locator(
       '[role="button"]:has(svg[class~="h-3"][class~="w-3"])'
     )
-    await searchModeButton.click({ force: true })
-    await page.locator('text=AI Semantic Search').click({ force: true })
+    await searchModeButton.click()
+    await page.locator('text=AI Semantic Search').click()
 
     // Search for AI-related content
     await searchInput.fill('artificial intelligence applications')
@@ -271,8 +259,8 @@ test.describe('Integrated Elite Features', () => {
     })
 
     // 2. Create new note from search context
-    await page.locator('text=New Note').click({ force: true })
-    await page.locator('text=Create Blank Note').click({ force: true })
+    await page.locator('text=New Note').click()
+    await page.locator('text=Create Blank Note').click()
 
     await expect(page.locator('[data-testid="note-editor"]')).toBeVisible()
 
@@ -288,23 +276,17 @@ test.describe('Integrated Elite Features', () => {
     )
 
     // Generate brainstorming ideas
-    await page
-      .locator('button', { hasText: 'Generate Content' })
-      .click({ force: true })
-    await page
-      .locator('button', { hasText: 'Brainstorm Ideas' })
-      .click({ force: true })
+    await page.locator('button', { hasText: 'Generate Content' }).click()
+    await page.locator('button', { hasText: 'Brainstorm Ideas' }).click()
     await page
       .locator('textarea[placeholder*="describe what you need"]')
       .fill('innovative AI applications in healthcare')
-    await page.locator('button', { hasText: 'Generate' }).click({ force: true })
+    await page.locator('button', { hasText: 'Generate' }).click()
 
     await expect(page.locator('text=Brainstorming Ideas')).toBeVisible({
       timeout: 15000,
     })
-    await page
-      .locator('button', { hasText: 'Insert Content' })
-      .click({ force: true })
+    await page.locator('button', { hasText: 'Insert Content' }).click()
 
     // 4. Verify Smart Linking Panel discovers connections
     await expect(page.locator('text=Smart Connections')).toBeVisible()
@@ -325,9 +307,7 @@ test.describe('Integrated Elite Features', () => {
       .locator('button')
       .filter({ hasText: 'AI Applications in Healthcare' })
       .first()
-    await healthcareSuggestion
-      .locator('button', { hasText: 'Link' })
-      .click({ force: true })
+    await healthcareSuggestion.locator('button', { hasText: 'Link' }).click()
 
     // Verify content was enhanced with AI-generated ideas and smart links
     const finalContent = await contentTextarea.inputValue()
@@ -341,9 +321,7 @@ test.describe('Integrated Elite Features', () => {
     await expect(searchInput).toBeVisible()
 
     // All features should be working simultaneously without conflicts
-    await page
-      .locator('button', { hasText: 'Summarize' })
-      .click({ force: true })
+    await page.locator('button', { hasText: 'Summarize' }).click()
     await expect(page.locator('text=This is a concise summary')).toBeVisible({
       timeout: 10000,
     })
@@ -353,8 +331,8 @@ test.describe('Integrated Elite Features', () => {
     // Test that elite features handle errors gracefully and perform well
 
     // Create note for testing
-    await page.locator('text=New Note').click({ force: true })
-    await page.locator('text=Create Blank Note').click({ force: true })
+    await page.locator('text=New Note').click()
+    await page.locator('text=Create Blank Note').click()
     await expect(page.locator('[data-testid="note-editor"]')).toBeVisible()
 
     const titleInput = page.locator('[data-testid="note-title-input"]')
@@ -370,9 +348,7 @@ test.describe('Integrated Elite Features', () => {
     // Test AI features with empty content (should handle gracefully)
     await contentTextarea.fill('')
 
-    await page
-      .locator('button', { hasText: 'Summarize' })
-      .click({ force: true })
+    await page.locator('button', { hasText: 'Summarize' }).click()
     // Should handle empty content gracefully, not crash
     await page.waitForTimeout(2000)
 
@@ -393,10 +369,10 @@ test.describe('Integrated Elite Features', () => {
 
     // Rapidly switch search modes
     for (let i = 0; i < 3; i++) {
-      await searchModeButton.click({ force: true })
-      await page.locator('text=Keyword Search').click({ force: true })
-      await searchModeButton.click({ force: true })
-      await page.locator('text=AI Semantic Search').click({ force: true })
+      await searchModeButton.click()
+      await page.locator('text=Keyword Search').click()
+      await searchModeButton.click()
+      await page.locator('text=AI Semantic Search').click()
     }
 
     // Should remain stable

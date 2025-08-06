@@ -26,11 +26,9 @@ test.describe('Mock Note Persistence Debug', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     console.info('🔄 Step 2: Create first note')
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
     await expect(page.getByTestId('template-picker')).toBeVisible()
-    await page
-      .getByRole('button', { name: 'Blank Note' })
-      .click({ force: true })
+    await page.getByRole('button', { name: 'Blank Note' }).click()
 
     // Get note URL and ID
     await page.waitForURL('**/notes/**')

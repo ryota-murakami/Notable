@@ -57,7 +57,7 @@ export async function clickWithHydration(page: Page, selector: string) {
   } catch {
     console.info('Standard click failed, trying force click')
     try {
-      await element.click({ force: true, timeout: 5000 })
+      await element.click({ timeout: 5000 })
     } catch {
       console.info('Force click failed, trying JavaScript click')
       await element.evaluate((el: HTMLElement) => el.click())

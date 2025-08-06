@@ -18,23 +18,21 @@ test('debug tag management panel', async ({ page }) => {
   await page.waitForSelector('[data-testid="app-shell"]', { timeout: 10000 })
 
   // Navigate to tag management
-  await page
-    .getByRole('button', { name: /manage tags/i })
-    .click({ force: true })
+  await page.getByRole('button', { name: /manage tags/i }).click()
   await page.waitForSelector('[role="dialog"]')
 
   // Click on "Manage Tags" section
   await page
     .locator('[role="dialog"]')
     .getByRole('button', { name: /^Manage Tags$/ })
-    .click({ force: true })
+    .click()
   await page.waitForTimeout(1000)
 
   // Take screenshot of manage tags section
   await page.screenshot({ path: 'manage-tags-section.png', fullPage: true })
 
   // Create new tag
-  await page.getByRole('button', { name: /create tag/i }).click({ force: true })
+  await page.getByRole('button', { name: /create tag/i }).click()
   await page.waitForTimeout(1000)
 
   // Take screenshot of create dialog
@@ -48,7 +46,7 @@ test('debug tag management panel', async ({ page }) => {
   await page.screenshot({ path: 'before-submit.png', fullPage: true })
 
   // Submit the form
-  await page.getByRole('button', { name: /^create$/i }).click({ force: true })
+  await page.getByRole('button', { name: /^create$/i }).click()
 
   // Wait and take screenshot after submit
   await page.waitForTimeout(2000)

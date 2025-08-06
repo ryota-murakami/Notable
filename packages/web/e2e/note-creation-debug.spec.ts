@@ -48,7 +48,7 @@ test.describe('Note Creation Debug', () => {
     console.info('🔄 Step 3: Click New Note button')
     const newNoteButton = page.getByRole('button', { name: 'New Note' })
     await expect(newNoteButton).toBeVisible()
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     console.info('🔄 Step 4: Wait for template picker')
     const templatePicker = page.getByTestId('template-picker')
@@ -62,7 +62,7 @@ test.describe('Note Creation Debug', () => {
     const urlBeforeClick = page.url()
     console.info(`📍 URL before Blank Note click: ${urlBeforeClick}`)
 
-    await blankNoteButton.click({ force: true })
+    await blankNoteButton.click()
 
     console.info('🔄 Step 6: Wait for navigation and check results')
     // Wait for page to be ready after navigation

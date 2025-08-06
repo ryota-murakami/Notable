@@ -35,7 +35,7 @@ test.describe('Comprehensive Authentication Tests', () => {
         page.waitForRequest(
           (req) => req.url().includes('google') || req.url().includes('oauth')
         ),
-        googleButton.click({ force: true }),
+        googleButton.click(),
       ])
 
       // Verify that OAuth request was initiated
@@ -129,11 +129,11 @@ test.describe('Comprehensive Authentication Tests', () => {
 
       // Open user menu
       const userMenuButton = page.getByTestId('user-menu-trigger')
-      await userMenuButton.click({ force: true })
+      await userMenuButton.click()
 
       // Click logout
       const logoutButton = page.getByText('Log out')
-      await logoutButton.click({ force: true })
+      await logoutButton.click()
 
       // Should redirect to auth page
       await expect(page).toHaveURL('/auth')
@@ -161,7 +161,7 @@ test.describe('Comprehensive Authentication Tests', () => {
 
       // Open user menu
       const userMenuButton = page.getByTestId('user-menu-trigger')
-      await userMenuButton.click({ force: true })
+      await userMenuButton.click()
 
       // Wait for menu to open
       await page.waitForTimeout(500)

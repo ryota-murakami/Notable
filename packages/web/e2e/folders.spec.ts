@@ -99,7 +99,7 @@ test.describe('Folder System', () => {
 
     // Toggle parent folder
     const parentFolder = page.locator('text=Parent').first()
-    await parentFolder.click({ force: true })
+    await parentFolder.click()
 
     // Verify expand/collapse functionality exists
     await expect(page.locator('text=Child')).toBeVisible()

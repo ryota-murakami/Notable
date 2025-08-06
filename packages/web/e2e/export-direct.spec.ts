@@ -65,7 +65,7 @@ test.describe('Direct Export Tests', () => {
     await expect(exportButton).toBeVisible({ timeout: 5000 })
 
     // Click export button to open dropdown
-    await exportButton.click({ force: true })
+    await exportButton.click()
 
     // Wait for dropdown to appear
     await page.waitForTimeout(500)
@@ -105,7 +105,7 @@ test.describe('Direct Export Tests', () => {
     })
 
     // Click export as markdown
-    await exportAsMarkdown.click({ force: true })
+    await exportAsMarkdown.click()
 
     // Wait for the export to complete
     const exportResult = await page.evaluate(() => {

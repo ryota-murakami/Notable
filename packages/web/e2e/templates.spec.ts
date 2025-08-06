@@ -150,7 +150,7 @@ test.describe('Template System E2E Tests', () => {
 
     // Clear search using keyboard simulation (reliable for React controlled inputs)
     const searchInput = page.locator('input[placeholder*="Search templates"]')
-    await searchInput.click({ force: true }) // Focus the input
+    await searchInput.click() // Focus the input
     await page.keyboard.press('Control+A') // Select all text
     await page.keyboard.press('Backspace') // Clear the selected text
 

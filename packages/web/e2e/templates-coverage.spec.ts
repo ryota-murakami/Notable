@@ -28,7 +28,7 @@ test.describe('Templates Coverage Tests', () => {
 
     // Click new note button
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Wait for template picker to appear (allow time for animation/loading)
     await page.waitForTimeout(1000)
@@ -54,7 +54,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Wait for template picker to appear (allow time for animation/loading)
     await page.waitForTimeout(1000)
@@ -66,7 +66,7 @@ test.describe('Templates Coverage Tests', () => {
 
     // Click blank template
     const blankTemplate = page.locator('button:has-text("Blank Note")')
-    await blankTemplate.click({ force: true })
+    await blankTemplate.click()
 
     // Wait for navigation to complete
     await page.waitForURL(/\/notes\/[a-z0-9-]+/, { timeout: 30000 })
@@ -83,7 +83,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Check for category buttons
     const categories = page.locator('[data-testid^="template-category-"]')
@@ -91,7 +91,7 @@ test.describe('Templates Coverage Tests', () => {
 
     if (categoryCount > 0) {
       // Click first category
-      await categories.first().click({ force: true })
+      await categories.first().click()
 
       // Check that templates are displayed
       await expect(
@@ -104,7 +104,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Find search input
     const searchInput = page
@@ -130,14 +130,14 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Select a category if needed
     const categoryButton = page
       .locator('[data-testid="template-category-general"]')
       .first()
     if (await categoryButton.isVisible()) {
-      await categoryButton.click({ force: true })
+      await categoryButton.click()
     }
 
     // Find a template card
@@ -150,7 +150,7 @@ test.describe('Templates Coverage Tests', () => {
         )
         .first()
       if (await previewButton.isVisible()) {
-        await previewButton.click({ force: true })
+        await previewButton.click()
 
         // Check preview modal
         await expect(
@@ -170,19 +170,19 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Select a category
     const categoryButton = page
       .locator('[data-testid="template-category-general"]')
       .first()
     if (await categoryButton.isVisible()) {
-      await categoryButton.click({ force: true })
+      await categoryButton.click()
     }
 
     // Select a template
     const templateCard = page.locator('[data-testid^="template-card-"]').first()
-    await templateCard.click({ force: true })
+    await templateCard.click()
 
     // Check if variable form appears
     const variableForm = page.locator('[data-testid="template-variable-form"]')
@@ -201,7 +201,7 @@ test.describe('Templates Coverage Tests', () => {
       const submitButton = page
         .locator('button:has-text("Create"), button:has-text("Use Template")')
         .first()
-      await submitButton.click({ force: true })
+      await submitButton.click()
     }
 
     // Should redirect to new note
@@ -219,7 +219,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Look for popular templates section
     const popularSection = page.locator(
@@ -243,14 +243,14 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Select a template
     const categoryButton = page
       .locator('[data-testid="template-category-general"]')
       .first()
     if (await categoryButton.isVisible()) {
-      await categoryButton.click({ force: true })
+      await categoryButton.click()
     }
 
     const templateCard = page.locator('[data-testid^="template-card-"]').first()
@@ -270,7 +270,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Look for create template button
     const createTemplateButton = page
@@ -279,7 +279,7 @@ test.describe('Templates Coverage Tests', () => {
       )
       .first()
     if (await createTemplateButton.isVisible()) {
-      await createTemplateButton.click({ force: true })
+      await createTemplateButton.click()
 
       // Fill template form
       const nameInput = page
@@ -310,7 +310,7 @@ test.describe('Templates Coverage Tests', () => {
       const saveButton = page
         .locator('button:has-text("Save"), button:has-text("Create")')
         .last()
-      await saveButton.click({ force: true })
+      await saveButton.click()
     }
   })
 
@@ -318,7 +318,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Check for filter options
     const filterButton = page
@@ -327,7 +327,7 @@ test.describe('Templates Coverage Tests', () => {
       )
       .first()
     if (await filterButton.isVisible()) {
-      await filterButton.click({ force: true })
+      await filterButton.click()
 
       // Check filter menu
       await expect(
@@ -343,7 +343,7 @@ test.describe('Templates Coverage Tests', () => {
       .locator('[data-testid="template-sort"], button[aria-label*="sort" i]')
       .first()
     if (await sortButton.isVisible()) {
-      await sortButton.click({ force: true })
+      await sortButton.click()
 
       // Check sort menu
       await expect(
@@ -355,7 +355,7 @@ test.describe('Templates Coverage Tests', () => {
         .locator('[role="menuitem"]:has-text("Name")')
         .first()
       if (await sortOption.isVisible()) {
-        await sortOption.click({ force: true })
+        await sortOption.click()
       }
     }
   })
@@ -365,7 +365,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Wait for template picker
     await expect(
@@ -397,7 +397,7 @@ test.describe('Templates Coverage Tests', () => {
     await page.goto('/app')
 
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // Wait for template picker
     await expect(

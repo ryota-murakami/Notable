@@ -148,7 +148,7 @@ test.describe('Rich Text Editor', () => {
     const hasEditor = await editor.isVisible().catch(() => false)
 
     if (hasEditor) {
-      await editor.click({ force: true })
+      await editor.click()
       await jsTypeContent(page, 'Test content')
       console.info('Successfully typed in editor')
     } else {

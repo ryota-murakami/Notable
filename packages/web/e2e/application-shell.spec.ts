@@ -158,7 +158,7 @@ test.describe('Application Shell', () => {
   test('should create a new note via sidebar button', async ({ page }) => {
     // Use sidebar button
     const newNoteButton = page.locator('[data-testid="new-note-button"]')
-    await newNoteButton.click({ force: true })
+    await newNoteButton.click()
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -205,7 +205,7 @@ test.describe('Application Shell', () => {
     page,
   }) => {
     // Create a new note
-    await page.locator('[data-testid="new-note-button"]').click({ force: true })
+    await page.locator('[data-testid="new-note-button"]').click()
 
     // In test mode, template picker is bypassed - wait for navigation
     await page.waitForTimeout(2000)
@@ -226,7 +226,7 @@ test.describe('Application Shell', () => {
 
   test('should display notes in sidebar after creation', async ({ page }) => {
     // Create a new note
-    await page.locator('[data-testid="new-note-button"]').click({ force: true })
+    await page.locator('[data-testid="new-note-button"]').click()
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -249,7 +249,7 @@ test.describe('Application Shell', () => {
         const editor = page.locator(selector).first()
         const isVisible = await editor.isVisible().catch(() => false)
         if (isVisible) {
-          await editor.click({ force: true })
+          await editor.click()
           if (selector.includes('textarea')) {
             await editor.fill('Test Note Title\n\nSome note content')
           } else {
@@ -299,7 +299,7 @@ test.describe('Application Shell', () => {
     page,
   }) => {
     // Create a new note first
-    await page.locator('[data-testid="new-note-button"]').click({ force: true })
+    await page.locator('[data-testid="new-note-button"]').click()
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -322,7 +322,7 @@ test.describe('Application Shell', () => {
         const editor = page.locator(selector).first()
         const isVisible = await editor.isVisible().catch(() => false)
         if (isVisible) {
-          await editor.click({ force: true })
+          await editor.click()
           if (selector.includes('textarea')) {
             await editor.fill('Clickable Note\n\nSome note content')
           } else {
@@ -347,9 +347,9 @@ test.describe('Application Shell', () => {
         const untitledNote = page.getByText('Untitled')
 
         if (await clickableNote.isVisible().catch(() => false)) {
-          await clickableNote.click({ force: true })
+          await clickableNote.click()
         } else if (await untitledNote.isVisible().catch(() => false)) {
-          await untitledNote.click({ force: true })
+          await untitledNote.click()
         }
 
         // Should navigate to the note
@@ -406,7 +406,7 @@ test.describe('Application Shell', () => {
 
   test('should handle keyboard navigation', async ({ page }) => {
     // Create a note first
-    await page.locator('[data-testid="new-note-button"]').click({ force: true })
+    await page.locator('[data-testid="new-note-button"]').click()
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -429,7 +429,7 @@ test.describe('Application Shell', () => {
         const editor = page.locator(selector).first()
         const isVisible = await editor.isVisible().catch(() => false)
         if (isVisible) {
-          await editor.click({ force: true })
+          await editor.click()
           if (selector.includes('textarea')) {
             await editor.fill('Keyboard Test Note\n\nSome note content')
           } else {

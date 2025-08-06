@@ -176,9 +176,7 @@ test.describe('Template System Core Tests', () => {
 
     // Select Daily Journal template - use heading to avoid duplicates
     await page.waitForSelector('h4:has-text("Daily Journal")')
-    await page
-      .getByRole('heading', { name: 'Daily Journal' })
-      .click({ force: true })
+    await page.getByRole('heading', { name: 'Daily Journal' }).click()
 
     // Variable form should open
     await expect(
@@ -222,9 +220,7 @@ test.describe('Template System Core Tests', () => {
 
     // Select Daily Journal template - use heading to avoid duplicates
     await page.waitForSelector('h4:has-text("Daily Journal")')
-    await page
-      .getByRole('heading', { name: 'Daily Journal' })
-      .click({ force: true })
+    await page.getByRole('heading', { name: 'Daily Journal' }).click()
 
     // Try to submit without required fields
     await page.fill('input#title', 'Test')

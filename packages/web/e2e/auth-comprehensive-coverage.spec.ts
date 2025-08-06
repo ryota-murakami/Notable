@@ -55,7 +55,7 @@ test.describe('Authentication Coverage Tests', () => {
       'input[type="checkbox"][name*="remember"], label:has-text("Remember me")'
     )
     if (await rememberMe.isVisible()) {
-      await rememberMe.click({ force: true })
+      await rememberMe.click()
     }
 
     // Test forgot password link
@@ -63,7 +63,7 @@ test.describe('Authentication Coverage Tests', () => {
       'a:has-text("Forgot password"), button:has-text("Forgot password")'
     )
     if (await forgotPassword.isVisible()) {
-      await forgotPassword.click({ force: true })
+      await forgotPassword.click()
       await page.goBack()
     }
 
@@ -96,7 +96,7 @@ test.describe('Authentication Coverage Tests', () => {
     await expect(userMenuButton).toBeVisible()
 
     // Open user menu
-    await userMenuButton.click({ force: true })
+    await userMenuButton.click()
 
     // Test menu items - user-menu.tsx only has Settings and Log out
     await expect(page.locator('text=Settings')).toBeVisible()
@@ -125,11 +125,11 @@ test.describe('Authentication Coverage Tests', () => {
 
     // Open user menu
     const userMenuButton = page.locator('[data-testid="user-menu-trigger"]')
-    await userMenuButton.click({ force: true })
+    await userMenuButton.click()
 
     // Click sign out
     const signOutButton = page.locator('text=Log out')
-    await signOutButton.click({ force: true })
+    await signOutButton.click()
 
     // Should redirect to auth page
     await expect(page).toHaveURL(/\/auth/)
@@ -201,7 +201,7 @@ test.describe('Authentication Coverage Tests', () => {
     await expect(userMenuButton).toBeVisible()
 
     // Open menu to see user info
-    await userMenuButton.click({ force: true })
+    await userMenuButton.click()
 
     // The user menu shows user email in the dropdown
     const emailElement = page.locator('.text-xs.text-muted-foreground')
@@ -278,7 +278,7 @@ test.describe('Authentication Coverage Tests', () => {
     ) {
       await emailInput.fill('test@example.com')
       await passwordInput.fill('password123')
-      await submitButton.click({ force: true })
+      await submitButton.click()
 
       // Should show error message
       await expect(page.locator('text=/error|failed|invalid/i')).toBeVisible({

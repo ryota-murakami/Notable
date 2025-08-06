@@ -126,7 +126,7 @@ test.describe('User Menu', () => {
 
     // Click outside the menu - click on the app shell instead of body
     const appShell = page.locator('[data-testid="app-shell"]')
-    await appShell.click({ position: { x: 10, y: 10 }, force: true })
+    await appShell.click({ position: { x: 10, y: 10 } })
 
     // Wait a bit for animation
     await page.waitForTimeout(500)
@@ -162,7 +162,7 @@ test.describe('User Menu', () => {
     await expect(page.locator('[role="menu"]')).toBeVisible({ timeout: 5000 })
 
     // Click settings
-    await page.locator('text="Settings"').click({ force: true })
+    await page.locator('text="Settings"').click()
 
     // Wait for click to be processed
     await page.waitForTimeout(500)
@@ -196,7 +196,7 @@ test.describe('User Menu', () => {
     await expect(page.locator('[role="menu"]')).toBeVisible({ timeout: 5000 })
 
     // Click logout
-    await page.locator('text="Log out"').click({ force: true })
+    await page.locator('text="Log out"').click()
 
     // Wait for navigation
     await page.waitForURL(/\/auth/, { timeout: 5000 })

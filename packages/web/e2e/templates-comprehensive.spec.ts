@@ -87,7 +87,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await page.waitForTimeout(500)
 
       // Click on Meeting Notes category
-      await page.locator('text="Meeting Notes"').click({ force: true })
+      await page.locator('text="Meeting Notes"').click()
       await page.waitForTimeout(500)
 
       // Verify only meeting templates are shown
@@ -171,10 +171,10 @@ test.describe('Comprehensive Template System Tests', () => {
 
       // Find and click the sort dropdown button
       const sortButton = page.locator('button:has-text("Sort")').first()
-      await sortButton.click({ force: true })
+      await sortButton.click()
 
       // Select "Name A-Z" sorting
-      await page.locator('text="Name A-Z"').click({ force: true })
+      await page.locator('text="Name A-Z"').click()
       await page.waitForTimeout(500)
 
       // Get all template names and verify they are sorted alphabetically
@@ -185,8 +185,8 @@ test.describe('Comprehensive Template System Tests', () => {
       expect(templateNames).toEqual(sortedNames)
 
       // Try another sort option
-      await sortButton.click({ force: true })
-      await page.locator('text="Most Recent"').click({ force: true })
+      await sortButton.click()
+      await page.locator('text="Most Recent"').click()
       await page.waitForTimeout(500)
 
       // Verify templates are displayed (we can't verify date order with mock data)
@@ -204,7 +204,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const favoriteButton = page
         .locator('[data-testid="template-favorite-button"]')
         .first()
-      await favoriteButton.click({ force: true })
+      await favoriteButton.click()
 
       // Verify favorited
       await expect(favoriteButton).toHaveClass(/favorited/)
@@ -306,7 +306,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       await contentEditor.type(
         '# {{title}}\n\nDate: {{date}}\n\nContent: {{content}}'
       )
@@ -399,7 +399,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-card-daily-standup"]'
       )
       await expect(templateCard).toBeVisible()
-      await templateCard.click({ force: true })
+      await templateCard.click()
 
       // After clicking a template, it should create a new note with that template
       // Wait for navigation to the new note
@@ -426,7 +426,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-card-daily-standup"]'
       )
       await expect(templateCard).toBeVisible()
-      await templateCard.click({ force: true })
+      await templateCard.click()
 
       // Wait for navigation to the new note page
       await page.waitForURL(/\/notes\//, { timeout: 5000 })
@@ -455,7 +455,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-card-daily-standup"]'
       )
       await expect(templateCard).toBeVisible()
-      await templateCard.click({ force: true })
+      await templateCard.click()
 
       // Wait for navigation to the new note page
       await page.waitForURL(/\/notes\//, { timeout: 5000 })
@@ -484,7 +484,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       // Template variable types removed due to parsing issues
       await contentEditor.fill('Template with variables')
 
@@ -535,7 +535,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       await contentEditor.type(
         'Status: {{status:select[draft,published,archived]:default=draft}}'
       )
@@ -604,7 +604,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-card-weekly-team-meeting"]'
       )
       await expect(templateCard).toBeVisible()
-      await templateCard.click({ force: true })
+      await templateCard.click()
 
       // Wait for navigation to the new note page
       await page.waitForURL(/\/notes\//, { timeout: 5000 })
@@ -637,7 +637,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       // Conditional template content removed due to parsing issues
       await contentEditor.fill('Conditional template')
 
@@ -671,7 +671,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       // List template content removed due to parsing issues
       await contentEditor.fill('List template')
 
@@ -759,7 +759,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-card-daily-standup"]'
       )
       await expect(templateCard).toBeVisible()
-      await templateCard.click({ force: true })
+      await templateCard.click()
 
       // Wait for navigation to the new note
       await page.waitForURL(/\/notes\//, { timeout: 5000 })
@@ -816,7 +816,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       // Skip filling template content due to parsing issues
 
       await page.click('[data-testid="save-template-button"]')
@@ -855,7 +855,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       // String transformation template content removed due to parsing issues
       await contentEditor.fill('String transforms template')
 
@@ -900,7 +900,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       // Complex template content removed due to parsing issues
 
       await page.click('[data-testid="save-template-button"]')
@@ -920,7 +920,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       await contentEditor.type('# {{title}}\nDate: {{date}}\n---')
 
       await page.click('[data-testid="save-template-button"]')
@@ -929,7 +929,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await page.click('[data-testid="create-template-button"]')
       await page.fill('[data-testid="template-name-input"]', 'Full Document')
 
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       await contentEditor.clear()
       // Template include content removed due to parsing issues
 
@@ -973,7 +973,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       // Template helper content removed due to parsing issues
 
       await page.click('[data-testid="save-template-button"]')
@@ -1022,7 +1022,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       await contentEditor.type('{{unclosed')
 
       // Try to save - should show error
@@ -1056,7 +1056,7 @@ test.describe('Comprehensive Template System Tests', () => {
       const contentEditor = page.locator(
         '[data-testid="template-content-editor"]'
       )
-      await contentEditor.click({ force: true })
+      await contentEditor.click()
       await contentEditor.type('Version 1')
       await page.click('[data-testid="save-template-button"]')
 
@@ -1112,7 +1112,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-card-daily-journal"]'
       )
       await expect(templateCard).toBeVisible()
-      await templateCard.click({ force: true })
+      await templateCard.click()
 
       // Wait for navigation to the new note
       await page.waitForURL(/\/notes\//, { timeout: 5000 })
@@ -1146,7 +1146,7 @@ test.describe('Comprehensive Template System Tests', () => {
         '[data-testid="template-category-meeting"]'
       )
       await expect(meetingCategory).toBeVisible()
-      await meetingCategory.click({ force: true })
+      await meetingCategory.click()
       await page.waitForTimeout(500)
 
       // Verify meeting templates are shown when meeting category is selected
@@ -1177,7 +1177,7 @@ test.describe('Comprehensive Template System Tests', () => {
       await expect(templateCard.locator('text=4.5')).toBeVisible() // Rating
 
       // Use the template to track analytics
-      await templateCard.click({ force: true })
+      await templateCard.click()
 
       // Wait for navigation to note page (this counts as usage)
       await page.waitForURL(/\/notes\//, { timeout: 5000 })

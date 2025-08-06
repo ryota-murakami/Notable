@@ -37,7 +37,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -47,7 +47,7 @@ test.describe('Block Editor', () => {
       }
 
       // Type content in the editor
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('This is a new paragraph block')
 
       // Verify the content is present
@@ -58,7 +58,7 @@ test.describe('Block Editor', () => {
       const editor = page.locator('[contenteditable="true"]').first()
 
       // Clear existing content
-      await editor.click({ force: true })
+      await editor.click()
       await page.keyboard.press('Control+a')
       await page.keyboard.press('Delete')
 
@@ -80,7 +80,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -89,7 +89,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
       // Use autoformat pattern for bullet list
       await editor.fill('- First item')
       await page.keyboard.press('Enter')
@@ -114,7 +114,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -123,7 +123,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
       // Use autoformat pattern for numbered list
       await editor.fill('1. First numbered item')
       await page.keyboard.press('Enter')
@@ -142,7 +142,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Todo blocks functionality not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -161,7 +161,7 @@ test.describe('Block Editor', () => {
       await expect(checkboxes).toHaveCount(2)
 
       // Click first checkbox to check it
-      await checkboxes.first().click({ force: true })
+      await checkboxes.first().click()
 
       // Verify the checkbox is checked
       await expect(checkboxes.first()).toHaveAttribute('aria-checked', 'true')
@@ -173,7 +173,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Code blocks functionality not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -199,7 +199,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Callout blocks functionality not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -226,7 +226,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Toggle blocks functionality not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -238,7 +238,7 @@ test.describe('Block Editor', () => {
 
       // Add content inside toggle
       const toggleContent = page.locator('.toggle-block .prose')
-      await toggleContent.click({ force: true })
+      await toggleContent.click()
       await toggleContent.type('This content can be hidden')
 
       // Test toggle functionality
@@ -248,14 +248,14 @@ test.describe('Block Editor', () => {
       await expect(toggleButton).toHaveAttribute('aria-expanded', 'true')
 
       // Click to collapse
-      await toggleButton.click({ force: true })
+      await toggleButton.click()
       await expect(toggleButton).toHaveAttribute('aria-expanded', 'false')
 
       // Content should be hidden
       await expect(toggleContent).not.toBeVisible()
 
       // Click to expand again
-      await toggleButton.click({ force: true })
+      await toggleButton.click()
       await expect(toggleButton).toHaveAttribute('aria-expanded', 'true')
       await expect(toggleContent).toBeVisible()
     })
@@ -266,7 +266,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Slash command menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       // Verify slash command menu appears
@@ -283,7 +283,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Slash command menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -305,7 +305,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Slash command menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -321,7 +321,7 @@ test.describe('Block Editor', () => {
       // SKIPPED: Slash command menu not implemented
       const editor = page.locator('[data-testid="block-editor"]')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -348,7 +348,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -358,7 +358,7 @@ test.describe('Block Editor', () => {
       }
 
       // Create a block
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('This is a test block')
 
       // Find the block element
@@ -380,7 +380,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -390,14 +390,14 @@ test.describe('Block Editor', () => {
       }
 
       // Create multiple blocks
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('First block')
       await editor.press('Enter')
       await editor.fill('Second block')
 
       // Click on first block
       const firstBlock = page.locator('[data-slate-node="element"]').first()
-      await firstBlock.click({ force: true })
+      await firstBlock.click()
 
       // Verify selection state
       await expect(firstBlock).toHaveClass(/block-selected/)
@@ -414,7 +414,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -423,7 +423,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('First block')
 
       // Create new block with shortcut
@@ -446,7 +446,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -455,7 +455,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('This text will be bold')
 
       // Select all text
@@ -480,7 +480,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -490,7 +490,7 @@ test.describe('Block Editor', () => {
       }
 
       // Create content using autoformat
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('# Test Heading')
       await page.keyboard.press('Enter')
       await editor.fill('This is a paragraph with some content.')
@@ -524,7 +524,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -533,7 +533,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -555,7 +555,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -565,7 +565,7 @@ test.describe('Block Editor', () => {
       }
 
       // Create some content
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('Test content before error')
 
       // Simulate an error condition (this would depend on your implementation)
@@ -589,7 +589,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -598,7 +598,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('First block')
       await editor.press('Enter')
       await editor.fill('Second block')
@@ -621,7 +621,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -630,7 +630,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill('/')
 
       await page.waitForSelector('.slash-command-menu', { timeout: 5000 })
@@ -655,7 +655,7 @@ test.describe('Block Editor', () => {
       if (!(await editor.isVisible())) {
         const placeholder = page.getByText('Start writing...')
         if (await placeholder.isVisible()) {
-          await placeholder.click({ force: true })
+          await placeholder.click()
           await page.waitForTimeout(1000)
         }
         // Try again after clicking
@@ -664,7 +664,7 @@ test.describe('Block Editor', () => {
           .first()
       }
 
-      await editor.click({ force: true })
+      await editor.click()
 
       // Create many blocks to test performance
       for (let i = 0; i < 50; i++) {

@@ -116,7 +116,7 @@ export async function jsType(
 
     // Special handling for clearing input (empty string) - use keyboard simulation for React
     if (text === '') {
-      await input.click({ force: true }) // Focus the input
+      await input.click() // Focus the input
       await page.keyboard.press('Control+A') // Select all text
       await page.keyboard.press('Backspace') // Clear the selected text
 
@@ -341,6 +341,6 @@ export async function jsTypeContent(page: Page, text: string): Promise<void> {
   const textarea = page.locator(selector)
 
   await textarea.waitFor({ state: 'visible', timeout: 10000 })
-  await textarea.click({ force: true })
+  await textarea.click()
   await jsType(page, selector, text)
 }

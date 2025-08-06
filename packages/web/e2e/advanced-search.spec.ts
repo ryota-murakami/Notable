@@ -277,9 +277,7 @@ test.describe('Advanced Search System', () => {
     ).toBeVisible()
 
     // Click to rerun search using jsClick for better reliability
-    await page
-      .getByRole('button', { name: 'TypeScript', exact: true })
-      .click({ force: true })
+    await page.getByRole('button', { name: 'TypeScript', exact: true }).click()
     await expect(page.locator('[data-testid="search-input"]')).toHaveValue(
       'TypeScript'
     )
@@ -340,7 +338,7 @@ test.describe('Advanced Search System', () => {
     await page
       .locator('[role="dialog"] button[class*="text-left"]')
       .first()
-      .click({ force: true })
+      .click()
 
     // Verify navigation
     await expect(page).toHaveURL(/\/notes\//)
@@ -398,7 +396,7 @@ test.describe('Advanced Search System', () => {
     const firstResult = page
       .locator('[role="dialog"] button[class*="text-left"]')
       .first()
-    await firstResult.click({ force: true })
+    await firstResult.click()
 
     // Verify navigation to note
     await expect(page).toHaveURL(/\/notes\//)

@@ -62,7 +62,7 @@ export async function createNewNote(
   // Fill in content if provided
   if (noteContent) {
     const editor = page.locator('[data-testid="note-content-textarea"]')
-    await editor.click({ force: true })
+    await editor.click()
     await editor.clear()
     await editor.type(noteContent)
   }
@@ -99,7 +99,7 @@ export async function createRichNote(
   const noteId = await createNewNote(page, title)
 
   const editor = page.locator('[data-testid="note-content-textarea"]')
-  await editor.click({ force: true })
+  await editor.click()
   await editor.clear()
 
   for (const block of content) {
@@ -147,7 +147,7 @@ export async function createRichNote(
 export async function addTagsToNote(page: Page, tags: string[]) {
   for (const tag of tags) {
     const tagInput = page.locator('[placeholder*="tag"]').first()
-    await tagInput.click({ force: true })
+    await tagInput.click()
     await tagInput.type(tag)
     await tagInput.press('Enter')
     await page.waitForTimeout(200) // Small wait between tags

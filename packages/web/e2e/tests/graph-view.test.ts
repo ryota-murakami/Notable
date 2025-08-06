@@ -21,15 +21,13 @@ test.describe('Graph View', () => {
 
   // Helper function to create a test note
   async function createTestNote(page: any, title: string) {
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
 
     // Handle template picker
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
-    await page
-      .getByRole('button', { name: 'Blank Note' })
-      .click({ force: true })
+    await page.getByRole('button', { name: 'Blank Note' }).click()
 
     await expect(page).toHaveURL(/\/notes\/[a-f0-9-]+/)
 
@@ -181,13 +179,13 @@ test.describe('Graph View', () => {
     await expect(page.getByText(/zoom: 100%/i)).toBeVisible()
 
     // Click zoom in
-    await zoomInBtn.click({ force: true })
+    await zoomInBtn.click()
 
     // Click zoom out
-    await zoomOutBtn.click({ force: true })
+    await zoomOutBtn.click()
 
     // Click reset
-    await resetBtn.click({ force: true })
+    await resetBtn.click()
   })
 
   test('should navigate to note when clicking on node', async ({ page }) => {
@@ -202,7 +200,7 @@ test.describe('Graph View', () => {
 
     // Click on the node (circle)
     const node = page.locator('svg circle').first()
-    await node.click({ force: true })
+    await node.click()
 
     // Should navigate to the note page
     await expect(page).toHaveURL(`/notes/${note1.id}`)
@@ -239,9 +237,7 @@ test.describe('Graph View', () => {
     await page.goto('/app/graph')
 
     // Click back to notes button
-    await page
-      .getByRole('button', { name: /back to notes/i })
-      .click({ force: true })
+    await page.getByRole('button', { name: /back to notes/i }).click()
 
     // Should navigate back to notes
     await expect(page).toHaveURL('/notes')

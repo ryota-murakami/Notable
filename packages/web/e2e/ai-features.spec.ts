@@ -166,7 +166,7 @@ test.describe('AI Features Integration', () => {
 
     // Add some content to test with
     const editor = page.getByRole('textbox', { name: 'Start writing...' })
-    await editor.click({ force: true })
+    await editor.click()
     await editor.type(
       'This is a test note with some content that can be summarized by AI.'
     )
@@ -175,7 +175,7 @@ test.describe('AI Features Integration', () => {
     // Check for AI Summary button
     const aiSummaryButton = page.locator('button', { hasText: 'AI Summary' })
     if (await aiSummaryButton.isVisible()) {
-      await aiSummaryButton.click({ force: true })
+      await aiSummaryButton.click()
       // Wait for dropdown menu to appear
       await page.waitForTimeout(500)
 
@@ -199,7 +199,7 @@ test.describe('AI Features Integration', () => {
   test('should show AI rewrite options when clicked', async ({ page }) => {
     // Navigate to note editor
     await page.goto('http://localhost:4378/app', { timeout: 30000 })
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
 
     // In test mode, go directly to note editor
     await page.waitForURL('**/notes/**', { timeout: 30000 })
@@ -207,14 +207,14 @@ test.describe('AI Features Integration', () => {
 
     // Add some content
     const editor = page.getByRole('textbox', { name: 'Start writing...' })
-    await editor.click({ force: true })
+    await editor.click()
     await editor.type('This is a test note that can be improved with AI.')
     await page.waitForTimeout(500)
 
     // Check for AI Improve button
     const aiImproveButton = page.locator('button:has-text("AI Improve")')
     if (await aiImproveButton.isVisible()) {
-      await aiImproveButton.click({ force: true })
+      await aiImproveButton.click()
       // Wait for dropdown menu to appear
       await page.waitForTimeout(500)
 
@@ -240,7 +240,7 @@ test.describe('AI Features Integration', () => {
   test('should execute AI summary with mock data', async ({ page }) => {
     // Navigate to note editor
     await page.goto('http://localhost:4378/app', { timeout: 30000 })
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
 
     // In test mode, go directly to note editor
     await page.waitForURL('**/notes/**', { timeout: 30000 })
@@ -250,20 +250,20 @@ test.describe('AI Features Integration', () => {
     const testContent =
       'This is a comprehensive test note about artificial intelligence and machine learning. It covers various topics including neural networks, deep learning, and natural language processing. The content is designed to test the AI summarization feature.'
     const editor = page.getByRole('textbox', { name: 'Start writing...' })
-    await editor.click({ force: true })
+    await editor.click()
     await editor.type(testContent)
     await page.waitForTimeout(500)
 
     // Try to execute AI summary if available
     const aiSummaryButton = page.locator('button:has-text("AI Summary")')
     if (await aiSummaryButton.isVisible()) {
-      await aiSummaryButton.click({ force: true })
+      await aiSummaryButton.click()
       await page.waitForTimeout(500)
 
       // Look for brief summary option and click it
       const briefSummaryOption = page.locator('text="Brief Summary"')
       if (await briefSummaryOption.isVisible()) {
-        await briefSummaryOption.click({ force: true })
+        await briefSummaryOption.click()
         // Wait for AI processing with network idle check
         await page.waitForLoadState('networkidle', { timeout: 5000 })
         await page.waitForTimeout(1000) // Reduced from 3000ms
@@ -282,7 +282,7 @@ test.describe('AI Features Integration', () => {
   test('should execute AI rewrite with mock data', async ({ page }) => {
     // Navigate to note editor
     await page.goto('http://localhost:4378/app', { timeout: 30000 })
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
 
     // In test mode, go directly to note editor
     await page.waitForURL('**/notes/**', { timeout: 30000 })
@@ -292,20 +292,20 @@ test.describe('AI Features Integration', () => {
     const testContent =
       'This text needs improvement and can be made better with AI assistance.'
     const editor = page.getByRole('textbox', { name: 'Start writing...' })
-    await editor.click({ force: true })
+    await editor.click()
     await editor.type(testContent)
     await page.waitForTimeout(500)
 
     // Try to execute AI rewrite if available
     const aiImproveButton = page.locator('button:has-text("AI Improve")')
     if (await aiImproveButton.isVisible()) {
-      await aiImproveButton.click({ force: true })
+      await aiImproveButton.click()
       await page.waitForTimeout(500)
 
       // Look for improve writing option
       const improveOption = page.locator('text="Improve Writing"')
       if (await improveOption.isVisible()) {
-        await improveOption.click({ force: true })
+        await improveOption.click()
         // Wait for AI processing with network idle check
         await page.waitForLoadState('networkidle', { timeout: 5000 })
         await page.waitForTimeout(1000) // Reduced from 3000ms
@@ -328,7 +328,7 @@ test.describe('AI Features Integration', () => {
     // Wait for app to be fully loaded
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
-    await page.getByRole('button', { name: 'New Note' }).click({ force: true })
+    await page.getByRole('button', { name: 'New Note' }).click()
 
     // In test mode, go directly to note editor
     await page.waitForURL('**/notes/**', { timeout: 30000 })
@@ -340,24 +340,24 @@ test.describe('AI Features Integration', () => {
 
     // Try clicking AI buttons with no content - should handle gracefully
     if (await aiSummaryButton.isVisible()) {
-      await aiSummaryButton.click({ force: true })
+      await aiSummaryButton.click()
       await page.waitForTimeout(500)
 
       const briefSummary = page.locator('text="Brief Summary"')
       if (await briefSummary.isVisible()) {
-        await briefSummary.click({ force: true })
+        await briefSummary.click()
         await page.waitForTimeout(1000)
         // Should show error toast or handle gracefully, but not crash
       }
     }
 
     if (await aiImproveButton.isVisible()) {
-      await aiImproveButton.click({ force: true })
+      await aiImproveButton.click()
       await page.waitForTimeout(500)
 
       const improveWriting = page.locator('text="Improve Writing"')
       if (await improveWriting.isVisible()) {
-        await improveWriting.click({ force: true })
+        await improveWriting.click()
         await page.waitForTimeout(1000)
         // Should show error toast or handle gracefully, but not crash
       }

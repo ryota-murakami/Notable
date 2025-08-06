@@ -134,7 +134,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       await jsType(page, '[data-testid="note-title"]', 'Note to Delete')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await editor.click({ force: true })
+      await editor.click()
       await editor.type('This note will be deleted')
       await page.keyboard.press('Control+s')
 
@@ -189,7 +189,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       await page.fill('[data-testid="note-title"]', 'JavaScript Note')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await editor.click({ force: true })
+      await editor.click()
       await editor.type('This note contains JavaScript code examples')
       await page.keyboard.press('Control+s')
 

@@ -32,7 +32,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       // Step 1: Open template picker
       const newNoteButton = page.getByRole('button', { name: 'New Note' })
       await expect(newNoteButton).toBeVisible()
-      await newNoteButton.click({ force: true })
+      await newNoteButton.click()
 
       // Step 2: Wait for template picker dialog
       const templatePicker = page.getByTestId('template-picker')
@@ -41,7 +41,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       // Step 3: Click "Blank Note" button
       const blankNoteButton = page.getByRole('button', { name: 'Blank Note' })
       await expect(blankNoteButton).toBeVisible()
-      await blankNoteButton.click({ force: true })
+      await blankNoteButton.click()
 
       // Step 4: Wait for navigation to note editor
       await page.waitForURL('**/notes/**', { timeout: 10000 })
@@ -51,7 +51,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       await expect(editor).toBeVisible({ timeout: 10000 })
 
       // Step 6: Add content to the note
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill(
         '# My Comprehensive Test Note\\n\\nThis is comprehensive test content\\nWith multiple lines\\nAnd various text.'
       )
@@ -87,15 +87,11 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       // Create multiple notes
       for (const note of notes) {
         // Open template picker
-        await page
-          .getByRole('button', { name: 'New Note' })
-          .click({ force: true })
+        await page.getByRole('button', { name: 'New Note' }).click()
         await expect(page.getByTestId('template-picker')).toBeVisible()
 
         // Select blank note
-        await page
-          .getByRole('button', { name: 'Blank Note' })
-          .click({ force: true })
+        await page.getByRole('button', { name: 'Blank Note' }).click()
 
         // Wait for navigation and get note ID from URL
         await page.waitForURL('**/notes/**')
@@ -105,7 +101,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
         // Add content
         const editor = page.locator('textarea[placeholder="Start writing..."]')
         await expect(editor).toBeVisible()
-        await editor.click({ force: true })
+        await editor.click()
         await editor.fill(`# ${note.title}\\n\\n${note.content}`)
 
         // Verify content is set
@@ -118,15 +114,11 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
 
     test('should handle empty notes correctly', async ({ page }) => {
       // Create note without adding content
-      await page
-        .locator('[data-testid="new-note-button"]')
-        .click({ force: true })
+      await page.locator('[data-testid="new-note-button"]').click()
       await expect(
         page.locator('[role="dialog"]:has-text("Choose a Template")')
       ).toBeVisible()
-      await page
-        .getByRole('button', { name: 'Blank Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       // Wait for editor
       await page.waitForURL('**/notes/**')
@@ -142,15 +134,11 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
 
     test('should handle large content efficiently', async ({ page }) => {
       // Create note with large content
-      await page
-        .locator('[data-testid="new-note-button"]')
-        .click({ force: true })
+      await page.locator('[data-testid="new-note-button"]').click()
       await expect(
         page.locator('[role="dialog"]:has-text("Choose a Template")')
       ).toBeVisible()
-      await page
-        .getByRole('button', { name: 'Blank Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       await page.waitForURL('**/notes/**')
       const editor = page.locator('textarea[placeholder="Start writing..."]')
@@ -162,7 +150,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
         (_, i) => `Line ${i + 1}: This is a test line with some content.`
       ).join('\\n')
 
-      await editor.click({ force: true })
+      await editor.click()
       await editor.fill(`# Large Content Note\\n\\n${largeContent}`)
 
       // Verify large content is handled
@@ -179,9 +167,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       page,
     }) => {
       // Open template picker
-      await page
-        .getByRole('button', { name: 'New Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'New Note' }).click()
 
       // Verify template picker dialog appears
       const templatePicker = page.getByTestId('template-picker')
@@ -201,9 +187,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       const initialUrl = page.url()
 
       // Open template picker
-      await page
-        .getByRole('button', { name: 'New Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'New Note' }).click()
       await expect(page.getByTestId('template-picker')).toBeVisible()
 
       // Cancel by pressing escape
@@ -219,13 +203,9 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     // SKIPPED: Note persistence not working
     test('should handle direct note URL navigation', async ({ page }) => {
       // Create a note first to get a valid ID
-      await page
-        .getByRole('button', { name: 'New Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'New Note' }).click()
       await expect(page.getByTestId('template-picker')).toBeVisible()
-      await page
-        .getByRole('button', { name: 'Blank Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       // Get the note ID from URL
       await page.waitForURL('**/notes/**')
@@ -274,13 +254,9 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
   test.describe('Error Handling and Edge Cases', () => {
     // SKIPPED: Note editor selectors not matching
     test('should handle extremely long titles', async ({ page }) => {
-      await page
-        .getByRole('button', { name: 'New Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'New Note' }).click()
       await expect(page.getByTestId('template-picker')).toBeVisible()
-      await page
-        .getByRole('button', { name: 'Blank Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       await page.waitForURL('**/notes/**')
       await expect(page.getByTestId('note-editor')).toBeVisible()
@@ -294,13 +270,9 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     })
 
     test('should handle special characters in content', async ({ page }) => {
-      await page
-        .getByRole('button', { name: 'New Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'New Note' }).click()
       await expect(page.getByTestId('template-picker')).toBeVisible()
-      await page
-        .getByRole('button', { name: 'Blank Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       await page.waitForURL('**/notes/**')
       await expect(page.getByTestId('note-editor')).toBeVisible()
@@ -326,13 +298,9 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
 
       // Create multiple notes in quick succession
       for (let i = 0; i < noteCount; i++) {
-        await page
-          .getByRole('button', { name: 'New Note' })
-          .click({ force: true })
+        await page.getByRole('button', { name: 'New Note' }).click()
         await expect(page.getByTestId('template-picker')).toBeVisible()
-        await page
-          .getByRole('button', { name: 'Blank Note' })
-          .click({ force: true })
+        await page.getByRole('button', { name: 'Blank Note' }).click()
 
         // Wait for navigation
         await page.waitForURL('**/notes/**')
@@ -358,13 +326,9 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
       // Complete user flow: create → edit → navigate → return
 
       // Step 1: Create note
-      await page
-        .getByRole('button', { name: 'New Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'New Note' }).click()
       await expect(page.getByTestId('template-picker')).toBeVisible()
-      await page
-        .getByRole('button', { name: 'Blank Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       // Step 2: Add content
       await page.waitForURL('**/notes/**')
@@ -401,9 +365,7 @@ test.describe('Working Note Management - Comprehensive Tests', () => {
     })
 
     test('should handle keyboard interactions', async ({ page }) => {
-      await page
-        .getByRole('button', { name: 'New Note' })
-        .click({ force: true })
+      await page.getByRole('button', { name: 'New Note' }).click()
       await expect(page.getByTestId('template-picker')).toBeVisible()
 
       // Use Enter key to select blank note
