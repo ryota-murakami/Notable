@@ -117,7 +117,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await page.click('$1')
+    await _editor.click()
 
     // Clear content and insert wiki link
     await page.evaluate(() => {
@@ -168,8 +168,8 @@ test.describe('Bi-directional Linking', () => {
       const backlinkItem = backlinksPanel.locator('text=Source Note')
       await expect(backlinkItem).toBeVisible()
 
-      // Verify backlink is clickable using jsClick to avoid timeout issues
-      await page.click('$1')
+      // Verify backlink is clickable
+      await backlinkItem.click()
       await expect(page).toHaveURL(`/notes/${note1.id}`)
       console.info('✅ Backlinks working correctly!')
     } else {
@@ -197,7 +197,7 @@ test.describe('Bi-directional Linking', () => {
 
     // Create multiple wiki links
     const _editor = page.locator('[contenteditable="true"]').first()
-    await page.click('$1')
+    await _editor.click()
 
     // Clear content and insert multiple wiki links
     await page.evaluate(() => {
@@ -273,7 +273,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await page.click('$1')
+    await _editor.click()
 
     // Insert wiki link
     await page.keyboard.press('Control+a')
@@ -333,7 +333,7 @@ test.describe('Bi-directional Linking', () => {
 
     // Create link to non-existent note
     const _editor = page.locator('[contenteditable="true"]').first()
-    await page.click('$1')
+    await _editor.click()
 
     // Use keyboard simulation
     await page.keyboard.press('Control+a')
@@ -370,7 +370,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await page.click('$1')
+    await _editor.click()
 
     // Wait for editor to be ready
     await page.waitForTimeout(200)
@@ -430,8 +430,8 @@ test.describe('Bi-directional Linking', () => {
       if (linkText === 'Original Title') {
         console.info('✅ Wiki link shows original title as expected')
 
-        // Verify it still navigates to correct note using jsClick
-        await page.click('$1')
+        // Verify it still navigates to correct note
+        await wikiLink.click()
         await expect(page).toHaveURL(`/notes/${_note2.id}`)
         console.info(
           '✅ Wiki link navigates to correct note after title change'
