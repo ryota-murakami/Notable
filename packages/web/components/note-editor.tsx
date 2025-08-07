@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNote } from '@/hooks/use-note'
 import { Spinner } from '@/components/ui/spinner'
 
@@ -8,7 +8,7 @@ interface NoteEditorProps {
   noteId: string
 }
 
-export function NoteEditor({ noteId }: NoteEditorProps) {
+const NoteEditor = React.memo(({ noteId }: NoteEditorProps) => {
   const { note, loading, updateNote } = useNote(noteId)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -73,4 +73,8 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
       </div>
     </div>
   )
-}
+})
+
+NoteEditor.displayName = 'NoteEditor'
+
+export { NoteEditor }

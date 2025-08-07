@@ -35,129 +35,133 @@ interface DailyNotesProps {
   compact?: boolean
 }
 
-export function DailyNotes({ className, compact = false }: DailyNotesProps) {
-  const {
-    todaysDailyNote,
-    thisWeeksDailyNotes,
-    dailyNotesStreak,
-    isLoadingTodaysNote,
-    isCreatingDailyNote,
-    goToTodaysDailyNote,
-    goToDailyNote,
-    getDailyNoteTitle,
-  } = useDailyNotes()
+const DailyNotes = React.memo(
+  ({ className, compact = false }: DailyNotesProps) => {
+    const {
+      todaysDailyNote,
+      thisWeeksDailyNotes,
+      dailyNotesStreak,
+      isLoadingTodaysNote,
+      isCreatingDailyNote,
+      goToTodaysDailyNote,
+      goToDailyNote,
+      getDailyNoteTitle,
+    } = useDailyNotes()
 
-  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date())
+    const [selectedDate, setSelectedDate] = React.useState<Date>(new Date())
 
-  if (compact) {
+    if (compact) {
+      return (
+        <div className={cn('space-y-2', className)}>
+          <Button
+            onClick={goToTodaysDailyNote}
+            variant={todaysDailyNote ? 'default' : 'outline'}
+            className='w-full justify-start gap-2'
+            disabled={isCreatingDailyNote}
+            data-testid='daily-notes-today-button'
+          >
+            <Edit3 className='h-4 w-4' />
+            {isCreatingDailyNote ? 'Creating...' : "Today's Note"}
+            {dailyNotesStreak > 0 && (
+              <Badge variant='secondary' className='ml-auto'>
+                {dailyNotesStreak}🔥
+              </Badge>
+            )}
+          </Button>
+        </div>
+      )
+    }
+
     return (
-      <div className={cn('space-y-2', className)}>
-        <Button
-          onClick={goToTodaysDailyNote}
-          variant={todaysDailyNote ? 'default' : 'outline'}
-          className='w-full justify-start gap-2'
-          disabled={isCreatingDailyNote}
-          data-testid='daily-notes-today-button'
-        >
-          <Edit3 className='h-4 w-4' />
-          {isCreatingDailyNote ? 'Creating...' : "Today's Note"}
+      <div className={cn('space-y-4', className)}>
+        {/* Header */}
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <Calendar className='h-4 w-4' />
+            <h3 className='font-semibold'>Daily Notes</h3>
+          </div>
           {dailyNotesStreak > 0 && (
-            <Badge variant='secondary' className='ml-auto'>
-              {dailyNotesStreak}🔥
-            </Badge>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant='secondary' className='gap-1'>
+                    <TrendingUp className='h-3 w-3' />
+                    {dailyNotesStreak}🔥
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{dailyNotesStreak} day streak!</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
-        </Button>
+        </div>
+
+        {/* Today's Note */}
+        <div className='space-y-2'>
+          <Button
+            onClick={goToTodaysDailyNote}
+            variant={todaysDailyNote ? 'default' : 'outline'}
+            className='w-full justify-start gap-2'
+            disabled={isCreatingDailyNote || isLoadingTodaysNote}
+            data-testid='daily-notes-today-button'
+          >
+            <Edit3 className='h-4 w-4' />
+            {isCreatingDailyNote ? 'Creating...' : "Today's Note"}
+            {todaysDailyNote && (
+              <Badge variant='secondary' className='ml-auto'>
+                ✓
+              </Badge>
+            )}
+          </Button>
+
+          {/* Quick Calendar Access */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant='ghost'
+                size='sm'
+                className='w-full justify-start gap-2'
+              >
+                <Calendar className='h-3 w-3' />
+                Other dates
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className='w-auto p-0' align='start'>
+              <div className='p-4'>
+                <CalendarComponent
+                  mode='single'
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setSelectedDate(date)
+                      goToDailyNote(date)
+                    }
+                  }}
+                  initialFocus
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <Separator />
+
+        {/* This Week's Notes */}
+        <div className='space-y-2'>
+          <h4 className='text-sm font-medium text-muted-foreground'>
+            This Week
+          </h4>
+          <WeeklyDailyNotes
+            dailyNotes={thisWeeksDailyNotes}
+            onDateClick={goToDailyNote}
+            getDailyNoteTitle={getDailyNoteTitle}
+          />
+        </div>
       </div>
     )
   }
-
-  return (
-    <div className={cn('space-y-4', className)}>
-      {/* Header */}
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center gap-2'>
-          <Calendar className='h-4 w-4' />
-          <h3 className='font-semibold'>Daily Notes</h3>
-        </div>
-        {dailyNotesStreak > 0 && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge variant='secondary' className='gap-1'>
-                  <TrendingUp className='h-3 w-3' />
-                  {dailyNotesStreak}🔥
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{dailyNotesStreak} day streak!</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-
-      {/* Today's Note */}
-      <div className='space-y-2'>
-        <Button
-          onClick={goToTodaysDailyNote}
-          variant={todaysDailyNote ? 'default' : 'outline'}
-          className='w-full justify-start gap-2'
-          disabled={isCreatingDailyNote || isLoadingTodaysNote}
-          data-testid='daily-notes-today-button'
-        >
-          <Edit3 className='h-4 w-4' />
-          {isCreatingDailyNote ? 'Creating...' : "Today's Note"}
-          {todaysDailyNote && (
-            <Badge variant='secondary' className='ml-auto'>
-              ✓
-            </Badge>
-          )}
-        </Button>
-
-        {/* Quick Calendar Access */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='w-full justify-start gap-2'
-            >
-              <Calendar className='h-3 w-3' />
-              Other dates
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className='w-auto p-0' align='start'>
-            <div className='p-4'>
-              <CalendarComponent
-                mode='single'
-                selected={selectedDate}
-                onSelect={(date) => {
-                  if (date) {
-                    setSelectedDate(date)
-                    goToDailyNote(date)
-                  }
-                }}
-                initialFocus
-              />
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <Separator />
-
-      {/* This Week's Notes */}
-      <div className='space-y-2'>
-        <h4 className='text-sm font-medium text-muted-foreground'>This Week</h4>
-        <WeeklyDailyNotes
-          dailyNotes={thisWeeksDailyNotes}
-          onDateClick={goToDailyNote}
-          getDailyNoteTitle={getDailyNoteTitle}
-        />
-      </div>
-    </div>
-  )
-}
+)
 
 interface WeeklyDailyNotesProps {
   dailyNotes?: Array<{
@@ -240,7 +244,7 @@ function WeeklyDailyNotes({
 /**
  * Quick action component for global daily notes access
  */
-export function DailyNotesQuickAction() {
+const DailyNotesQuickAction = React.memo(() => {
   const {
     todaysDailyNote,
     dailyNotesStreak,
@@ -285,12 +289,14 @@ export function DailyNotesQuickAction() {
       </Tooltip>
     </TooltipProvider>
   )
-}
+})
+
+DailyNotesQuickAction.displayName = 'DailyNotesQuickAction'
 
 /**
  * Daily notes widget for dashboard
  */
-export function DailyNotesWidget() {
+const DailyNotesWidget = React.memo(() => {
   const {
     todaysDailyNote,
     thisWeeksDailyNotes = [],
@@ -359,4 +365,8 @@ export function DailyNotesWidget() {
       </div>
     </div>
   )
-}
+})
+
+DailyNotesWidget.displayName = 'DailyNotesWidget'
+
+export { DailyNotes, DailyNotesQuickAction, DailyNotesWidget }

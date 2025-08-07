@@ -40,7 +40,7 @@ export const isProduction = (): boolean => {
  * For client-side, checks for test auth bypass cookie
  * For server-side, checks NODE_ENV or API mocking env var
  */
-export const // Removed isTest() - Testing should be handled via DB fixtures and MSW mocking
+// Removed isTest() - Testing should be handled via DB fixtures and MSW mocking
 // Tests should use NODE_ENV=test and NEXT_PUBLIC_API_MOCKING='enabled' for environment control
 
 /**
