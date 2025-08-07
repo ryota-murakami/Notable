@@ -54,10 +54,11 @@ test.describe('AI Features Integration', () => {
     const url = page.url()
     expect(url).toMatch(/\/notes\/[a-z0-9-]+/)
 
-    // Look for TestNoteEditor elements (textarea in test mode)
+    // Look for actual editable elements (contenteditable or textarea)
     const possibleEditors = [
       '[data-testid="note-content-textarea"]', // TestNoteEditor content textarea
-      '[data-testid="note-editor"]', // TestNoteEditor container
+      '[data-testid="note-editor"] [contenteditable="true"]', // Contenteditable inside note-editor
+      '[contenteditable="true"]', // Any contenteditable element
       'textarea[placeholder="Start writing..."]', // TestNoteEditor textarea
       'textarea',
     ]
@@ -141,10 +142,11 @@ test.describe('AI Features Integration', () => {
     await page.goto(`/notes/${noteId}`)
     await page.waitForTimeout(1000)
 
-    // Look for TestNoteEditor elements (textarea in test mode)
+    // Look for actual editable elements (contenteditable or textarea)
     const possibleEditors = [
       '[data-testid="note-content-textarea"]', // TestNoteEditor content textarea
-      '[data-testid="note-editor"]', // TestNoteEditor container
+      '[data-testid="note-editor"] [contenteditable="true"]', // Contenteditable inside note-editor
+      '[contenteditable="true"]', // Any contenteditable element
       'textarea[placeholder="Start writing..."]', // TestNoteEditor textarea
       'textarea',
     ]
@@ -232,10 +234,11 @@ test.describe('AI Features Integration', () => {
     await page.goto(`/notes/${noteId}`)
     await page.waitForTimeout(1000)
 
-    // Look for TestNoteEditor elements (textarea in test mode)
+    // Look for actual editable elements (contenteditable or textarea)
     const possibleEditors = [
       '[data-testid="note-content-textarea"]', // TestNoteEditor content textarea
-      '[data-testid="note-editor"]', // TestNoteEditor container
+      '[data-testid="note-editor"] [contenteditable="true"]', // Contenteditable inside note-editor
+      '[contenteditable="true"]', // Any contenteditable element
       'textarea[placeholder="Start writing..."]', // TestNoteEditor textarea
       'textarea',
     ]
@@ -323,10 +326,11 @@ test.describe('AI Features Integration', () => {
     await page.goto(`/notes/${noteId}`)
     await page.waitForTimeout(1000)
 
-    // Look for TestNoteEditor elements (textarea in test mode)
+    // Look for actual editable elements (contenteditable or textarea)
     const possibleEditors = [
       '[data-testid="note-content-textarea"]', // TestNoteEditor content textarea
-      '[data-testid="note-editor"]', // TestNoteEditor container
+      '[data-testid="note-editor"] [contenteditable="true"]', // Contenteditable inside note-editor
+      '[contenteditable="true"]', // Any contenteditable element
       'textarea[placeholder="Start writing..."]', // TestNoteEditor textarea
       'textarea',
     ]
@@ -414,10 +418,11 @@ test.describe('AI Features Integration', () => {
     await page.goto(`/notes/${noteId}`)
     await page.waitForTimeout(1000)
 
-    // Look for TestNoteEditor elements (textarea in test mode)
+    // Look for actual editable elements (contenteditable or textarea)
     const possibleEditors = [
       '[data-testid="note-content-textarea"]', // TestNoteEditor content textarea
-      '[data-testid="note-editor"]', // TestNoteEditor container
+      '[data-testid="note-editor"] [contenteditable="true"]', // Contenteditable inside note-editor
+      '[contenteditable="true"]', // Any contenteditable element
       'textarea[placeholder="Start writing..."]', // TestNoteEditor textarea
       'textarea',
     ]
@@ -505,10 +510,11 @@ test.describe('AI Features Integration', () => {
     await page.goto(`/notes/${noteId}`)
     await page.waitForTimeout(1000)
 
-    // Look for TestNoteEditor elements (textarea in test mode)
+    // Look for actual editable elements (contenteditable or textarea)
     const possibleEditors = [
       '[data-testid="note-content-textarea"]', // TestNoteEditor content textarea
-      '[data-testid="note-editor"]', // TestNoteEditor container
+      '[data-testid="note-editor"] [contenteditable="true"]', // Contenteditable inside note-editor
+      '[contenteditable="true"]', // Any contenteditable element
       'textarea[placeholder="Start writing..."]', // TestNoteEditor textarea
       'textarea',
     ]

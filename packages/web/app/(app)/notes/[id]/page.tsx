@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { NoteEditorRich } from '@/components/note-editor-rich'
+import { ErrorBoundary } from '@/components/error-boundary'
 
 interface NotePageProps {
   params: Promise<{
@@ -14,5 +15,9 @@ export default async function NotePage({ params }: NotePageProps) {
     notFound()
   }
 
-  return <NoteEditorRich noteId={id} />
+  return (
+    <ErrorBoundary>
+      <NoteEditorRich noteId={id} />
+    </ErrorBoundary>
+  )
 }
