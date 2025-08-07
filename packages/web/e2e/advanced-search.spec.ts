@@ -312,13 +312,45 @@ test.describe('Advanced Search System', () => {
     // In test mode, template picker is bypassed
     await page.waitForTimeout(2000)
 
+    // Debug: Check if test mode is detected
+    const debugInfo = await page.evaluate(() => {
+      const isTestCookie = document.cookie.includes('dev-auth-bypass=true')
+      const apiMocking = (window as any).__NEXT_PUBLIC_API_MOCKING
+      const lastCreatedNoteId =
+        window.sessionStorage.getItem('lastCreatedNoteId')
+      const allStorageKeys = Object.keys(window.sessionStorage)
+
+      return {
+        hasDevAuthCookie: isTestCookie,
+        apiMocking,
+        lastCreatedNoteId,
+        storageKeys: allStorageKeys,
+        sessionStorageContent: Object.keys(window.sessionStorage).reduce(
+          (acc, key) => {
+            acc[key] = window.sessionStorage.getItem(key)
+            return acc
+          },
+          {} as Record<string, string | null>
+        ),
+      }
+    })
+
+    console.log('Debug info:', debugInfo)
+
     // Get the created note ID from sessionStorage
     const noteId = await page.evaluate(() => {
       return window.sessionStorage.getItem('lastCreatedNoteId')
     })
 
     if (!noteId) {
-      throw new Error('Note ID not found in sessionStorage')
+      // More debugging before throwing error
+      const consoleErrors = await page.evaluate(() => {
+        return (window as any).__test_errors || []
+      })
+
+      throw new Error(
+        `Note ID not found in sessionStorage. Debug info: ${JSON.stringify(debugInfo)}, Console errors: ${JSON.stringify(consoleErrors)}`
+      )
     }
 
     // Navigate to the note page
