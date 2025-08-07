@@ -98,9 +98,9 @@ export default defineConfig({
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes for CI server startup
-    // In CI, redirect to 'inherit' for better debugging visibility
-    stdout: process.env.CI ? 'inherit' : 'pipe',
-    stderr: process.env.CI ? 'inherit' : 'pipe',
+    // In CI, use 'pipe' for debugging visibility
+    stdout: 'pipe',
+    stderr: 'pipe',
     env: {
       // CRITICAL: Use NODE_ENV=test to enable test mode features
       NODE_ENV: 'test',
