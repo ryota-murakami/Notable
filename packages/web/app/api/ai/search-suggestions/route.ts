@@ -32,19 +32,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if we're in test mode
-    const isTest = request.headers
-      .get('cookie')
-      ?.includes('dev-auth-bypass=true')
-
-    if (isTest) {
-      // Return mock AI search suggestions for testing
+    // Development mode: return mock suggestions
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'true'
+    ) {
       const mockSuggestions = [
         {
-          suggestion: `${query} examples`,
-          reason: 'Find practical examples and use cases',
+          suggestion: query,
+          reason: 'Exact match for your search query',
           confidence: 0.95,
-          type: 'expansion',
+          type: 'exact_match',
+          category: 'primary',
         },
         {
           suggestion: `${query} best practices`,

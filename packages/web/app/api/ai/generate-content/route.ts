@@ -48,86 +48,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if we're in test mode
-    const isTest = request.headers
-      .get('cookie')
-      ?.includes('dev-auth-bypass=true')
-
-    if (isTest) {
-      // Return mock content generation for testing
+    // Development mode: return mock content
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'true'
+    ) {
       const mockGenerations = {
-        continue: `${prompt} This is AI-generated continuation of your content. The system has analyzed your existing text and generated relevant, contextual content that flows naturally from your original ideas. This mock content demonstrates the content generation capabilities.`,
-
-        brainstorm: `## Brainstorming Ideas for: "${prompt}"
-
-1. **Explore Different Perspectives**: Consider approaching this topic from multiple angles - technical, business, and user perspectives.
-
-2. **Break Down Complex Concepts**: Identify the core components and how they interconnect.
-
-3. **Real-World Applications**: Think about practical implementations and case studies.
-
-4. **Future Implications**: Consider how this topic might evolve and impact related areas.
-
-5. **Common Challenges**: Anticipate potential obstacles and how to address them.`,
-
-        answer: `**Answer to your question:** "${prompt}"
-
-Based on the context provided, here's a comprehensive response: This mock answer demonstrates the AI's ability to understand your question and provide relevant, detailed explanations. The system can analyze complex queries and generate informative responses that help clarify concepts and provide actionable insights.
-
-**Key Points:**
-- The AI understands the context of your note
-- Responses are tailored to your specific question
-- Information is structured for easy comprehension`,
-
-        outline: `# ${prompt}
-
-## I. Introduction
-- Background and context  
-- Key concepts and definitions
-- Objectives and scope
-
-## II. Main Content Areas
-### A. Primary Topic
-- Core principles
-- Key components
-- Implementation details
-
-### B. Secondary Considerations  
-- Related concepts
-- Dependencies
-- Best practices
-
-## III. Analysis and Examples
-- Case studies
-- Practical applications
-- Common pitfalls
-
-## IV. Conclusion
-- Summary of key points
-- Next steps
-- Further resources`,
-
-        ideas: `💡 **Creative Ideas Related to: "${prompt}"**
-
-🎯 **Immediate Actions:**
-- Quick win #1: Focus on the most impactful aspect first
-- Quick win #2: Identify low-hanging fruit opportunities
-- Quick win #3: Build momentum with early successes
-
-🚀 **Strategic Approaches:**
-- Long-term vision: How this fits into bigger picture
-- Innovation opportunity: Unique angles to explore
-- Collaboration potential: Who else could be involved
-
-🔧 **Implementation Ideas:**
-- Technical solutions and tools
-- Process improvements
-- Resource optimization strategies
-
-💭 **Further Exploration:**
-- Questions to investigate
-- Assumptions to validate
-- Experiments to conduct`,
+        continue:
+          'This is mock continued content that flows naturally from your existing text...',
+        brainstorm:
+          '• Idea 1: Consider this approach\n• Idea 2: Alternative solution\n• Idea 3: Creative perspective',
+        answer:
+          'Here is a comprehensive mock answer to your question with detailed explanations...',
+        outline:
+          '1. Introduction\n   a. Background\n   b. Objectives\n2. Main Content\n   a. Key Points\n   b. Supporting Details\n3. Conclusion',
+        ideas:
+          '💡 Innovation Ideas:\n- Streamline the process\n- Implement automation\n- Enhance user experience\n\n🎯 Strategic Actions:\n- Short-term wins\n- Long-term vision\n- Resource optimization',
       }
 
       const generatedContent =

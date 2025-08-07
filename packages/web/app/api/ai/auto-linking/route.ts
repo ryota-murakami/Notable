@@ -48,24 +48,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if we're in test mode
-    const isTest = request.headers
-      .get('cookie')
-      ?.includes('dev-auth-bypass=true')
-
-    if (isTest) {
-      // Return mock auto-linking suggestions for testing
+    // Development mode: return mock suggestions
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'true'
+    ) {
       const mockSuggestions = [
         {
           noteId: 'auto-link-1',
-          title: 'Machine Learning Best Practices',
+          title: 'Machine Learning Fundamentals',
           similarity: 0.89,
           connectionReason:
-            'Both notes discuss AI algorithms and implementation strategies',
+            'Strong conceptual overlap in machine learning and AI topics',
           connectionType: 'topical',
           relevantSnippet:
-            'machine learning algorithms and their practical applications',
-          tags: ['machine-learning', 'ai', 'algorithms'],
+            'fundamental concepts of machine learning algorithms and applications',
+          tags: ['machine-learning', 'ai', 'fundamentals'],
           created_at: new Date(
             Date.now() - 7 * 24 * 60 * 60 * 1000
           ).toISOString(), // 7 days ago

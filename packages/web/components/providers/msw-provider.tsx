@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { setupWorker } from 'msw/browser'
 import { setupServer } from 'msw/node'
 import { handlers } from '@/mocks/handlers'
 
@@ -12,7 +11,7 @@ interface MSWProviderProps {
 /**
  * MSW Provider that initializes Mock Service Worker for API mocking
  * Following Next.js 15 and React 19 best practices
- * 
+ *
  * Features:
  * - Client-side service worker setup with proper error handling
  * - Server-side node server setup for SSR compatibility
@@ -30,7 +29,7 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
 
     const initializeMSW = async () => {
       // Check if MSW should be enabled
-      const shouldEnableMSW = 
+      const shouldEnableMSW =
         process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' ||
         process.env.NODE_ENV === 'test'
 
@@ -46,9 +45,9 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
           console.info('🌐 Initializing MSW for server-side rendering...')
           const server = setupServer(...handlers)
           await server.listen({
-            onUnhandledRequest: 'bypass'
+            onUnhandledRequest: 'bypass',
           })
-          
+
           cleanup = () => {
             server.close()
           }
@@ -82,8 +81,13 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
           // Handle unmatched requests gracefully
           onUnhandledRequest(request, print) {
             // Only warn about unhandled API requests, not static assets
-            if (request.url.includes('/api/') || request.url.includes('/auth/')) {
-              console.warn(`🚨 Unhandled MSW request: ${request.method} ${request.url}`)
+            if (
+              request.url.includes('/api/') ||
+              request.url.includes('/auth/')
+            ) {
+              console.warn(
+                `🚨 Unhandled MSW request: ${request.method} ${request.url}`
+              )
               print.warning()
             }
             // Let other requests pass through
@@ -100,7 +104,7 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
 
         console.info('✅ MSW initialized successfully for client-side')
         console.info(`📊 Loaded ${handlers.length} request handlers`)
-        
+
         // Log enabled features in development
         if (process.env.NODE_ENV === 'development') {
           console.group('🛠️ MSW Features Enabled:')
@@ -113,12 +117,12 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
         }
 
         setIsMSWReady(true)
-
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error'
         console.error('❌ Failed to initialize MSW:', errorMessage)
         setInitError(errorMessage)
-        
+
         // Don't block the app if MSW fails - graceful degradation
         setIsMSWReady(true)
       }
@@ -138,11 +142,13 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
   // Show loading state only in development to avoid flash
   if (!isMSWReady && process.env.NODE_ENV === 'development') {
     return (
-      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div className="bg-card p-6 rounded-lg shadow-lg border max-w-sm text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <h3 className="font-semibold text-lg mb-2">Initializing Mock Services</h3>
-          <p className="text-muted-foreground text-sm">
+      <div className='fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center'>
+        <div className='bg-card p-6 rounded-lg shadow-lg border max-w-sm text-center'>
+          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'></div>
+          <h3 className='font-semibold text-lg mb-2'>
+            Initializing Mock Services
+          </h3>
+          <p className='text-muted-foreground text-sm'>
             Setting up API mocking for development...
           </p>
         </div>
@@ -153,19 +159,21 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
   // Show error state in development
   if (initError && process.env.NODE_ENV === 'development') {
     return (
-      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div className="bg-destructive/10 border-destructive p-6 rounded-lg shadow-lg border max-w-md text-center">
-          <div className="text-destructive text-4xl mb-4">⚠️</div>
-          <h3 className="font-semibold text-lg mb-2 text-destructive">MSW Initialization Failed</h3>
-          <p className="text-muted-foreground text-sm mb-4">
+      <div className='fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center'>
+        <div className='bg-destructive/10 border-destructive p-6 rounded-lg shadow-lg border max-w-md text-center'>
+          <div className='text-destructive text-4xl mb-4'>⚠️</div>
+          <h3 className='font-semibold text-lg mb-2 text-destructive'>
+            MSW Initialization Failed
+          </h3>
+          <p className='text-muted-foreground text-sm mb-4'>
             Mock Service Worker failed to start: {initError}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className='text-xs text-muted-foreground'>
             The app will continue to work, but API mocking may not be available.
           </p>
-          <button 
+          <button
             onClick={() => setInitError(null)}
-            className="mt-4 px-4 py-2 bg-destructive text-destructive-foreground rounded-md text-sm hover:bg-destructive/90 transition-colors"
+            className='mt-4 px-4 py-2 bg-destructive text-destructive-foreground rounded-md text-sm hover:bg-destructive/90 transition-colors'
           >
             Continue Anyway
           </button>
@@ -187,7 +195,7 @@ export const useMSWStatus = () => {
 
   useEffect(() => {
     const checkMSWStatus = () => {
-      const shouldBeActive = 
+      const shouldBeActive =
         process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' ||
         process.env.NODE_ENV === 'test'
 
@@ -203,11 +211,8 @@ export const useMSWStatus = () => {
 /**
  * Utility function to conditionally enable MSW features
  */
-export const withMSW = <T,>(
-  enabledValue: T,
-  disabledValue: T
-): T => {
-  const shouldEnable = 
+export const withMSW = <T,>(enabledValue: T, disabledValue: T): T => {
+  const shouldEnable =
     process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' ||
     process.env.NODE_ENV === 'test'
 

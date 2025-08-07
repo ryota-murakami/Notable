@@ -42,16 +42,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if we're in test mode
-    const isTest = request.headers
-      .get('cookie')
-      ?.includes('dev-auth-bypass=true')
-
-    if (isTest) {
-      // Return mock embedding data for testing
+    // Development mode: return mock embedding
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'true'
+    ) {
+      // Generate a mock embedding vector (1536 dimensions for text-embedding-3-small)
       const mockEmbedding = Array.from(
         { length: 1536 },
-        () => Math.random() - 0.5
+        () => (Math.random() - 0.5) * 2
       )
 
       return NextResponse.json({
@@ -59,11 +58,11 @@ export async function POST(request: NextRequest) {
         data: {
           embedding: mockEmbedding,
           noteId,
-          dimensions: 1536,
+          dimensions: mockEmbedding.length,
           model: 'text-embedding-3-small',
-          processingTime: 200,
+          processingTime: 150,
           textLength: text.length,
-          tokenCount: Math.ceil(text.length / 4), // Rough estimate
+          tokenCount: Math.ceil(text.length / 4),
         },
       })
     }

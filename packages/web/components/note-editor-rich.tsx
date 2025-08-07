@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useNote } from '@/hooks/use-note'
 import { RichTextEditorClient } from '@/components/rich-text-editor-client'
-import { TestNoteEditor } from '@/components/test-note-editor'
+
 import { Spinner } from '@/components/ui/spinner'
 import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
 import { plateToMarkdown } from '@/lib/plate/plate-to-markdown'
@@ -17,26 +17,6 @@ interface NoteEditorRichProps {
 const NoteEditorRich = React.memo(({ noteId }: NoteEditorRichProps) => {
   const { note, loading, updateNote } = useNote(noteId)
   const [_isInitialized, _setIsInitialized] = useState(false)
-
-  // Direct fallback for mock notes to avoid state propagation issues
-  const isTestMode = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
-  const isMockNote = noteId.startsWith('mock-note-')
-  const shouldUseMockNote = isTestMode && isMockNote && loading && !note
-
-  const effectiveNote = shouldUseMockNote
-    ? {
-        id: noteId,
-        title: 'Untitled',
-        content: '',
-        user_id: 'mock-user-id',
-        folder_id: null,
-        is_hidden: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-    : note
-
-  const effectiveLoading = shouldUseMockNote ? false : loading
 
   const handleTitleChange = (newTitle: string) => {
     updateNote({ title: newTitle })
@@ -52,7 +32,7 @@ const NoteEditorRich = React.memo(({ noteId }: NoteEditorRichProps) => {
     await updateNoteLinks(noteId, markdown)
   }
 
-  if (effectiveLoading) {
+  if (loading) {
     return (
       <div className='flex-1 flex items-center justify-center'>
         <div className='text-center'>
@@ -63,7 +43,7 @@ const NoteEditorRich = React.memo(({ noteId }: NoteEditorRichProps) => {
     )
   }
 
-  if (!effectiveNote) {
+  if (!note) {
     return (
       <div className='flex-1 flex items-center justify-center'>
         <div className='text-center'>
@@ -85,34 +65,19 @@ const NoteEditorRich = React.memo(({ noteId }: NoteEditorRichProps) => {
     },
   ]
 
-  if (effectiveNote.content && typeof effectiveNote.content === 'string') {
+  if (note.content && typeof note.content === 'string') {
     try {
-      initialContent = markdownToPlate(effectiveNote.content)
+      initialContent = markdownToPlate(note.content)
     } catch (error) {
       console.error('Failed to parse note content:', error)
     }
-  }
-
-  // Use simplified test editor to avoid dynamic import issues in test environment
-  if (isTestMode) {
-    return (
-      <div className='flex-1 flex flex-col' data-testid='note-editor-container'>
-        <TestNoteEditor
-          noteId={noteId}
-          initialTitle={effectiveNote.title}
-          initialContent={effectiveNote.content}
-          onTitleChange={handleTitleChange}
-          onContentChange={handleContentChange}
-        />
-      </div>
-    )
   }
 
   return (
     <div className='flex-1 flex flex-col' data-testid='note-editor-container'>
       <RichTextEditorClient
         noteId={noteId}
-        initialTitle={effectiveNote.title}
+        initialTitle={note.title}
         initialContent={initialContent}
         onTitleChange={handleTitleChange}
         onContentChange={handleContentChange}

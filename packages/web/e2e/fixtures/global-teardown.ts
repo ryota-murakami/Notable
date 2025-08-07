@@ -39,7 +39,7 @@ function globalTeardown(_config: FullConfig) {
             '⚠️  docker-compose.test.yml not found, skipping database cleanup'
           )
         }
-      } catch (dockerError) {
+      } catch {
         console.info(
           '⚠️  Docker not available or cleanup failed, skipping database cleanup'
         )

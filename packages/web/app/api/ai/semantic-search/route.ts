@@ -42,25 +42,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if we're in test mode
-    const isTest = request.headers
-      .get('cookie')
-      ?.includes('dev-auth-bypass=true')
-
-    if (isTest) {
-      // Return mock semantic search results for testing
+    // Development mode: return mock search results
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'true'
+    ) {
       const mockResults = [
         {
           noteId: 'semantic-note-1',
           title: 'Machine Learning Fundamentals',
           content:
-            'This note covers the basics of machine learning algorithms and their applications in modern AI systems...',
-          similarity: 0.95,
+            'Understanding the core principles of machine learning, including supervised and unsupervised learning methods...',
+          similarity: 0.92,
           snippet:
-            'machine learning algorithms and their applications in modern AI systems',
-          tags: ['ai', 'machine-learning', 'algorithms'],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+            'core principles of machine learning, including supervised and unsupervised learning',
+          tags: ['machine-learning', 'fundamentals', 'ai'],
+          created_at: new Date(
+            Date.now() - 5 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+          updated_at: new Date(
+            Date.now() - 1 * 24 * 60 * 60 * 1000
+          ).toISOString(),
         },
         {
           noteId: 'semantic-note-2',

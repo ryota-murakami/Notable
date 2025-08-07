@@ -32,18 +32,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if we're in test mode
-    const isTest = request.headers
-      .get('cookie')
-      ?.includes('dev-auth-bypass=true')
-
-    if (isTest) {
-      // Return mock AI rewrite for testing
+    // Development mode: return mock rewritten content
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'true'
+    ) {
       const mockRewrites = {
-        improve: `Enhanced version: ${content.substring(0, 50)}... [AI improved with better clarity and structure]`,
-        proofread: `Corrected version: ${content.substring(0, 50)}... [Grammar and spelling checked]`,
-        simplify: `Simplified: ${content.substring(0, 50)}... [Made clearer and more concise]`,
-        expand: `Expanded version: ${content}... [Additional context and details provided for better understanding]`,
+        improve:
+          'This is an enhanced version of your content with improved clarity, structure, and flow. The ideas are presented more coherently with better transitions.',
+        shorten:
+          'Concise version of your content that maintains key points while reducing length.',
+        expand:
+          'This is a detailed expansion of your original content, providing additional context, examples, and explanations to enrich the material with comprehensive insights.',
+        simplify:
+          'Simple, clear version of your content using everyday language that anyone can understand.',
+        formal:
+          'This represents a formal, professional rendition of your content suitable for business or academic contexts.',
+        casual:
+          "Hey! Here's a casual, friendly version of your content that feels more conversational and relaxed.",
       }
 
       return NextResponse.json({

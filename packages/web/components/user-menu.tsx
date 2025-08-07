@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { cn } from '../lib/utils'
 import { toast } from 'sonner'
 import { createClient } from '@/utils/supabase/client'
-import { createMockUser } from '@/utils/test-helpers'
+
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 interface UserMenuProps {
@@ -105,15 +105,8 @@ const UserMenu = React.memo(({ className }: UserMenuProps) => {
     toast.info('Settings page coming soon!')
   }
 
-  // Create mock user for testing when API mocking is enabled
-  const testMode = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
-  const mockUser: SupabaseUser | null =
-    testMode && !user ? createMockUser() : null
-
-  const currentUser = user || mockUser
-
-  // Don't render if loading or no user (and not in test mode)
-  if (loading || (!currentUser && !testMode)) {
+  // Don't render if loading or no user
+  if (loading || !user) {
     return null
   }
 
@@ -128,9 +121,7 @@ const UserMenu = React.memo(({ className }: UserMenuProps) => {
           aria-label='User menu'
           data-testid='user-menu-trigger'
         >
-          <span className='text-sm font-semibold'>
-            {getInitials(currentUser)}
-          </span>
+          <span className='text-sm font-semibold'>{getInitials(user)}</span>
         </button>
       </DropdownMenu.Trigger>
 
@@ -142,13 +133,13 @@ const UserMenu = React.memo(({ className }: UserMenuProps) => {
         >
           <div className='px-2 py-1.5'>
             <p className='text-sm font-semibold'>
-              {currentUser?.user_metadata?.full_name ||
-                currentUser?.user_metadata?.name ||
-                currentUser?.email ||
+              {user?.user_metadata?.full_name ||
+                user?.user_metadata?.name ||
+                user?.email ||
                 'User'}
             </p>
             <p className='text-xs text-muted-foreground'>
-              {currentUser?.email || 'No email'}
+              {user?.email || 'No email'}
             </p>
           </div>
 

@@ -8,7 +8,6 @@ import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { toast } from '@/hooks/use-toast'
 import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
-import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
@@ -41,7 +40,7 @@ import { ExportDialog } from '@/components/ui/export-dialog'
 import { VersionHistory } from '@/components/ui/version-history'
 
 const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
-  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [_user, setUser] = useState<SupabaseUser | null>(null)
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
   const {

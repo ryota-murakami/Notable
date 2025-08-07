@@ -7,7 +7,7 @@ const isCI = process.env.CI === 'true'
 const isVercelPreview =
   process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'production'
 // In test environments, we need to allow builds without all env vars
-const isTest =
+const isTestOrCI =
   process.env.NODE_ENV === 'test' ||
   process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
 
@@ -22,63 +22,63 @@ export const env = createEnv({
       .default('development'),
     CI: z.string().optional(), // Only CI can be optional
     DATABASE_URL:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().url().min(1),
     SUPABASE_SERVICE_ROLE_KEY:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     SUPABASE_JWT_SECRET:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     GOOGLE_CLIENT_ID:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     GOOGLE_CLIENT_SECRET:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     RESEND_API_KEY:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     EMAIL_FROM:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().email(),
     UPLOADTHING_SECRET:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     UPLOADTHING_APP_ID:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     OPENAI_API_KEY:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     JWT_SECRET:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     SENTRY_DSN:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().url().min(1),
     SENTRY_ORG:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     SENTRY_PROJECT:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     SENTRY_AUTH_TOKEN:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     REDIS_URL: z.string().optional(),
@@ -107,15 +107,15 @@ export const env = createEnv({
           : 'http://localhost:3000'
       ),
     NEXT_PUBLIC_SUPABASE_URL:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().url().min(1),
     NEXT_PUBLIC_SUPABASE_ANON_KEY:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().min(1),
     NEXT_PUBLIC_SENTRY_DSN:
-      isCI || isVercelPreview || isTest
+      isCI || isVercelPreview || isTestOrCI
         ? z.string().optional()
         : z.string().url().min(1),
     NEXT_PUBLIC_API_MOCKING: z.string().optional(),

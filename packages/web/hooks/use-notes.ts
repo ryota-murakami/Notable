@@ -33,13 +33,13 @@ export function useNotes(options: UseNotesOptions = {}) {
       const message =
         err instanceof Error ? err.message : 'Failed to fetch notes'
       setError(message)
-      
+
       // Show toast for user feedback
       toast({
-          title: 'Error fetching notes',
-          description: message,
-          variant: 'destructive',
-        })
+        title: 'Error fetching notes',
+        description: message,
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
@@ -67,21 +67,21 @@ export function useNotes(options: UseNotesOptions = {}) {
 
       // Show toast for user feedback
       toast({
-          title: 'Note created',
-          description: 'Your note has been created successfully.',
-        })
+        title: 'Note created',
+        description: 'Your note has been created successfully.',
+      })
 
       return response.note
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to create note'
-      
+
       // Show toast for user feedback
       toast({
-          title: 'Error creating note',
-          description: message,
-          variant: 'destructive',
-        })
+        title: 'Error creating note',
+        description: message,
+        variant: 'destructive',
+      })
       throw err
     }
   }, [])
@@ -97,22 +97,22 @@ export function useNotes(options: UseNotesOptions = {}) {
         )
 
         // Show toast for user feedback
-      toast({
-            title: 'Note updated',
-            description: 'Your note has been updated successfully.',
-          })
+        toast({
+          title: 'Note updated',
+          description: 'Your note has been updated successfully.',
+        })
 
         return response.note
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update note'
-        
+
         // Show toast for user feedback
-      toast({
-            title: 'Error updating note',
-            description: message,
-            variant: 'destructive',
-          })
+        toast({
+          title: 'Error updating note',
+          description: message,
+          variant: 'destructive',
+        })
         throw err
       }
     },
@@ -129,19 +129,19 @@ export function useNotes(options: UseNotesOptions = {}) {
 
       // Show toast for user feedback
       toast({
-          title: 'Note deleted',
-          description: 'Your note has been deleted successfully.',
-        })
+        title: 'Note deleted',
+        description: 'Your note has been deleted successfully.',
+      })
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to delete note'
-      
+
       // Show toast for user feedback
       toast({
-          title: 'Error deleting note',
-          description: message,
-          variant: 'destructive',
-        })
+        title: 'Error deleting note',
+        description: message,
+        variant: 'destructive',
+      })
       throw err
     }
   }, [])
@@ -169,23 +169,6 @@ export function useNote(id: string, enabled = true) {
 
   const fetchNote = useCallback(async () => {
     if (!enabled || !id) return
-
-    // For mock notes during testing, create/return mock note if it's a mock ID
-    if ((process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') && id.startsWith('mock-note-')) {
-      const mockNote: Note = {
-        id,
-        title: 'Untitled',
-        content: '',
-        user_id: 'mock-user-id',
-        folder_id: null,
-        is_hidden: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-      setNote(mockNote)
-      setLoading(false)
-      return
-    }
 
     setLoading(true)
     setError(null)
@@ -215,24 +198,6 @@ export function useNote(id: string, enabled = true) {
     async (data: Partial<NoteUpdate>) => {
       if (!id) return
 
-      // For mock notes during testing, update mock note
-      if ((process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') && id.startsWith('mock-note-')) {
-        if (!note) return
-        const updatedNote: Note = {
-          ...note,
-          ...data,
-          updated_at: new Date().toISOString(),
-        }
-        setNote(updatedNote)
-
-        toast({
-          title: 'Note updated',
-          description: 'Your note has been updated successfully.',
-        })
-
-        return updatedNote
-      }
-
       try {
         const response = await notesService.updateNote(id, data)
         setNote(response.note)
@@ -254,7 +219,7 @@ export function useNote(id: string, enabled = true) {
         throw err
       }
     },
-    [id, note]
+    [id]
   )
 
   const deleteNote = useCallback(async () => {

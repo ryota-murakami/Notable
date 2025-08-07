@@ -1,12 +1,27 @@
-import { createMockUser } from '@/utils/test-helpers'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type {
+  SupabaseClient,
+  User as SupabaseUser,
+} from '@supabase/supabase-js'
 
 /**
  * Creates a mock Supabase client for testing that returns mock data
  * instead of making real database queries
  */
 export function createMockSupabaseClient(): SupabaseClient {
-  const mockUser = createMockUser()
+  const mockUser: SupabaseUser = {
+    id: '11111111-1111-1111-1111-111111111111',
+    email: 'test@example.com',
+    user_metadata: {
+      full_name: 'Test User',
+      name: 'Test User',
+    },
+    app_metadata: {},
+    aud: 'authenticated',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    role: 'authenticated',
+    email_confirmed_at: new Date().toISOString(),
+  } as SupabaseUser
 
   // Store mock data in memory and localStorage for persistence
   const getStoredData = (table: string) => {

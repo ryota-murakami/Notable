@@ -32,20 +32,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if we're in test mode
-    const isTest = request.headers
-      .get('cookie')
-      ?.includes('dev-auth-bypass=true')
-
-    if (isTest) {
-      // Return mock AI summary for testing
+    // Development mode: return mock summary
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.NEXT_PUBLIC_API_MOCKING === 'true'
+    ) {
       const mockSummaries = {
         brief:
-          'This note discusses key concepts and provides actionable insights.',
+          'This is a concise summary highlighting the main points and key takeaways from your content.',
         detailed:
-          'This comprehensive note covers multiple important topics including main concepts, practical applications, and strategic recommendations. The content provides valuable insights that can be applied in various contexts.',
-        bullet:
-          '• Key concept 1: Important insight\n• Key concept 2: Practical application\n• Key concept 3: Strategic recommendation',
+          'This comprehensive summary covers all major themes, supporting details, and important nuances present in your original content, providing a thorough overview while maintaining the essential structure and meaning.',
+        bullets:
+          '• Main point 1: Primary concept or idea\n• Main point 2: Supporting argument or detail\n• Main point 3: Conclusion or key takeaway\n• Additional insight: Context or implication',
+        executive:
+          'Executive Summary: This content addresses [key topic] through [main approach]. Key findings include [primary insights]. Recommendations focus on [actionable items]. Expected outcomes involve [projected results].',
       }
 
       return NextResponse.json({

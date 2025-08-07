@@ -22,12 +22,6 @@ const SyncProviderWrapper = React.memo(
       return <>{children}</>
     }
 
-    // In test mode, skip sync provider initialization
-    // We only check for dev-auth-bypass cookie on client-side since NODE_ENV is server-only
-    const isTestMode =
-      typeof window !== 'undefined' &&
-      document.cookie.includes('dev-auth-bypass=true')
-
     const syncConfig: SyncConfig = {
       supabaseUrl:
         env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -42,16 +36,12 @@ const SyncProviderWrapper = React.memo(
         last_seen: new Date().toISOString(),
         is_online: true,
       },
-      enableRealtime: !isTestMode, // Disable realtime in test mode
-      enablePresence: !isTestMode, // Disable presence in test mode
+      enableRealtime: true,
+      enablePresence: true,
     }
 
     return (
-      <SyncProvider
-        config={syncConfig}
-        storage={storage}
-        autoInit={!isTestMode}
-      >
+      <SyncProvider config={syncConfig} storage={storage} autoInit={true}>
         {children}
       </SyncProvider>
     )
