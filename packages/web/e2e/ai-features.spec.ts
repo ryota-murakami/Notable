@@ -32,7 +32,7 @@ test.describe('AI Features Integration', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     // Create note using jsClick approach
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)

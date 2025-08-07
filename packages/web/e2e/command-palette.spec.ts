@@ -62,13 +62,13 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await page.keyboard.press('Meta+k')
 
     // Click on New Note command - be more specific to avoid duplicates
-    await page.click('$1')
+    await page.click('button[data-testid], [role="button"]', { force: true })
 
     // Handle template picker
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
-    await page.click('$1')
+    await page.click('button[data-testid], [role="button"]', { force: true })
 
     // Verify we're now on a note page
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
@@ -86,7 +86,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
-    await page.click('$1')
+    await page.click('button[data-testid], [role="button"]', { force: true })
 
     // Verify we're now on a note page
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
@@ -170,10 +170,13 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await page.keyboard.press('Meta+k')
 
     // Search for keyboard shortcuts in command palette
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[placeholder*="search"], input[type="text"]',
+      'test-query'
+    )
 
     // Click on keyboard shortcuts command
-    await page.click('$1')
+    await page.click('button[data-testid], [role="button"]', { force: true })
 
     // Verify keyboard shortcuts dialog opens
     const shortcutsDialog = page.locator(

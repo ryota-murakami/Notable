@@ -145,7 +145,7 @@ test.describe('Rich Text Editor', () => {
 
     if (hasEditor) {
       await editor.click()
-      await page.fill('[contenteditable="true"]', '$1')
+      await page.fill('[contenteditable="true"]', 'test-content')
       console.info('Successfully typed in editor')
     } else {
       console.info('No editable element found')

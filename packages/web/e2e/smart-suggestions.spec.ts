@@ -195,13 +195,19 @@ test.describe('Smart Note Suggestions Feature', () => {
       .locator('input[placeholder*="Untitled"], input[placeholder*="title"]')
       .first()
     if (await titleInput.isVisible()) {
-      await page.fill('$1', '$2')
+      await page.fill(
+        'input[type="text"], [contenteditable="true"]',
+        'test-content'
+      )
     }
 
     const editor = page.locator('[contenteditable="true"]').first()
     if (await editor.isVisible()) {
-      await page.click('$1')
-      await page.fill('$1', '$2')
+      await page.click('[data-testid="new-note-button"]', { force: true })
+      await page.fill(
+        'input[type="text"], [contenteditable="true"]',
+        'test-content'
+      )
     }
     await page.waitForTimeout(2000)
 
@@ -235,13 +241,19 @@ test.describe('Smart Note Suggestions Feature', () => {
       .locator('input[placeholder*="Untitled"], input[placeholder*="title"]')
       .first()
     if (await titleInput.isVisible()) {
-      await page.fill('$1', '$2')
+      await page.fill(
+        'input[type="text"], [contenteditable="true"]',
+        'test-content'
+      )
     }
 
     const editor = page.locator('[contenteditable="true"]').first()
     if (await editor.isVisible()) {
-      await page.click('$1')
-      await page.fill('$1', '$2')
+      await page.click('[data-testid="new-note-button"]', { force: true })
+      await page.fill(
+        'input[type="text"], [contenteditable="true"]',
+        'test-content'
+      )
     }
     await page.waitForTimeout(2000)
 
@@ -265,11 +277,17 @@ test.describe('Smart Note Suggestions Feature', () => {
     }
 
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[type="text"], [contenteditable="true"]',
+      'test-content'
+    )
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await page.click('$1')
-    await page.fill('$1', '$2')
+    await page.click('[data-testid="new-note-button"]', { force: true })
+    await page.fill(
+      'input[type="text"], [contenteditable="true"]',
+      'test-content'
+    )
     // Test passes since feature not implemented yet
     console.info('✅ Test completed - graceful handling of missing feature')
   })

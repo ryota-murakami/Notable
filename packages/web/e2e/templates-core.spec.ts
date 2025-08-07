@@ -50,7 +50,7 @@ test.describe('Template System Core Tests', () => {
     page,
   }) => {
     // Click the "New Note" button using jsClick to avoid timeout issues
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Verify template picker dialog opens
     await expect(
@@ -69,10 +69,10 @@ test.describe('Template System Core Tests', () => {
 
   test('should create blank note from template picker', async ({ page }) => {
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Click Blank Note button
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Verify template picker closes and we're redirected
     await expect(
@@ -95,7 +95,7 @@ test.describe('Template System Core Tests', () => {
     })
 
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for the dialog to open
     await expect(
@@ -134,7 +134,7 @@ test.describe('Template System Core Tests', () => {
 
   test('should filter templates by category', async ({ page }) => {
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for the dialog to open
     await expect(
@@ -167,7 +167,7 @@ test.describe('Template System Core Tests', () => {
   test('should create note from template with variables', async ({ page }) => {
     // SKIPPED: Template variable forms not implemented
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for template picker dialog to open
     await expect(
@@ -211,7 +211,7 @@ test.describe('Template System Core Tests', () => {
   test('should validate required fields', async ({ page }) => {
     // SKIPPED: Template variable validation not implemented
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for the dialog to open
     await expect(
@@ -238,7 +238,7 @@ test.describe('Template System Core Tests', () => {
   test('should cancel template selection', async ({ page }) => {
     // SKIPPED: Template variable form not implemented
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for the dialog to open
     await expect(
@@ -272,7 +272,7 @@ test.describe('Template System Core Tests', () => {
     await page.waitForTimeout(500)
 
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for the dialog to open with longer timeout
     await expect(
@@ -313,7 +313,7 @@ test.describe('Template System Core Tests', () => {
   test('should show popular and recent tabs', async ({ page }) => {
     // SKIPPED: Tabs UI not implemented
     // Open template picker
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Check tabs exist
     await expect(

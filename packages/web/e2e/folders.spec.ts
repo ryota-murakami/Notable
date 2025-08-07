@@ -28,13 +28,16 @@ test.describe('Folder System', () => {
 
   test('should create a new folder', async ({ page }) => {
     // Click new folder button using jsClick to avoid timeout issues
-    await page.click('$1')
+    await page.click('[data-testid="new-folder-button"]', { force: true })
 
     // Wait for dialog
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
     // Fill in folder name using jsType to avoid timeout issues
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[placeholder*="folder name"], input[placeholder*="name"]',
+      'test-folder'
+    )
 
     // Submit form
     await page.keyboard.press('Enter')
@@ -45,12 +48,15 @@ test.describe('Folder System', () => {
 
   test('should create note in folder', async ({ page }) => {
     // First create a folder using jsClick to avoid timeout issues
-    await page.click('$1')
+    await page.click('[data-testid="new-folder-button"]', { force: true })
 
     // Wait for dialog
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[placeholder*="folder name"], input[placeholder*="name"]',
+      'test-folder'
+    )
     await page.keyboard.press('Enter')
 
     // Wait for folder to appear
@@ -74,12 +80,15 @@ test.describe('Folder System', () => {
 
   test('should expand and collapse folders', async ({ page }) => {
     // Create parent folder using jsClick to avoid timeout issues
-    await page.click('$1')
+    await page.click('[data-testid="new-folder-button"]', { force: true })
 
     // Wait for dialog
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[placeholder*="folder name"], input[placeholder*="name"]',
+      'test-folder'
+    )
     await page.keyboard.press('Enter')
 
     // Wait for parent folder
@@ -89,12 +98,15 @@ test.describe('Folder System', () => {
     await page.click('text=Parent')
 
     // Create child folder using jsClick to avoid timeout issues
-    await page.click('$1')
+    await page.click('[data-testid="new-folder-button"]', { force: true })
 
     // Wait for dialog again
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[placeholder*="folder name"], input[placeholder*="name"]',
+      'test-folder'
+    )
     await page.keyboard.press('Enter')
 
     // Toggle parent folder

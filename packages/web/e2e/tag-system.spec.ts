@@ -85,7 +85,7 @@ test.describe('Tag System', () => {
       await page.waitForSelector('[role="dialog"]')
 
       // Fill in the form using standard Playwright API
-      await page.fill('$1', '$2')
+      await page.fill('input[placeholder="Enter tag name..."]', 'test-tag')
       await page
         .locator('textarea[placeholder="Enter tag description..."]')
         .fill('A test tag for E2E testing')

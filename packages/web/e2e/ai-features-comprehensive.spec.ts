@@ -90,7 +90,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await page.locator(selector).click()
-        await page.fill(selector, '$1')
+        await page.fill(selector, 'test-content')
         contentAdded = true
         break
       }
@@ -143,7 +143,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await page.locator(selector).click()
-        await page.fill(selector, '$1')
+        await page.fill(selector, 'test-content')
         contentAdded = true
         break
       }
@@ -250,7 +250,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await page.locator(selector).click()
-        await page.fill(selector, '$1')
+        await page.fill(selector, 'test-content')
         contentAdded = true
         break
       }
@@ -301,7 +301,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await page.locator(selector).click()
-        await page.fill(selector, '$1')
+        await page.fill(selector, 'test-content')
         contentAdded = true
         break
       }
@@ -383,7 +383,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await page.locator(selector).click()
-        await page.fill(selector, '$1')
+        await page.fill(selector, 'test-content')
         contentAdded = true
         break
       }
@@ -508,7 +508,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
           editorContent?.locator(s).first()
         )
         if (selector) {
-          await page.fill(selector, '$1')
+          await page.fill(selector, 'test-content')
         }
       }
     } else {

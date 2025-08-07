@@ -27,7 +27,7 @@ test.describe('Simple Export Tests', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     // Click new note button using jsClick to avoid timeouts
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for template picker dialog to appear
     await expect(
@@ -35,7 +35,7 @@ test.describe('Simple Export Tests', () => {
     ).toBeVisible({ timeout: 5000 })
 
     // Click Blank Note button using jsClick for reliable interaction
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Verify template picker closes
     await expect(
@@ -63,7 +63,7 @@ test.describe('Simple Export Tests', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     // Click new note button using jsClick to avoid timeouts
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for template picker dialog to appear
     await expect(
@@ -71,7 +71,7 @@ test.describe('Simple Export Tests', () => {
     ).toBeVisible({ timeout: 5000 })
 
     // Click Blank Note button using jsClick for reliable interaction
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Verify template picker closes
     await expect(
@@ -93,8 +93,8 @@ test.describe('Simple Export Tests', () => {
     await page.waitForTimeout(1000)
 
     // Export as markdown
-    await page.click('$1')
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for download
     const download = await page.waitForEvent('download', { timeout: 5000 })

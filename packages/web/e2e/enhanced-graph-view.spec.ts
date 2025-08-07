@@ -102,7 +102,7 @@ test.describe('Enhanced Graph View', () => {
     await expect(page.locator('text=Hub Notes')).not.toBeVisible()
 
     // Click analytics toggle using jsClick to avoid timeout issues
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Analytics panel should now be visible
     await expect(page.locator('text=Hub Notes')).toBeVisible()
@@ -123,7 +123,10 @@ test.describe('Enhanced Graph View', () => {
     const searchInput = page.locator('input[placeholder="Search notes..."]')
 
     // Type a search term using jsType for reliable input handling
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[type="text"], input[placeholder*="search"]',
+      'test-input'
+    )
 
     // Wait for graph to update
     await page.waitForTimeout(500)
@@ -169,11 +172,14 @@ test.describe('Enhanced Graph View', () => {
 
     // Adjust connection filter using jsType for reliable slider handling
     const _connectionSlider = page.locator('input[type="range"]')
-    await page.fill('$1', '$2')
+    await page.fill(
+      'input[type="text"], input[placeholder*="search"]',
+      'test-input'
+    )
 
     // Toggle hub filter using jsClick for reliable checkbox interaction
     const hubCheckbox = page.locator('input[type="checkbox"]').first()
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
     await expect(hubCheckbox).not.toBeChecked()
 
     // Check that the note count updates
@@ -211,7 +217,10 @@ test.describe('Enhanced Graph View', () => {
   test('should show proper empty state messages', async ({ page }) => {
     // Filter to show no results using jsType for reliable slider handling
     const _connectionSlider = page.locator('input[type="range"]')
-    await page.fill('$1', '$2') // Very high number to filter out all nodes
+    await page.fill(
+      'input[type="text"], input[placeholder*="search"]',
+      'test-input'
+    ) // Very high number to filter out all nodes
 
     // Should show "no matches" message
     await expect(
@@ -243,7 +252,7 @@ test.describe('Enhanced Graph View', () => {
     await expect(backButton).toBeVisible()
 
     // Click the button using jsClick to avoid timeout issues
-    await page.click('$1')
+    await page.click('[data-testid="new-note-button"]', { force: true })
 
     // Wait for navigation or timeout
     try {

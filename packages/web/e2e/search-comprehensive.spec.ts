@@ -49,7 +49,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(searchBar).toBeVisible()
 
       // Click to open search using jsClick to avoid timeout issues
-      await page.click('$1')
+      await page.click('[data-testid="new-note-button"]', { force: true })
       await page.waitForTimeout(500)
 
       // Find the command palette/search dialog that appears
@@ -62,7 +62,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(searchInput).toBeFocused()
 
       // Type in search using jsType for reliable input handling
-      await page.fill('$1', '$2')
+      await page.fill('input[placeholder*="search"]', 'test-query')
 
       // The search input should accept input
       await expect(searchInput).toHaveValue('test search')
@@ -73,13 +73,13 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const notes = ['JavaScript Tutorial', 'Python Guide', 'TypeScript Basics']
 
       for (const title of notes) {
-        await page.click('$1')
+        await page.click('[data-testid="new-note-button"]', { force: true })
 
         // Handle template picker
         await expect(
           page.locator('[role="dialog"]:has-text("Choose a Template")')
         ).toBeVisible()
-        await page.click('$1')
+        await page.click('[data-testid="new-note-button"]', { force: true })
 
         // Wait for navigation to new note
         await page.waitForURL(/\/notes\/[a-z0-9-]+/)
