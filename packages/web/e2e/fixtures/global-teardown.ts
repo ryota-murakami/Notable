@@ -43,7 +43,7 @@ function globalTeardown(_config: FullConfig) {
         console.info(
           '⚠️  Docker not available or cleanup failed, skipping database cleanup'
         )
-        console.debug('Docker cleanup error:', dockerError)
+        // Docker cleanup error logged
       }
     }
 
