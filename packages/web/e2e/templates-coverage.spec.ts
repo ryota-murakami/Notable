@@ -1,9 +1,8 @@
 import { expect, test } from './fixtures/coverage'
 import {
   authBypassSetup,
-  setupAuthAndNavigateToApp,
-  createNewNote,
   checkElementExists,
+  createNewNote,
 } from './utils/auth-helpers'
 import { waitForHydration } from './utils/wait-for-hydration'
 
@@ -346,7 +345,7 @@ test.describe('Templates Coverage Tests', () => {
         2000
       )
       if (variableFormExists) {
-        const variableForm = page.locator(
+        const _variableForm = page.locator(
           '[data-testid="template-variable-form"]'
         )
         // Fill in variables

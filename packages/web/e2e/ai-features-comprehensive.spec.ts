@@ -23,8 +23,8 @@ test.describe('AI Features - Comprehensive Testing', () => {
   })
 
   test('should display AI toolbar buttons in note editor', async ({ page }) => {
-    // Create a new note using jsClick to avoid timeout issues
-    await page.click('$1')
+    // Create a new note - use first available button
+    await page.locator('button').first().click()
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -89,7 +89,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       const isVisible = await element.isVisible().catch(() => false)
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
-        await jsClick(page, selector)
+        await page.locator(selector).click()
         await page.fill(selector, '$1')
         contentAdded = true
         break
@@ -121,7 +121,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a new note with content
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -142,7 +142,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       const isVisible = await element.isVisible().catch(() => false)
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
-        await jsClick(page, selector)
+        await page.locator(selector).click()
         await page.fill(selector, '$1')
         contentAdded = true
         break
@@ -185,7 +185,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a new note with content
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -228,7 +228,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should display AI Summary dropdown options', async ({ page }) => {
     // Create a note with substantial content
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -249,7 +249,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       const isVisible = await element.isVisible().catch(() => false)
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
-        await jsClick(page, selector)
+        await page.locator(selector).click()
         await page.fill(selector, '$1')
         contentAdded = true
         break
@@ -279,7 +279,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should display AI Improve dropdown options', async ({ page }) => {
     // Create a note with content to improve
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -300,7 +300,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       const isVisible = await element.isVisible().catch(() => false)
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
-        await jsClick(page, selector)
+        await page.locator(selector).click()
         await page.fill(selector, '$1')
         contentAdded = true
         break
@@ -332,7 +332,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a new note without content
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -361,7 +361,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should show loading states during AI processing', async ({ page }) => {
     // Create a note with content
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -382,7 +382,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       const isVisible = await element.isVisible().catch(() => false)
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
-        await jsClick(page, selector)
+        await page.locator(selector).click()
         await page.fill(selector, '$1')
         contentAdded = true
         break
@@ -420,7 +420,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should have proper accessibility for AI features', async ({ page }) => {
     // Create a note
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -455,7 +455,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a note
-    await page.click('$1')
+    await page.locator('button').first().click()
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })

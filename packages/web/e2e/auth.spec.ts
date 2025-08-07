@@ -81,9 +81,9 @@ test.describe('Authentication Flow', () => {
     // So we should end up on the app page, not auth page
     // The key thing is no infinite redirect loop (redirectCount should be reasonable)
     expect(redirectCount).toBeLessThanOrEqual(3)
-    console.log(`Redirect count: ${redirectCount}`)
-    console.log(`Redirects: ${redirects.join(', ')}`)
-    console.log(`Final URL: ${page.url()}`)
+    console.info(`Redirect count: ${redirectCount}`)
+    console.info(`Redirects: ${redirects.join(', ')}`)
+    console.info(`Final URL: ${page.url()}`)
 
     // In test environment, user should be authenticated and go to /app
     await expect(page).toHaveURL('/app')

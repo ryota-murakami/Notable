@@ -397,10 +397,12 @@ test.describe('Bi-directional Linking', () => {
         '[data-testid="note-title-input"], input[placeholder="Untitled Note"]'
       )
       .first()
-    await jsClick(
-      page,
-      '[data-testid="note-title-input"], input[placeholder="Untitled Note"]'
-    )
+    await page
+      .locator(
+        '[data-testid="note-title-input"], input[placeholder="Untitled Note"]'
+      )
+      .first()
+      .click()
     await page.fill('$1', '$2')
     await page.keyboard.press('Enter')
 

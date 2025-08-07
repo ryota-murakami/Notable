@@ -138,7 +138,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     // In test mode, create note directly without template picker (unless forced)
     if (isTestMode && !forceTemplatePicker) {
       try {
-        console.log(
+        console.info(
           'DEBUG: Creating note in test mode, isTestMode:',
           isTestMode,
           'forceTemplatePicker:',
@@ -151,19 +151,22 @@ export function Shell({ children }: { children?: React.ReactNode }) {
           folder_id: selectedFolderId,
         })
 
-        console.log('DEBUG: Note created successfully:', newNote)
+        console.info('DEBUG: Note created successfully:', newNote)
 
         if (newNote) {
           setSelectedNoteId(newNote.id)
 
           // Store note ID for test helpers
           if (typeof window !== 'undefined') {
-            console.log('DEBUG: Storing note ID in sessionStorage:', newNote.id)
+            console.info(
+              'DEBUG: Storing note ID in sessionStorage:',
+              newNote.id
+            )
             window.sessionStorage.setItem('lastCreatedNoteId', newNote.id)
 
             // Verify it was stored
             const stored = window.sessionStorage.getItem('lastCreatedNoteId')
-            console.log('DEBUG: Verified stored note ID:', stored)
+            console.info('DEBUG: Verified stored note ID:', stored)
           }
 
           router.push(`/notes/${newNote.id}`)

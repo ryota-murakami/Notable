@@ -85,6 +85,7 @@ export function usePluginSystem(): UsePluginSystemReturn {
   }, [isInitialized])
 
   // Refresh plugin data
+  // eslint-disable-next-line require-await
   const refreshPlugins = useCallback(async () => {
     if (!isInitialized) return
 

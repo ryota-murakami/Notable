@@ -84,8 +84,8 @@ test.describe('Comprehensive Search Functionality Tests', () => {
         // Wait for navigation to new note
         await page.waitForURL(/\/notes\/[a-z0-9-]+/)
 
-        // Fill in the title using jsType for reliable input handling
-        await jsType(page, '[data-testid="note-title-input"]', title)
+        // Fill in the title using standard Playwright API
+        await page.locator('[data-testid="note-title-input"]').fill(title)
         await page.waitForTimeout(1000) // Auto-save
 
         // Go back to create next note

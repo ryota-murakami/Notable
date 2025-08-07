@@ -1,5 +1,6 @@
 // Removed jsClick and jsType imports - using standard Playwright APIs
 import { expect, test } from './fixtures/coverage'
+import { waitForHydration } from './utils/wait-for-hydration'
 
 test.describe('Rich Text Editor', () => {
   test.beforeEach(async ({ page }) => {

@@ -322,7 +322,7 @@ test.describe('Advanced Search System', () => {
       }
     })
 
-    console.log('Debug info:', debugInfo)
+    console.info('Debug info:', debugInfo)
 
     // Get the created note ID from sessionStorage
     const noteId = await page.evaluate(() => {

@@ -5,7 +5,7 @@
  * Bypasses dynamic imports that cause issues in test environment
  */
 
-import React, { useState, useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { EnhancedAIToolbar } from '@/components/ai/enhanced-ai-toolbar'
 

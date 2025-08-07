@@ -1,13 +1,12 @@
 import { expect, test } from './fixtures/coverage'
 import {
   authBypassSetup,
-  setupAuthAndNavigateToApp,
+  checkElementExists,
   createNewNote,
   findNoteEditor,
   findNoteTitleInput,
+  setupAuthAndNavigateToApp,
   typeInElement,
-  waitForElement,
-  checkElementExists,
 } from './utils/auth-helpers'
 import { waitForHydration } from './utils/wait-for-hydration'
 

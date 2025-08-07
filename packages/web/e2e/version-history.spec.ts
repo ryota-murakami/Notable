@@ -48,13 +48,11 @@ test.describe('Version History Feature', () => {
       timeout: 10000,
     })
 
-    // Add some content to create a version using jsType for reliable input handling
+    // Add some content to create a version using standard Playwright API
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(
-      page,
-      'input[placeholder*="Untitled"]',
-      'Test Note for Version History'
-    )
+    await page
+      .locator('input[placeholder*="Untitled"]')
+      .fill('Test Note for Version History')
 
     // Wait a moment for auto-save
     await page.waitForTimeout(1000)
@@ -91,12 +89,10 @@ test.describe('Version History Feature', () => {
     await page.fill('$1', '$2')
     await page.waitForTimeout(500)
 
-    // Edit the content to create another version using jsType
-    await jsType(
-      page,
-      'input[placeholder*="Untitled"]',
-      'Version Test Note - Updated'
-    )
+    // Edit the content to create another version using standard API
+    await page
+      .locator('input[placeholder*="Untitled"]')
+      .fill('Version Test Note - Updated')
     await page.waitForTimeout(500)
 
     // Open version history using jsClick to avoid timeout issues
@@ -158,21 +154,17 @@ test.describe('Version History Feature', () => {
       timeout: 10000,
     })
 
-    // Add initial content using jsType for reliable input handling
+    // Add initial content using standard Playwright API
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(
-      page,
-      'input[placeholder*="Untitled"]',
-      'Comparison Test - Version 1'
-    )
+    await page
+      .locator('input[placeholder*="Untitled"]')
+      .fill('Comparison Test - Version 1')
     await page.waitForTimeout(1000)
 
-    // Update content to create another version using jsType
-    await jsType(
-      page,
-      'input[placeholder*="Untitled"]',
-      'Comparison Test - Version 2'
-    )
+    // Update content to create another version using standard API
+    await page
+      .locator('input[placeholder*="Untitled"]')
+      .fill('Comparison Test - Version 2')
     await page.waitForTimeout(1000)
 
     // Open version history using jsClick to avoid timeout issues
@@ -346,13 +338,11 @@ test.describe('Version History Feature', () => {
       timeout: 10000,
     })
 
-    // Add content using jsType for reliable input handling
+    // Add content using standard Playwright API
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(
-      page,
-      'input[placeholder*="Untitled"]',
-      'Keyboard Navigation Test'
-    )
+    await page
+      .locator('input[placeholder*="Untitled"]')
+      .fill('Keyboard Navigation Test')
     await page.waitForTimeout(1000)
 
     // Navigate to version history button using Tab

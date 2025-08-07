@@ -84,13 +84,11 @@ test.describe('Tag System', () => {
       // Wait for the create dialog to appear
       await page.waitForSelector('[role="dialog"]')
 
-      // Fill in the form using jsType to avoid timeout issues
+      // Fill in the form using standard Playwright API
       await page.fill('$1', '$2')
-      await jsType(
-        page,
-        'textarea[placeholder="Enter tag description..."]',
-        'A test tag for E2E testing'
-      )
+      await page
+        .locator('textarea[placeholder="Enter tag description..."]')
+        .fill('A test tag for E2E testing')
 
       // Submit the form by clicking the Create button in the dialog using JavaScript evaluation
       await page.evaluate(() => {
