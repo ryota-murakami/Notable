@@ -298,9 +298,8 @@ test.describe('AI Features Integration', () => {
     }
 
     // Verify original content still exists
-    await expect(editor).toHaveValue(
-      expect.stringContaining('artificial intelligence')
-    )
+    const finalContent = await editor.inputValue()
+    expect(finalContent).toContain('artificial intelligence')
   })
 
   test('should execute AI rewrite with mock data', async ({ page }) => {
@@ -348,7 +347,8 @@ test.describe('AI Features Integration', () => {
     }
 
     // Verify some content exists
-    await expect(editor).toHaveValue(expect.stringContaining('improvement'))
+    const editorContent = await editor.inputValue()
+    expect(editorContent).toContain('improvement')
   })
 
   test('should handle empty content gracefully', async ({ page }) => {
