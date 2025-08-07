@@ -73,7 +73,7 @@ test.describe('Basic App Check', () => {
     ]
 
     let foundNewNoteButton = false
-    let newNoteButton = null
+    let _newNoteButton = null
 
     for (const selector of possibleNewNoteSelectors) {
       const hasButton = await page
@@ -81,7 +81,7 @@ test.describe('Basic App Check', () => {
         .isVisible()
         .catch(() => false)
       if (hasButton) {
-        newNoteButton = page.locator(selector).first()
+        _newNoteButton = page.locator(selector).first()
         foundNewNoteButton = true
         console.info(`✅ New Note button found with selector: ${selector}`)
         break
