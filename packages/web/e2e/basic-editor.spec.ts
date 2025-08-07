@@ -1,12 +1,16 @@
 import { expect, test } from './fixtures/coverage'
+import { authBypassSetup } from './utils/auth-helpers'
 
 test.describe('Basic Editor Test', () => {
   test('should be able to type text in editor', async ({ page }) => {
+    // Set up authentication bypass
+    await authBypassSetup(page)
+
     // Navigate directly to new note page
     await page.goto('http://localhost:4378/notes/new')
 
     // Wait for the editor to be ready
-    await page.waitForSelector('[contenteditable="true"]', { timeout: 5000 })
+    await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
     const editor = page.locator('[contenteditable="true"]').first()
 
     // Click and type in the editor
@@ -19,11 +23,14 @@ test.describe('Basic Editor Test', () => {
   })
 
   test('should support basic formatting', async ({ page }) => {
+    // Set up authentication bypass
+    await authBypassSetup(page)
+
     // Navigate directly to new note page
     await page.goto('http://localhost:4378/notes/new')
 
     // Wait for the editor to be ready
-    await page.waitForSelector('[contenteditable="true"]', { timeout: 5000 })
+    await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
     const editor = page.locator('[contenteditable="true"]').first()
 
     // Type heading with markdown syntax

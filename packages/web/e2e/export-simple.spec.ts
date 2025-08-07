@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick } from './utils/js-click'
+// Removed jsClick import - using standard Playwright APIs
 
 test.describe('Simple Export Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,7 +27,7 @@ test.describe('Simple Export Tests', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     // Click new note button using jsClick to avoid timeouts
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for template picker dialog to appear
     await expect(
@@ -35,7 +35,7 @@ test.describe('Simple Export Tests', () => {
     ).toBeVisible({ timeout: 5000 })
 
     // Click Blank Note button using jsClick for reliable interaction
-    await jsClick(page, 'button:has-text("Blank Note")')
+    await page.click('$1')
 
     // Verify template picker closes
     await expect(
@@ -63,7 +63,7 @@ test.describe('Simple Export Tests', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     // Click new note button using jsClick to avoid timeouts
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for template picker dialog to appear
     await expect(
@@ -71,7 +71,7 @@ test.describe('Simple Export Tests', () => {
     ).toBeVisible({ timeout: 5000 })
 
     // Click Blank Note button using jsClick for reliable interaction
-    await jsClick(page, 'button:has-text("Blank Note")')
+    await page.click('$1')
 
     // Verify template picker closes
     await expect(
@@ -93,8 +93,8 @@ test.describe('Simple Export Tests', () => {
     await page.waitForTimeout(1000)
 
     // Export as markdown
-    await jsClick(page, 'button:has-text("Export")')
-    await jsClick(page, 'text="Export as Markdown"')
+    await page.click('$1')
+    await page.click('$1')
 
     // Wait for download
     const download = await page.waitForEvent('download', { timeout: 5000 })

@@ -7,5 +7,5 @@ storybook-static
 *.png
 coverage/
 .nyc_output/
-volumes/db/data
+volumes/
 .env.supabase

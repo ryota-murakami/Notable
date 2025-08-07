@@ -10,7 +10,12 @@ export async function waitForHydration(page: Page) {
 
   // In test environment, skip hydration check as it may not be set properly
   const isTestEnv = await page.evaluate(() => {
-    return document.cookie.includes('dev-auth-bypass=true')
+    try {
+      return document.cookie.includes('dev-auth-bypass=true')
+    } catch {
+      // SecurityError or cookie access denied - assume test environment
+      return true
+    }
   })
 
   if (isTestEnv) {

@@ -1,10 +1,5 @@
+// Removed jsClick and jsType imports - using standard Playwright APIs
 import { expect, test } from './fixtures/coverage'
-import { waitForHydration } from './utils/wait-for-hydration'
-import {
-  jsTypeTitle as _jsTypeTitle,
-  jsClick,
-  jsTypeContent,
-} from './utils/js-click'
 
 test.describe('Rich Text Editor', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,7 +36,7 @@ test.describe('Rich Text Editor', () => {
 
   test('should handle new note creation', async ({ page }) => {
     // Click new note button using jsClick
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -69,7 +64,7 @@ test.describe('Rich Text Editor', () => {
 
   test('should check for editor elements', async ({ page }) => {
     // Navigate to notes using jsClick
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -121,7 +116,7 @@ test.describe('Rich Text Editor', () => {
 
   test('should handle text input if editor exists', async ({ page }) => {
     // Navigate to notes using jsClick
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -149,7 +144,7 @@ test.describe('Rich Text Editor', () => {
 
     if (hasEditor) {
       await editor.click()
-      await jsTypeContent(page, 'Test content')
+      await page.fill('[contenteditable="true"]', '$1')
       console.info('Successfully typed in editor')
     } else {
       console.info('No editable element found')
@@ -161,7 +156,7 @@ test.describe('Rich Text Editor', () => {
 
   test('should check for formatting toolbar', async ({ page }) => {
     // Navigate to notes using jsClick
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)

@@ -5,7 +5,7 @@ import {
   loginAsTestUser,
 } from './utils/test-helpers'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Bi-directional Linking', () => {
   test.beforeEach(async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe('Bi-directional Linking', () => {
 
     // Click to focus the editor using jsClick to avoid timeout issues
     const _editor = page.locator('[contenteditable="true"]').first()
-    await jsClick(page, '[contenteditable="true"]')
+    await page.click('$1')
     await page.waitForTimeout(200) // Wait for focus
 
     // Editor focus will be handled by page interactions
@@ -117,7 +117,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await jsClick(page, '[contenteditable="true"]')
+    await page.click('$1')
 
     // Clear content and insert wiki link
     await page.evaluate(() => {
@@ -169,7 +169,7 @@ test.describe('Bi-directional Linking', () => {
       await expect(backlinkItem).toBeVisible()
 
       // Verify backlink is clickable using jsClick to avoid timeout issues
-      await jsClick(page, 'text=Source Note')
+      await page.click('$1')
       await expect(page).toHaveURL(`/notes/${note1.id}`)
       console.info('✅ Backlinks working correctly!')
     } else {
@@ -197,7 +197,7 @@ test.describe('Bi-directional Linking', () => {
 
     // Create multiple wiki links
     const _editor = page.locator('[contenteditable="true"]').first()
-    await jsClick(page, '[contenteditable="true"]')
+    await page.click('$1')
 
     // Clear content and insert multiple wiki links
     await page.evaluate(() => {
@@ -273,7 +273,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await jsClick(page, '[contenteditable="true"]')
+    await page.click('$1')
 
     // Insert wiki link
     await page.keyboard.press('Control+a')
@@ -333,7 +333,7 @@ test.describe('Bi-directional Linking', () => {
 
     // Create link to non-existent note
     const _editor = page.locator('[contenteditable="true"]').first()
-    await jsClick(page, '[contenteditable="true"]')
+    await page.click('$1')
 
     // Use keyboard simulation
     await page.keyboard.press('Control+a')
@@ -370,7 +370,7 @@ test.describe('Bi-directional Linking', () => {
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await jsClick(page, '[contenteditable="true"]')
+    await page.click('$1')
 
     // Wait for editor to be ready
     await page.waitForTimeout(200)
@@ -401,11 +401,7 @@ test.describe('Bi-directional Linking', () => {
       page,
       '[data-testid="note-title-input"], input[placeholder="Untitled Note"]'
     )
-    await jsType(
-      page,
-      '[data-testid="note-title-input"], input[placeholder="Untitled Note"]',
-      'Updated Title'
-    )
+    await page.fill('$1', '$2')
     await page.keyboard.press('Enter')
 
     // Wait for auto-save
@@ -430,9 +426,11 @@ test.describe('Bi-directional Linking', () => {
         console.info('✅ Wiki link shows original title as expected')
 
         // Verify it still navigates to correct note using jsClick
-        await jsClick(page, 'a[data-wiki-link="true"]')
+        await page.click('$1')
         await expect(page).toHaveURL(`/notes/${_note2.id}`)
-        console.info('✅ Wiki link navigates to correct note after title change')
+        console.info(
+          '✅ Wiki link navigates to correct note after title change'
+        )
       } else {
         console.info(
           '⚠️  Wiki link text not as expected - implementation may be incomplete'

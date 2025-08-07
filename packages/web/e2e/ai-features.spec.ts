@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick } from './utils/js-click'
+// Removed jsClick import - using standard Playwright APIs
 
 test.describe('AI Features Integration', () => {
   // Note: These tests check for AI features that may not be implemented yet.
@@ -32,7 +32,7 @@ test.describe('AI Features Integration', () => {
     await expect(page.getByTestId('app-shell')).toBeVisible()
 
     // Create note using jsClick approach
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)

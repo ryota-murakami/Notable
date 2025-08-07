@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Comprehensive Search Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -49,7 +49,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(searchBar).toBeVisible()
 
       // Click to open search using jsClick to avoid timeout issues
-      await jsClick(page, 'button:has-text("Search...")')
+      await page.click('$1')
       await page.waitForTimeout(500)
 
       // Find the command palette/search dialog that appears
@@ -62,7 +62,7 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       await expect(searchInput).toBeFocused()
 
       // Type in search using jsType for reliable input handling
-      await jsType(page, 'input[type="text"]', 'test search')
+      await page.fill('$1', '$2')
 
       // The search input should accept input
       await expect(searchInput).toHaveValue('test search')
@@ -73,13 +73,13 @@ test.describe('Comprehensive Search Functionality Tests', () => {
       const notes = ['JavaScript Tutorial', 'Python Guide', 'TypeScript Basics']
 
       for (const title of notes) {
-        await jsClick(page, 'button:has-text("New Note")')
+        await page.click('$1')
 
         // Handle template picker
         await expect(
           page.locator('[role="dialog"]:has-text("Choose a Template")')
         ).toBeVisible()
-        await jsClick(page, 'button:has-text("Blank Note")')
+        await page.click('$1')
 
         // Wait for navigation to new note
         await page.waitForURL(/\/notes\/[a-z0-9-]+/)

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { jsClick } from './utils/js-click'
+// Removed jsClick import - using standard Playwright APIs
 
 test('simple tag button click test', async ({ page }) => {
   // Listen for JavaScript errors
@@ -81,11 +81,11 @@ test('simple tag button click test', async ({ page }) => {
                   btn.textContent.toLowerCase().includes('manage tags')
               )
               if (manageTagsBtn) {
-                (manageTagsBtn as HTMLElement).click()
+                ;(manageTagsBtn as HTMLElement).click()
               }
             })
           } else {
-            await jsClick(page, selector)
+            await page.click(selector, { force: true })
           }
           clicked = true
           break

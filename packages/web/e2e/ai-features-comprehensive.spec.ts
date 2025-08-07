@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('AI Features - Comprehensive Testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,7 +24,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should display AI toolbar buttons in note editor', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -90,11 +90,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await jsClick(page, selector)
-        await jsType(
-          page,
-          selector,
-          'This is test content for AI processing. It has multiple sentences and ideas.'
-        )
+        await page.fill(selector, '$1')
         contentAdded = true
         break
       }
@@ -125,7 +121,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a new note with content
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -147,7 +143,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await jsClick(page, selector)
-        await jsType(page, selector, 'Starting content for AI generation.')
+        await page.fill(selector, '$1')
         contentAdded = true
         break
       }
@@ -189,7 +185,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a new note with content
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -232,7 +228,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should display AI Summary dropdown options', async ({ page }) => {
     // Create a note with substantial content
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -254,11 +250,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await jsClick(page, selector)
-        await jsType(
-          page,
-          selector,
-          'This is a long piece of content that contains multiple ideas and concepts. It discusses various topics including technology, innovation, and future trends. The content is substantial enough to warrant summarization through artificial intelligence processing.'
-        )
+        await page.fill(selector, '$1')
         contentAdded = true
         break
       }
@@ -287,7 +279,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should display AI Improve dropdown options', async ({ page }) => {
     // Create a note with content to improve
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -309,11 +301,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await jsClick(page, selector)
-        await jsType(
-          page,
-          selector,
-          'This text can be improved and made more professional. It might have gramatical errors or could be more clear and concise.'
-        )
+        await page.fill(selector, '$1')
         contentAdded = true
         break
       }
@@ -344,7 +332,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a new note without content
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -373,7 +361,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should show loading states during AI processing', async ({ page }) => {
     // Create a note with content
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -395,7 +383,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
       if (isVisible) {
         console.info(`Adding content using selector: ${selector}`)
         await jsClick(page, selector)
-        await jsType(page, selector, 'Test content for AI processing.')
+        await page.fill(selector, '$1')
         contentAdded = true
         break
       }
@@ -432,7 +420,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
 
   test('should have proper accessibility for AI features', async ({ page }) => {
     // Create a note
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -467,7 +455,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
     page,
   }) => {
     // Create a note
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -520,7 +508,7 @@ test.describe('AI Features - Comprehensive Testing', () => {
           editorContent?.locator(s).first()
         )
         if (selector) {
-          await jsType(page, selector, 'Test content')
+          await page.fill(selector, '$1')
         }
       }
     } else {

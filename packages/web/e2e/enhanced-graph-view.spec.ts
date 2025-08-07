@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Enhanced Graph View', () => {
   test.beforeEach(async ({ page }) => {
@@ -102,7 +102,7 @@ test.describe('Enhanced Graph View', () => {
     await expect(page.locator('text=Hub Notes')).not.toBeVisible()
 
     // Click analytics toggle using jsClick to avoid timeout issues
-    await jsClick(page, 'button:has-text("Analytics")')
+    await page.click('$1')
 
     // Analytics panel should now be visible
     await expect(page.locator('text=Hub Notes')).toBeVisible()
@@ -123,7 +123,7 @@ test.describe('Enhanced Graph View', () => {
     const searchInput = page.locator('input[placeholder="Search notes..."]')
 
     // Type a search term using jsType for reliable input handling
-    await jsType(page, 'input[placeholder="Search notes..."]', 'test')
+    await page.fill('$1', '$2')
 
     // Wait for graph to update
     await page.waitForTimeout(500)
@@ -169,11 +169,11 @@ test.describe('Enhanced Graph View', () => {
 
     // Adjust connection filter using jsType for reliable slider handling
     const _connectionSlider = page.locator('input[type="range"]')
-    await jsType(page, 'input[type="range"]', '2')
+    await page.fill('$1', '$2')
 
     // Toggle hub filter using jsClick for reliable checkbox interaction
     const hubCheckbox = page.locator('input[type="checkbox"]').first()
-    await jsClick(page, 'input[type="checkbox"]')
+    await page.click('$1')
     await expect(hubCheckbox).not.toBeChecked()
 
     // Check that the note count updates
@@ -211,7 +211,7 @@ test.describe('Enhanced Graph View', () => {
   test('should show proper empty state messages', async ({ page }) => {
     // Filter to show no results using jsType for reliable slider handling
     const _connectionSlider = page.locator('input[type="range"]')
-    await jsType(page, 'input[type="range"]', '10') // Very high number to filter out all nodes
+    await page.fill('$1', '$2') // Very high number to filter out all nodes
 
     // Should show "no matches" message
     await expect(
@@ -243,7 +243,7 @@ test.describe('Enhanced Graph View', () => {
     await expect(backButton).toBeVisible()
 
     // Click the button using jsClick to avoid timeout issues
-    await jsClick(page, 'button:has-text("Back to Notes")')
+    await page.click('$1')
 
     // Wait for navigation or timeout
     try {

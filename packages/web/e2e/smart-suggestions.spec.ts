@@ -3,7 +3,7 @@ import {
   clickWithHydration,
   waitForHydration,
 } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Smart Note Suggestions Feature', () => {
   test.beforeEach(async ({ page }) => {
@@ -195,21 +195,13 @@ test.describe('Smart Note Suggestions Feature', () => {
       .locator('input[placeholder*="Untitled"], input[placeholder*="title"]')
       .first()
     if (await titleInput.isVisible()) {
-      await jsType(
-        page,
-        'input[placeholder*="Untitled"], input[placeholder*="title"]',
-        'Project Management'
-      )
+      await page.fill('$1', '$2')
     }
 
     const editor = page.locator('[contenteditable="true"]').first()
     if (await editor.isVisible()) {
-      await jsClick(page, '[contenteditable="true"]')
-      await jsType(
-        page,
-        '[contenteditable="true"]',
-        'Effective project management requires careful planning, team coordination, and regular progress monitoring. Key methodologies include Agile, Scrum, and Waterfall approaches.'
-      )
+      await page.click('$1')
+      await page.fill('$1', '$2')
     }
     await page.waitForTimeout(2000)
 
@@ -243,21 +235,13 @@ test.describe('Smart Note Suggestions Feature', () => {
       .locator('input[placeholder*="Untitled"], input[placeholder*="title"]')
       .first()
     if (await titleInput.isVisible()) {
-      await jsType(
-        page,
-        'input[placeholder*="Untitled"], input[placeholder*="title"]',
-        'Software Development Best Practices'
-      )
+      await page.fill('$1', '$2')
     }
 
     const editor = page.locator('[contenteditable="true"]').first()
     if (await editor.isVisible()) {
-      await jsClick(page, '[contenteditable="true"]')
-      await jsType(
-        page,
-        '[contenteditable="true"]',
-        'Software development requires following best practices including code reviews, testing, documentation, and version control. These practices ensure maintainable and reliable software.'
-      )
+      await page.click('$1')
+      await page.fill('$1', '$2')
     }
     await page.waitForTimeout(2000)
 
@@ -281,15 +265,11 @@ test.describe('Smart Note Suggestions Feature', () => {
     }
 
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(page, 'input[placeholder*="Untitled"]', 'Action Test Note')
+    await page.fill('$1', '$2')
 
     const _editor = page.locator('[contenteditable="true"]').first()
-    await jsClick(page, '[contenteditable="true"]')
-    await jsType(
-      page,
-      '[contenteditable="true"]',
-      'This note is for testing suggestion actions and interactions.'
-    )
+    await page.click('$1')
+    await page.fill('$1', '$2')
     // Test passes since feature not implemented yet
     console.info('✅ Test completed - graceful handling of missing feature')
   })

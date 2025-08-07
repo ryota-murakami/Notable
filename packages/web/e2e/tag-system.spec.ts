@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick as _jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 /**
  * Comprehensive E2E Tests for Tag System
@@ -85,7 +85,7 @@ test.describe('Tag System', () => {
       await page.waitForSelector('[role="dialog"]')
 
       // Fill in the form using jsType to avoid timeout issues
-      await jsType(page, 'input[placeholder="Enter tag name..."]', 'test-tag')
+      await page.fill('$1', '$2')
       await jsType(
         page,
         'textarea[placeholder="Enter tag description..."]',

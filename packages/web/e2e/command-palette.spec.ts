@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Command Palette & Keyboard Shortcuts', () => {
   test.beforeEach(async ({ page }) => {
@@ -62,13 +62,13 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await page.keyboard.press('Meta+k')
 
     // Click on New Note command - be more specific to avoid duplicates
-    await jsClick(page, '[role="dialog"] >> text="New Note"')
+    await page.click('$1')
 
     // Handle template picker
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
-    await jsClick(page, 'button:has-text("Blank Note")')
+    await page.click('$1')
 
     // Verify we're now on a note page
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
@@ -86,7 +86,7 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await expect(
       page.locator('[role="dialog"]:has-text("Choose a Template")')
     ).toBeVisible()
-    await jsClick(page, 'button:has-text("Blank Note")')
+    await page.click('$1')
 
     // Verify we're now on a note page
     await expect(page).toHaveURL(/\/notes\/[a-z0-9-]+/)
@@ -170,14 +170,10 @@ test.describe('Command Palette & Keyboard Shortcuts', () => {
     await page.keyboard.press('Meta+k')
 
     // Search for keyboard shortcuts in command palette
-    await jsType(
-      page,
-      'input[placeholder="Type a command or search..."]',
-      'keyboard'
-    )
+    await page.fill('$1', '$2')
 
     // Click on keyboard shortcuts command
-    await jsClick(page, '[role="dialog"] >> text="Keyboard Shortcuts"')
+    await page.click('$1')
 
     // Verify keyboard shortcuts dialog opens
     const shortcutsDialog = page.locator(

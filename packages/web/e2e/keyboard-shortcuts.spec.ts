@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick as _jsClick, jsType as _jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Keyboard Shortcuts', () => {
   // Skip auth tests in CI until proper Supabase test credentials are configured

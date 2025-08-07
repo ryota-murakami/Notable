@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Version History Feature', () => {
   test.beforeEach(async ({ page }) => {
@@ -26,7 +26,7 @@ test.describe('Version History Feature', () => {
     page,
   }) => {
     // Create a new note first using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -43,7 +43,7 @@ test.describe('Version History Feature', () => {
 
   test('should open version history dialog when clicked', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -63,7 +63,7 @@ test.describe('Version History Feature', () => {
     const _versionHistoryButton = page.locator(
       '[data-testid="version-history-button"]'
     )
-    await jsClick(page, '[data-testid="version-history-button"]')
+    await page.click('$1')
 
     // Dialog should open
     const dialog = page.locator('[role="dialog"]')
@@ -81,14 +81,14 @@ test.describe('Version History Feature', () => {
 
   test('should show version list in history tab', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
 
     // Add content to create versions using jsType for reliable input handling
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(page, 'input[placeholder*="Untitled"]', 'Version Test Note')
+    await page.fill('$1', '$2')
     await page.waitForTimeout(500)
 
     // Edit the content to create another version using jsType
@@ -100,7 +100,7 @@ test.describe('Version History Feature', () => {
     await page.waitForTimeout(500)
 
     // Open version history using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="version-history-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="version-history-panel"]')
 
     // Should show at least one version item
@@ -113,36 +113,36 @@ test.describe('Version History Feature', () => {
 
   test('should allow marking versions as milestones', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
 
     // Add content using jsType for reliable input handling
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(page, 'input[placeholder*="Untitled"]', 'Milestone Test Note')
+    await page.fill('$1', '$2')
     await page.waitForTimeout(1000)
 
     // Open version history using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="version-history-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="version-history-panel"]')
 
     // Find first version and click milestone button using jsClick
     const _firstVersionMilestoneButton = page
       .locator('[data-testid^="milestone-button-"]')
       .first()
-    await jsClick(page, '[data-testid^="milestone-button-"]')
+    await page.click('$1')
 
     // Milestone dialog should open
     const dialog = page.locator('[role="dialog"]').nth(1) // Second dialog (first is version history dialog)
     await expect(dialog).toBeVisible()
 
     // Fill milestone details using jsType for reliable input handling
-    await jsType(page, '#milestone-name', 'First Draft')
-    await jsType(page, '#milestone-message', 'Initial version of the note')
+    await page.fill('$1', '$2')
+    await page.fill('$1', '$2')
 
     // Save milestone using jsClick to avoid timeout issues
-    await jsClick(page, 'button:has-text("Save Milestone")')
+    await page.click('$1')
 
     // Dialog should close
     await expect(dialog).not.toBeVisible()
@@ -153,7 +153,7 @@ test.describe('Version History Feature', () => {
 
   test('should allow version comparison', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -176,21 +176,21 @@ test.describe('Version History Feature', () => {
     await page.waitForTimeout(1000)
 
     // Open version history using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="version-history-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="version-history-panel"]')
 
     // Switch to Compare tab using jsClick
-    await jsClick(page, 'text=Compare')
+    await page.click('$1')
 
     // Click on first version using jsClick
     const _versionItems = page.locator('[data-testid^="version-item-"]')
-    await jsClick(page, '[data-testid^="version-item-"]')
+    await page.click('$1')
 
     // Should show selection message
     await expect(page.locator('text=Selected version')).toBeVisible()
 
     // Click on second version using jsClick (selecting second item by index)
-    await jsClick(page, '[data-testid^="version-item-"]:nth-child(2)')
+    await page.click('$1')
 
     // Should show comparison
     await expect(page.locator('text=Comparing versions')).toBeVisible()
@@ -198,28 +198,28 @@ test.describe('Version History Feature', () => {
 
   test('should allow version restoration', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
 
     // Add initial content using jsType for reliable input handling
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(page, 'input[placeholder*="Untitled"]', 'Original Title')
+    await page.fill('$1', '$2')
     await page.waitForTimeout(1000)
 
     // Update content using jsType
-    await jsType(page, 'input[placeholder*="Untitled"]', 'Updated Title')
+    await page.fill('$1', '$2')
     await page.waitForTimeout(1000)
 
     // Open version history using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="version-history-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="version-history-panel"]')
 
     // Find a version that's not current and click restore using jsClick
     const restoreButtons = page.locator('[data-testid^="restore-button-"]')
     if ((await restoreButtons.count()) > 0) {
-      await jsClick(page, '[data-testid^="restore-button-"]')
+      await page.click('$1')
 
       // Should show success toast (assuming toast system exists)
       // In real implementation, you might want to check for actual content restoration
@@ -235,18 +235,18 @@ test.describe('Version History Feature', () => {
 
   test('should show milestones in dedicated tab', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
 
     // Add content using jsType for reliable input handling
     const _titleInput = page.locator('input[placeholder*="Untitled"]')
-    await jsType(page, 'input[placeholder*="Untitled"]', 'Milestones Test Note')
+    await page.fill('$1', '$2')
     await page.waitForTimeout(1000)
 
     // Open version history using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="version-history-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="version-history-panel"]')
 
     // Try to create a milestone first
@@ -254,19 +254,19 @@ test.describe('Version History Feature', () => {
       .locator('[data-testid^="milestone-button-"]')
       .first()
     if (await milestoneButton.isVisible()) {
-      await jsClick(page, '[data-testid^="milestone-button-"]')
+      await page.click('$1')
 
       // Fill milestone form if dialog opens using jsType and jsClick
       const milestoneDialog = page.locator('[role="dialog"]').nth(1)
       if (await milestoneDialog.isVisible()) {
-        await jsType(page, '#milestone-name', 'Test Milestone')
-        await jsClick(page, 'button:has-text("Save Milestone")')
+        await page.fill('$1', '$2')
+        await page.click('$1')
         await milestoneDialog.waitFor({ state: 'hidden', timeout: 5000 })
       }
     }
 
     // Switch to Milestones tab using jsClick
-    await jsClick(page, 'text=Milestones')
+    await page.click('$1')
 
     // Should either show milestones or empty state
     const milestonesContent = page.locator(
@@ -288,7 +288,7 @@ test.describe('Version History Feature', () => {
     page,
   }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -320,7 +320,7 @@ test.describe('Version History Feature', () => {
     page,
   }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })
@@ -341,7 +341,7 @@ test.describe('Version History Feature', () => {
 
   test('should work with keyboard navigation', async ({ page }) => {
     // Create a new note using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
     await page.waitForSelector('[data-testid="note-editor"]', {
       timeout: 10000,
     })

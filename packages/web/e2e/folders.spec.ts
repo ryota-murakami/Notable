@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Folder System', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,13 +28,13 @@ test.describe('Folder System', () => {
 
   test('should create a new folder', async ({ page }) => {
     // Click new folder button using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-folder-button"]')
+    await page.click('$1')
 
     // Wait for dialog
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
     // Fill in folder name using jsType to avoid timeout issues
-    await jsType(page, '[data-testid="folder-name-input"]', 'Test Folder')
+    await page.fill('$1', '$2')
 
     // Submit form
     await page.keyboard.press('Enter')
@@ -45,12 +45,12 @@ test.describe('Folder System', () => {
 
   test('should create note in folder', async ({ page }) => {
     // First create a folder using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-folder-button"]')
+    await page.click('$1')
 
     // Wait for dialog
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
-    await jsType(page, '[data-testid="folder-name-input"]', 'My Work')
+    await page.fill('$1', '$2')
     await page.keyboard.press('Enter')
 
     // Wait for folder to appear
@@ -74,12 +74,12 @@ test.describe('Folder System', () => {
 
   test('should expand and collapse folders', async ({ page }) => {
     // Create parent folder using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-folder-button"]')
+    await page.click('$1')
 
     // Wait for dialog
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
-    await jsType(page, '[data-testid="folder-name-input"]', 'Parent')
+    await page.fill('$1', '$2')
     await page.keyboard.press('Enter')
 
     // Wait for parent folder
@@ -89,12 +89,12 @@ test.describe('Folder System', () => {
     await page.click('text=Parent')
 
     // Create child folder using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-folder-button"]')
+    await page.click('$1')
 
     // Wait for dialog again
     await page.waitForSelector('[data-testid="folder-name-input"]')
 
-    await jsType(page, '[data-testid="folder-name-input"]', 'Child')
+    await page.fill('$1', '$2')
     await page.keyboard.press('Enter')
 
     // Toggle parent folder

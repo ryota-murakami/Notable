@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsType as _jsType, jsClick } from './utils/js-click'
+// Removed jsClick and jsType imports - using standard Playwright APIs
 
 test.describe('Template System Core Tests', () => {
   test('debug - check API auth', async ({ page }) => {
@@ -50,7 +50,7 @@ test.describe('Template System Core Tests', () => {
     page,
   }) => {
     // Click the "New Note" button using jsClick to avoid timeout issues
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Verify template picker dialog opens
     await expect(
@@ -69,10 +69,10 @@ test.describe('Template System Core Tests', () => {
 
   test('should create blank note from template picker', async ({ page }) => {
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Click Blank Note button
-    await jsClick(page, 'button:has-text("Blank Note")')
+    await page.click('$1')
 
     // Verify template picker closes and we're redirected
     await expect(
@@ -95,7 +95,7 @@ test.describe('Template System Core Tests', () => {
     })
 
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for the dialog to open
     await expect(
@@ -134,7 +134,7 @@ test.describe('Template System Core Tests', () => {
 
   test('should filter templates by category', async ({ page }) => {
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for the dialog to open
     await expect(
@@ -167,7 +167,7 @@ test.describe('Template System Core Tests', () => {
   test('should create note from template with variables', async ({ page }) => {
     // SKIPPED: Template variable forms not implemented
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for template picker dialog to open
     await expect(
@@ -211,7 +211,7 @@ test.describe('Template System Core Tests', () => {
   test('should validate required fields', async ({ page }) => {
     // SKIPPED: Template variable validation not implemented
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for the dialog to open
     await expect(
@@ -238,7 +238,7 @@ test.describe('Template System Core Tests', () => {
   test('should cancel template selection', async ({ page }) => {
     // SKIPPED: Template variable form not implemented
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for the dialog to open
     await expect(
@@ -272,7 +272,7 @@ test.describe('Template System Core Tests', () => {
     await page.waitForTimeout(500)
 
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Wait for the dialog to open with longer timeout
     await expect(
@@ -313,7 +313,7 @@ test.describe('Template System Core Tests', () => {
   test('should show popular and recent tabs', async ({ page }) => {
     // SKIPPED: Tabs UI not implemented
     // Open template picker
-    await jsClick(page, '[data-testid="new-note-button"]')
+    await page.click('$1')
 
     // Check tabs exist
     await expect(

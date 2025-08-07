@@ -1,6 +1,5 @@
 import { expect, test } from './fixtures/coverage'
 import { waitForHydration } from './utils/wait-for-hydration'
-import { jsClick, jsType } from './utils/js-click'
 
 test.describe('Comprehensive Note Management Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,11 +23,11 @@ test.describe('Comprehensive Note Management Tests', () => {
 
   test.describe('Note CRUD Operations', () => {
     test('should create a new note', async ({ page }) => {
-      // Click new note button to open template picker using jsClick to avoid timeout issues
+      // Click new note button to open template picker
       await expect(
         page.locator('[data-testid="new-note-button"]')
       ).toBeVisible()
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
 
       // Wait for template picker dialog
       const templatePicker = page.locator(
@@ -36,11 +35,11 @@ test.describe('Comprehensive Note Management Tests', () => {
       )
       await expect(templatePicker).toBeVisible({ timeout: 10000 })
 
-      // Click "Blank Note" button using jsClick for reliable interaction
+      // Click "Blank Note" button
       await expect(
         page.getByRole('button', { name: 'Blank Note' })
       ).toBeVisible()
-      await jsClick(page, 'button:has-text("Blank Note")')
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       // Wait for navigation to note editor
       await page.waitForURL('**/notes/**', { timeout: 10000 })
@@ -49,12 +48,10 @@ test.describe('Comprehensive Note Management Tests', () => {
       await expect(
         page.locator('textarea[placeholder="Start writing..."]')
       ).toBeVisible({ timeout: 10000 })
-      await jsClick(page, 'textarea[placeholder="Start writing..."]')
-      await jsType(
-        page,
-        'textarea[placeholder="Start writing..."]',
-        '# Test Note Title\n\nThis is the content of my test note.'
-      )
+      await page.locator('textarea[placeholder="Start writing..."]').click()
+      await page
+        .locator('textarea[placeholder="Start writing..."]')
+        .fill('# Test Note Title\n\nThis is the content of my test note.')
 
       // Verify content is filled
       const editor = page.locator('textarea[placeholder="Start writing..."]')
@@ -66,19 +63,19 @@ test.describe('Comprehensive Note Management Tests', () => {
     test('should read and display existing note', async ({ page }) => {
       // SKIPPED: Note list integration not implemented
       // Create a note first
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
 
       // Wait for template picker and select blank note
       await expect(
         page.locator('[role="dialog"]:has-text("Choose a Template")')
       ).toBeVisible()
-      await jsClick(page, 'button:has-text("Blank Note")')
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       // Wait for editor and fill content
       await page.waitForSelector('[data-testid="note-editor"]')
       const _editor = page.locator('textarea').first()
-      await jsClick(page, 'textarea')
-      await jsType(page, 'textarea', '# Existing Note\n\nExisting note content')
+      await _editor.click()
+      await _editor.fill('Read Test Note Content')
 
       // SKIPPED: Note list integration not implemented
       // Navigate away
@@ -89,13 +86,13 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should update existing note', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
 
       // Wait for template picker and select blank note
       await expect(
         page.locator('[role="dialog"]:has-text("Choose a Template")')
       ).toBeVisible()
-      await jsClick(page, 'button:has-text("Blank Note")')
+      await page.getByRole('button', { name: 'Blank Note' }).click()
 
       // Wait for editor page to be ready
       await page.waitForURL('**/notes/**', { timeout: 10000 })
@@ -103,21 +100,13 @@ test.describe('Comprehensive Note Management Tests', () => {
       // Find the textarea editor
       const editor = page.locator('textarea[placeholder="Start writing..."]')
       await expect(editor).toBeVisible({ timeout: 10000 })
-      await jsClick(page, 'textarea[placeholder="Start writing..."]')
-      await jsType(
-        page,
-        'textarea[placeholder="Start writing..."]',
-        '# Original Title\n\nOriginal content'
-      )
+      await editor.click()
+      await editor.fill('# Initial Title\n\nInitial content')
 
       // Update content - use keyboard simulation to clear
-      await jsClick(page, 'textarea[placeholder="Start writing..."]')
-      await jsType(page, 'textarea[placeholder="Start writing..."]', '') // Clear with keyboard simulation
-      await jsType(
-        page,
-        'textarea[placeholder="Start writing..."]',
-        '# Updated Title\n\nUpdated content'
-      )
+      await editor.click()
+      await editor.fill('') // Clear with keyboard simulation
+      await editor.fill('# Updated Title\n\nUpdated content')
 
       // Auto-save should handle saving
       await page.waitForTimeout(1000)
@@ -129,9 +118,9 @@ test.describe('Comprehensive Note Management Tests', () => {
     test('should delete note', async ({ page }) => {
       // SKIPPED: Delete functionality UI not implemented
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Note to Delete')
+      await page.locator('[data-testid="note-title"]').fill('Note to Delete')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
       await editor.click()
@@ -163,14 +152,14 @@ test.describe('Comprehensive Note Management Tests', () => {
       const notes = ['Alpha Note', 'Beta Note', 'Gamma Note']
 
       for (const title of notes) {
-        await jsClick(page, '[data-testid="new-note-button"]')
+        await page.locator('[data-testid="new-note-button"]').click()
         await page.waitForSelector('[data-testid="note-editor"]')
-        await jsType(page, '[data-testid="note-title"]', title)
+        await page.locator('[data-testid="note-title"]').fill(title)
         await page.keyboard.press('Control+s')
       }
 
       // Search for "Beta"
-      await jsType(page, '[data-testid="search-input"]', 'Beta')
+      await page.locator('[data-testid="search-input"]').fill('Beta')
 
       // Verify search results
       await expect(page.locator('[data-testid="note-list-item"]')).toHaveCount(
@@ -205,13 +194,13 @@ test.describe('Comprehensive Note Management Tests', () => {
     test('should show no results for non-matching search', async ({ page }) => {
       // SKIPPED: Search functionality needs implementation
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Test Note')
+      await page.locator('[data-testid="note-title"]').fill('Test Note')
       await page.keyboard.press('Control+s')
 
       // Search for non-existing content
-      await jsType(page, '[data-testid="search-input"]', 'NonExistentContent')
+      await page.locator('[data-testid="search-input"]').fill('NonExistent')
 
       // Verify no results
       await expect(
@@ -225,20 +214,20 @@ test.describe('Comprehensive Note Management Tests', () => {
       const notes = ['Note One', 'Note Two']
 
       for (const title of notes) {
-        await jsClick(page, '[data-testid="new-note-button"]')
+        await page.locator('[data-testid="new-note-button"]').click()
         await page.waitForSelector('[data-testid="note-editor"]')
-        await jsType(page, '[data-testid="note-title"]', title)
+        await page.locator('[data-testid="note-title"]').fill(title)
         await page.keyboard.press('Control+s')
       }
 
       // Search
-      await jsType(page, '[data-testid="search-input"]', 'One')
+      await page.locator('[data-testid="search-input"]').fill('One')
       await expect(page.locator('[data-testid="note-list-item"]')).toHaveCount(
         1
       )
 
       // Clear search
-      await jsClick(page, '[data-testid="clear-search-button"]')
+      await page.locator('[data-testid="clear-search-button"]').click()
 
       // Verify all notes are shown
       await expect(page.locator('[data-testid="note-list-item"]')).toHaveCount(
@@ -251,19 +240,19 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Note organization features not implemented
     test('should favorite a note', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Favorite Note')
+      await page.locator('[data-testid="note-title"]').fill('Favorite Note')
       await page.keyboard.press('Control+s')
 
       // Click favorite button
-      await jsClick(page, '[data-testid="favorite-button"]')
+      await page.locator('[data-testid="favorite-button"]').click()
 
       // Verify note is favorited
       await expect(page.locator('[data-testid="favorite-icon"]')).toBeVisible()
 
       // Filter by favorites
-      await jsClick(page, '[data-testid="filter-favorites"]')
+      await page.locator('[data-testid="filter-favorites"]').click()
       await expect(
         page.locator('[data-testid="note-list-item"]')
       ).toContainText('Favorite Note')
@@ -271,21 +260,20 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should pin a note', async ({ page }) => {
       // Create notes
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Pinned Note')
+      await page.locator('[data-testid="note-title"]').fill('Pinned Note')
       await page.keyboard.press('Control+s')
 
-      await jsClick(page, '[data-testid="new-note-button"]')
-      await jsType(page, '[data-testid="note-title"]', 'Regular Note')
+      await page.locator('[data-testid="new-note-button"]').click()
+      await page.locator('[data-testid="note-title"]').fill('Regular Note')
       await page.keyboard.press('Control+s')
 
       // Pin the first note
-      await jsClick(
-        page,
-        '[data-testid="note-list-item"]:has-text("Pinned Note")'
-      )
-      await jsClick(page, '[data-testid="pin-button"]')
+      await page
+        .locator('[data-testid="note-list-item"]:has-text("Pinned Note")')
+        .click()
+      await page.locator('[data-testid="pin-button"]').click()
 
       // Verify pinned note appears first
       const firstNote = page.locator('[data-testid="note-list-item"]').first()
@@ -295,14 +283,14 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should archive a note', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Archive Note')
+      await page.locator('[data-testid="note-title"]').fill('Archive Note')
       await page.keyboard.press('Control+s')
 
       // Archive the note
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="archive-note-button"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="archive-button"]').click()
 
       // Verify note is not in main list
       await expect(
@@ -310,7 +298,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       ).toHaveCount(0)
 
       // Show archived notes
-      await jsClick(page, '[data-testid="filter-archived"]')
+      await page.locator('[data-testid="show-archived"]').click()
 
       // Verify note appears in archive
       await expect(
@@ -320,14 +308,14 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should move note to trash', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Trash Note')
+      await page.locator('[data-testid="note-title"]').fill('Trash Note')
       await page.keyboard.press('Control+s')
 
       // Move to trash
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="trash-note-button"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="trash-button"]').click()
 
       // Verify note is not in main list
       await expect(
@@ -335,7 +323,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       ).toHaveCount(0)
 
       // Show trash
-      await jsClick(page, '[data-testid="filter-trash"]')
+      await page.locator('[data-testid="show-trash"]').click()
 
       // Verify note appears in trash
       await expect(
@@ -345,26 +333,25 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should restore from trash', async ({ page }) => {
       // Create and trash a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Restore Note')
+      await page.locator('[data-testid="note-title"]').fill('Restore Note')
       await page.keyboard.press('Control+s')
 
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="trash-note-button"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="trash-button"]').click()
 
       // Go to trash
-      await jsClick(page, '[data-testid="filter-trash"]')
+      await page.locator('[data-testid="show-trash"]').click()
 
       // Restore note
-      await jsClick(
-        page,
-        '[data-testid="note-list-item"]:has-text("Restore Note")'
-      )
-      await jsClick(page, '[data-testid="restore-note-button"]')
+      await page
+        .locator('[data-testid="note-list-item"]:has-text("Restore Note")')
+        .click()
+      await page.locator('[data-testid="restore-button"]').click()
 
       // Go back to all notes
-      await jsClick(page, '[data-testid="filter-all"]')
+      await page.locator('[data-testid="show-all-notes"]').click()
 
       // Verify note is restored
       await expect(
@@ -374,24 +361,23 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should permanently delete from trash', async ({ page }) => {
       // Create and trash a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Delete Forever')
+      await page.locator('[data-testid="note-title"]').fill('Delete Forever')
       await page.keyboard.press('Control+s')
 
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="trash-note-button"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="trash-button"]').click()
 
       // Go to trash
-      await jsClick(page, '[data-testid="filter-trash"]')
+      await page.locator('[data-testid="show-trash"]').click()
 
       // Permanently delete
-      await jsClick(
-        page,
-        '[data-testid="note-list-item"]:has-text("Delete Forever")'
-      )
-      await jsClick(page, '[data-testid="delete-forever-button"]')
-      await jsClick(page, '[data-testid="confirm-permanent-delete"]')
+      await page
+        .locator('[data-testid="note-list-item"]:has-text("Delete Forever")')
+        .click()
+      await page.locator('[data-testid="delete-permanent-button"]').click()
+      await page.locator('[data-testid="confirm-delete-button"]').click()
 
       // Verify note is gone
       await expect(
@@ -406,19 +392,19 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Export functionality not implemented
     test('should export note as Markdown', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Export Test')
+      await page.locator('[data-testid="note-title"]').fill('Export Markdown')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('# Heading\n\nThis is **bold** text.')
       await page.keyboard.press('Control+s')
 
       // Export as Markdown
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="export-button"]')
-      await jsClick(page, '[data-testid="export-markdown"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="export-button"]').click()
+      await page.locator('[data-testid="export-markdown"]').click()
 
       // Verify download started
       const download = await page.waitForEvent('download')
@@ -427,19 +413,19 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should export note as HTML', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'HTML Export')
+      await page.locator('[data-testid="note-title"]').fill('Export HTML')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('HTML content')
       await page.keyboard.press('Control+s')
 
       // Export as HTML
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="export-button"]')
-      await jsClick(page, '[data-testid="export-html"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="export-button"]').click()
+      await page.locator('[data-testid="export-html"]').click()
 
       // Verify download
       const download = await page.waitForEvent('download')
@@ -448,15 +434,15 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should export note as PDF', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'PDF Export')
+      await page.locator('[data-testid="note-title"]').fill('Export PDF')
       await page.keyboard.press('Control+s')
 
       // Export as PDF
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="export-button"]')
-      await jsClick(page, '[data-testid="export-pdf"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="export-button"]').click()
+      await page.locator('[data-testid="export-pdf"]').click()
 
       // Verify download
       const download = await page.waitForEvent('download')
@@ -468,20 +454,20 @@ test.describe('Comprehensive Note Management Tests', () => {
       const notes = ['Export 1', 'Export 2']
 
       for (const title of notes) {
-        await jsClick(page, '[data-testid="new-note-button"]')
+        await page.locator('[data-testid="new-note-button"]').click()
         await page.waitForSelector('[data-testid="note-editor"]')
-        await jsType(page, '[data-testid="note-title"]', title)
+        await page.locator('[data-testid="note-title"]').fill(title)
         await page.keyboard.press('Control+s')
       }
 
       // Select multiple notes
-      await jsClick(page, '[data-testid="select-mode-button"]')
-      await jsClick(page, '[data-testid="note-checkbox-Export 1"]')
-      await jsClick(page, '[data-testid="note-checkbox-Export 2"]')
+      await page.locator('[data-testid="select-mode-button"]').click()
+      await page.locator('[data-testid="note-checkbox"]').first().click()
+      await page.locator('[data-testid="note-checkbox"]').nth(1).click()
 
       // Export selected
-      await jsClick(page, '[data-testid="bulk-export-button"]')
-      await jsClick(page, '[data-testid="export-zip"]')
+      await page.locator('[data-testid="bulk-export-button"]').click()
+      await page.locator('[data-testid="export-as-zip"]').click()
 
       // Verify download
       const download = await page.waitForEvent('download')
@@ -493,7 +479,7 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Import functionality not implemented
     test('should import Markdown file', async ({ page }) => {
       // Click import button
-      await jsClick(page, '[data-testid="import-button"]')
+      await page.locator('[data-testid="import-button"]').click()
 
       // Upload file
       const fileInput = page.locator('[data-testid="import-file-input"]')
@@ -504,7 +490,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       })
 
       // Confirm import
-      await jsClick(page, '[data-testid="confirm-import"]')
+      await page.locator('[data-testid="confirm-import"]').click()
 
       // Verify note is created
       await expect(
@@ -548,12 +534,12 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Version history not implemented
     test('should show version history', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Version Test')
+      await page.locator('[data-testid="note-title"]').fill('Version History')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('Version 1')
       await page.keyboard.press('Control+s')
 
@@ -563,8 +549,8 @@ test.describe('Comprehensive Note Management Tests', () => {
       await page.keyboard.press('Control+s')
 
       // Open version history
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="version-history-button"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="version-history-button"]').click()
 
       // Verify versions are shown
       await expect(page.locator('[data-testid="version-item"]')).toHaveCount(2)
@@ -572,12 +558,12 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should restore previous version', async ({ page }) => {
       // Create note with versions
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Restore Version')
+      await page.locator('[data-testid="note-title"]').fill('Version Test')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('Original content')
       await page.keyboard.press('Control+s')
 
@@ -586,15 +572,16 @@ test.describe('Comprehensive Note Management Tests', () => {
       await page.keyboard.press('Control+s')
 
       // Open version history
-      await jsClick(page, '[data-testid="note-menu-button"]')
-      await jsClick(page, '[data-testid="version-history-button"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="version-history-button"]').click()
 
       // Restore first version
-      await jsClick(
-        page,
-        '[data-testid="version-item"]:last-child [data-testid="restore-version"]'
-      )
-      await jsClick(page, '[data-testid="confirm-restore"]')
+      await page
+        .locator(
+          '[data-testid="version-item"]:last-child [data-testid="restore-version"]'
+        )
+        .click()
+      await page.locator('[data-testid="confirm-restore"]').click()
 
       // Verify content is restored
       await expect(editor).toContainText('Original content')
@@ -605,14 +592,14 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Sharing functionality not implemented
     test('should share note with link', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Shared Note')
+      await page.locator('[data-testid="note-title"]').fill('Share Note')
       await page.keyboard.press('Control+s')
 
       // Share note
-      await jsClick(page, '[data-testid="share-button"]')
-      await jsClick(page, '[data-testid="create-share-link"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="share-button"]').click()
 
       // Verify share link is created
       await expect(
@@ -620,7 +607,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       ).toBeVisible()
 
       // Copy link
-      await jsClick(page, '[data-testid="copy-share-link"]')
+      await page.locator('[data-testid="copy-link-button"]').click()
 
       // Verify copied indicator
       await expect(page.locator('[data-testid="link-copied"]')).toBeVisible()
@@ -628,17 +615,17 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should manage share permissions', async ({ page }) => {
       // Create and share note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Permission Test')
+      await page.locator('[data-testid="note-title"]').fill('Permission Note')
       await page.keyboard.press('Control+s')
 
-      await jsClick(page, '[data-testid="share-button"]')
-      await jsClick(page, '[data-testid="create-share-link"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="share-button"]').click()
 
       // Change permissions
-      await jsClick(page, '[data-testid="permission-dropdown"]')
-      await jsClick(page, '[data-testid="permission-view-only"]')
+      await page.locator('[data-testid="permission-dropdown"]').click()
+      await page.locator('[data-testid="permission-view-only"]').click()
 
       // Verify permission is updated
       await expect(
@@ -648,17 +635,17 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should revoke share link', async ({ page }) => {
       // Create and share note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Revoke Share')
+      await page.locator('[data-testid="note-title"]').fill('Revoke Note')
       await page.keyboard.press('Control+s')
 
-      await jsClick(page, '[data-testid="share-button"]')
-      await jsClick(page, '[data-testid="create-share-link"]')
+      await page.locator('[data-testid="note-menu-button"]').click()
+      await page.locator('[data-testid="share-button"]').click()
 
       // Revoke link
-      await jsClick(page, '[data-testid="revoke-share-link"]')
-      await jsClick(page, '[data-testid="confirm-revoke"]')
+      await page.locator('[data-testid="revoke-link-button"]').click()
+      await page.locator('[data-testid="confirm-revoke"]').click()
 
       // Verify link is revoked
       await expect(
@@ -674,13 +661,13 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Metadata features not implemented
     test('should show note creation date', async ({ page }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Metadata Test')
+      await page.locator('[data-testid="note-title"]').fill('Metadata Note')
       await page.keyboard.press('Control+s')
 
       // Open note info
-      await jsClick(page, '[data-testid="note-info-button"]')
+      await page.locator('[data-testid="note-info-button"]').click()
 
       // Verify creation date is shown
       await expect(page.locator('[data-testid="created-date"]')).toBeVisible()
@@ -691,9 +678,9 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should show note modification date', async ({ page }) => {
       // Create and modify note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Modified Note')
+      await page.locator('[data-testid="note-title"]').fill('Modified Note')
       await page.keyboard.press('Control+s')
 
       // Wait a moment
@@ -701,12 +688,12 @@ test.describe('Comprehensive Note Management Tests', () => {
 
       // Modify note
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('Modified content')
       await page.keyboard.press('Control+s')
 
       // Open note info
-      await jsClick(page, '[data-testid="note-info-button"]')
+      await page.locator('[data-testid="note-info-button"]').click()
 
       // Verify modification date
       await expect(page.locator('[data-testid="modified-date"]')).toBeVisible()
@@ -714,12 +701,12 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should show word count', async ({ page }) => {
       // Create note with content
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Word Count Test')
+      await page.locator('[data-testid="note-title"]').fill('Word Count')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('This is a test with multiple words in it.')
 
       // Check word count
@@ -730,11 +717,11 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should show character count', async ({ page }) => {
       // Create note with content
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('Test')
 
       // Check character count
@@ -748,12 +735,12 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Performance tests not applicable without full implementation
     test('should handle large notes efficiently', async ({ page }) => {
       // Create a large note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Large Note')
+      await page.locator('[data-testid="note-title"]').fill('Large Note')
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
 
       // Type large content
       const largeContent = 'Lorem ipsum dolor sit amet. '.repeat(1000)
@@ -769,7 +756,7 @@ test.describe('Comprehensive Note Management Tests', () => {
 
       // Search should work
       await page.keyboard.press('Control+f')
-      await jsType(page, '[data-testid="find-input"]', 'Lorem')
+      await page.locator('[data-testid="find-input"]').fill('Lorem')
       await expect(page.locator('[data-testid="find-count"]')).toContainText(
         '1000'
       )
@@ -778,9 +765,9 @@ test.describe('Comprehensive Note Management Tests', () => {
     test('should handle many notes efficiently', async ({ page }) => {
       // Create many notes
       for (let i = 0; i < 20; i++) {
-        await jsClick(page, '[data-testid="new-note-button"]')
+        await page.locator('[data-testid="new-note-button"]').click()
         await page.waitForSelector('[data-testid="note-editor"]')
-        await jsType(page, '[data-testid="note-title"]', `Note ${i + 1}`)
+        await page.locator('[data-testid="note-title"]').fill(`Note ${i + 1}`)
         await page.keyboard.press('Control+s')
       }
 
@@ -790,7 +777,7 @@ test.describe('Comprehensive Note Management Tests', () => {
       )
 
       // Search should be fast
-      await jsType(page, '[data-testid="search-input"]', 'Note 15')
+      await page.locator('[data-testid="search-input"]').fill('Note 15')
       await expect(page.locator('[data-testid="note-list-item"]')).toHaveCount(
         1
       )
@@ -809,9 +796,9 @@ test.describe('Comprehensive Note Management Tests', () => {
     // SKIPPED: Offline support not implemented
     test('should work offline', async ({ page, context }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Offline Note')
+      await page.locator('[data-testid="note-title"]').fill('Offline Note')
       await page.keyboard.press('Control+s')
 
       // Go offline
@@ -819,7 +806,7 @@ test.describe('Comprehensive Note Management Tests', () => {
 
       // Should still be able to edit
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('Offline edit')
 
       // Verify offline indicator
@@ -836,15 +823,15 @@ test.describe('Comprehensive Note Management Tests', () => {
 
     test('should sync when coming back online', async ({ page, context }) => {
       // Create a note
-      await jsClick(page, '[data-testid="new-note-button"]')
+      await page.locator('[data-testid="new-note-button"]').click()
       await page.waitForSelector('[data-testid="note-editor"]')
-      await jsType(page, '[data-testid="note-title"]', 'Sync Test')
+      await page.locator('[data-testid="note-title"]').fill('Sync Test')
 
       // Go offline and make changes
       await context.setOffline(true)
 
       const editor = page.locator('[data-testid="note-editor"] .slate-content')
-      await jsClick(page, '[data-testid="note-editor"] .slate-content')
+      await editor.click()
       await editor.type('Offline changes')
       await page.keyboard.press('Control+s')
 
@@ -858,10 +845,9 @@ test.describe('Comprehensive Note Management Tests', () => {
 
       // Verify changes persisted
       await page.reload()
-      await jsClick(
-        page,
-        '[data-testid="note-list-item"]:has-text("Sync Test")'
-      )
+      await page
+        .locator('[data-testid="note-list-item"]:has-text("Sync Test")')
+        .click()
       await expect(editor).toContainText('Offline changes')
     })
   })
