@@ -66,7 +66,7 @@ test.describe('Block Editor', () => {
             'Content typed but not immediately visible (may be processing)'
           )
         }
-      } catch (e) {
+      } catch (_error) {
         console.info(
           'Block editor typing failed - may not be fully implemented'
         )

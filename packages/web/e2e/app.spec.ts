@@ -82,11 +82,11 @@ test.describe('Notable Web App E2E Infrastructure', () => {
       }
     })
 
-    const response = await page.goto('/', { timeout: 30000 })
+    const _response = await page.goto('/', { timeout: 30000 })
 
     // Page may return 500 status due to server-side errors, but should still have HTML structure
-    expect(response).not.toBeNull()
-    expect(response?.status()).toBeLessThan(600) // Accept any valid HTTP status
+    expect(_response).not.toBeNull()
+    expect(_response?.status()).toBeLessThan(600) // Accept any valid HTTP status
 
     // Wait for React hydration if possible
     try {
@@ -99,7 +99,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
     await expect(page.locator('html')).toBeAttached()
 
     console.info(
-      `✅ Page loaded with status ${response?.status()} and ${errors.length} console errors (expected in development)`
+      `✅ Page loaded with status ${_response?.status()} and ${errors.length} console errors (expected in development)`
     )
   })
 
@@ -147,7 +147,7 @@ test.describe('Notable Web App E2E Infrastructure', () => {
 
   test('can access authenticated routes with dev bypass', async ({ page }) => {
     // Test that dev auth bypass works for protected routes
-    const response = await page.goto('/app', { timeout: 30000 })
+    const _response = await page.goto('/app', { timeout: 30000 })
 
     // Should not redirect to auth page due to dev-auth-bypass cookie
     const url = page.url()

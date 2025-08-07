@@ -110,6 +110,12 @@ test.describe('Supabase Integration Tests', () => {
     // Should show error toast (implementation dependent)
     // For now, just verify no page crash
     await page.waitForTimeout(1000)
-    await expect(page).toHaveURL('/auth')
+
+    // URL might have query parameters after form submission, which is expected
+    const currentUrl = page.url()
+    expect(currentUrl).toMatch(/\/auth/)
+
+    // Verify we're still on auth page (may have query params)
+    await expect(page.getByText('Welcome to Notable')).toBeVisible()
   })
 })

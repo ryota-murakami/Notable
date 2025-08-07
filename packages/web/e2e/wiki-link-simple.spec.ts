@@ -122,14 +122,14 @@ test.describe('Wiki Link Simple Test', () => {
 
         // Check if the text content at least contains the wiki link syntax
         const editorContent = await editor.textContent().catch(() => '')
-        if (editorContent.includes('[[Wiki Link]]')) {
+        if (editorContent && editorContent.includes('[[Wiki Link]]')) {
           console.info('Wiki link syntax preserved in editor')
         }
       }
     } catch (e) {
       console.info(
         'Wiki link test failed - feature may not be implemented:',
-        e.message
+        (e as Error).message
       )
     }
 

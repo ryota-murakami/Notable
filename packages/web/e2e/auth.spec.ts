@@ -55,6 +55,16 @@ test.describe('Authentication Flow', () => {
     // This test verifies that with API mocking enabled (test environment),
     // navigation doesn't result in infinite redirect loops
 
+    // Set dev auth bypass cookie to test authenticated flow
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
     // Track redirects to ensure no infinite loop
     const redirects: string[] = []
     let redirectCount = 0
@@ -77,7 +87,7 @@ test.describe('Authentication Flow', () => {
     // Wait for navigation to complete
     await page.waitForTimeout(2000)
 
-    // In test mode with API mocking, users are auto-authenticated via dev-auth-bypass
+    // With dev-auth-bypass cookie, users are auto-authenticated
     // So we should end up on the app page, not auth page
     // The key thing is no infinite redirect loop (redirectCount should be reasonable)
     expect(redirectCount).toBeLessThanOrEqual(3)
@@ -85,7 +95,7 @@ test.describe('Authentication Flow', () => {
     console.info(`Redirects: ${redirects.join(', ')}`)
     console.info(`Final URL: ${page.url()}`)
 
-    // In test environment, user should be authenticated and go to /app
+    // In test environment with auth bypass, user should be authenticated and go to /app
     await expect(page).toHaveURL('/app')
   })
 

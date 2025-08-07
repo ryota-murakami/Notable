@@ -129,7 +129,7 @@ test.describe('Template System Core Tests', () => {
           clicked = true
           break
         }
-      } catch (e) {
+      } catch (_error) {
         continue
       }
     }

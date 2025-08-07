@@ -47,7 +47,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
   })
 
   // Helper function to find editor with fallback patterns
-  const getEditor = async (page) => {
+  const getEditor = async (page: any) => {
     const possibleEditors = [
       '[data-testid="note-content-textarea"]', // TestNoteEditor content textarea
       '[data-testid="note-editor"] [contenteditable="true"]', // Contenteditable inside note-editor
@@ -329,7 +329,7 @@ test.describe('Comprehensive Editor Functionality Tests', () => {
       // Check if text is still there, if not, that's expected behavior without link dialog
       const hasText = await editor
         .textContent()
-        .then((text) => text?.includes('Click here'))
+        .then((text: string | null) => text?.includes('Click here'))
         .catch(() => false)
       if (hasText) {
         await expect(editor).toContainText('Click here')
