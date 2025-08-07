@@ -28,12 +28,12 @@ interface ExportButtonProps {
   compact?: boolean
 }
 
-export function ExportButton({
+const ExportButton = React.memo(({
   note,
   variant = 'secondary',
   size = 'sm',
   compact = false,
-}: ExportButtonProps) {
+}: ExportButtonProps) => {
   const [showExportDialog, setShowExportDialog] = React.useState(false)
   const { exportNote } = useExport({
     autoDownload: true,
@@ -140,4 +140,8 @@ export function ExportButton({
       />
     </>
   )
-}
+})
+
+ExportButton.displayName = 'ExportButton'
+
+export { ExportButton }

@@ -46,11 +46,11 @@ interface EnhancedAIToolbarProps {
 
 type GenerationType = 'continue' | 'brainstorm' | 'answer' | 'outline' | 'ideas'
 
-export function EnhancedAIToolbar({
+const EnhancedAIToolbar = React.memo(({
   content,
   onContentUpdate,
   className = '',
-}: EnhancedAIToolbarProps) {
+}: EnhancedAIToolbarProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [loadingAction, setLoadingAction] = useState<string>('')
   const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false)
@@ -516,4 +516,8 @@ export function EnhancedAIToolbar({
       </Badge>
     </div>
   )
-}
+})
+
+EnhancedAIToolbar.displayName = 'EnhancedAIToolbar'
+
+export { EnhancedAIToolbar }

@@ -6,7 +6,18 @@ const isRequestAllowed = (cookies: Record<string, string>) => {
   const hasAuthBypass = cookies['dev-auth-bypass'] === 'true'
   const isTestEnv = process.env.NODE_ENV === 'test'
 
-  return hasAuthBypass || isTestEnv || isMockingEnabled
+  // Always allow in test environment or when API mocking is enabled
+  if (isTestEnv || isMockingEnabled) {
+    return true
+  }
+
+  // In development, require the dev-auth-bypass cookie for security
+  if (process.env.NODE_ENV === 'development') {
+    return hasAuthBypass
+  }
+
+  // In production, never allow unless explicitly enabled
+  return false
 }
 
 // Stateful note storage for tests

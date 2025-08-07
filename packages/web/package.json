@@ -24,6 +24,7 @@
     "e2e:coverage:ci": "rm -rf coverage .nyc_output/v8-coverage && COVERAGE=1 playwright test",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
+    "db:reset": "ts-node scripts/db-reset.ts",
     "deploy": "ts-node scripts/deploy.ts",
     "deploy:staging": "ENVIRONMENT=staging ts-node scripts/deploy.ts",
     "deploy:production": "ENVIRONMENT=production ts-node scripts/deploy.ts",

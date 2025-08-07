@@ -22,7 +22,7 @@ interface NoteActionsProps {
   className?: string
 }
 
-export function NoteActions({
+const NoteActions = React.memo(({
   noteId: _noteId,
   isFavorite = false,
   isPinned = false,
@@ -31,7 +31,7 @@ export function NoteActions({
   onPin,
   onArchive,
   className,
-}: NoteActionsProps) {
+}: NoteActionsProps) => {
   return (
     <div className={cn('flex items-center gap-1', className)}>
       <Button
@@ -77,4 +77,8 @@ export function NoteActions({
       </DropdownMenu>
     </div>
   )
-}
+})
+
+NoteActions.displayName = 'NoteActions'
+
+export { NoteActions }

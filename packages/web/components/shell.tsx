@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotes } from '@/hooks/use-notes'
 import { useRouting } from '@/hooks/use-routing'
@@ -8,7 +8,6 @@ import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { toast } from '@/hooks/use-toast'
 import { UserMenu } from './user-menu'
 import { createClient } from '@/utils/supabase/client'
-import { isTest } from '@/lib/utils/environment'
 import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { Spinner } from '@/components/ui/spinner'
@@ -41,7 +40,7 @@ import { useFolders } from '@/hooks/use-folders'
 import { ExportDialog } from '@/components/ui/export-dialog'
 import { VersionHistory } from '@/components/ui/version-history'
 
-export function Shell({ children }: { children?: React.ReactNode }) {
+const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
@@ -100,31 +99,10 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     ? notes.find((note) => note.id === selectedNoteId)
     : null
 
-  // In test mode, treat as initialized to show the main UI
-  const [isTestMode, setIsTestMode] = useState(() => {
-    // Initialize with the correct value immediately to avoid timing issues
-    return isTest()
-  })
-
-  useEffect(() => {
-    // Double-check the test mode on mount in case it changes
-    const testMode = isTest()
-    if (testMode !== isTestMode) {
-      setIsTestMode(testMode)
-    }
-
-    // Set hydration flag for tests - always set it to ensure E2E tests work
-    if (typeof window !== 'undefined') {
-      ;(window as any).__NOTABLE_HYDRATED = true
-      // Hydration flag set for E2E tests
-    }
-  }, [isTestMode])
-
-  // Set hydration flag immediately on mount for E2E tests
+  // Set hydration flag for E2E tests
   useEffect(() => {
     if (typeof window !== 'undefined') {
       ;(window as any).__NOTABLE_HYDRATED = true
-      // Hydration flag set immediately on mount
     }
   }, [])
 
@@ -135,46 +113,30 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       typeof window !== 'undefined' &&
       window.sessionStorage.getItem('forceTemplatePicker') === 'true'
 
-    // In test mode, create note directly without template picker (unless forced)
-    if (isTestMode && !forceTemplatePicker) {
+    // Always show template picker unless forced to skip
+    if (!forceTemplatePicker) {
+      setShowTemplatePicker(true)
+    } else {
+      // Create note directly when forced (used by tests)
       try {
-        console.info(
-          'DEBUG: Creating note in test mode, isTestMode:',
-          isTestMode,
-          'forceTemplatePicker:',
-          forceTemplatePicker
-        )
-
         const newNote = await createNote({
           title: 'Untitled',
           content: '',
           folder_id: selectedFolderId,
         })
 
-        console.info('DEBUG: Note created successfully:', newNote)
-
         if (newNote) {
           setSelectedNoteId(newNote.id)
 
           // Store note ID for test helpers
           if (typeof window !== 'undefined') {
-            console.info(
-              'DEBUG: Storing note ID in sessionStorage:',
-              newNote.id
-            )
             window.sessionStorage.setItem('lastCreatedNoteId', newNote.id)
-
-            // Verify it was stored
-            const stored = window.sessionStorage.getItem('lastCreatedNoteId')
-            console.info('DEBUG: Verified stored note ID:', stored)
           }
 
           router.push(`/notes/${newNote.id}`)
-        } else {
-          console.error('DEBUG: Note creation returned null/undefined')
         }
       } catch (error) {
-        console.error('DEBUG: Failed to create note:', error)
+        console.error('Failed to create note:', error)
 
         // Store error info for test debugging
         if (typeof window !== 'undefined') {
@@ -182,11 +144,8 @@ export function Shell({ children }: { children?: React.ReactNode }) {
           ;(window as any).__test_errors.push(error)
         }
       }
-    } else {
-      // Show template picker instead of creating note directly
-      setShowTemplatePicker(true)
     }
-  }, [isTestMode, router, createNote, selectedFolderId])
+  }, [router, createNote, selectedFolderId])
 
   const handleDeleteCurrentNote = useCallback(async () => {
     if (!selectedNoteId) return
@@ -625,14 +584,6 @@ export function Shell({ children }: { children?: React.ReactNode }) {
 
   useKeyboardShortcuts(shortcuts)
 
-  // Create mock user for testing when dev-auth-bypass is enabled
-  const mockUser: SupabaseUser | null =
-    isTestMode && !user ? createMockUser() : null
-
-  const _currentUser = user || mockUser
-
-  const shouldShowLoading = notesLoading && !isTestMode
-
   // Get user on mount
   useEffect(() => {
     const getUser = async () => {
@@ -732,7 +683,7 @@ export function Shell({ children }: { children?: React.ReactNode }) {
     }
   }, [createNote, router, selectedFolderId])
 
-  if (shouldShowLoading) {
+  if (notesLoading) {
     return (
       <div className='flex h-screen bg-background' data-testid='app-shell'>
         <div className='space-y-4 p-4 w-64 border-r'>
@@ -1099,4 +1050,8 @@ export function Shell({ children }: { children?: React.ReactNode }) {
       />
     </div>
   )
-}
+})
+
+Shell.displayName = 'Shell'
+
+export { Shell }

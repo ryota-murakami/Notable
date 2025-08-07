@@ -13,13 +13,13 @@ interface NewFolderButtonProps {
   'data-testid'?: string
 }
 
-export function NewFolderButton({
+const NewFolderButton = React.memo(({
   parentId,
   variant = 'ghost',
   size = 'sm',
   className,
   'data-testid': dataTestId = 'new-folder-button',
-}: NewFolderButtonProps) {
+}: NewFolderButtonProps) => {
   const [open, setOpen] = React.useState(false)
 
   return (
@@ -42,4 +42,8 @@ export function NewFolderButton({
       />
     </>
   )
-}
+})
+
+NewFolderButton.displayName = 'NewFolderButton'
+
+export { NewFolderButton }

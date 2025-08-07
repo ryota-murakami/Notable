@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { type NotesQueryParams, notesService } from '@/lib/services/notes'
 import { type Database } from '@/types/database'
 import { toast } from './use-toast'
-import { isTest } from '@/lib/utils/environment'
 
 type Note = Database['public']['Tables']['notes']['Row']
 type NoteInsert = Database['public']['Tables']['notes']['Insert']
@@ -35,14 +34,12 @@ export function useNotes(options: UseNotesOptions = {}) {
         err instanceof Error ? err.message : 'Failed to fetch notes'
       setError(message)
       
-      // Only show toast in non-test environments to avoid noise
-      if (!isTest()) {
-        toast({
+      // Show toast for user feedback
+      toast({
           title: 'Error fetching notes',
           description: message,
           variant: 'destructive',
         })
-      }
     } finally {
       setLoading(false)
     }
@@ -68,27 +65,23 @@ export function useNotes(options: UseNotesOptions = {}) {
       setNotes((prev) => [response.note, ...prev])
       setTotal((prev) => prev + 1)
 
-      // Only show toast in non-test environments to avoid noise
-      if (!isTest()) {
-        toast({
+      // Show toast for user feedback
+      toast({
           title: 'Note created',
           description: 'Your note has been created successfully.',
         })
-      }
 
       return response.note
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to create note'
       
-      // Only show toast in non-test environments to avoid noise
-      if (!isTest()) {
-        toast({
+      // Show toast for user feedback
+      toast({
           title: 'Error creating note',
           description: message,
           variant: 'destructive',
         })
-      }
       throw err
     }
   }, [])
@@ -103,27 +96,23 @@ export function useNotes(options: UseNotesOptions = {}) {
           prev.map((note) => (note.id === id ? response.note : note))
         )
 
-        // Only show toast in non-test environments to avoid noise
-        if (!isTest()) {
-          toast({
+        // Show toast for user feedback
+      toast({
             title: 'Note updated',
             description: 'Your note has been updated successfully.',
           })
-        }
 
         return response.note
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update note'
         
-        // Only show toast in non-test environments to avoid noise
-        if (!isTest()) {
-          toast({
+        // Show toast for user feedback
+      toast({
             title: 'Error updating note',
             description: message,
             variant: 'destructive',
           })
-        }
         throw err
       }
     },
@@ -138,25 +127,21 @@ export function useNotes(options: UseNotesOptions = {}) {
       setNotes((prev) => prev.filter((note) => note.id !== id))
       setTotal((prev) => prev - 1)
 
-      // Only show toast in non-test environments to avoid noise
-      if (!isTest()) {
-        toast({
+      // Show toast for user feedback
+      toast({
           title: 'Note deleted',
           description: 'Your note has been deleted successfully.',
         })
-      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to delete note'
       
-      // Only show toast in non-test environments to avoid noise
-      if (!isTest()) {
-        toast({
+      // Show toast for user feedback
+      toast({
           title: 'Error deleting note',
           description: message,
           variant: 'destructive',
         })
-      }
       throw err
     }
   }, [])
@@ -185,8 +170,8 @@ export function useNote(id: string, enabled = true) {
   const fetchNote = useCallback(async () => {
     if (!enabled || !id) return
 
-    // In test environment, create/return mock note if it's a mock ID
-    if (isTest() && id.startsWith('mock-note-')) {
+    // For mock notes during testing, create/return mock note if it's a mock ID
+    if ((process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') && id.startsWith('mock-note-')) {
       const mockNote: Note = {
         id,
         title: 'Untitled',
@@ -230,8 +215,8 @@ export function useNote(id: string, enabled = true) {
     async (data: Partial<NoteUpdate>) => {
       if (!id) return
 
-      // In test environment, update mock note
-      if (isTest() && id.startsWith('mock-note-')) {
+      // For mock notes during testing, update mock note
+      if ((process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') && id.startsWith('mock-note-')) {
         if (!note) return
         const updatedNote: Note = {
           ...note,

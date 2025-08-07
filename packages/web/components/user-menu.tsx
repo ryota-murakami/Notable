@@ -9,13 +9,12 @@ import { toast } from 'sonner'
 import { createClient } from '@/utils/supabase/client'
 import { createMockUser } from '@/utils/test-helpers'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
-import { isTest } from '../lib/utils/environment'
 
 interface UserMenuProps {
   className?: string
 }
 
-export function UserMenu({ className }: UserMenuProps) {
+const UserMenu = React.memo(({ className }: UserMenuProps) => {
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
   const [user, setUser] = React.useState<SupabaseUser | null>(null)
@@ -106,8 +105,8 @@ export function UserMenu({ className }: UserMenuProps) {
     toast.info('Settings page coming soon!')
   }
 
-  // Create mock user for testing when dev-auth-bypass is enabled
-  const testMode = isTest()
+  // Create mock user for testing when API mocking is enabled
+  const testMode = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
   const mockUser: SupabaseUser | null =
     testMode && !user ? createMockUser() : null
 
@@ -176,4 +175,8 @@ export function UserMenu({ className }: UserMenuProps) {
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   )
-}
+})
+
+UserMenu.displayName = 'UserMenu'
+
+export { UserMenu }

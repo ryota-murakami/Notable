@@ -17,13 +17,13 @@ interface TestNoteEditorProps {
   onContentChange?: (content: any) => void
 }
 
-export function TestNoteEditor({
+const TestNoteEditor = React.memo(({
   noteId: _noteId,
   initialTitle = 'Untitled',
   initialContent: _initialContent,
   onTitleChange,
   onContentChange,
-}: TestNoteEditorProps) {
+}: TestNoteEditorProps) => {
   const [title, setTitle] = useState(initialTitle)
   const [content, setContent] = useState('')
 
@@ -87,4 +87,8 @@ export function TestNoteEditor({
       </div>
     </div>
   )
-}
+})
+
+TestNoteEditor.displayName = 'TestNoteEditor'
+
+export { TestNoteEditor }

@@ -7,7 +7,7 @@ interface SpinnerProps {
   size?: '1' | '2' | '3'
 }
 
-export function Spinner({ className, size = '2' }: SpinnerProps) {
+const Spinner = React.memo(({ className, size = '2' }: SpinnerProps) => {
   return (
     <RadixSpinner
       className={cn('text-muted-foreground', className)}
@@ -16,4 +16,8 @@ export function Spinner({ className, size = '2' }: SpinnerProps) {
       data-size={size}
     />
   )
-}
+})
+
+Spinner.displayName = 'Spinner'
+
+export { Spinner }

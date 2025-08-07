@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNote } from '@/hooks/use-note'
 import { RichTextEditorClient } from '@/components/rich-text-editor-client'
 import { TestNoteEditor } from '@/components/test-note-editor'
@@ -8,19 +8,18 @@ import { Spinner } from '@/components/ui/spinner'
 import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
 import { plateToMarkdown } from '@/lib/plate/plate-to-markdown'
 import { updateNoteLinks } from '@/lib/note-links'
-import { isTest } from '@/lib/utils/environment'
 import type { Value } from 'platejs'
 
 interface NoteEditorRichProps {
   noteId: string
 }
 
-export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
+const NoteEditorRich = React.memo(({ noteId }: NoteEditorRichProps) => {
   const { note, loading, updateNote } = useNote(noteId)
   const [_isInitialized, _setIsInitialized] = useState(false)
 
   // Direct fallback for mock notes to avoid state propagation issues
-  const isTestMode = isTest()
+  const isTestMode = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
   const isMockNote = noteId.startsWith('mock-note-')
   const shouldUseMockNote = isTestMode && isMockNote && loading && !note
 
@@ -120,4 +119,8 @@ export function NoteEditorRich({ noteId }: NoteEditorRichProps) {
       />
     </div>
   )
-}
+})
+
+NoteEditorRich.displayName = 'NoteEditorRich'
+
+export { NoteEditorRich }

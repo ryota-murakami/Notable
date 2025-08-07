@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { notesService } from '@/lib/services/notes'
 import { toast } from './use-toast'
-import { isTest } from '@/lib/utils/environment'
 import type { Database } from '@/types/database'
 
 type Note = Database['public']['Tables']['notes']['Row']
@@ -23,9 +22,9 @@ export function useNote(noteId: string) {
         setLoading(true)
         setError(null)
 
-        // In test environment, return mock note for mock IDs
+        // For mock notes during testing, return mock note for mock IDs
         if (
-          isTest() &&
+          (process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') &&
           (noteId.startsWith('mock-note-') || noteId.startsWith('test-'))
         ) {
           const mockNote: Note = {
@@ -89,9 +88,9 @@ export function useNote(noteId: string) {
       if (!note) return
 
       try {
-        // In test environment, update mock note locally
+        // For mock notes during testing, update mock note locally
         if (
-          isTest() &&
+          (process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') &&
           (noteId.startsWith('mock-note-') || noteId.startsWith('test-'))
         ) {
           const updatedNote: Note = {

@@ -48,7 +48,7 @@ const defaultContent: Value = [
   },
 ]
 
-export function RichTextEditor({
+const RichTextEditor = React.memo(({
   noteId,
   initialTitle = '',
   initialContent = defaultContent,
@@ -62,7 +62,7 @@ export function RichTextEditor({
   onToggleFavorite,
   onTogglePin,
   onToggleArchive,
-}: RichTextEditorProps) {
+}: RichTextEditorProps) => {
   const [title, setTitle] = useState(initialTitle)
   const [content, setContent] = useState<Value>(
     initialContent || defaultContent
@@ -428,4 +428,8 @@ export function RichTextEditor({
       />
     </div>
   )
-}
+})
+
+RichTextEditor.displayName = 'RichTextEditor'
+
+export { RichTextEditor }

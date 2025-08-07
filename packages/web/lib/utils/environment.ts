@@ -40,42 +40,14 @@ export const isProduction = (): boolean => {
  * For client-side, checks for test auth bypass cookie
  * For server-side, checks NODE_ENV or API mocking env var
  */
-export const isTest = (): boolean => {
-  if (!isBrowser) {
-    // Server-side: safe to use process.env
-    return (
-      process.env.NODE_ENV === 'test' ||
-      process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
-    )
-  }
-
-  // Client-side: primarily check for test auth bypass cookie
-  // This is more reliable than env vars in production builds
-  try {
-    const hasTestCookie = document.cookie.includes('dev-auth-bypass=true')
-
-    // If we have the test cookie, we're in test mode
-    if (hasTestCookie) {
-      return true
-    }
-
-    // Fallback to checking window object (for dev environments)
-    const hasApiMocking =
-      typeof window !== 'undefined' &&
-      (window as any).__NEXT_PUBLIC_API_MOCKING === 'enabled'
-
-    return hasApiMocking
-  } catch {
-    // During SSR/hydration, be conservative
-    return false
-  }
-}
+export const // Removed isTest() - Testing should be handled via DB fixtures and MSW mocking
+// Tests should use NODE_ENV=test and NEXT_PUBLIC_API_MOCKING='enabled' for environment control
 
 /**
  * Get the current environment name
  */
 export const getEnvironment = (): 'development' | 'production' | 'test' => {
-  if (isTest()) return 'test'
+  if (process.env.NODE_ENV === 'test') return 'test'
   if (isDevelopment()) return 'development'
   return 'production'
 }

@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+
 import { useCallback, useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -40,14 +42,14 @@ interface SmartSuggestionsPanelProps {
   onDismiss?: () => void
 }
 
-export function SmartSuggestionsPanel({
+const SmartSuggestionsPanel = React.memo(({
   context = 'general',
   noteId,
   currentContent,
   className,
   onSelectSuggestion,
   onDismiss,
-}: SmartSuggestionsPanelProps) {
+}: SmartSuggestionsPanelProps) => {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [loading, setLoading] = useState(false)
   const [isExpanded, setIsExpanded] = useState(true)
@@ -252,7 +254,9 @@ export function SmartSuggestionsPanel({
       )}
     </Card>
   )
-}
+})
+
+SmartSuggestionsPanel.displayName = 'SmartSuggestionsPanel'
 
 function SuggestionCard({
   suggestion,
@@ -368,7 +372,7 @@ export function useSmartSuggestions({
 }
 
 // Inline suggestion component for editor
-export function InlineSuggestion({
+const InlineSuggestion = React.memo(({
   suggestion,
   onAccept,
   onDismiss,
@@ -403,7 +407,9 @@ export function InlineSuggestion({
       </div>
     </div>
   )
-}
+})
+
+InlineSuggestion.displayName = 'InlineSuggestion'
 
 function getSuggestionIcon(type: string) {
   switch (type) {
@@ -421,3 +427,5 @@ function getSuggestionIcon(type: string) {
       return Lightbulb
   }
 }
+
+export { SmartSuggestionsPanel, InlineSuggestion }
