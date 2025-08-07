@@ -13,6 +13,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
 import { Archive, BarChart3, FileText, Plus, Star, Tags } from 'lucide-react'
 import { RichTextEditor } from '@/components/rich-text-editor'
+import { TestNoteEditor } from '@/components/test-note-editor'
 import { NoteActions } from '@/components/note-actions'
 import {
   NotableCommandPalette,
@@ -107,16 +108,17 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
 
   // Command handlers
   const handleNewNote = useCallback(async () => {
-    // Check if we should force template picker in tests
-    const forceTemplatePicker =
-      typeof window !== 'undefined' &&
-      window.sessionStorage.getItem('forceTemplatePicker') === 'true'
+    // Check if we should bypass template picker in tests - use API_MOCKING as the indicator
+    const bypassTemplatePicker =
+      process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' ||
+      (typeof window !== 'undefined' &&
+        window.sessionStorage.getItem('forceTemplatePicker') === 'true')
 
-    // Always show template picker unless forced to skip
-    if (!forceTemplatePicker) {
+    // Always show template picker unless bypassed (used by tests)
+    if (!bypassTemplatePicker) {
       setShowTemplatePicker(true)
     } else {
-      // Create note directly when forced (used by tests)
+      // Create note directly when bypassed (used by tests)
       try {
         const newNote = await createNote({
           title: 'Untitled',
@@ -899,37 +901,57 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
               <div className='h-full flex'>
                 {/* Main editor area */}
                 <div className='flex-1 min-w-0'>
-                  <RichTextEditor
-                    noteId={selectedNote.id}
-                    initialTitle={selectedNote.title}
-                    initialContent={
-                      selectedNote.content
-                        ? typeof selectedNote.content === 'string'
-                          ? JSON.parse(selectedNote.content)
-                          : selectedNote.content
-                        : undefined
-                    }
-                    isFavorite={noteOrganization.favorites.includes(
-                      selectedNote.id
-                    )}
-                    isPinned={noteOrganization.pinned.includes(selectedNote.id)}
-                    isArchived={noteOrganization.archived.includes(
-                      selectedNote.id
-                    )}
-                    onToggleFavorite={() =>
-                      handleToggleFavorite(selectedNote.id)
-                    }
-                    onTogglePin={() => handleTogglePin(selectedNote.id)}
-                    onToggleArchive={() => handleToggleArchive(selectedNote.id)}
-                    onTitleChange={(title) => {
-                      // TODO: Implement title update
-                      console.info('Title changed:', title)
-                    }}
-                    onContentChange={(content) => {
-                      // TODO: Implement content update
-                      console.info('Content changed:', content)
-                    }}
-                  />
+                  {process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' ? (
+                    <TestNoteEditor
+                      noteId={selectedNote.id}
+                      initialTitle={selectedNote.title}
+                      initialContent={selectedNote.content}
+                      onTitleChange={(title) => {
+                        // TODO: Implement title update
+                        console.info('Title changed:', title)
+                      }}
+                      onContentChange={(content) => {
+                        // TODO: Implement content update
+                        console.info('Content changed:', content)
+                      }}
+                    />
+                  ) : (
+                    <RichTextEditor
+                      noteId={selectedNote.id}
+                      initialTitle={selectedNote.title}
+                      initialContent={
+                        selectedNote.content
+                          ? typeof selectedNote.content === 'string'
+                            ? JSON.parse(selectedNote.content)
+                            : selectedNote.content
+                          : undefined
+                      }
+                      isFavorite={noteOrganization.favorites.includes(
+                        selectedNote.id
+                      )}
+                      isPinned={noteOrganization.pinned.includes(
+                        selectedNote.id
+                      )}
+                      isArchived={noteOrganization.archived.includes(
+                        selectedNote.id
+                      )}
+                      onToggleFavorite={() =>
+                        handleToggleFavorite(selectedNote.id)
+                      }
+                      onTogglePin={() => handleTogglePin(selectedNote.id)}
+                      onToggleArchive={() =>
+                        handleToggleArchive(selectedNote.id)
+                      }
+                      onTitleChange={(title) => {
+                        // TODO: Implement title update
+                        console.info('Title changed:', title)
+                      }}
+                      onContentChange={(content) => {
+                        // TODO: Implement content update
+                        console.info('Content changed:', content)
+                      }}
+                    />
+                  )}
                 </div>
 
                 {/* Smart suggestions panel */}
