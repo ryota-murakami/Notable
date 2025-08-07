@@ -1351,8 +1351,7 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 })
   }),
 
-  // Temporarily disable MSW Notes API endpoints to test built-in API route mocking
-  // /*
+  // Enable MSW Notes API endpoints for E2E testing
   http.get('*/api/notes', ({ request, cookies }) => {
     if (!isRequestAllowed(cookies)) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -1364,12 +1363,16 @@ export const handlers = [
 
     const paginatedNotes = mockNoteStore.slice(offset, offset + limit)
 
+    console.info(
+      '[MSW] GET /api/notes - returning notes:',
+      paginatedNotes.length
+    )
+
     return HttpResponse.json({
       notes: paginatedNotes,
       total: mockNoteStore.length,
     })
   }),
-  // */
 
   http.get('*/api/notes/:id', ({ params, cookies }) => {
     if (!isRequestAllowed(cookies)) {
@@ -1425,6 +1428,13 @@ export const handlers = [
     // Add to the stateful store
     mockNoteStore.push(newNote)
 
+    console.info(
+      '[MSW] POST /api/notes - created note:',
+      newNote.id,
+      'Title:',
+      newNote.title
+    )
+
     return HttpResponse.json({ note: newNote })
   }),
 
@@ -1454,6 +1464,13 @@ export const handlers = [
             : mockNoteStore[noteIndex].is_public,
       }
 
+      console.info(
+        '[MSW] PUT /api/notes/:id - updated note:',
+        id,
+        'Title:',
+        mockNoteStore[noteIndex].title
+      )
+
       return HttpResponse.json({ note: mockNoteStore[noteIndex] })
     }
 
@@ -1479,7 +1496,6 @@ export const handlers = [
 
     return HttpResponse.json({ error: 'Note not found' }, { status: 404 })
   }),
-  // */
 
   // Comprehensive search API mocks
   http.get('*/api/search', ({ request, cookies }) => {
