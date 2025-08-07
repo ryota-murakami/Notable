@@ -104,10 +104,21 @@ jobs:
           NEXT_PUBLIC_APP_URL: 'http://localhost:4378'
           NEXT_PUBLIC_API_MOCKING: 'enabled'
 
+      - name: Verify build output
+        run: |
+          cd packages/web
+          echo "Checking build output..."
+          ls -la .next/
+          echo "Checking if standalone output exists..."
+          ls -la .next/standalone/ || echo "No standalone build found"
+
       - name: Run E2E Tests
         run: |
           cd packages/web
-          DEBUG=pw:webserver pnpm run e2e
+          echo "Starting E2E tests..."
+          echo "Current working directory: $(pwd)"
+          echo "Build output exists: $(ls -la .next/ | head -5)"
+          pnpm run e2e --reporter=list
         env:
           CI: true
           PLAYWRIGHT_BROWSERS_PATH: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}

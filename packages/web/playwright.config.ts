@@ -97,9 +97,10 @@ export default defineConfig({
     command: 'pnpm start',
     url: 'http://localhost:4378',
     reuseExistingServer: !process.env.CI,
-    timeout: 90000, // 1.5 minutes for CI (reduced from 2 minutes)
-    stdout: 'pipe',
-    stderr: 'pipe',
+    timeout: 120000, // 2 minutes for CI server startup
+    // In CI, redirect to 'inherit' for better debugging visibility
+    stdout: process.env.CI ? 'inherit' : 'pipe',
+    stderr: process.env.CI ? 'inherit' : 'pipe',
     env: {
       // CRITICAL: Use NODE_ENV=test to enable test mode features
       NODE_ENV: 'test',
