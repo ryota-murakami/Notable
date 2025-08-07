@@ -36,8 +36,8 @@ test.describe('Rich Text Editor', () => {
   })
 
   test('should handle new note creation', async ({ page }) => {
-    // Click new note button using jsClick
-    await page.click('$1')
+    // Navigate directly to new note page
+    await page.goto('http://localhost:4378/notes/new')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -64,8 +64,8 @@ test.describe('Rich Text Editor', () => {
   })
 
   test('should check for editor elements', async ({ page }) => {
-    // Navigate to notes using jsClick
-    await page.click('$1')
+    // Navigate directly to new note page
+    await page.goto('http://localhost:4378/notes/new')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -116,8 +116,8 @@ test.describe('Rich Text Editor', () => {
   })
 
   test('should handle text input if editor exists', async ({ page }) => {
-    // Navigate to notes using jsClick
-    await page.click('$1')
+    // Navigate directly to new note page
+    await page.goto('http://localhost:4378/notes/new')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)
@@ -156,8 +156,8 @@ test.describe('Rich Text Editor', () => {
   })
 
   test('should check for formatting toolbar', async ({ page }) => {
-    // Navigate to notes using jsClick
-    await page.click('$1')
+    // Navigate directly to new note page
+    await page.goto('http://localhost:4378/notes/new')
 
     // In test mode, template picker is bypassed - wait for note creation
     await page.waitForTimeout(2000)

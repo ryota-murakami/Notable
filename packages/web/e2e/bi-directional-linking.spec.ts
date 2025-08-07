@@ -38,9 +38,9 @@ test.describe('Bi-directional Linking', () => {
     // Wait for editor to load
     await page.waitForSelector('[contenteditable="true"]', { timeout: 10000 })
 
-    // Click to focus the editor using jsClick to avoid timeout issues
+    // Click to focus the editor
     const _editor = page.locator('[contenteditable="true"]').first()
-    await page.click('$1')
+    await page.locator('[contenteditable="true"]').first().click()
     await page.waitForTimeout(200) // Wait for focus
 
     // Editor focus will be handled by page interactions
@@ -403,7 +403,10 @@ test.describe('Bi-directional Linking', () => {
       )
       .first()
       .click()
-    await page.fill('$1', '$2')
+    await page.fill(
+      '[data-testid="note-title-input"], input[placeholder="Untitled Note"]',
+      'Cross-Reference Test Note'
+    )
     await page.keyboard.press('Enter')
 
     // Wait for auto-save
