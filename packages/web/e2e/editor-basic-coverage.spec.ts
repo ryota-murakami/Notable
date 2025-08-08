@@ -139,7 +139,16 @@ test.describe('Editor Basic Coverage', () => {
 
           // Test basic editing functionality
           await editor.click({ force: true })
-          await editor.fill('Test editor content')
+
+          // Check if it's a contenteditable element or textarea
+          const isContentEditable = await editor
+            .getAttribute('contenteditable')
+            .catch(() => null)
+          if (isContentEditable === 'true') {
+            await page.keyboard.type('Test editor content')
+          } else {
+            await editor.fill('Test editor content')
+          }
 
           // Verify content was added
           const hasContent = await editor.textContent()
