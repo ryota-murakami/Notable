@@ -68,7 +68,9 @@ test.describe('Markdown Editor', () => {
           try {
             await editor.type('# Test Heading')
           } catch (error) {
-            console.info(`Could not type in editor: ${error.message}`)
+            console.info(
+              `Could not type in editor: ${error instanceof Error ? error.message : String(error)}`
+            )
           }
         }
 
@@ -88,7 +90,9 @@ test.describe('Markdown Editor', () => {
             )
           }
         } catch (error) {
-          console.info(`⚠️ Content verification failed: ${error.message}`)
+          console.info(
+            `⚠️ Content verification failed: ${error instanceof Error ? error.message : String(error)}`
+          )
         }
 
         editorFound = true
@@ -151,7 +155,7 @@ test.describe('Markdown Editor', () => {
             shortcutsWorking = true
           } catch (error) {
             console.info(
-              `⚠️ Shortcut ${shortcut.keys.join('+')} not available: ${error.message}`
+              `⚠️ Shortcut ${shortcut.keys.join('+')} not available: ${error instanceof Error ? error.message : String(error)}`
             )
           }
         }
