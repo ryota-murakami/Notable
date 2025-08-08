@@ -108,14 +108,20 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
 
   // Command handlers
   const handleNewNote = useCallback(async () => {
-    // Check if we should bypass template picker in tests - use API_MOCKING as the indicator
+    // Check if we should force template picker (for specific tests)
+    const forceTemplatePicker =
+      typeof window !== 'undefined' &&
+      window.sessionStorage.getItem('forceTemplatePicker') === 'true'
+
+    // Check if we should bypass template picker (for most E2E tests)
     const bypassTemplatePicker =
       process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' ||
+      process.env.NEXT_PUBLIC_BYPASS_TEMPLATE_PICKER === 'true' ||
       (typeof window !== 'undefined' &&
-        window.sessionStorage.getItem('forceTemplatePicker') === 'true')
+        window.sessionStorage.getItem('bypassTemplatePicker') === 'true')
 
-    // Always show template picker unless bypassed (used by tests)
-    if (!bypassTemplatePicker) {
+    // Show template picker if forced OR if not bypassed (default behavior)
+    if (forceTemplatePicker || !bypassTemplatePicker) {
       setShowTemplatePicker(true)
     } else {
       // Create note directly when bypassed (used by tests)
