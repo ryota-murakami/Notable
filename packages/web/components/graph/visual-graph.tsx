@@ -1,31 +1,19 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+const { useCallback, useEffect, useMemo, useRef, useState } = React
 import dynamic from 'next/dynamic'
 import {
-  Download,
   Eye,
   EyeOff,
   Filter,
   Info,
-  Layers,
-  Link,
   Maximize2,
   Minimize2,
-  MousePointer,
-  Move3D,
   Pause,
-  Pin,
-  PinOff,
   Play,
   RotateCcw,
-  Search,
   Settings,
-  Share,
-  Trash2,
-  ZoomIn,
-  ZoomOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -34,13 +22,7 @@ import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Popover,
   PopoverContent,
@@ -485,18 +467,22 @@ export function VisualGraph({
     }
   }, [mode])
 
-  const focusNode = useCallback(
+  const _focusNode = useCallback(
     (nodeId: string) => {
       const node = filteredData.nodes.find((n) => n.id === nodeId)
       if (node && graphRef.current) {
         if (mode === '3d') {
           graphRef.current.cameraPosition(
-            { x: node.x! + 300, y: node.y! + 300, z: node.z! + 300 },
-            { x: node.x!, y: node.y!, z: node.z! },
+            {
+              x: (node.x ?? 0) + 300,
+              y: (node.y ?? 0) + 300,
+              z: (node.z ?? 0) + 300,
+            },
+            { x: node.x ?? 0, y: node.y ?? 0, z: node.z ?? 0 },
             1000
           )
         } else {
-          graphRef.current.centerAt(node.x!, node.y!, 1000)
+          graphRef.current.centerAt(node.x ?? 0, node.y ?? 0, 1000)
           graphRef.current.zoom(2, 1000)
         }
       }
@@ -529,8 +515,8 @@ export function VisualGraph({
       // Background
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
       ctx.fillRect(
-        node.x! - bckgDimensions[0] / 2,
-        node.y! - bckgDimensions[1] / 2,
+        (node.x ?? 0) - bckgDimensions[0] / 2,
+        (node.y ?? 0) - bckgDimensions[1] / 2,
         bckgDimensions[0],
         bckgDimensions[1]
       )
@@ -539,7 +525,7 @@ export function VisualGraph({
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillStyle = getNodeColor(node)
-      ctx.fillText(label, node.x!, node.y!)
+      ctx.fillText(label, node.x ?? 0, node.y ?? 0)
 
       // Store dimensions for pointer area
       ;(node as any).__bckgDimensions = bckgDimensions
@@ -553,8 +539,8 @@ export function VisualGraph({
       const bckgDimensions = (node as any).__bckgDimensions
       bckgDimensions &&
         ctx.fillRect(
-          node.x! - bckgDimensions[0] / 2,
-          node.y! - bckgDimensions[1] / 2,
+          (node.x ?? 0) - bckgDimensions[0] / 2,
+          (node.y ?? 0) - bckgDimensions[1] / 2,
           bckgDimensions[0],
           bckgDimensions[1]
         )
@@ -915,8 +901,11 @@ function FiltersPanel({
       </div>
 
       <div className='flex items-center justify-between'>
-        <label className='text-sm font-medium'>Show Isolated Nodes</label>
+        <label htmlFor='show-isolated-nodes' className='text-sm font-medium'>
+          Show Isolated Nodes
+        </label>
         <Switch
+          id='show-isolated-nodes'
           checked={filters.showIsolated}
           onCheckedChange={(checked) =>
             setFilters({ ...filters, showIsolated: checked })
@@ -925,10 +914,14 @@ function FiltersPanel({
       </div>
 
       <div>
-        <label className='text-sm font-medium mb-2 block'>
+        <label
+          htmlFor='min-connections-slider'
+          className='text-sm font-medium mb-2 block'
+        >
           Min Connections: {filters.minConnections}
         </label>
         <Slider
+          id='min-connections-slider'
           value={[filters.minConnections]}
           onValueChange={([value]) =>
             setFilters({ ...filters, minConnections: value })
@@ -939,10 +932,14 @@ function FiltersPanel({
       </div>
 
       <div>
-        <label className='text-sm font-medium mb-2 block'>
+        <label
+          htmlFor='min-strength-slider'
+          className='text-sm font-medium mb-2 block'
+        >
           Min Relationship Strength: {filters.minStrength}
         </label>
         <Slider
+          id='min-strength-slider'
           value={[filters.minStrength]}
           onValueChange={([value]) =>
             setFilters({ ...filters, minStrength: value })
@@ -953,10 +950,10 @@ function FiltersPanel({
       </div>
 
       {relationshipTypes.length > 0 && (
-        <div>
-          <label className='text-sm font-medium mb-2 block'>
+        <fieldset>
+          <legend className='text-sm font-medium mb-2 block'>
             Relationship Types
-          </label>
+          </legend>
           <div className='space-y-2 max-h-32 overflow-y-auto'>
             {relationshipTypes.map((type) => (
               <div key={type} className='flex items-center space-x-2'>
@@ -986,12 +983,14 @@ function FiltersPanel({
               </div>
             ))}
           </div>
-        </div>
+        </fieldset>
       )}
 
       {communities.length > 0 && (
-        <div>
-          <label className='text-sm font-medium mb-2 block'>Communities</label>
+        <fieldset>
+          <legend className='text-sm font-medium mb-2 block'>
+            Communities
+          </legend>
           <div className='space-y-2 max-h-32 overflow-y-auto'>
             {communities.map((community) => (
               <div key={community} className='flex items-center space-x-2'>
@@ -1021,7 +1020,7 @@ function FiltersPanel({
               </div>
             ))}
           </div>
-        </div>
+        </fieldset>
       )}
     </div>
   )
@@ -1044,9 +1043,9 @@ function SettingsPanel({
 
       <TabsContent value='visual' className='space-y-4 mt-4'>
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Node Size: {settings.visual.nodeSize}
-          </label>
+          </div>
           <Slider
             value={[settings.visual.nodeSize]}
             onValueChange={([value]) =>
@@ -1062,9 +1061,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Link Width: {settings.visual.linkWidth}
-          </label>
+          </div>
           <Slider
             value={[settings.visual.linkWidth]}
             onValueChange={([value]) =>
@@ -1080,8 +1079,11 @@ function SettingsPanel({
         </div>
 
         <div className='flex items-center justify-between'>
-          <label className='text-sm font-medium'>Show Labels</label>
+          <label htmlFor='show-labels' className='text-sm font-medium'>
+            Show Labels
+          </label>
           <Switch
+            id='show-labels'
             checked={settings.visual.showLabels}
             onCheckedChange={(checked) =>
               setSettings({
@@ -1093,7 +1095,10 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <label
+            htmlFor='node-color'
+            className='text-sm font-medium mb-2 block'
+          >
             Node Coloring
           </label>
           <Select
@@ -1118,7 +1123,10 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <label
+            htmlFor='link-color'
+            className='text-sm font-medium mb-2 block'
+          >
             Link Coloring
           </label>
           <Select
@@ -1144,8 +1152,11 @@ function SettingsPanel({
 
       <TabsContent value='physics' className='space-y-4 mt-4'>
         <div className='flex items-center justify-between'>
-          <label className='text-sm font-medium'>Enable Physics</label>
+          <label htmlFor='enable-physics' className='text-sm font-medium'>
+            Enable Physics
+          </label>
           <Switch
+            id='enable-physics'
             checked={settings.physics.enabled}
             onCheckedChange={(checked) =>
               setSettings({
@@ -1157,9 +1168,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Force Strength: {settings.physics.strength}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.strength]}
             onValueChange={([value]) =>
@@ -1175,9 +1186,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Link Distance: {settings.physics.distance}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.distance]}
             onValueChange={([value]) =>
@@ -1193,9 +1204,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Collision Radius: {settings.physics.collisionRadius}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.collisionRadius]}
             onValueChange={([value]) =>
@@ -1211,9 +1222,9 @@ function SettingsPanel({
         </div>
 
         <div>
-          <label className='text-sm font-medium mb-2 block'>
+          <div className='text-sm font-medium mb-2 block'>
             Damping: {settings.physics.damping}
-          </label>
+          </div>
           <Slider
             value={[settings.physics.damping]}
             onValueChange={([value]) =>
@@ -1231,8 +1242,11 @@ function SettingsPanel({
 
       <TabsContent value='interaction' className='space-y-4 mt-4'>
         <div className='flex items-center justify-between'>
-          <label className='text-sm font-medium'>Enable Drag</label>
+          <label htmlFor='enable-drag' className='text-sm font-medium'>
+            Enable Drag
+          </label>
           <Switch
+            id='enable-drag'
             checked={settings.interaction.enableDrag}
             onCheckedChange={(checked) =>
               setSettings({
@@ -1244,8 +1258,11 @@ function SettingsPanel({
         </div>
 
         <div className='flex items-center justify-between'>
-          <label className='text-sm font-medium'>Enable Zoom</label>
+          <label htmlFor='enable-zoom' className='text-sm font-medium'>
+            Enable Zoom
+          </label>
           <Switch
+            id='enable-zoom'
             checked={settings.interaction.enableZoom}
             onCheckedChange={(checked) =>
               setSettings({
@@ -1257,8 +1274,11 @@ function SettingsPanel({
         </div>
 
         <div className='flex items-center justify-between'>
-          <label className='text-sm font-medium'>Enable Pan</label>
+          <label htmlFor='enable-pan' className='text-sm font-medium'>
+            Enable Pan
+          </label>
           <Switch
+            id='enable-pan'
             checked={settings.interaction.enablePan}
             onCheckedChange={(checked) =>
               setSettings({
@@ -1270,8 +1290,11 @@ function SettingsPanel({
         </div>
 
         <div className='flex items-center justify-between'>
-          <label className='text-sm font-medium'>Enable Hover</label>
+          <label htmlFor='enable-hover' className='text-sm font-medium'>
+            Enable Hover
+          </label>
           <Switch
+            id='enable-hover'
             checked={settings.interaction.enableHover}
             onCheckedChange={(checked) =>
               setSettings({

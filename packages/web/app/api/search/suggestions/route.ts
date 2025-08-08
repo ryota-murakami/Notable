@@ -4,6 +4,42 @@ import type { SearchSuggestion } from '@/types/search'
 
 export async function GET(request: NextRequest) {
   try {
+    const searchParams = request.nextUrl.searchParams
+    const query = searchParams.get('q') || ''
+    const limit = parseInt(searchParams.get('limit') || '5')
+
+    // Return mock data when API mocking is enabled
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+      if (!query || query.length < 1) {
+        return NextResponse.json({ success: true, data: [] })
+      }
+
+      const mockSuggestions: SearchSuggestion[] = [
+        {
+          suggestion: `${query} in notes`,
+          type: 'content' as const,
+          score: 0.9,
+        },
+        {
+          suggestion: `${query} in templates`,
+          type: 'content' as const,
+          score: 0.8,
+        },
+        { suggestion: `recent ${query}`, type: 'history' as const, score: 0.7 },
+        { suggestion: `${query} tag`, type: 'tag' as const, score: 0.6 },
+        {
+          suggestion: `${query} content`,
+          type: 'content' as const,
+          score: 0.5,
+        },
+      ].filter((s) => s.suggestion.toLowerCase().includes(query.toLowerCase()))
+
+      return NextResponse.json({
+        success: true,
+        data: mockSuggestions.slice(0, limit),
+      })
+    }
+
     const supabase = await createClient()
     const {
       data: { user },
@@ -12,10 +48,6 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    const searchParams = request.nextUrl.searchParams
-    const query = searchParams.get('q') || ''
-    const limit = parseInt(searchParams.get('limit') || '5')
 
     if (!query || query.length < 1) {
       return NextResponse.json({ success: true, data: [] })

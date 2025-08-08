@@ -1,8 +1,18 @@
 import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from '@/types/database'
 import { env } from '@/env'
+import { createMockSupabaseClient } from './test-client'
 
 export function createClient() {
+  // Return mock client for tests
+  if (
+    process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' &&
+    typeof window !== 'undefined' &&
+    document.cookie.includes('dev-auth-bypass=true')
+  ) {
+    return createMockSupabaseClient()
+  }
+
   // Handle missing environment variables gracefully
   const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = env.NEXT_PUBLIC_SUPABASE_ANON_KEY

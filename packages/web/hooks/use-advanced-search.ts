@@ -1,14 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDebounce } from './use-debounce'
-import type {
-  SavedSearch,
-  SearchFilters,
-  SearchQuery,
-  SearchResult,
-  SearchSuggestion,
-} from '@/types/search'
-import { SEARCH_CONSTANTS } from '@/types/search'
+import { type SavedSearch, SEARCH_CONSTANTS, type SearchFilters, type SearchQuery, type SearchSuggestion } from '@/types/search'
 
 // Search for notes
 export function useAdvancedSearch(initialQuery: string = '') {

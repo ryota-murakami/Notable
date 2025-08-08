@@ -4,10 +4,11 @@
 
 import { createQueryClient, queryConfigs, queryKeys } from '@/lib/react-query'
 import { QueryClient } from '@tanstack/react-query'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the toast hook to avoid import issues in tests
-jest.mock('@/hooks/use-toast', () => ({
-  toast: jest.fn(),
+vi.mock('@/hooks/use-toast', () => ({
+  toast: vi.fn(),
 }))
 
 describe('React Query Configuration', () => {

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '../utils/theme'
-import { motion, type MotionProps } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 export interface ButtonProps
   extends Omit<React.ComponentProps<typeof motion.button>, 'children'> {

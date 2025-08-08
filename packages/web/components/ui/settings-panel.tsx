@@ -4,26 +4,26 @@ import * as React from 'react'
 import { cn } from '../../lib/utils'
 import { Button } from '../../design-system/components/button'
 import {
+  ModalFooter as _ModalFooter,
   Modal,
   ModalBody,
-  ModalFooter,
   ModalHeader,
   ModalTitle,
 } from '../../design-system/components/modal'
 import {
+  DatabaseIcon as _DatabaseIcon,
+  HelpCircleIcon as _HelpCircleIcon,
+  ShieldIcon as _ShieldIcon,
+  SmartphoneIcon as _SmartphoneIcon,
+  UserIcon as _UserIcon,
+  XIcon as _XIcon,
   BellIcon,
-  DatabaseIcon,
-  HelpCircleIcon,
   KeyboardIcon,
   MonitorIcon,
   MoonIcon,
   PaletteIcon,
   SettingsIcon,
-  ShieldIcon,
-  SmartphoneIcon,
   SunIcon,
-  UserIcon,
-  XIcon,
 } from 'lucide-react'
 
 export interface SettingsSection {
@@ -175,7 +175,7 @@ export function ThemeSettings({
 
         <div className='space-y-4'>
           <div>
-            <label className='text-sm font-medium mb-3 block'>Theme</label>
+            <div className='text-sm font-medium mb-3 block'>Theme</div>
             <div className='grid grid-cols-3 gap-3'>
               {themes.map((theme) => (
                 <button
@@ -197,9 +197,9 @@ export function ThemeSettings({
 
           {customColors && (
             <div>
-              <label className='text-sm font-medium mb-3 block'>
+              <div className='text-sm font-medium mb-3 block'>
                 Accent Color
-              </label>
+              </div>
               <div className='grid grid-cols-6 gap-2'>
                 {Object.entries(customColors).map(([name, color]) => (
                   <button

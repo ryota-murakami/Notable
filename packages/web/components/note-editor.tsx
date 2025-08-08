@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNote } from '@/hooks/use-note'
 import { Spinner } from '@/components/ui/spinner'
 
@@ -8,7 +8,7 @@ interface NoteEditorProps {
   noteId: string
 }
 
-export function NoteEditor({ noteId }: NoteEditorProps) {
+const NoteEditor = React.memo(({ noteId }: NoteEditorProps) => {
   const { note, loading, updateNote } = useNote(noteId)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -47,7 +47,8 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
         <div className='text-center'>
           <h3 className='text-lg font-semibold mb-2'>Note not found</h3>
           <p className='text-muted-foreground'>
-            The note you're looking for doesn't exist or has been deleted.
+            The note you&apos;re looking for doesn&apos;t exist or has been
+            deleted.
           </p>
         </div>
       </div>
@@ -72,4 +73,8 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
       </div>
     </div>
   )
-}
+})
+
+NoteEditor.displayName = 'NoteEditor'
+
+export { NoteEditor }

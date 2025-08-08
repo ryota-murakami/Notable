@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { Database } from './database'
 import type { EnhancedTag } from './tags'
 
@@ -12,6 +13,9 @@ export interface SearchResult {
   rank: number
   headline_title: string
   headline_content: string
+  folder_id?: string | null
+  folder_name?: string | null
+  type?: 'note'
 }
 
 // Search filters
@@ -22,6 +26,7 @@ export interface SearchFilters {
   noteTypes?: string[]
   status?: 'all' | 'published' | 'draft' | 'archived'
   linkedTo?: string // Note ID to search within linked notes
+  folders?: string[]
 }
 
 // Search query types

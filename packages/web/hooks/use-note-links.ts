@@ -13,27 +13,14 @@ export function useNoteLinks(noteId: string) {
   return useQuery({
     queryKey: ['note-links', noteId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('note_links')
-        .select(
-          `
-          *,
-          to_note:notes!to_note_id(id, title),
-          from_note:notes!from_note_id(id, title)
-        `
-        )
-        .or(`from_note_id.eq.${noteId},to_note_id.eq.${noteId}`)
-        .order('created_at', { ascending: false })
+      const response = await fetch(`/api/notes/${noteId}/links`)
 
-      if (error) throw error
+      if (!response.ok) {
+        throw new Error('Failed to fetch note links')
+      }
 
-      // Separate outgoing and incoming links
-      const outgoingLinks =
-        data?.filter((link: any) => link.from_note_id === noteId) || []
-      const backlinks =
-        data?.filter((link: any) => link.to_note_id === noteId) || []
-
-      return { outgoingLinks, backlinks, allLinks: data || [] }
+      const data = await response.json()
+      return data
     },
     enabled: !!noteId,
   })
@@ -48,10 +35,11 @@ export function useCreateNoteLink() {
         .from('note_links')
         .insert(link)
         .select()
-        .single()
 
       if (error) throw error
-      return data
+      const newLink = data?.[0]
+      if (!newLink) throw new Error('Failed to create note link')
+      return newLink
     },
     onSuccess: (data) => {
       // Invalidate queries for both notes involved in the link

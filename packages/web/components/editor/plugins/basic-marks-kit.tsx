@@ -1,68 +1,38 @@
 'use client'
 
 import { createPlatePlugin } from 'platejs/react'
+import {
+  BoldPlugin as BaseBoldPlugin,
+  CodePlugin as BaseCodePlugin,
+  ItalicPlugin as BaseItalicPlugin,
+  StrikethroughPlugin as BaseStrikethroughPlugin,
+  SubscriptPlugin as BaseSubscriptPlugin,
+  SuperscriptPlugin as BaseSuperscriptPlugin,
+  UnderlinePlugin as BaseUnderlinePlugin,
+} from '@udecode/plate-basic-marks/react'
 
 import { CodeLeaf } from '@/components/ui/code-node'
 import { HighlightLeaf } from '@/components/ui/highlight-node'
 import { KbdLeaf } from '@/components/ui/kbd-node'
 
-// Text Mark Plugins with proper v49 configuration
-const BoldPlugin = createPlatePlugin({
-  key: 'bold',
-  node: {
-    isLeaf: true,
-    type: 'bold',
-  },
-})
+// Text Mark Plugins - using direct plugin instances with extensions for components
+const BoldPlugin = BaseBoldPlugin
 
-const ItalicPlugin = createPlatePlugin({
-  key: 'italic',
-  node: {
-    isLeaf: true,
-    type: 'italic',
-  },
-})
+const ItalicPlugin = BaseItalicPlugin
 
-const UnderlinePlugin = createPlatePlugin({
-  key: 'underline',
-  node: {
-    isLeaf: true,
-    type: 'underline',
-  },
-})
+const UnderlinePlugin = BaseUnderlinePlugin
 
-const CodePlugin = createPlatePlugin({
-  key: 'code',
+const CodePlugin = BaseCodePlugin.extend({
   node: {
-    isLeaf: true,
-    type: 'code',
     component: CodeLeaf,
   },
 })
 
-const StrikethroughPlugin = createPlatePlugin({
-  key: 'strikethrough',
-  node: {
-    isLeaf: true,
-    type: 'strikethrough',
-  },
-})
+const StrikethroughPlugin = BaseStrikethroughPlugin
 
-const SubscriptPlugin = createPlatePlugin({
-  key: 'subscript',
-  node: {
-    isLeaf: true,
-    type: 'subscript',
-  },
-})
+const SubscriptPlugin = BaseSubscriptPlugin
 
-const SuperscriptPlugin = createPlatePlugin({
-  key: 'superscript',
-  node: {
-    isLeaf: true,
-    type: 'superscript',
-  },
-})
+const SuperscriptPlugin = BaseSuperscriptPlugin
 
 const HighlightPlugin = createPlatePlugin({
   key: 'highlight',

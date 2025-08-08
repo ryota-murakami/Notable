@@ -4,9 +4,9 @@ const createServerLogger = () => ({
   warn: (message: string, metadata?: any) => console.warn(message, metadata),
   info: (message: string, metadata?: any) => console.info(message, metadata),
   debug: (message: string, metadata?: any) => console.debug(message, metadata),
-  verbose: (message: string, metadata?: any) => console.log(message, metadata),
+  verbose: (message: string, metadata?: any) => console.info(message, metadata),
   log: (level: string, message: string, metadata?: any) =>
-    console.log(`[${level}]`, message, metadata),
+    console.info(`[${level}]`, message, metadata),
 })
 import { createClientLogger } from './client'
 
@@ -99,7 +99,7 @@ export function logPerformance(
   }
 
   if (isServerSide()) {
-    console.log(`[${level}] ${message}`, data)
+    console.info(`[${level}] ${message}`, data)
   }
 }
 
@@ -142,7 +142,7 @@ export function logUserAction(
   }
 
   if (isServerSide()) {
-    console.log(`[${LogLevel.INFO}] ${message}`, data)
+    console.info(`[${LogLevel.INFO}] ${message}`, data)
   }
 }
 

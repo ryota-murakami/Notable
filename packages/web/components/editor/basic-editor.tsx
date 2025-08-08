@@ -18,6 +18,8 @@ import {
   withReact,
 } from 'slate-react'
 import { type HistoryEditor, withHistory } from 'slate-history'
+import { withWikiLinks } from './plugins/wiki-link-plugin'
+import { WikiLinkElement } from './wiki-link-element'
 import { Toggle } from '../ui/toggle'
 import { Separator } from '../ui/separator'
 import {
@@ -47,6 +49,13 @@ type CustomElement =
   | { type: 'bulleted-list'; children: CustomElement[] }
   | { type: 'numbered-list'; children: CustomElement[] }
   | { type: 'list-item'; children: CustomText[] }
+  | {
+      type: 'wiki-link'
+      noteId?: string
+      noteTitle: string
+      url: string
+      children: CustomText[]
+    }
 
 type CustomText = {
   text: string
@@ -168,6 +177,12 @@ const Element = ({ attributes, children, element }: RenderElementProps) => {
           {children}
         </ol>
       )
+    case 'wiki-link':
+      return (
+        <WikiLinkElement attributes={attributes} element={element}>
+          {children}
+        </WikiLinkElement>
+      )
     default:
       return (
         <p {...attributes} className='my-2'>
@@ -233,6 +248,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'bold')}
           onPressedChange={() => toggleMark(editor, 'bold')}
           aria-label='Bold'
+          data-testid='bold-button'
         >
           <Bold className='h-4 w-4' />
         </Toggle>
@@ -241,6 +257,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'italic')}
           onPressedChange={() => toggleMark(editor, 'italic')}
           aria-label='Italic'
+          data-testid='italic-button'
         >
           <Italic className='h-4 w-4' />
         </Toggle>
@@ -249,6 +266,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'underline')}
           onPressedChange={() => toggleMark(editor, 'underline')}
           aria-label='Underline'
+          data-testid='underline-button'
         >
           <Underline className='h-4 w-4' />
         </Toggle>
@@ -257,6 +275,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'strikethrough')}
           onPressedChange={() => toggleMark(editor, 'strikethrough')}
           aria-label='Strikethrough'
+          data-testid='strikethrough-button'
         >
           <Strikethrough className='h-4 w-4' />
         </Toggle>
@@ -265,6 +284,7 @@ const Toolbar = ({
           pressed={isMarkActive(editor, 'code')}
           onPressedChange={() => toggleMark(editor, 'code')}
           aria-label='Code'
+          data-testid='code-button'
         >
           <Code className='h-4 w-4' />
         </Toggle>
@@ -279,6 +299,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'heading-one')}
           onPressedChange={() => toggleBlock(editor, 'heading-one')}
           aria-label='Heading 1'
+          data-testid='heading-1'
         >
           <Heading1 className='h-4 w-4' />
         </Toggle>
@@ -287,6 +308,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'heading-two')}
           onPressedChange={() => toggleBlock(editor, 'heading-two')}
           aria-label='Heading 2'
+          data-testid='heading-2'
         >
           <Heading2 className='h-4 w-4' />
         </Toggle>
@@ -295,6 +317,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'heading-three')}
           onPressedChange={() => toggleBlock(editor, 'heading-three')}
           aria-label='Heading 3'
+          data-testid='heading-3'
         >
           <Heading3 className='h-4 w-4' />
         </Toggle>
@@ -303,6 +326,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'block-quote')}
           onPressedChange={() => toggleBlock(editor, 'block-quote')}
           aria-label='Quote'
+          data-testid='quote-button'
         >
           <Quote className='h-4 w-4' />
         </Toggle>
@@ -311,6 +335,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'bulleted-list')}
           onPressedChange={() => toggleBlock(editor, 'bulleted-list')}
           aria-label='Bullet List'
+          data-testid='bulleted-list'
         >
           <List className='h-4 w-4' />
         </Toggle>
@@ -319,6 +344,7 @@ const Toolbar = ({
           pressed={isBlockActive(editor, 'numbered-list')}
           onPressedChange={() => toggleBlock(editor, 'numbered-list')}
           aria-label='Numbered List'
+          data-testid='numbered-list'
         >
           <ListOrdered className='h-4 w-4' />
         </Toggle>
@@ -357,7 +383,13 @@ export function BasicEditor({
     (props: RenderLeafProps) => <Leaf {...props} />,
     []
   )
-  const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+
+  const editor = useMemo(
+    () =>
+      withWikiLinks(withHistory(withReact(createEditor()))) as ReactEditor &
+        HistoryEditor,
+    []
+  )
 
   return (
     <Slate editor={editor} initialValue={initialValue} onChange={onChange}>
@@ -381,6 +413,7 @@ export function BasicEditor({
             'selection:bg-primary/20',
             readOnly && 'cursor-text select-text'
           )}
+          data-testid='note-content-textarea'
         />
       </div>
     </Slate>

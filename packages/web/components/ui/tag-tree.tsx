@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useTagManager, useTagTree } from '@/hooks/use-tags'
+import { useTagManager as _useTagManager, useTagTree } from '@/hooks/use-tags'
 import type { EnhancedTag } from '@/types/tags'
 
 export interface TagTreeProps {
@@ -89,6 +89,7 @@ const TagTree: React.FC<TagTreeProps> = ({
           'flex items-center justify-center py-8 text-muted-foreground',
           className
         )}
+        data-testid='tag-tree'
       >
         <div className='text-center'>
           <Hash className='mx-auto h-8 w-8 mb-2 opacity-50' />
@@ -110,7 +111,7 @@ const TagTree: React.FC<TagTreeProps> = ({
   }
 
   return (
-    <div className={cn('space-y-1', className)}>
+    <div className={cn('space-y-1', className)} data-testid='tag-tree'>
       {tags.map((tag) => (
         <TagTreeNode
           key={tag.id}
@@ -195,6 +196,16 @@ const TagTreeNode: React.FC<TagTreeNodeProps> = ({
         )}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={handleNodeClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleNodeClick()
+          }
+        }}
+        tabIndex={clickable ? 0 : -1}
+        role={clickable ? 'treeitem' : 'none'}
+        aria-label={`Tag: ${tag.name}`}
+        data-testid={`tag-tree-item-${tag.name}`}
       >
         {/* Expand/collapse button */}
         <button
@@ -275,7 +286,7 @@ const TagTreeNode: React.FC<TagTreeNodeProps> = ({
       {/* Child nodes */}
       {canExpand && isExpanded && hasChildren && (
         <div className='space-y-1'>
-          {tag.children!.map((childTag) => (
+          {(tag.children ?? []).map((childTag) => (
             <TagTreeNode
               key={childTag.id}
               tag={childTag}

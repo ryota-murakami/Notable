@@ -19,6 +19,14 @@ export class SlateToReactConverter {
     return { component, types }
   }
 
+  convertToSingleFileTypeScript(
+    nodes: Descendant[],
+    componentName: string = 'ExportedNote'
+  ): string {
+    const jsxContent = this.nodesToJSX(nodes)
+    return this.wrapInSingleFileTypescriptComponent(jsxContent, componentName)
+  }
+
   private nodesToJSX(nodes: Descendant[]): string {
     return nodes.map((node) => this.nodeToJSX(node)).join('\n')
   }
@@ -127,6 +135,37 @@ export default ${componentName};`
   ): string {
     return `import React from 'react';
 import type { ${componentName}Props } from './${componentName}.types';
+
+const ${componentName}: React.FC<${componentName}Props> = ({
+  className,
+  style,
+  onContentClick,
+}) => {
+  return (
+    <div 
+      className={\`exported-note \${className || ''}\`}
+      style={style}
+      onClick={onContentClick}
+    >
+${content}
+    </div>
+  );
+};
+
+export default ${componentName};`
+  }
+
+  private wrapInSingleFileTypescriptComponent(
+    content: string,
+    componentName: string
+  ): string {
+    return `import React, { CSSProperties, MouseEventHandler } from 'react';
+
+interface ${componentName}Props {
+  className?: string;
+  style?: CSSProperties;
+  onContentClick?: MouseEventHandler<HTMLDivElement>;
+}
 
 const ${componentName}: React.FC<${componentName}Props> = ({
   className,

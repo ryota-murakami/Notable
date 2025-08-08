@@ -1,26 +1,27 @@
 'use client'
 
 import * as React from 'react'
-import { LogOut, Settings, User } from 'lucide-react'
+import { LogOut, Settings } from 'lucide-react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useRouter } from 'next/navigation'
 import { cn } from '../lib/utils'
 import { toast } from 'sonner'
 import { createClient } from '@/utils/supabase/client'
-import { createMockUser } from '@/utils/test-helpers'
+
 import type { User as SupabaseUser } from '@supabase/supabase-js'
-import { isTest } from '../lib/utils/environment'
 
 interface UserMenuProps {
   className?: string
 }
 
-export function UserMenu({ className }: UserMenuProps) {
+const UserMenu = React.memo(({ className }: UserMenuProps) => {
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
   const [user, setUser] = React.useState<SupabaseUser | null>(null)
   const [loading, setLoading] = React.useState(true)
-  const supabase = createClient()
+
+  // Memoize the supabase client to prevent recreating it on every render
+  const supabase = React.useMemo(() => createClient(), [])
 
   React.useEffect(() => {
     // Get initial user
@@ -82,6 +83,9 @@ export function UserMenu({ className }: UserMenuProps) {
       document.cookie =
         'dev-auth-bypass=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
 
+      // Clear all localStorage data
+      localStorage.clear()
+
       toast.success('Logged out successfully', {
         description: 'You have been logged out of your account.',
       })
@@ -101,14 +105,8 @@ export function UserMenu({ className }: UserMenuProps) {
     toast.info('Settings page coming soon!')
   }
 
-  // Create mock user for testing when dev-auth-bypass is enabled
-  const testMode = isTest()
-  const mockUser: SupabaseUser | null = testMode && !user ? createMockUser() : null
-
-  const currentUser = user || mockUser
-
-  // Don't render if loading or no user (and not in test mode)
-  if (loading || (!currentUser && !testMode)) {
+  // Don't render if loading or no user
+  if (loading || !user) {
     return null
   }
 
@@ -123,7 +121,7 @@ export function UserMenu({ className }: UserMenuProps) {
           aria-label='User menu'
           data-testid='user-menu-trigger'
         >
-          <span className='text-sm font-semibold'>{getInitials(currentUser)}</span>
+          <span className='text-sm font-semibold'>{getInitials(user)}</span>
         </button>
       </DropdownMenu.Trigger>
 
@@ -135,13 +133,13 @@ export function UserMenu({ className }: UserMenuProps) {
         >
           <div className='px-2 py-1.5'>
             <p className='text-sm font-semibold'>
-              {currentUser?.user_metadata?.full_name ||
-                currentUser?.user_metadata?.name ||
-                currentUser?.email ||
+              {user?.user_metadata?.full_name ||
+                user?.user_metadata?.name ||
+                user?.email ||
                 'User'}
             </p>
             <p className='text-xs text-muted-foreground'>
-              {currentUser?.email || 'No email'}
+              {user?.email || 'No email'}
             </p>
           </div>
 
@@ -168,4 +166,8 @@ export function UserMenu({ className }: UserMenuProps) {
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   )
-}
+})
+
+UserMenu.displayName = 'UserMenu'
+
+export { UserMenu }

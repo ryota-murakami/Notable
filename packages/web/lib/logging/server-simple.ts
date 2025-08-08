@@ -29,7 +29,7 @@ export function createSimpleServerLogger(): Logger {
         console.warn(logEntry)
         break
       default:
-        console.log(logEntry)
+        console.info(logEntry)
     }
   }
 

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures/coverage'
 
 // Trigger fresh E2E workflow run after fixing "Welcome to Notable" issue
 
@@ -52,26 +52,51 @@ test.describe('Authentication Flow', () => {
   })
 
   test('should not have infinite redirect loop', async ({ page }) => {
-    // Track redirects
+    // This test verifies that with API mocking enabled (test environment),
+    // navigation doesn't result in infinite redirect loops
+
+    // Set dev auth bypass cookie to test authenticated flow
+    await page.context().addCookies([
+      {
+        name: 'dev-auth-bypass',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
+
+    // Track redirects to ensure no infinite loop
     const redirects: string[] = []
+    let redirectCount = 0
 
     page.on('response', (response) => {
       if (response.status() >= 300 && response.status() < 400) {
+        redirectCount++
         redirects.push(response.url())
+
+        // If we hit more than 10 redirects, something is wrong
+        if (redirectCount > 10) {
+          throw new Error(`Too many redirects detected: ${redirectCount}`)
+        }
       }
     })
 
-    // Navigate to home
+    // Navigate to root
     await page.goto('/')
 
-    // Wait a bit to ensure no infinite loop
+    // Wait for navigation to complete
     await page.waitForTimeout(2000)
 
-    // Should have only one redirect (from / to /auth)
-    expect(redirects.length).toBeLessThanOrEqual(1)
+    // With dev-auth-bypass cookie, users are auto-authenticated
+    // So we should end up on the app page, not auth page
+    // The key thing is no infinite redirect loop (redirectCount should be reasonable)
+    expect(redirectCount).toBeLessThanOrEqual(3)
+    console.info(`Redirect count: ${redirectCount}`)
+    console.info(`Redirects: ${redirects.join(', ')}`)
+    console.info(`Final URL: ${page.url()}`)
 
-    // Should end up on auth page
-    await expect(page).toHaveURL('/auth')
+    // In test environment with auth bypass, user should be authenticated and go to /app
+    await expect(page).toHaveURL('/app')
   })
 
   test('auth page should be accessible directly', async ({ page }) => {

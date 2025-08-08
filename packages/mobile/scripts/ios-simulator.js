@@ -26,7 +26,7 @@ class IOSSimulatorManager {
     console.log(`${colors[color]}${message}${colors.reset}`)
   }
 
-  async checkRequirements() {
+  checkRequirements() {
     try {
       execSync('which xcrun', { stdio: 'ignore' })
       return true

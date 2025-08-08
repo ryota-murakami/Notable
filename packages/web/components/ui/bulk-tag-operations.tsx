@@ -20,10 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
+import { Badge as _Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { TagInput } from '@/components/ui/tag-input'
-import { TagBadge } from '@/components/ui/tag-badge'
+import { TagBadge as _TagBadge } from '@/components/ui/tag-badge'
 import { useTagManager, useTags } from '@/hooks/use-tags'
 import type { BulkTagOperation, BulkTagResult, EnhancedTag } from '@/types/tags'
 
@@ -70,8 +70,8 @@ const BulkTagOperations: React.FC<BulkTagOperationsProps> = ({
     error: null,
   })
 
-  const { data: availableTags = [] } = useTags()
-  const { parseAndCreateTags } = useTagManager()
+  const { data: _availableTags = [] } = useTags()
+  const { parseAndCreateTags: _parseAndCreateTags } = useTagManager()
 
   // Reset state when dialog opens/closes
   React.useEffect(() => {
@@ -198,9 +198,9 @@ const BulkTagOperations: React.FC<BulkTagOperationsProps> = ({
         <div className='space-y-6'>
           {/* Operation Type Selection */}
           <div>
-            <label className='text-sm font-medium mb-2 block'>
+            <div className='text-sm font-medium mb-2 block'>
               Operation Type
-            </label>
+            </div>
             <Select
               value={state.type}
               onValueChange={handleOperationTypeChange}
@@ -237,13 +237,13 @@ const BulkTagOperations: React.FC<BulkTagOperationsProps> = ({
 
           {/* Tag Selection */}
           <div>
-            <label className='text-sm font-medium mb-2 block'>
+            <div className='text-sm font-medium mb-2 block'>
               {state.type === 'add'
                 ? 'Tags to Add'
                 : state.type === 'remove'
                   ? 'Tags to Remove'
                   : 'New Tags (will replace all existing tags)'}
-            </label>
+            </div>
             <TagInput
               tags={state.tags}
               onTagsChange={handleTagsChange}

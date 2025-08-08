@@ -9,6 +9,8 @@ export interface NotesQueryParams {
   offset?: number
   search?: string
   folder_id?: string | null
+  sort_by?: string
+  sort_order?: 'asc' | 'desc'
 }
 
 export interface NotesResponse {

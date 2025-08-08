@@ -6,7 +6,6 @@ import {
   useSimpleNavigation,
   useSimpleNavigationState,
 } from '@notable/routing/src/simple-store'
-import { isTest } from '../lib/utils/environment'
 
 /**
  * Hook for web-specific routing functionality
@@ -15,31 +14,6 @@ import { isTest } from '../lib/utils/environment'
 export function useRouting() {
   const navigation = useSimpleNavigation()
   const currentRoute = useSimpleCurrentRoute()
-  const isTestMode = isTest()
-
-  if (isTestMode) {
-    return {
-      // Navigation actions (no-ops in test mode)
-      navigate: () => {},
-      replace: () => {},
-      goBack: () => {},
-      goForward: () => {},
-      reset: () => {},
-
-      // Current state (mock values)
-      current: null,
-      history: [],
-      state: 'idle',
-
-      // Route metadata (mock values)
-      auth: { isAuthenticated: true, isLoading: false },
-      title: 'Test Mode',
-      breadcrumb: [],
-
-      // Route definitions for reference
-      routes: ROUTES,
-    }
-  }
   
   // Mock auth, title, and breadcrumb for now - we can implement these later
   const auth = { requiresAuth: false, isPublic: true }
@@ -74,11 +48,6 @@ export function useRouting() {
  */
 export function useCurrentRouteInfo() {
   const currentRoute = useSimpleCurrentRoute()
-  const isTestMode = isTest()
-
-  if (isTestMode) {
-    return null
-  }
 
   return currentRoute
 }
@@ -88,11 +57,6 @@ export function useCurrentRouteInfo() {
  */
 export function useNavigationHistoryWeb() {
   const navigation = useSimpleNavigation()
-  const isTestMode = isTest()
-
-  if (isTestMode) {
-    return []
-  }
 
   return navigation.history
 }
@@ -102,11 +66,6 @@ export function useNavigationHistoryWeb() {
  */
 export function useNavigationStateWeb() {
   const navState = useSimpleNavigationState()
-  const isTestMode = isTest()
-
-  if (isTestMode) {
-    return 'idle'
-  }
 
   return navState
 }
@@ -116,17 +75,6 @@ export function useNavigationStateWeb() {
  */
 export function useNavigationActions() {
   const navigation = useSimpleNavigation()
-  const isTestMode = isTest()
-
-  if (isTestMode) {
-    return {
-      navigate: () => {},
-      replace: () => {},
-      goBack: () => {},
-      goForward: () => {},
-      reset: () => {},
-    }
-  }
 
   return {
     navigate: navigation.navigate,

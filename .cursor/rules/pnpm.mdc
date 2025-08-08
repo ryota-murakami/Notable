@@ -1,7 +1,0 @@
-# Package Manager
-
-This project uses `pnpm` as the package manager.
-
-- To install dependencies, run: `pnpm install`
-- To add a new dependency, run: `pnpm add <package-name>`
-- To run a script, use: `pnpm <script-name>`

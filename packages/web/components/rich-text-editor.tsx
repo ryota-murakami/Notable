@@ -4,40 +4,51 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { BasicEditor } from '@/components/editor/basic-editor'
+import { EnhancedPlateEditorClient } from '@/components/editor/enhanced-plate-editor-client'
 import { TagInput } from '@/components/ui/tag-input'
 import { TagList } from '@/components/ui/tag-badge'
 import { TemplatePicker } from '@/components/templates/template-picker'
 import { TemplateVariableForm } from '@/components/templates/template-variable-form'
+import { ExportButton } from '@/components/export/export-button'
+import { NoteActions } from '@/components/note-actions'
+import { BacklinksPanel } from '@/components/backlinks-panel'
+import { EnhancedAIToolbar } from '@/components/ai/enhanced-ai-toolbar'
+import { VersionHistoryButton } from '@/components/ui/version-history-button'
 import { TemplateEngine } from '@/lib/templates/engine'
-import { markdownToSlate } from '@/lib/slate/markdown-to-slate'
+import { markdownToPlate } from '@/lib/plate/markdown-to-plate'
 import {
   useAddTagsToNote,
   useNoteTags,
   useRemoveTagFromNote,
 } from '@/hooks/use-tags'
-import type { Descendant } from 'slate'
+import type { Value } from 'platejs'
 import type { EnhancedTag } from '@/types/tags'
-import type { Template, TemplateVariable } from '@/types/templates'
+import type { Template } from '@/components/ui/template-picker'
 
 interface RichTextEditorProps {
   noteId: string
   initialTitle?: string
-  initialContent?: Descendant[]
+  initialContent?: Value
   onTitleChange?: (title: string) => void
-  onContentChange?: (content: Descendant[]) => void
+  onContentChange?: (content: Value) => void
   onTemplateUsed?: (templateId: string, noteTitle: string) => void
   className?: string
+  isFavorite?: boolean
+  isPinned?: boolean
+  isArchived?: boolean
+  onToggleFavorite?: () => void
+  onTogglePin?: () => void
+  onToggleArchive?: () => void
 }
 
-const defaultContent: Descendant[] = [
+const defaultContent: Value = [
   {
     type: 'paragraph',
     children: [{ text: '' }],
   },
 ]
 
-export function RichTextEditor({
+const RichTextEditor = React.memo(({
   noteId,
   initialTitle = '',
   initialContent = defaultContent,
@@ -45,9 +56,17 @@ export function RichTextEditor({
   onContentChange,
   onTemplateUsed,
   className,
-}: RichTextEditorProps) {
+  isFavorite = false,
+  isPinned = false,
+  isArchived = false,
+  onToggleFavorite,
+  onTogglePin,
+  onToggleArchive,
+}: RichTextEditorProps) => {
   const [title, setTitle] = useState(initialTitle)
-  const [content, setContent] = useState<Descendant[]>(initialContent)
+  const [content, setContent] = useState<Value>(
+    initialContent || defaultContent
+  )
 
   // Template state
   const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false)
@@ -82,7 +101,7 @@ export function RichTextEditor({
 
   // Handle content changes
   const handleContentChange = useCallback(
-    (newContent: Descendant[]) => {
+    (newContent: Value) => {
       setContent(newContent)
       onContentChange?.(newContent)
     },
@@ -130,19 +149,6 @@ export function RichTextEditor({
     [noteId, removeTagFromNote]
   )
 
-  // Handle template selection
-  const handleTemplateSelect = useCallback((template: Template) => {
-    setSelectedTemplate(template)
-    setIsTemplatePickerOpen(false)
-
-    // If template has no variables, process immediately
-    if (!template.variables || template.variables.length === 0) {
-      handleTemplateSubmit(template.name, {})
-    } else {
-      setIsVariableFormOpen(true)
-    }
-  }, [])
-
   // Handle template variable form submission
   const handleTemplateSubmit = useCallback(
     async (noteTitle: string, variables: Record<string, any>) => {
@@ -182,7 +188,7 @@ export function RichTextEditor({
         })
 
         // Convert markdown to Slate format
-        const slateContent = markdownToSlate(processedContent)
+        const slateContent = markdownToPlate(processedContent)
 
         // Update title and content
         setTitle(noteTitle)
@@ -220,6 +226,22 @@ export function RichTextEditor({
     [selectedTemplate, noteId, onTitleChange, onContentChange, onTemplateUsed]
   )
 
+  // Handle template selection
+  const handleTemplateSelect = useCallback(
+    (template: Template) => {
+      setSelectedTemplate(template)
+      setIsTemplatePickerOpen(false)
+
+      // If template has no variables, process immediately
+      if (!template.variables || template.variables.length === 0) {
+        handleTemplateSubmit(template.name, {})
+      } else {
+        setIsVariableFormOpen(true)
+      }
+    },
+    [handleTemplateSubmit]
+  )
+
   // Handle creating blank note
   const handleCreateBlank = useCallback(() => {
     setTitle('')
@@ -228,8 +250,37 @@ export function RichTextEditor({
     onContentChange?.(defaultContent)
   }, [onTitleChange, onContentChange])
 
+  // Handle AI content updates
+  const handleAIContentUpdate = useCallback(
+    (newContent: string) => {
+      // Convert the AI-generated content to Plate format
+      const plateContent = markdownToPlate(newContent)
+      setContent(plateContent)
+      onContentChange?.(plateContent)
+    },
+    [onContentChange]
+  )
+
+  // Convert Slate content to text for AI processing
+  const getContentAsText = useCallback((): string => {
+    return content
+      .map((node: any) => {
+        if (node.type === 'paragraph') {
+          return (
+            node.children?.map((child: any) => child.text || '').join('') || ''
+          )
+        }
+        return ''
+      })
+      .join('\n')
+      .trim()
+  }, [content])
+
   return (
-    <div className={`flex flex-col h-full ${className || ''}`}>
+    <div
+      className={`flex flex-col h-full ${className || ''}`}
+      data-testid='note-editor'
+    >
       {/* Header with Title and Template Button */}
       <div className='border-b bg-background px-6 py-4'>
         <div className='flex items-center justify-between gap-4'>
@@ -239,17 +290,57 @@ export function RichTextEditor({
             placeholder='Untitled Note'
             className='text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-0 h-auto flex-1'
             style={{ fontSize: '1.5rem', fontWeight: 'bold' }}
+            data-testid='note-title-input'
           />
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={() => setIsTemplatePickerOpen(true)}
-            className='flex items-center gap-2 shrink-0'
-            disabled={isProcessingTemplate}
-          >
-            <Sparkles className='h-4 w-4' />
-            {isProcessingTemplate ? 'Processing...' : 'New from Template'}
-          </Button>
+          <div className='flex items-center gap-2'>
+            <NoteActions
+              noteId={noteId}
+              isFavorite={isFavorite}
+              isPinned={isPinned}
+              isArchived={isArchived}
+              onFavorite={onToggleFavorite}
+              onPin={onTogglePin}
+              onArchive={onToggleArchive}
+            />
+            <div className='w-px h-6 bg-border mx-1' />
+            <ExportButton
+              note={{
+                id: noteId,
+                title: title || 'Untitled',
+                content: JSON.stringify(content),
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                userId: 'current-user',
+                tags: tags.map((tag) => tag.name),
+                // Sync-related properties (required by Note type)
+                is_folder: false,
+                version: 1,
+                device_id: 'web',
+                last_modified: new Date().toISOString(),
+                vector_clock: {},
+                local_changes: false,
+                deleted: false,
+              }}
+              size='sm'
+              variant='ghost'
+            />
+            <VersionHistoryButton
+              noteId={noteId}
+              size='sm'
+              variant='ghost'
+              showLabel={false}
+            />
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => setIsTemplatePickerOpen(true)}
+              className='flex items-center gap-2 shrink-0'
+              disabled={isProcessingTemplate}
+            >
+              <Sparkles className='h-4 w-4' />
+              {isProcessingTemplate ? 'Processing...' : 'New from Template'}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -287,16 +378,37 @@ export function RichTextEditor({
         </div>
       </div>
 
-      {/* Content Editor */}
-      <div className='flex-1 overflow-auto'>
-        <BasicEditor
-          key={noteId} // Force re-render when note changes
-          initialValue={content}
-          onChange={handleContentChange}
-          placeholder='Start writing your note...'
-          autoFocus
-          className='border-0 h-full'
+      {/* AI Toolbar Section */}
+      <div className='border-b bg-background/30 px-6 py-2'>
+        <EnhancedAIToolbar
+          content={getContentAsText()}
+          onContentUpdate={handleAIContentUpdate}
+          className='justify-start'
         />
+      </div>
+
+      {/* Content Area with Editor and Backlinks */}
+      <div className='flex-1 flex'>
+        {/* Main Editor */}
+        <div className='flex-1 overflow-auto'>
+          <EnhancedPlateEditorClient
+            key={noteId} // Force re-render when note changes
+            value={content}
+            onChange={handleContentChange}
+            placeholder='Start writing your note...'
+            autoFocus
+            className='border-0 h-full'
+            data-testid='rich-text-editor'
+          />
+        </div>
+
+        {/* Backlinks Panel */}
+        <div
+          className='w-80 border-l bg-background/50 p-4 overflow-auto'
+          data-testid='backlinks-panel'
+        >
+          <BacklinksPanel noteId={noteId} className='sticky top-0' />
+        </div>
       </div>
 
       {/* Template Picker Modal */}
@@ -316,4 +428,8 @@ export function RichTextEditor({
       />
     </div>
   )
-}
+})
+
+RichTextEditor.displayName = 'RichTextEditor'
+
+export { RichTextEditor }

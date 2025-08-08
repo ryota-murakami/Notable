@@ -75,8 +75,10 @@ export function useCreateTag() {
       return result.data
     },
     onSuccess: () => {
-      // Invalidate and refetch tags
+      // Invalidate and refetch all tag-related queries
       queryClient.invalidateQueries({ queryKey: ['tags'] })
+      // Also invalidate note-tags queries since usage counts may have changed
+      queryClient.invalidateQueries({ queryKey: ['note-tags'] })
     },
   })
 }
@@ -107,7 +109,10 @@ export function useUpdateTag() {
       return result.data
     },
     onSuccess: () => {
+      // Invalidate and refetch all tag-related queries
       queryClient.invalidateQueries({ queryKey: ['tags'] })
+      // Also invalidate note-tags queries since tag details may have changed
+      queryClient.invalidateQueries({ queryKey: ['note-tags'] })
     },
   })
 }

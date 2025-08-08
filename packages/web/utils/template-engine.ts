@@ -204,10 +204,19 @@ export class TemplateEngine {
           created_by: userData.user.id,
         })
         .select()
-        .single()
 
       if (error) {
         console.error('Failed to create template:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to create template. Please try again.',
+          variant: 'destructive',
+        })
+        return null
+      }
+
+      const createdTemplate = data?.[0]
+      if (!createdTemplate) {
         toast({
           title: 'Error',
           description: 'Failed to create template. Please try again.',
@@ -222,21 +231,21 @@ export class TemplateEngine {
       })
 
       return {
-        id: data.id,
-        name: data.name,
-        description: data.description || undefined,
-        category: data.category as TemplateCategory,
-        tags: data.tags || [],
-        titleTemplate: data.title_template,
-        contentTemplate: data.content_template,
-        variables: data.variables || {},
-        isBuiltIn: data.is_built_in,
-        isPublic: data.is_public || false,
-        usageCount: data.usage_count || 0,
-        createdBy: data.created_by,
-        organizationId: data.organization_id,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at || data.created_at,
+        id: createdTemplate.id,
+        name: createdTemplate.name,
+        description: createdTemplate.description || undefined,
+        category: createdTemplate.category as TemplateCategory,
+        tags: createdTemplate.tags || [],
+        titleTemplate: createdTemplate.title_template,
+        contentTemplate: createdTemplate.content_template,
+        variables: createdTemplate.variables || {},
+        isBuiltIn: createdTemplate.is_built_in,
+        isPublic: createdTemplate.is_public || false,
+        usageCount: createdTemplate.usage_count || 0,
+        createdBy: createdTemplate.created_by,
+        organizationId: createdTemplate.organization_id,
+        createdAt: createdTemplate.created_at,
+        updatedAt: createdTemplate.updated_at || createdTemplate.created_at,
       }
     } catch (error) {
       console.error('Error creating template:', error)

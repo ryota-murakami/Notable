@@ -7,6 +7,7 @@ import { Toaster } from 'sonner'
 import { Theme } from '@radix-ui/themes'
 import './globals.css'
 import '@radix-ui/themes/styles.css'
+import './init-msw' // Initialize MSW if in test mode
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

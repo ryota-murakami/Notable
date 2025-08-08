@@ -30,19 +30,19 @@ export function ThemeCustomizer({ className, onSave }: ThemeCustomizerProps) {
     onChange: (value: string) => void
   }) => {
     // Convert OKLCH to hex for color picker (simplified)
-    const oklchToHex = (oklch: string): string => {
+    const oklchToHex = (_oklch: string): string => {
       // This is a simplified conversion - in production, use a proper color library
       return '#6366f1' // Default brand color
     }
 
-    const hexToOklch = (hex: string): string => {
+    const hexToOklch = (_hex: string): string => {
       // This is a simplified conversion - in production, use a proper color library
       return 'oklch(0.623 0.214 259.815)'
     }
 
     return (
       <div className='flex items-center justify-between py-2'>
-        <label className='text-sm font-medium'>{label}</label>
+        <div className='text-sm font-medium'>{label}</div>
         <div className='flex items-center gap-2'>
           <input
             type='color'
@@ -156,7 +156,7 @@ export function ThemeCustomizer({ className, onSave }: ThemeCustomizerProps) {
               <div className='space-y-6'>
                 {/* Theme Name */}
                 <div>
-                  <label className='text-sm font-medium'>Theme Name</label>
+                  <div className='text-sm font-medium'>Theme Name</div>
                   <input
                     type='text'
                     value={customTheme.displayName}

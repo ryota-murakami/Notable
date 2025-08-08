@@ -1,5 +1,5 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from 'eslint-plugin-storybook'
+// import storybook from 'eslint-plugin-storybook'
 
 import nextConfig from '../configs/eslint-config/next.js'
 
@@ -16,6 +16,7 @@ export default [
       'node_modules/**/*',
       'dist/**/*',
       'coverage/**/*',
+      'volumes/**/*',
     ],
   },
   {
@@ -54,12 +55,15 @@ export default [
         HTMLPreElement: 'readonly',
         HTMLSpanElement: 'readonly',
         HTMLSelectElement: 'readonly',
+        HTMLAnchorElement: 'readonly',
         Element: 'readonly',
         Node: 'readonly',
         Event: 'readonly',
         MouseEvent: 'readonly',
         KeyboardEvent: 'readonly',
+        PointerEvent: 'readonly',
         CanvasRenderingContext2D: 'readonly',
+        MutationObserver: 'readonly',
 
         // Node.js globals
         setTimeout: 'readonly',
@@ -311,5 +315,5 @@ export default [
       'require-await': 'off', // Allow async hooks without await
     },
   },
-  ...storybook.configs['flat/recommended'],
+  // ...storybook.configs['flat/recommended'],
 ]
