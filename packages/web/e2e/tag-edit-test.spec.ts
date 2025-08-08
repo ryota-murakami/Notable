@@ -81,7 +81,7 @@ test.describe('Tag Edit Tests', () => {
         return
       }
 
-      const tagId = createResponse.data?.id
+      const tagId = (createResponse as any).data?.id
       if (!tagId) {
         console.info('Tag creation succeeded but no ID returned')
         expect(true).toBe(true)
@@ -164,8 +164,8 @@ test.describe('Tag Edit Tests', () => {
 
       console.info(`Fetch updated tag response:`, fetchResponse)
 
-      if (fetchResponse.success && fetchResponse.data) {
-        const updatedTag = fetchResponse.data
+      if (fetchResponse.success && (fetchResponse as any).data) {
+        const updatedTag = (fetchResponse as any).data
         if (updatedTag.name === newTagName && updatedTag.color === newColor) {
           console.info(`🎉 SUCCESS: Tag edited and verified!`)
           console.info(`Updated tag name: ${updatedTag.name}`)
@@ -211,7 +211,7 @@ test.describe('Tag Edit Tests', () => {
 
       if (deleteResponse.success) {
         console.info(
-          `✅ Tag deleted successfully: ${deleteResponse.message || 'No message provided'}`
+          `✅ Tag deleted successfully: ${(deleteResponse as any).message || 'No message provided'}`
         )
       } else {
         console.info(`❌ Tag deletion failed: ${deleteResponse.error}`)

@@ -745,13 +745,13 @@ test.describe('Note CRUD Coverage Tests', () => {
         '[class*="notes"]',
       ]
 
-      let noteList = null
+      let _noteList = null
       let listFound = false
       for (const selector of noteListSelectors) {
         const element = page.locator(selector).first()
         const isVisible = await element.isVisible().catch(() => false)
         if (isVisible) {
-          noteList = element
+          _noteList = element
           listFound = true
           console.info(`Found note list with selector: ${selector}`)
           break

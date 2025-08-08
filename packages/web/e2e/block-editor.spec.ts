@@ -331,7 +331,7 @@ test.describe('Block Editor', () => {
       if (hasBlock) {
         await blockElement.hover()
         // Check for hover state (implementation dependent)
-        const hasHoverClass = await blockElement
+        const _hasHoverClass = await blockElement
           .getAttribute('class')
           .then(
             (classes) =>

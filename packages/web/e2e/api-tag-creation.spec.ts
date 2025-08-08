@@ -107,7 +107,9 @@ test.describe('API Tag Creation Tests', () => {
 
       if (apiResponse.success && apiResponse.status === 201) {
         console.info(`✅ Tag created successfully via API: ${testTagName}`)
-        console.info(`Created tag ID: ${apiResponse.data?.id || 'unknown'}`)
+        console.info(
+          `Created tag ID: ${(apiResponse as any).data?.id || 'unknown'}`
+        )
       } else {
         console.info(`❌ API tag creation failed:`, apiResponse.error)
         console.info('API tag creation may not be implemented')
@@ -145,9 +147,9 @@ test.describe('API Tag Creation Tests', () => {
 
       if (
         getAllTagsResponse.success &&
-        Array.isArray(getAllTagsResponse.data)
+        Array.isArray((getAllTagsResponse as any).data)
       ) {
-        const createdTag = getAllTagsResponse.data.find(
+        const createdTag = (getAllTagsResponse as any).data.find(
           (tag: any) => tag.name === testTagName
         )
         if (createdTag) {
@@ -156,7 +158,7 @@ test.describe('API Tag Creation Tests', () => {
           console.info(`❌ Tag not found in API response`)
           console.info(
             `Available tags:`,
-            getAllTagsResponse.data.map((t: any) => t.name)
+            (getAllTagsResponse as any).data.map((t: any) => t.name)
           )
         }
       } else {

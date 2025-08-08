@@ -347,7 +347,7 @@ test.describe('Note Editor Display', () => {
         'button[class*="note"]',
       ]
 
-      let notes = []
+      let notes: any[] = []
       let notesFound = false
 
       for (const selector of noteSelectors) {
@@ -378,7 +378,7 @@ test.describe('Note Editor Display', () => {
       await page.waitForTimeout(2000)
 
       // Check if we're on a note page
-      let currentUrl = page.url()
+      const currentUrl = page.url()
       if (!currentUrl.includes('/notes/')) {
         console.info(
           'Note navigation not working - skipping content persistence test'
@@ -416,7 +416,7 @@ test.describe('Note Editor Display', () => {
       }
 
       // Try to add content to first note
-      await editor.click({ force: true })
+      await editor?.click({ force: true })
       await page.keyboard.type('First note content')
       await page.waitForTimeout(1000)
 

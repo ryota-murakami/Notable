@@ -154,7 +154,8 @@ test.describe('Debug Marks Test', () => {
       const strongCount = await strongElement.count().catch(() => 0)
 
       if (strongVisible && strongCount > 0) {
-        const strongText = await strongElement.textContent().catch(() => '')
+        const strongText =
+          (await strongElement?.textContent().catch(() => '')) || ''
         if (strongText.includes('This should be bold')) {
           console.info('✅ SUCCESS: Fresh text marks working!')
         } else {

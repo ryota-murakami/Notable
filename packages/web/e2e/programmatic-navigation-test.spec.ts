@@ -311,11 +311,11 @@ test.describe('Programmatic Navigation Tests', () => {
           console.info(`Found ${element.description} - testing navigation`)
 
           // Monitor for navigation events
-          let navigationDetected = false
+          let _navigationDetected = false
           const navigationPromise = page
             .waitForURL(/.*/, { timeout: 3000 })
             .then(() => {
-              navigationDetected = true
+              _navigationDetected = true
             })
             .catch(() => {})
 

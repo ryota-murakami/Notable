@@ -67,7 +67,7 @@ test.describe('Editor Basic Coverage', () => {
       '.template-picker',
     ]
 
-    let templatePickerFound = false
+    let _templatePickerFound = false
     for (const selector of templatePickerSelectors) {
       const isVisible = await page
         .locator(selector)
@@ -75,7 +75,7 @@ test.describe('Editor Basic Coverage', () => {
         .catch(() => false)
       if (isVisible) {
         console.info(`Template picker found with selector: ${selector}`)
-        templatePickerFound = true
+        _templatePickerFound = true
 
         // Look for blank note or similar template options
         const templateButtonSelectors = [

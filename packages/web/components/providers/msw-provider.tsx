@@ -107,13 +107,12 @@ const MSWProvider = React.memo(({ children }: MSWProviderProps) => {
 
         // Log enabled features in development
         if (process.env.NODE_ENV === 'development') {
-          console.group('🛠️ MSW Features Enabled:')
+          console.info('🛠️ MSW Features Enabled:')
           console.info('• API request interception')
           console.info('• Authentication mocking')
           console.info('• Database operation simulation')
           console.info('• External service mocking (OAuth, Resend, etc.)')
           console.info('• Real-time features simulation')
-          console.groupEnd()
         }
 
         setIsMSWReady(true)
