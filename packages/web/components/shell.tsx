@@ -3,6 +3,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotes } from '@/hooks/use-notes'
+import { useCachedNotes, useCachedSearch } from '@/hooks/use-cached-notes'
+import { VirtualizedNoteList } from '@/components/virtualized/VirtualizedNoteList'
+import { SmartSkeleton } from '@/components/ui/progressive-skeleton'
 import { useRouting } from '@/hooks/use-routing'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { toast } from '@/hooks/use-toast'
@@ -41,17 +44,53 @@ import { ExportDialog } from '@/components/ui/export-dialog'
 import { VersionHistory } from '@/components/ui/version-history'
 
 const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
-  const [_user, setUser] = useState<SupabaseUser | null>(null)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
-  const {
-    notes,
-    loading: notesLoading,
-    createNote,
-    deleteNote,
-  } = useNotes({
+
+  // Use cached notes for better performance
+  const cachedNotesResult = useCachedNotes({
+    userId: user?.id,
+    limit: 100,
+    enablePreloading: true,
+    cacheFirst: true,
+  })
+
+  // Fallback to regular notes hook for compatibility
+  const regularNotesResult = useNotes({
     folder_id: selectedFolderId,
   })
+
+  // Use cached notes if available, otherwise fall back to regular notes
+  const {
+    notes,
+    isLoading: notesLoading,
+    createNote,
+    deleteNote,
+    preloadRelatedNotes,
+  } = user?.id && process.env.NEXT_PUBLIC_ENABLE_CACHING !== 'false'
+    ? {
+        notes: cachedNotesResult.notes,
+        isLoading: cachedNotesResult.isLoading,
+        createNote: cachedNotesResult.createNote,
+        deleteNote: cachedNotesResult.deleteNote,
+        preloadRelatedNotes: cachedNotesResult.preloadRelatedNotes,
+      }
+    : {
+        notes: regularNotesResult.notes,
+        isLoading: regularNotesResult.loading,
+        createNote: regularNotesResult.createNote,
+        deleteNote: regularNotesResult.deleteNote,
+        preloadRelatedNotes: null,
+      }
+
+  // Enhanced search with caching
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    results: searchResults,
+    isSearching,
+  } = useCachedSearch(user?.id)
   const { moveNotesToFolder: _moveNotesToFolder } = useFolders()
   const router = useRouter()
   // TODO: Integrate routing functionality - current, title, navigate will be used for navigation
@@ -722,24 +761,20 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
   if (notesLoading) {
     return (
       <div className='flex h-screen bg-background' data-testid='app-shell'>
-        <div className='space-y-4 p-4 w-64 border-r'>
-          <div className='space-y-2'>
-            <div className='animate-pulse rounded-md bg-muted h-6 w-24'></div>
-            <div className='animate-pulse rounded-md bg-muted h-8 w-full'></div>
-          </div>
-          <div className='animate-pulse rounded-md bg-muted h-10 w-full'></div>
-          <div className='space-y-2'>
-            <div className='animate-pulse rounded-md bg-muted h-8 w-full'></div>
-            <div className='animate-pulse rounded-md bg-muted h-8 w-full'></div>
-          </div>
+        <div className='w-64 border-r bg-muted/10'>
+          <SmartSkeleton
+            contentType='list'
+            itemCount={6}
+            className='p-4'
+            isLoading={true}
+          />
         </div>
-        <div className='flex-1 flex items-center justify-center'>
-          <div className='text-center'>
-            <div className='flex items-center justify-center mx-auto mb-4'>
-              <Spinner size='3' />
-            </div>
-            <p className='text-muted-foreground'>Loading...</p>
-          </div>
+        <div className='flex-1'>
+          <SmartSkeleton
+            contentType='editor'
+            className='h-full'
+            isLoading={true}
+          />
         </div>
       </div>
     )
@@ -793,42 +828,44 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
             />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-2 flex-1 min-h-0'>
             <h3 className='text-sm font-medium text-muted-foreground'>
               Recent Notes
             </h3>
-            <div className='space-y-1'>
-              {notes.length === 0 ? (
-                <div className='text-sm text-muted-foreground py-4 text-center'>
-                  No notes yet. Create your first note to get started.
+
+            {/* Enhanced search bar */}
+            <div className='relative'>
+              <input
+                type='text'
+                placeholder='Search notes...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className='w-full px-3 py-2 text-sm border rounded-md bg-background'
+                data-testid='search-input'
+              />
+              {isSearching && (
+                <div className='absolute right-2 top-2.5'>
+                  <Spinner size='1' />
                 </div>
-              ) : (
-                notes
-                  .filter((note) => {
-                    if (activeFilter === 'favorites') {
-                      return noteOrganization.favorites.includes(note.id)
-                    }
-                    if (activeFilter === 'archived') {
-                      return noteOrganization.archived.includes(note.id)
-                    }
-                    // For 'all' filter, exclude archived notes
-                    return !noteOrganization.archived.includes(note.id)
-                  })
-                  .sort((a, b) => {
-                    // Sort pinned notes first
-                    const aPinned = noteOrganization.pinned.includes(a.id)
-                    const bPinned = noteOrganization.pinned.includes(b.id)
-                    if (aPinned && !bPinned) return -1
-                    if (!aPinned && bPinned) return 1
-                    return 0
-                  })
-                  .map((note) => (
+              )}
+            </div>
+
+            <div className='flex-1 min-h-0' data-testid='notes-list'>
+              {searchQuery && searchResults.length > 0 ? (
+                <div className='space-y-1' data-testid='search-results'>
+                  {searchResults.map((note) => (
                     <div
                       key={note.id}
                       className='flex items-center p-2 rounded-md hover:bg-muted group'
+                      data-testid='note-row'
                     >
                       <button
-                        onClick={() => handleNoteSelect(note.id)}
+                        onClick={() => {
+                          handleNoteSelect(note.id)
+                          if (preloadRelatedNotes) {
+                            preloadRelatedNotes(note.id)
+                          }
+                        }}
                         className='flex items-center space-x-2 flex-1 text-left'
                       >
                         <FileText className='h-4 w-4 text-muted-foreground' />
@@ -841,24 +878,58 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
                           </div>
                         </div>
                       </button>
-                      <div className='opacity-0 group-hover:opacity-100 transition-opacity'>
-                        <NoteActions
-                          noteId={note.id}
-                          isFavorite={noteOrganization.favorites.includes(
-                            note.id
-                          )}
-                          isPinned={noteOrganization.pinned.includes(note.id)}
-                          isArchived={noteOrganization.archived.includes(
-                            note.id
-                          )}
-                          onFavorite={() => handleToggleFavorite(note.id)}
-                          onPin={() => handleTogglePin(note.id)}
-                          onArchive={() => handleToggleArchive(note.id)}
-                          className='ml-2'
-                        />
-                      </div>
                     </div>
-                  ))
+                  ))}
+                </div>
+              ) : notes.length === 0 ? (
+                <SmartSkeleton
+                  contentType='list'
+                  itemCount={3}
+                  isLoading={notesLoading}
+                >
+                  <div className='text-sm text-muted-foreground py-4 text-center'>
+                    No notes yet. Create your first note to get started.
+                  </div>
+                </SmartSkeleton>
+              ) : (
+                <div
+                  className='h-64 min-h-0'
+                  data-testid='virtualized-note-list'
+                >
+                  <VirtualizedNoteList
+                    userId={user?.id}
+                    notes={notes
+                      .filter((note) => {
+                        if (activeFilter === 'favorites') {
+                          return noteOrganization.favorites.includes(note.id)
+                        }
+                        if (activeFilter === 'archived') {
+                          return noteOrganization.archived.includes(note.id)
+                        }
+                        // For 'all' filter, exclude archived notes
+                        return !noteOrganization.archived.includes(note.id)
+                      })
+                      .sort((a, b) => {
+                        // Sort pinned notes first
+                        const aPinned = noteOrganization.pinned.includes(a.id)
+                        const bPinned = noteOrganization.pinned.includes(b.id)
+                        if (aPinned && !bPinned) return -1
+                        if (!aPinned && bPinned) return 1
+                        return 0
+                      })}
+                    selectedNoteId={selectedNoteId}
+                    onNoteSelect={(note) => {
+                      handleNoteSelect(note.id)
+                      if (preloadRelatedNotes) {
+                        preloadRelatedNotes(note.id)
+                      }
+                    }}
+                    enableCaching={true}
+                    showSkeletonWhileLoading={true}
+                    itemHeight={80}
+                    className='h-full'
+                  />
+                </div>
               )}
             </div>
           </div>
