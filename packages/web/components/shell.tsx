@@ -108,7 +108,7 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
 
   // Command handlers
   const handleNewNote = useCallback(async () => {
-    console.log('🚀 handleNewNote called')
+    console.info('🚀 handleNewNote called')
 
     // Check if we should force template picker (for specific tests)
     const forceTemplatePicker =
@@ -122,7 +122,7 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
       (typeof window !== 'undefined' &&
         window.sessionStorage.getItem('bypassTemplatePicker') === 'true')
 
-    console.log('🔍 Debug values:', {
+    console.info('🔍 Debug values:', {
       forceTemplatePicker,
       bypassTemplatePicker,
       NEXT_PUBLIC_API_MOCKING: process.env.NEXT_PUBLIC_API_MOCKING,
@@ -136,10 +136,10 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
 
     // Show template picker if forced OR if not bypassed (default behavior)
     if (forceTemplatePicker || !bypassTemplatePicker) {
-      console.log('📝 Showing template picker')
+      console.info('📝 Showing template picker')
       setShowTemplatePicker(true)
     } else {
-      console.log('⚡ Creating note directly (bypassed)')
+      console.info('⚡ Creating note directly (bypassed)')
       // Create note directly when bypassed (used by tests)
       try {
         const newNote = await createNote({
@@ -148,7 +148,7 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
           folder_id: selectedFolderId,
         })
 
-        console.log('✅ Note created:', newNote)
+        console.info('✅ Note created:', newNote)
 
         if (newNote) {
           setSelectedNoteId(newNote.id)
@@ -158,7 +158,7 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
             window.sessionStorage.setItem('lastCreatedNoteId', newNote.id)
           }
 
-          console.log('🧭 Navigating to:', `/notes/${newNote.id}`)
+          console.info('🧭 Navigating to:', `/notes/${newNote.id}`)
           router.push(`/notes/${newNote.id}`)
         } else {
           console.error('❌ No note returned from createNote')
@@ -181,7 +181,7 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
         })
       }
     }
-  }, [router, createNote, selectedFolderId, toast])
+  }, [router, createNote, selectedFolderId])
 
   const handleDeleteCurrentNote = useCallback(async () => {
     if (!selectedNoteId) return
