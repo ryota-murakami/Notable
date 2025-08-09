@@ -6,17 +6,32 @@ const isRequestAllowed = (cookies: Record<string, string>) => {
   const hasAuthBypass = cookies['dev-auth-bypass'] === 'true'
   const isTestEnv = process.env.NODE_ENV === 'test'
 
+  // Debug logging
+  console.info('[MSW] isRequestAllowed check:', {
+    isMockingEnabled,
+    hasAuthBypass,
+    isTestEnv,
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_API_MOCKING: process.env.NEXT_PUBLIC_API_MOCKING,
+    cookies: Object.keys(cookies),
+  })
+
   // Always allow in test environment or when API mocking is enabled
   if (isTestEnv || isMockingEnabled) {
+    console.info('[MSW] Request allowed due to test env or mocking enabled')
     return true
   }
 
   // In development, require the dev-auth-bypass cookie for security
   if (process.env.NODE_ENV === 'development') {
+    console.info('[MSW] Development mode - checking for dev-auth-bypass cookie')
     return hasAuthBypass
   }
 
   // In production, never allow unless explicitly enabled
+  console.info(
+    '[MSW] Request denied - production mode without explicit enabling'
+  )
   return false
 }
 
@@ -1356,13 +1371,7 @@ export const handlers = [
     })
   }),
 
-  // Default handler for unhandled API requests only (not page routes)
-  http.all('*/api/*', ({ request }) => {
-    console.warn(`Unhandled API request: ${request.method} ${request.url}`)
-    return new HttpResponse(null, { status: 404 })
-  }),
-
-  // Enable MSW Notes API endpoints for E2E testing
+  // Enable MSW Notes API endpoints for E2E testing - MOVED BEFORE catch-all handler
   http.get('*/api/notes', ({ request, cookies }) => {
     if (!isRequestAllowed(cookies)) {
       return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -1835,5 +1844,11 @@ export const handlers = [
       success: true,
       message: `Tag ${params.tagId} removed from note`,
     })
+  }),
+
+  // Default handler for unhandled API requests only (not page routes) - MOVED AFTER notes handlers
+  http.all('*/api/*', ({ request }) => {
+    console.warn(`Unhandled API request: ${request.method} ${request.url}`)
+    return new HttpResponse(null, { status: 404 })
   }),
 ]

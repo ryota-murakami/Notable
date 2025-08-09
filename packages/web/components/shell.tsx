@@ -108,6 +108,8 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
 
   // Command handlers
   const handleNewNote = useCallback(async () => {
+    console.log('🚀 handleNewNote called')
+
     // Check if we should force template picker (for specific tests)
     const forceTemplatePicker =
       typeof window !== 'undefined' &&
@@ -120,10 +122,24 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
       (typeof window !== 'undefined' &&
         window.sessionStorage.getItem('bypassTemplatePicker') === 'true')
 
+    console.log('🔍 Debug values:', {
+      forceTemplatePicker,
+      bypassTemplatePicker,
+      NEXT_PUBLIC_API_MOCKING: process.env.NEXT_PUBLIC_API_MOCKING,
+      NEXT_PUBLIC_BYPASS_TEMPLATE_PICKER:
+        process.env.NEXT_PUBLIC_BYPASS_TEMPLATE_PICKER,
+      sessionStorage_bypass:
+        typeof window !== 'undefined'
+          ? window.sessionStorage.getItem('bypassTemplatePicker')
+          : 'N/A',
+    })
+
     // Show template picker if forced OR if not bypassed (default behavior)
     if (forceTemplatePicker || !bypassTemplatePicker) {
+      console.log('📝 Showing template picker')
       setShowTemplatePicker(true)
     } else {
+      console.log('⚡ Creating note directly (bypassed)')
       // Create note directly when bypassed (used by tests)
       try {
         const newNote = await createNote({
@@ -131,6 +147,8 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
           content: '',
           folder_id: selectedFolderId,
         })
+
+        console.log('✅ Note created:', newNote)
 
         if (newNote) {
           setSelectedNoteId(newNote.id)
@@ -140,19 +158,30 @@ const Shell = React.memo(({ children }: { children?: React.ReactNode }) => {
             window.sessionStorage.setItem('lastCreatedNoteId', newNote.id)
           }
 
+          console.log('🧭 Navigating to:', `/notes/${newNote.id}`)
           router.push(`/notes/${newNote.id}`)
+        } else {
+          console.error('❌ No note returned from createNote')
         }
       } catch (error) {
-        console.error('Failed to create note:', error)
+        console.error('❌ Failed to create note:', error)
 
         // Store error info for test debugging
         if (typeof window !== 'undefined') {
           ;(window as any).__test_errors = (window as any).__test_errors || []
           ;(window as any).__test_errors.push(error)
         }
+
+        // Show toast error for user feedback
+        toast({
+          title: 'Error creating note',
+          description:
+            'There was an error creating your note. Please try again.',
+          variant: 'destructive',
+        })
       }
     }
-  }, [router, createNote, selectedFolderId])
+  }, [router, createNote, selectedFolderId, toast])
 
   const handleDeleteCurrentNote = useCallback(async () => {
     if (!selectedNoteId) return
