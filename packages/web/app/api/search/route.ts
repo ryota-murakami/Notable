@@ -33,8 +33,8 @@ export async function GET(request: NextRequest) {
     const tags = searchParams.get('tags')?.split(',').filter(Boolean) || []
     const _folders =
       searchParams.get('folders')?.split(',').filter(Boolean) || []
-    const dateFrom = searchParams.get('date_from')
-    const dateTo = searchParams.get('date_to')
+    const _dateFrom = searchParams.get('date_from')
+    const _dateTo = searchParams.get('date_to')
     const includeContent = searchParams.get('include_content') !== 'false'
     const sortBy = searchParams.get('sort_by') || 'relevance'
     const isAutocomplete = searchParams.get('autocomplete') === 'true'
@@ -232,7 +232,7 @@ export async function GET(request: NextRequest) {
 }
 
 // Helper function to calculate relevance score
-function calculateRelevanceScore(note: SearchableNote, query: string): number {
+function _calculateRelevanceScore(note: SearchableNote, query: string): number {
   const searchTerms = query
     .toLowerCase()
     .split(' ')

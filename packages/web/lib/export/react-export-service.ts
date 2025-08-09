@@ -74,7 +74,7 @@ export class ReactExportService extends BaseExportService {
     const styling = this.getStylingProps(options)
     const metadata = this.generateMetadataJSX(note, options)
 
-    const isTypeScript = options.useTypeScript
+    const isTypeScript = options.typescript
     const extension = isTypeScript ? 'tsx' : 'jsx'
 
     let component = ''
@@ -142,7 +142,7 @@ export class ReactExportService extends BaseExportService {
     note: Note,
     options: ReactExportOptions
   ): string {
-    if (!options.useTypeScript) {
+    if (!options.typescript) {
       return ''
     }
 
@@ -176,13 +176,13 @@ export class ReactExportService extends BaseExportService {
     styling: any,
     options: ReactExportOptions
   ): string {
-    const propsType = options.useTypeScript
+    const propsType = options.typescript
       ? `: ${options.propsInterface || `${componentName}Props`}`
       : ''
 
     const destructuredProps = this.getDestructuredProps(options)
 
-    return `const ${componentName}${options.useTypeScript ? `: React.FC${propsType || '<{}>'}` : ''} = (${destructuredProps}) => {
+    return `const ${componentName}${options.typescript ? `: React.FC${propsType || '<{}>'}` : ''} = (${destructuredProps}) => {
   return (
     <div${styling.container}>
       ${metadata}
@@ -209,7 +209,7 @@ export default ${componentName}`
     styling: any,
     options: ReactExportOptions
   ): string {
-    const propsType = options.useTypeScript
+    const propsType = options.typescript
       ? `<${options.propsInterface || `${componentName}Props`}>`
       : ''
 
@@ -344,7 +344,7 @@ export default ${componentName}`
       props.push('showTags = true')
     }
 
-    const propsType = options.useTypeScript
+    const propsType = options.typescript
       ? `: ${options.propsInterface || 'NoteComponentProps'}`
       : ''
 

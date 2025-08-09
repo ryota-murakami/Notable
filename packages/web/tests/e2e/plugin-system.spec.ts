@@ -43,7 +43,7 @@ test.describe('Plugin System', () => {
       button.textContent = 'Open Plugin Manager'
       button.onclick = () => {
         // This would normally be handled by the app's routing/modal system
-        console.log('Plugin manager would open here')
+        console.info('Plugin manager would open here')
       }
       document.body.appendChild(button)
     })

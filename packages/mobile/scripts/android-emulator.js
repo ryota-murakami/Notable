@@ -29,7 +29,7 @@ class AndroidEmulatorManager {
     console.log(`${colors[color]}${message}${colors.reset}`)
   }
 
-  async checkRequirements() {
+  checkRequirements() {
     const issues = []
 
     // Check ANDROID_HOME

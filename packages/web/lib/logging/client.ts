@@ -80,7 +80,7 @@ export function createClientLogger() {
         [LogLevel.VERBOSE]: 'color: lightgray',
       }
 
-      console.log(
+      console.info(
         `%c[${level.toUpperCase()}] ${message}`,
         style[level] || '',
         metadata || ''

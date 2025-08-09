@@ -13,7 +13,7 @@ export async function registerServiceWorker(): Promise<
       scope: '/',
     })
 
-    console.log('Service Worker registered successfully:', registration.scope)
+    console.info('Service Worker registered successfully:', registration.scope)
 
     // Handle service worker updates
     registration.addEventListener('updatefound', () => {
@@ -27,7 +27,7 @@ export async function registerServiceWorker(): Promise<
         ) {
           // New content is available
 
-          console.log('New content available - refresh to update')
+          console.info('New content available - refresh to update')
 
           // Show update notification to user
           if (window.confirm('New version available! Refresh to update?')) {
@@ -52,9 +52,9 @@ export async function registerServiceWorker(): Promise<
           }
         ).sync.register('sync-notes')
 
-        console.log('Background sync registered')
+        console.info('Background sync registered')
       } catch (err) {
-        console.log('Background sync registration failed:', err)
+        console.info('Background sync registration failed:', err)
       }
     }
 

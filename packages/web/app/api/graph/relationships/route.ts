@@ -55,16 +55,13 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url)
     const noteId = url.searchParams.get('noteId')
     const relationshipType = url.searchParams.get('type')
-    const minStrength = url.searchParams.get('minStrength')
-      ? parseFloat(url.searchParams.get('minStrength')!)
-      : 0
+    const minStrengthParam = url.searchParams.get('minStrength')
+    const minStrength = minStrengthParam ? parseFloat(minStrengthParam) : 0
     const includeMetrics = url.searchParams.get('includeMetrics') === 'true'
-    const limit = url.searchParams.get('limit')
-      ? parseInt(url.searchParams.get('limit')!)
-      : 100
-    const offset = url.searchParams.get('offset')
-      ? parseInt(url.searchParams.get('offset')!)
-      : 0
+    const limitParam = url.searchParams.get('limit')
+    const limit = limitParam ? parseInt(limitParam) : 100
+    const offsetParam = url.searchParams.get('offset')
+    const offset = offsetParam ? parseInt(offsetParam) : 0
 
     // Build query
     let query = supabase.from('graph_relationships_with_metrics').select('*')
@@ -443,7 +440,7 @@ export async function DELETE(request: NextRequest) {
         .from('notes')
         .select('id')
         .eq('user_id', user.id)
-        .eq('id', sourceNoteId!)
+        .eq('id', sourceNoteId)
         .single()
 
       if (sourceError || !sourceNote) {
@@ -456,8 +453,8 @@ export async function DELETE(request: NextRequest) {
       let deleteQuery = supabase
         .from('note_relationships')
         .delete()
-        .eq('source_note_id', sourceNoteId!)
-        .eq('target_note_id', targetNoteId!)
+        .eq('source_note_id', sourceNoteId)
+        .eq('target_note_id', targetNoteId)
 
       if (relationshipType) {
         deleteQuery = deleteQuery.eq('relationship_type', relationshipType)
@@ -508,7 +505,7 @@ async function createRelationship(supabase: any, userId: string, body: any) {
     }
 
     // Check for existing relationship
-    const { data: existing, error: existingError } = await supabase
+    const { data: existing } = await supabase
       .from('note_relationships')
       .select('id')
       .eq('source_note_id', validatedData.sourceNoteId)
@@ -527,7 +524,7 @@ async function createRelationship(supabase: any, userId: string, body: any) {
     }
 
     // Create relationship
-    const { data: relationship, error } = await supabase
+    const { data, error } = await supabase
       .from('note_relationships')
       .insert({
         source_note_id: validatedData.sourceNoteId,
@@ -541,10 +538,17 @@ async function createRelationship(supabase: any, userId: string, body: any) {
         created_by: userId,
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Error creating relationship:', error)
+      return NextResponse.json(
+        { error: 'Failed to create relationship' },
+        { status: 500 }
+      )
+    }
+
+    const relationship = data?.[0]
+    if (!relationship) {
       return NextResponse.json(
         { error: 'Failed to create relationship' },
         { status: 500 }
@@ -677,7 +681,7 @@ async function autoDiscoverRelationships(
   body: any
 ) {
   try {
-    const { noteId, types = ['tag', 'hierarchy', 'template'] } = body
+    const { noteId } = body
 
     if (noteId) {
       // Auto-discover relationships for specific note
@@ -717,9 +721,9 @@ async function autoDiscoverRelationships(
   }
 }
 
-async function suggestRelationships(supabase: any, userId: string, body: any) {
+function suggestRelationships(_supabase: any, _userId: string, _body: any) {
   try {
-    const { noteId, limit = 10 } = body
+    // const { noteId, limit = 10 } = body // Placeholder for future implementation
 
     // This is a placeholder for intelligent relationship suggestions
     // In a real implementation, this would use content similarity,

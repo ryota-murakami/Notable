@@ -1,2 +1,2 @@
-// Re-export all types from root
-export * from '../../../types/note'
+// Re-export all types from current directory
+export * from './note'

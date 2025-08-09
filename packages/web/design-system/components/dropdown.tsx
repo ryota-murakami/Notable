@@ -61,6 +61,7 @@ interface DropdownContextType {
 
 const DropdownContext = React.createContext<DropdownContextType | null>(null)
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useDropdownContext = () => {
   const context = React.useContext(DropdownContext)
   if (!context) {
@@ -90,7 +91,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
       label,
       helper,
       maxHeight = 320,
-      virtualized = false,
+      virtualized: _virtualized = false,
       creatable = false,
       onCreateOption,
       className,
@@ -99,7 +100,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
       'aria-label': ariaLabel,
       ...props
     },
-    ref
+    _ref
   ) => {
     const [internalValue, setInternalValue] = React.useState<string | string[]>(
       defaultValue || (multiple ? [] : '')
@@ -414,7 +415,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
                           }}
                           className='block mt-2 text-primary hover:underline'
                         >
-                          Create "{searchQuery}"
+                          Create &quot;{searchQuery}&quot;
                         </button>
                       )}
                     </>
@@ -535,7 +536,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
                     }}
                     className='w-full px-3 py-2 text-sm text-left hover:bg-accent rounded transition-colors'
                   >
-                    Create "{searchQuery}"
+                    Create &quot;{searchQuery}&quot;
                   </button>
                 </div>
               )}

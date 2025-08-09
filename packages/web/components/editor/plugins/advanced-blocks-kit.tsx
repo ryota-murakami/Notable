@@ -1,15 +1,23 @@
 'use client'
 
 import { createPlatePlugin } from 'platejs/react'
+import { BulletedListElement } from '@/components/ui/bulleted-list-node'
+import { NumberedListElement } from '@/components/ui/numbered-list-node'
+import { ListItemElement } from '@/components/ui/list-item-node'
+import { CodeBlockElement } from '@/components/ui/code-block'
+import { TodoElement } from '@/components/ui/todo-block'
+import { ToggleElement } from '@/components/ui/toggle-block'
+import { CalloutElement } from '@/components/ui/callout-block'
 
 // Advanced Block Plugins for Notion-like experience
 
-// List Plugins
+// List Plugins with keyboard shortcuts
 const BulletedListPlugin = createPlatePlugin({
   key: 'ul',
   node: {
     isElement: true,
     type: 'ul',
+    component: BulletedListElement,
   },
 })
 
@@ -18,6 +26,7 @@ const NumberedListPlugin = createPlatePlugin({
   node: {
     isElement: true,
     type: 'ol',
+    component: NumberedListElement,
   },
 })
 
@@ -26,6 +35,7 @@ const ListItemPlugin = createPlatePlugin({
   node: {
     isElement: true,
     type: 'li',
+    component: ListItemElement,
   },
 })
 
@@ -35,6 +45,7 @@ const CodeBlockPlugin = createPlatePlugin({
   node: {
     isElement: true,
     type: 'code_block',
+    component: CodeBlockElement,
   },
 })
 
@@ -44,6 +55,7 @@ const TodoPlugin = createPlatePlugin({
   node: {
     isElement: true,
     type: 'action_item',
+    component: TodoElement,
   },
 })
 
@@ -53,6 +65,7 @@ const TogglePlugin = createPlatePlugin({
   node: {
     isElement: true,
     type: 'toggle',
+    component: ToggleElement,
   },
 })
 
@@ -62,6 +75,7 @@ const CalloutPlugin = createPlatePlugin({
   node: {
     isElement: true,
     type: 'callout',
+    component: CalloutElement,
   },
 })
 

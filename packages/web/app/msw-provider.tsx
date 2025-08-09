@@ -1,60 +1,75 @@
 'use client'
 
-import { Suspense, use } from 'react'
-
-let mockingEnabledPromise: Promise<void> | undefined
-
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
-) {
-  if (typeof window !== 'undefined') {
-    // Only run MSW in the browser
-    mockingEnabledPromise = import('../mocks/browser')
-      .then(async ({ worker }) => {
-        await worker.start({
-          onUnhandledRequest: 'bypass', // Don't warn about unhandled requests
-          serviceWorker: {
-            url: '/mockServiceWorker.js',
-          },
-        })
-      })
-      .catch((error) => {
-        // Silently fail in production builds where MSW imports are aliased to false
-        if (process.env.NODE_ENV === 'production') {
-          console.warn('MSW not available in production build')
-        } else {
-          console.error('Failed to initialize MSW:', error)
-        }
-      })
-  }
-}
+import { useEffect, useState } from 'react'
 
 export function MSWProvider({ children }: { children: React.ReactNode }) {
-  // If MSW is enabled, we need to wait for it to start
-  if (mockingEnabledPromise) {
-    use(mockingEnabledPromise)
-  }
+  const [mswReady, setMswReady] = useState(false)
+
+  useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
+    ) {
+      // Initialize MSW asynchronously without blocking
+      import('../mocks/browser')
+        .then(async ({ worker }) => {
+          try {
+            await worker.start({
+              onUnhandledRequest(request, print) {
+                // Ignore Next.js internal requests
+                if (request.url.includes('_next')) {
+                  return
+                }
+                // Ignore various CDN and external requests
+                if (
+                  request.url.includes('clerk.') ||
+                  request.url.includes('supabase.') ||
+                  request.url.includes('googleapis.') ||
+                  request.url.includes('vercel.') ||
+                  request.url.includes('sentry.')
+                ) {
+                  return
+                }
+                print.warning()
+              },
+              serviceWorker: {
+                url: '/mockServiceWorker.js',
+              },
+            })
+            console.info(
+              '🛠️ [MSW] Mock Service Worker enabled via NEXT_PUBLIC_API_MOCKING'
+            )
+            setMswReady(true)
+          } catch (error) {
+            console.error('[MSW] Failed to initialize:', error)
+            setMswReady(true) // Still render children even if MSW fails
+          }
+        })
+        .catch((error) => {
+          console.error('[MSW] Failed to load MSW module:', error)
+          setMswReady(true) // Still render children even if MSW fails
+        })
+    } else {
+      // MSW not enabled, render immediately
+      setMswReady(true)
+    }
+  }, [])
+
+  // Always render children, but log MSW status
+  useEffect(() => {
+    if (mswReady) {
+      console.info('[MSW] Provider ready, children rendered')
+    }
+  }, [mswReady])
 
   return <>{children}</>
 }
 
-// Wrapper component that handles the suspense boundary
+// Wrapper component that handles the initialization
 export function MSWProviderWrapper({
   children,
 }: {
   children: React.ReactNode
 }) {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
-  ) {
-    return (
-      <Suspense fallback={null}>
-        <MSWProvider>{children}</MSWProvider>
-      </Suspense>
-    )
-  }
-
-  return <>{children}</>
+  return <MSWProvider>{children}</MSWProvider>
 }

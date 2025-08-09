@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { getDevAuthBypassUser } from '@/utils/auth-helpers'
-import type { EnhancedTag, TagFilter, TagInsert } from '@/types/tags'
+import type { EnhancedTag, TagInsert } from '@/types/tags'
+import { mockStore } from '@/utils/mock-data-store'
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -37,12 +38,25 @@ export async function GET(request: NextRequest) {
         | 'updated') || 'name'
     const sortOrder =
       (searchParams.get('sort_order') as 'asc' | 'desc') || 'asc'
-    const limit = searchParams.get('limit')
-      ? parseInt(searchParams.get('limit')!)
-      : undefined
-    const offset = searchParams.get('offset')
-      ? parseInt(searchParams.get('offset')!)
-      : 0
+    const limitParam = searchParams.get('limit')
+    const offsetParam = searchParams.get('offset')
+    const limit = limitParam ? parseInt(limitParam) : undefined
+    const offset = offsetParam ? parseInt(offsetParam) : 0
+
+    // Return mock data when API mocking is enabled or dev auth bypass is used
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const hasDevAuthBypass =
+      cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' || hasDevAuthBypass) {
+      const mockTags = mockStore.tags.getAll(user.id)
+
+      return NextResponse.json({
+        success: true,
+        data: mockTags,
+      })
+    }
 
     // Build the query
     let tagsQuery = supabase
@@ -163,6 +177,46 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { name, color } = body as TagInsert
 
+    // Return mock data when API mocking is enabled or dev auth bypass is used
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    const hasDevAuthBypass =
+      cookieStore.get('dev-auth-bypass')?.value === 'true'
+
+    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled' || hasDevAuthBypass) {
+      // Basic validation still needed for mock
+      if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        return NextResponse.json(
+          { error: 'Tag name is required' },
+          { status: 400 }
+        )
+      }
+
+      // Check for duplicate tag names
+      const existingTag = mockStore.tags.findByName(name.trim(), user.id)
+      if (existingTag) {
+        return NextResponse.json(
+          { error: 'A tag with this name already exists' },
+          { status: 409 }
+        )
+      }
+
+      const mockTag = mockStore.tags.create({
+        name: name.trim(),
+        color: color || '#3b82f6',
+        user_id: user.id,
+        parent_id: null,
+      })
+
+      return NextResponse.json(
+        {
+          success: true,
+          data: mockTag,
+        },
+        { status: 201 }
+      )
+    }
+
     // Validate required fields
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return NextResponse.json(
@@ -215,14 +269,21 @@ export async function POST(request: NextRequest) {
       user_id: user.id,
     }
 
-    const { data: newTag, error: insertError } = await supabase
+    const { data, error: insertError } = await supabase
       .from('tags')
       .insert(tagData)
       .select()
-      .single()
 
     if (insertError) {
       console.error('Error creating tag:', insertError)
+      return NextResponse.json(
+        { error: 'Failed to create tag' },
+        { status: 500 }
+      )
+    }
+
+    const newTag = data?.[0]
+    if (!newTag) {
       return NextResponse.json(
         { error: 'Failed to create tag' },
         { status: 500 }

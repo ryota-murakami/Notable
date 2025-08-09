@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { useNoteLinks } from '@/hooks/use-note-links'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,7 +12,7 @@ interface BacklinksPanelProps {
   className?: string
 }
 
-export function BacklinksPanel({ noteId, className }: BacklinksPanelProps) {
+const BacklinksPanel = React.memo(({ noteId, className }: BacklinksPanelProps) => {
   const { data: links, isLoading, error } = useNoteLinks(noteId)
 
   if (isLoading) {
@@ -102,4 +103,8 @@ export function BacklinksPanel({ noteId, className }: BacklinksPanelProps) {
       </CardContent>
     </Card>
   )
-}
+})
+
+BacklinksPanel.displayName = 'BacklinksPanel'
+
+export { BacklinksPanel }

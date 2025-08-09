@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { type NotesQueryParams, notesService } from '@/lib/services/notes'
 import { type Database } from '@/types/database'
 import { toast } from './use-toast'
-import { isTest } from '@/lib/utils/environment'
 
 type Note = Database['public']['Tables']['notes']['Row']
 type NoteInsert = Database['public']['Tables']['notes']['Insert']
@@ -23,12 +22,6 @@ export function useNotes(options: UseNotesOptions = {}) {
   const fetchNotes = useCallback(async () => {
     if (!enabled) return
 
-    // In test environment, preserve existing notes and don't fetch from server
-    if (isTest()) {
-      setLoading(false)
-      return
-    }
-
     setLoading(true)
     setError(null)
 
@@ -40,6 +33,8 @@ export function useNotes(options: UseNotesOptions = {}) {
       const message =
         err instanceof Error ? err.message : 'Failed to fetch notes'
       setError(message)
+
+      // Show toast for user feedback
       toast({
         title: 'Error fetching notes',
         description: message,
@@ -48,37 +43,21 @@ export function useNotes(options: UseNotesOptions = {}) {
     } finally {
       setLoading(false)
     }
-  }, [enabled, queryParams])
+  }, [
+    enabled,
+    queryParams.folder_id,
+    queryParams.search,
+    queryParams.sort_by,
+    queryParams.sort_order,
+    queryParams.limit,
+    queryParams.offset,
+  ])
 
   useEffect(() => {
     fetchNotes()
   }, [fetchNotes])
 
   const createNote = useCallback(async (data: Omit<NoteInsert, 'user_id'>) => {
-    // In test environment, create mock note
-    if (isTest()) {
-      const mockNote: Note = {
-        id: `mock-note-${Date.now()}`,
-        title: data.title || 'Untitled',
-        content: data.content || '',
-        user_id: 'mock-user-id',
-        folder_id: null,
-        is_hidden: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-
-      setNotes((prev) => [mockNote, ...prev])
-      setTotal((prev) => prev + 1)
-
-      toast({
-        title: 'Note created',
-        description: 'Your note has been created successfully.',
-      })
-
-      return mockNote
-    }
-
     try {
       const response = await notesService.createNote(data)
 
@@ -86,6 +65,7 @@ export function useNotes(options: UseNotesOptions = {}) {
       setNotes((prev) => [response.note, ...prev])
       setTotal((prev) => prev + 1)
 
+      // Show toast for user feedback
       toast({
         title: 'Note created',
         description: 'Your note has been created successfully.',
@@ -95,6 +75,8 @@ export function useNotes(options: UseNotesOptions = {}) {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to create note'
+
+      // Show toast for user feedback
       toast({
         title: 'Error creating note',
         description: message,
@@ -114,6 +96,7 @@ export function useNotes(options: UseNotesOptions = {}) {
           prev.map((note) => (note.id === id ? response.note : note))
         )
 
+        // Show toast for user feedback
         toast({
           title: 'Note updated',
           description: 'Your note has been updated successfully.',
@@ -123,6 +106,8 @@ export function useNotes(options: UseNotesOptions = {}) {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update note'
+
+        // Show toast for user feedback
         toast({
           title: 'Error updating note',
           description: message,
@@ -142,6 +127,7 @@ export function useNotes(options: UseNotesOptions = {}) {
       setNotes((prev) => prev.filter((note) => note.id !== id))
       setTotal((prev) => prev - 1)
 
+      // Show toast for user feedback
       toast({
         title: 'Note deleted',
         description: 'Your note has been deleted successfully.',
@@ -149,6 +135,8 @@ export function useNotes(options: UseNotesOptions = {}) {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to delete note'
+
+      // Show toast for user feedback
       toast({
         title: 'Error deleting note',
         description: message,
@@ -182,23 +170,6 @@ export function useNote(id: string, enabled = true) {
   const fetchNote = useCallback(async () => {
     if (!enabled || !id) return
 
-    // In test environment, create/return mock note if it's a mock ID
-    if (isTest() && id.startsWith('mock-note-')) {
-      const mockNote: Note = {
-        id,
-        title: 'Untitled',
-        content: '',
-        user_id: 'mock-user-id',
-        folder_id: null,
-        is_hidden: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-      setNote(mockNote)
-      setLoading(false)
-      return
-    }
-
     setLoading(true)
     setError(null)
 
@@ -227,24 +198,6 @@ export function useNote(id: string, enabled = true) {
     async (data: Partial<NoteUpdate>) => {
       if (!id) return
 
-      // In test environment, update mock note
-      if (isTest() && id.startsWith('mock-note-')) {
-        if (!note) return
-        const updatedNote: Note = {
-          ...note,
-          ...data,
-          updated_at: new Date().toISOString(),
-        }
-        setNote(updatedNote)
-
-        toast({
-          title: 'Note updated',
-          description: 'Your note has been updated successfully.',
-        })
-
-        return updatedNote
-      }
-
       try {
         const response = await notesService.updateNote(id, data)
         setNote(response.note)
@@ -266,7 +219,7 @@ export function useNote(id: string, enabled = true) {
         throw err
       }
     },
-    [id, note]
+    [id]
   )
 
   const deleteNote = useCallback(async () => {

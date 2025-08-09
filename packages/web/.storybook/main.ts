@@ -1,25 +1,23 @@
 import type { StorybookConfig } from '@storybook/nextjs'
+
 const config: StorybookConfig = {
   stories: [
-    '../stories/**/*.mdx',
-    '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-    '../design-system/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-    '../components/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../stories/**/*.stories.@(js|jsx|ts|tsx|mdx)',
+    '../components/**/*.stories.@(js|jsx|ts|tsx)',
+    '../design-system/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [
+    '@storybook/addon-essentials',
+    '@storybook/addon-interactions',
+    '@storybook/addon-links',
     '@storybook/addon-docs',
-    '@storybook/addon-coverage',
-    '@storybook/experimental-addon-test',
   ],
   framework: {
     name: '@storybook/nextjs',
-    options: {
-      nextConfigPath: '../next.config.mjs',
-    },
+    options: {},
   },
-  staticDirs: ['../public'],
   typescript: {
-    // Include workspace packages
+    check: false,
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
@@ -27,5 +25,7 @@ const config: StorybookConfig = {
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
     },
   },
+  staticDirs: ['../public'],
 }
+
 export default config

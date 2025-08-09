@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useRef, useState } from 'react'
+const { useCallback, useRef, useState } = React
 import { createPlatePlugin, Plate, usePlateEditor } from 'platejs/react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -10,7 +10,11 @@ import { BasicBlocksKit } from './plugins/basic-blocks-kit'
 import { BasicMarksKit } from './plugins/basic-marks-kit'
 import { AdvancedBlocksKit } from './plugins/advanced-blocks-kit'
 import { SlashCommandPlugin } from './plugins/slash-command-kit'
-import { SlashCommandMenu, useSlashCommand } from './slash-command-menu'
+import { AutoformatKit } from './plugins/autoformat-kit'
+import { WikiLinkPlugin } from './plugins/wiki-link-plate-plugin'
+// import { SlashCommandMenu, useSlashCommand } from './slash-command-menu'
+import { SimpleSlashMenu, useSimpleSlashCommand } from './simple-slash-menu'
+import { EditorToolbar } from './editor-toolbar'
 import { Editor, EditorContainer } from '@/components/ui/editor'
 import { cn } from '@/lib/utils'
 
@@ -52,7 +56,9 @@ const createBlockEditorPlugins = () => [
   ...BasicBlocksKit,
   ...BasicMarksKit,
   ...AdvancedBlocksKit,
+  AutoformatKit,
   SlashCommandPlugin,
+  WikiLinkPlugin,
   BlockSelectionPlugin,
   BlockDragDropPlugin,
 ]
@@ -65,6 +71,7 @@ export function BlockEditor({
   readOnly = false,
   autoFocus = false,
 }: BlockEditorProps) {
+  console.info('BlockEditor component rendered!')
   const _editorRef = useRef<HTMLDivElement>(null)
   const [value, setValue] = useState(initialValue)
 
@@ -75,30 +82,46 @@ export function BlockEditor({
   })
 
   // Slash command management
-  const { isOpen, position, openMenu, closeMenu, handleCommandSelect } =
-    useSlashCommand(editor)
+  const {
+    isOpen,
+    position,
+    openMenu,
+    closeMenu,
+    handleCommandSelect,
+    executeCommand,
+  } = useSimpleSlashCommand(editor)
 
-  // Handle slash command trigger
+  // Expose executeCommand for testing
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).slashCommand = { executeCommand }
+      console.info('🚨 Exposed window.slashCommand.executeCommand for testing')
+    }
+  }, [executeCommand])
+
+  // RE-ENABLED: Handle slash command trigger with SimpleSlashMenu
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (event.key === '/' && !isOpen) {
+      console.info('🚨 BlockEditor handleKeyDown called:', event.key)
+      if (event.key === '/' && !isOpen && editor.selection) {
+        console.info('🚨 Opening SimpleSlashMenu...')
         // Get cursor position for menu placement
         const selection = window.getSelection()
         if (selection && selection.rangeCount > 0) {
           const range = selection.getRangeAt(0)
           const rect = range.getBoundingClientRect()
 
-          // Open menu at cursor position
+          // Open menu at cursor position with slight delay
           setTimeout(() => {
             openMenu({
               x: rect.left,
               y: rect.bottom + 8,
             })
-          }, 0)
+          }, 10)
         }
       }
     },
-    [isOpen, openMenu]
+    [isOpen, openMenu, editor.selection]
   )
 
   // Block hover effects
@@ -198,6 +221,7 @@ export function BlockEditor({
             onChange?.(value)
           }}
         >
+          {!readOnly && <EditorToolbar className='mb-2' />}
           <EditorContainer
             className='block-editor-content'
             onMouseEnter={handleMouseEnter}
@@ -215,6 +239,21 @@ export function BlockEditor({
                 '[&_.block-selected]:ring-2 [&_.block-selected]:ring-blue-500'
               )}
               onKeyDown={(event) => {
+                // If slash menu is open, let it handle navigation keys
+                if (
+                  isOpen &&
+                  ['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(
+                    event.key
+                  )
+                ) {
+                  console.info(
+                    '🚨 Editor delegating key to slash menu:',
+                    event.key
+                  )
+                  // Let the document listener handle it - don't prevent default here
+                  return
+                }
+
                 handleKeyDown(event)
                 handleKeyDownGlobal(event)
               }}
@@ -222,8 +261,8 @@ export function BlockEditor({
           </EditorContainer>
         </Plate>
 
-        {/* Slash Command Menu */}
-        <SlashCommandMenu
+        {/* Simple Slash Command Menu */}
+        <SimpleSlashMenu
           isOpen={isOpen}
           onClose={closeMenu}
           onSelect={handleCommandSelect}

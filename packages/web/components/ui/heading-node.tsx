@@ -2,10 +2,8 @@
 
 import * as React from 'react'
 
-import type { PlateElementProps } from 'platejs/react'
-
+import { PlateElement, type PlateElementProps } from 'platejs/react'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { PlateElement } from 'platejs/react'
 
 const headingVariants = cva('relative mb-1', {
   variants: {
@@ -26,7 +24,7 @@ export function HeadingElement({
 }: PlateElementProps & VariantProps<typeof headingVariants>) {
   return (
     <PlateElement
-      as={variant!}
+      as={variant ?? 'h1'}
       className={headingVariants({ variant })}
       {...props}
     >

@@ -7,6 +7,15 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  // Check for dev auth bypass cookie for e2e testing first
+  const devAuthBypassCookie =
+    request.cookies.get('dev-auth-bypass')?.value === 'true'
+
+  // If dev auth bypass cookie is present, skip all auth checks
+  if (devAuthBypassCookie) {
+    return supabaseResponse
+  }
+
   // Handle missing environment variables gracefully
   const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -43,15 +52,6 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  // Check for dev auth bypass cookie for e2e testing
-  const devAuthBypassCookie =
-    request.cookies.get('dev-auth-bypass')?.value === 'true'
-
-  // If dev auth bypass cookie is present, skip all auth checks
-  if (devAuthBypassCookie) {
-    return supabaseResponse
-  }
 
   if (!user && !request.nextUrl.pathname.startsWith('/auth')) {
     // no user, potentially respond by redirecting the user to the auth page

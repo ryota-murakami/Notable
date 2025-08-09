@@ -125,7 +125,7 @@ export class NotablePluginSystem {
   /**
    * Execute a plugin command
    */
-  async executeCommand(command: string, ...args: any[]): Promise<any> {
+  executeCommand(command: string, ...args: any[]): Promise<any> {
     // This would integrate with Notable's command system
     console.info(`Executing plugin command: ${command}`, args)
 
@@ -136,14 +136,14 @@ export class NotablePluginSystem {
 
   private async installExamplePlugin(): Promise<void> {
     try {
-      const { helloWorldManifest, createHelloWorldPlugin } = await import(
+      const { helloWorldManifest, createHelloWorldPlugin: _createHelloWorldPlugin } = await import(
         './examples/hello-world-plugin'
       )
 
       // Check if already installed
       const existing = this.pluginManager.getPlugin('hello-world')
       if (existing) {
-        console.log('Hello World plugin already installed')
+        console.info('Hello World plugin already installed')
         return
       }
 
@@ -153,7 +153,7 @@ export class NotablePluginSystem {
         'example-plugin-code'
       )
 
-      console.log('📦 Example "Hello World" plugin installed')
+      console.info('📦 Example "Hello World" plugin installed')
     } catch (error) {
       console.warn('Failed to install example plugin:', error)
     }
@@ -163,7 +163,7 @@ export class NotablePluginSystem {
     // TODO: Integrate with Notable's command palette system
     // This would register plugin commands in the global command palette
 
-    console.log('🎯 Plugin commands integrated with global command system')
+    console.info('🎯 Plugin commands integrated with global command system')
   }
 
   private groupPluginsByCategory(plugins: any[]): Record<string, number> {
@@ -193,7 +193,7 @@ export class NotablePluginSystem {
   ): void {
     // TODO: Integrate with Notable's notification system
     const emoji = type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌'
-    console.log(`${emoji} ${title}: ${message}`)
+    console.info(`${emoji} ${title}: ${message}`)
   }
 }
 
@@ -210,7 +210,7 @@ export const notablePluginSystem = NotablePluginSystem.getInstance()
 
 // Make plugin system available globally for debugging and testing
 if (typeof window !== 'undefined') {
-  ;(window as any).notablePluginSystem = notablePluginSystem
+  (window as any).notablePluginSystem = notablePluginSystem
 }
 
 // Convenience exports for common operations

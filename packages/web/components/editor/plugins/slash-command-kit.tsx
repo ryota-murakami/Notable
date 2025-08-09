@@ -41,7 +41,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     group: 'basic',
     action: (editor) => {
       // Transform current block to paragraph
-      editor.api.block.setBlockType({ type: 'p' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'p' })
+      }
     },
   },
   {
@@ -52,7 +54,16 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['heading', 'h1', 'title', 'big'],
     group: 'basic',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'h1' })
+      console.info('H1 slash command action called!', {
+        selection: editor.selection,
+      })
+      if (editor.selection) {
+        console.info('H1 transformation executing...')
+        editor.tf.setNodes({ type: 'h1' })
+        console.info('H1 transformation completed')
+      } else {
+        console.warn('No selection available for H1 transformation')
+      }
     },
   },
   {
@@ -63,7 +74,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['heading', 'h2', 'subtitle'],
     group: 'basic',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'h2' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'h2' })
+      }
     },
   },
   {
@@ -74,7 +87,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['heading', 'h3', 'subheading'],
     group: 'basic',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'h3' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'h3' })
+      }
     },
   },
 
@@ -87,7 +102,11 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['list', 'bullet', 'ul', 'unordered'],
     group: 'basic',
     action: (editor) => {
-      editor.api.list.toggle({ type: 'ul' })
+      if (editor.selection) {
+        // Use proper list transformation
+        editor.tf.setNodes({ type: 'li' })
+        // TODO: Wrap in ul when list plugin is properly configured
+      }
     },
   },
   {
@@ -98,7 +117,11 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['list', 'number', 'ol', 'ordered'],
     group: 'basic',
     action: (editor) => {
-      editor.api.list.toggle({ type: 'ol' })
+      if (editor.selection) {
+        // Use proper list transformation
+        editor.tf.setNodes({ type: 'li' })
+        // TODO: Wrap in ol when list plugin is properly configured
+      }
     },
   },
   {
@@ -109,7 +132,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['todo', 'task', 'check', 'checkbox'],
     group: 'basic',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'action_item' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'action_item' })
+      }
     },
   },
 
@@ -122,7 +147,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['code', 'snippet', 'programming'],
     group: 'basic',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'code_block' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'code_block' })
+      }
     },
   },
   {
@@ -133,7 +160,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['quote', 'blockquote', 'citation'],
     group: 'basic',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'blockquote' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'blockquote' })
+      }
     },
   },
 
@@ -146,7 +175,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['toggle', 'collapse', 'expand', 'fold'],
     group: 'advanced',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'toggle' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'toggle' })
+      }
     },
   },
   {
@@ -157,7 +188,9 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['callout', 'note', 'alert', 'info'],
     group: 'advanced',
     action: (editor) => {
-      editor.api.block.setBlockType({ type: 'callout' })
+      if (editor.selection) {
+        editor.tf.setNodes({ type: 'callout' })
+      }
     },
   },
   {
@@ -168,7 +201,10 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['divider', 'separator', 'hr', 'line'],
     group: 'basic',
     action: (editor) => {
-      editor.api.block.insertBlock({ type: 'thematic_break' })
+      editor.tf.insertNodes({
+        type: 'thematic_break',
+        children: [{ text: '' }],
+      })
     },
   },
 
@@ -182,7 +218,7 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     group: 'media',
     action: (editor) => {
       // This would typically open an image upload dialog
-      editor.api.block.insertBlock({ type: 'img' })
+      editor.tf.insertNodes({ type: 'img', children: [{ text: '' }] })
     },
   },
 
@@ -195,7 +231,19 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     keywords: ['table', 'spreadsheet', 'data'],
     group: 'database',
     action: (editor) => {
-      editor.api.table.insert()
+      // For now, insert a placeholder table
+      editor.tf.insertNodes({
+        type: 'table',
+        children: [
+          {
+            type: 'tr',
+            children: [
+              { type: 'td', children: [{ text: 'Cell 1' }] },
+              { type: 'td', children: [{ text: 'Cell 2' }] },
+            ],
+          },
+        ],
+      })
     },
   },
 
@@ -210,7 +258,7 @@ export const SLASH_COMMANDS: SlashCommandItem[] = [
     action: (editor) => {
       // This would open the template picker
       // For now, just insert a placeholder
-      editor.api.block.insertBlock({
+      editor.tf.insertNodes({
         type: 'p',
         children: [
           {

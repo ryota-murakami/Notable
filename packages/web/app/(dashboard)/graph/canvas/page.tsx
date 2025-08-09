@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useState } from 'react'
+const { useCallback, useEffect, useState } = React
 
 // Force dynamic rendering since this page uses React Query
 export const dynamic = 'force-dynamic'
@@ -756,9 +756,9 @@ function SettingsPanel({
         </CardHeader>
         <CardContent className='space-y-3'>
           <div>
-            <label className='text-sm mb-2 block'>
+            <div className='text-sm mb-2 block'>
               Width: {settings.canvasWidth}px
-            </label>
+            </div>
             <Slider
               value={[settings.canvasWidth]}
               onValueChange={([value]) =>
@@ -771,9 +771,9 @@ function SettingsPanel({
           </div>
 
           <div>
-            <label className='text-sm mb-2 block'>
+            <div className='text-sm mb-2 block'>
               Height: {settings.canvasHeight}px
-            </label>
+            </div>
             <Slider
               value={[settings.canvasHeight]}
               onValueChange={([value]) =>

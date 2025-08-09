@@ -1,41 +1,12 @@
-/**
- * Shared Template Types for Notable
- */
-
 export interface TemplateVariable {
-  id?: string
-  templateId?: string
   name: string
   label: string
-  description?: string
-  type:
-    | 'text'
-    | 'textarea'
-    | 'date'
-    | 'time'
-    | 'datetime'
-    | 'number'
-    | 'boolean'
-    | 'select'
-    | 'multi-select'
-    | 'user'
-    | 'tag'
-    | 'note'
-    | 'uuid'
-    | 'counter'
-  defaultValue?: string
-  required?: boolean
+  type: 'text' | 'date' | 'select' | 'textarea'
+  required: boolean
   options?: string[]
-  validation?: {
-    min?: number
-    max?: number
-    pattern?: string
-    maxLength?: number
-    minLength?: number
-  }
   placeholder?: string
+  defaultValue?: string
   helpText?: string
-  displayOrder?: number
 }
 
 export interface Template {
@@ -43,46 +14,94 @@ export interface Template {
   name: string
   description: string
   category: string
-  categoryName?: string
-  categoryIcon?: string
-  categoryColor?: string
-  content?: string | { content: string } | any
-  thumbnail?: string
+  categoryName: string
+  categoryIcon: string
+  tags?: string[]
+  content: string
+  variables?: TemplateVariable[]
   isPublic: boolean
   isSystem: boolean
-  version?: number
-  createdBy?: string
-  createdAt: string
-  updatedAt: string
   usageCount: number
   rating: number
   ratingCount: number
   variableCount: number
-  variables?: TemplateVariable[]
-  tags?: string[]
+  createdAt: string
+  updatedAt: string
+  thumbnail?: string
 }
 
 export interface TemplateCategory {
   id: string
   name: string
-  description?: string
-  icon?: string
-  color?: string
+  icon: string
+  description: string
   displayOrder: number
-  isSystem: boolean
   templateCount: number
+  isSystem: boolean
+  createdAt: string
 }
 
-export interface CreateTemplateData {
+export interface TemplateUsageStats {
+  templateId: string
+  usageCount: number
+  averageRating: number
+  totalRatings: number
+  lastUsed: string
+}
+
+export interface TemplateCreateRequest {
   name: string
   description?: string
   category: string
-  content: any
-  thumbnail?: string
+  content: string
+  variables?: TemplateVariable[]
   isPublic?: boolean
-  variables?: Omit<TemplateVariable, 'id' | 'templateId'>[]
+  thumbnail?: string
 }
 
-export interface UpdateTemplateData extends Partial<CreateTemplateData> {
-  id: string
+export interface TemplateUpdateRequest {
+  name?: string
+  description?: string
+  category?: string
+  content?: string
+  variables?: TemplateVariable[]
+  isPublic?: boolean
+  thumbnail?: string
+}
+
+export interface TemplateSearchParams {
+  category?: string
+  search?: string
+  sort?: 'popular' | 'recent' | 'name' | 'usage' | 'rating'
+  limit?: number
+  offset?: number
+  isPublic?: boolean
+  isSystem?: boolean
+  includeOwn?: boolean
+}
+
+export interface TemplateListResponse {
+  success: boolean
+  data: Template[]
+  pagination: {
+    total: number
+    limit: number
+    offset: number
+    hasMore: boolean
+  }
+  meta?: {
+    search?: string
+    category?: string
+    sortBy?: string
+  }
+}
+
+export interface TemplateResponse {
+  success: boolean
+  data: Template
+}
+
+export interface TemplateCategoriesResponse {
+  success: boolean
+  data: TemplateCategory[]
 }

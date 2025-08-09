@@ -1,22 +1,55 @@
 import { cookies } from 'next/headers'
-import { createMockUser } from './test-helpers'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type User as SupabaseUser } from '@supabase/supabase-js'
 
 /**
  * Check if dev auth bypass is enabled and return mock user if so
  */
 export async function getDevAuthBypassUser() {
+  // Check for API mocking FIRST to avoid any cookie/Supabase initialization
+  if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    console.info('API mocking enabled - returning mock user via auth bypass')
+    return {
+      id: '11111111-1111-1111-1111-111111111111',
+      email: 'test@example.com',
+      user_metadata: {
+        full_name: 'Test User',
+        name: 'Test User',
+      },
+      app_metadata: {},
+      aud: 'authenticated',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      role: 'authenticated',
+      email_confirmed_at: new Date().toISOString(),
+    } as SupabaseUser
+  }
+
   const cookieStore = await cookies()
   const devAuthBypassCookie =
     cookieStore.get('dev-auth-bypass')?.value === 'true'
 
-  if (
-    devAuthBypassCookie &&
-    (process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test' ||
-      process.env.CI === 'true')
-  ) {
-    return createMockUser()
+  // For E2E tests, also check for test database URL
+  const isTestEnvironment =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.CI === 'true' ||
+    process.env.DATABASE_URL?.includes('localhost:5433')
+
+  if (devAuthBypassCookie && isTestEnvironment) {
+    return {
+      id: '11111111-1111-1111-1111-111111111111',
+      email: 'test@example.com',
+      user_metadata: {
+        full_name: 'Test User',
+        name: 'Test User',
+      },
+      app_metadata: {},
+      aud: 'authenticated',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      role: 'authenticated',
+      email_confirmed_at: new Date().toISOString(),
+    } as SupabaseUser
   }
 
   return null
@@ -26,6 +59,12 @@ export async function getDevAuthBypassUser() {
  * Create a Supabase client configured for testing with the mock user
  */
 export async function getTestSupabaseClient() {
+  // Check for API mocking FIRST to avoid any Supabase initialization
+  if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    console.info('API mocking enabled - skipping Supabase client creation')
+    return null
+  }
+
   const mockUser = await getDevAuthBypassUser()
 
   if (!mockUser) {
@@ -60,14 +99,22 @@ export async function getTestSupabaseClient() {
  * Check if we should bypass auth checks for development/testing
  */
 export async function shouldBypassAuth() {
+  // Check for API mocking FIRST
+  if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    console.info('API mocking enabled - bypassing auth checks')
+    return true
+  }
+
   const cookieStore = await cookies()
   const devAuthBypassCookie =
     cookieStore.get('dev-auth-bypass')?.value === 'true'
 
-  return (
-    devAuthBypassCookie &&
-    (process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test' ||
-      process.env.CI === 'true')
-  )
+  // For E2E tests, also check for test database URL
+  const isTestEnvironment =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test' ||
+    process.env.CI === 'true' ||
+    process.env.DATABASE_URL?.includes('localhost:5433')
+
+  return devAuthBypassCookie && isTestEnvironment
 }

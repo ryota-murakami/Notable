@@ -1,8 +1,7 @@
 'use client'
 
-import { type ReactNode, useEffect, useState } from 'react'
+import React, { type ReactNode, useEffect, useState } from 'react'
 import { initializeSimpleStore, webAdapter } from '@notable/routing'
-import { isTest } from '../lib/utils/environment'
 
 interface RoutingProviderProps {
   children: ReactNode
@@ -12,31 +11,34 @@ interface RoutingProviderProps {
  * Routing provider that initializes the routing system for the web app
  * Uses simple store to avoid SSR/hydration issues
  */
-export function RoutingProvider({ children }: RoutingProviderProps) {
+const RoutingProvider = React.memo(({ children }: RoutingProviderProps) => {
   const [isClient, setIsClient] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
-  
+
   useEffect(() => {
     // Mark as client-side after hydration
     setIsClient(true)
   }, [])
-  
+
   useEffect(() => {
-    // Wait for client-side hydration and avoid test mode
-    const isTestMode = isTest()
-    if (!isClient || isTestMode || isInitialized) {
+    // Wait for client-side hydration
+    if (!isClient || isInitialized) {
       return
     }
-    
+
     // Initialize the simple store with web adapter
     const unsubscribe = initializeSimpleStore(webAdapter)
     setIsInitialized(true)
-    
+
     return () => {
       unsubscribe()
       webAdapter.dispose()
     }
   }, [isClient, isInitialized])
-  
+
   return <>{children}</>
-}
+})
+
+RoutingProvider.displayName = 'RoutingProvider'
+
+export { RoutingProvider }

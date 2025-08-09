@@ -9,7 +9,7 @@ module.exports = {
   reporters: ['default', 'detox/runners/jest/reporter'],
   testEnvironment: 'detox/runners/jest/testEnvironment',
   verbose: true,
-  setupFilesAfterEnv: ['<rootDir>/e2e/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
   transform: {
     '^.+\\.js$': ['babel-jest', { presets: ['babel-preset-expo'] }],
   },

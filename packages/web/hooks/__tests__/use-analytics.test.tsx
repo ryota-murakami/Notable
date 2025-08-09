@@ -11,41 +11,42 @@ import {
   usePageTracking,
 } from '../use-analytics'
 import { analytics } from '@/lib/analytics'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the analytics module
-jest.mock('@/lib/analytics', () => ({
+vi.mock('@/lib/analytics', () => ({
   analytics: {
-    performance: jest.fn(),
-    interaction: jest.fn(),
-    pageView: jest.fn(),
-    usage: jest.fn(),
-    error: jest.fn(),
-    setConsent: jest.fn(),
-    setUser: jest.fn(),
-    updateConfig: jest.fn(),
-    resetSession: jest.fn(),
-    exportData: jest.fn(),
-    deleteUserData: jest.fn(),
+    performance: vi.fn(),
+    interaction: vi.fn(),
+    pageView: vi.fn(),
+    usage: vi.fn(),
+    error: vi.fn(),
+    setConsent: vi.fn(),
+    setUser: vi.fn(),
+    updateConfig: vi.fn(),
+    resetSession: vi.fn(),
+    exportData: vi.fn(),
+    deleteUserData: vi.fn(),
   },
 }))
 
-jest.mock('@/lib/performance', () => ({
+vi.mock('@/lib/performance', () => ({
   performanceMonitor: {
-    measureAsync: jest.fn(),
+    measureAsync: vi.fn(),
   },
 }))
 
 // Mock performance.now
 Object.defineProperty(global, 'performance', {
   value: {
-    now: jest.fn(() => 1000),
+    now: vi.fn(() => 1000),
   },
   writable: true,
 })
 
 describe('useAnalytics', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should provide analytics methods', () => {
@@ -183,7 +184,9 @@ describe('useAnalytics', () => {
   describe('Timer functionality', () => {
     beforeEach(() => {
       let time = 1000
-      ;(global.performance.now as jest.Mock).mockImplementation(() => time++)
+      ;(global.performance.now as ReturnType<typeof vi.fn>).mockImplementation(
+        () => time++
+      )
     })
 
     it('should provide timer functionality', () => {
@@ -211,13 +214,13 @@ describe('useAnalytics', () => {
 
 describe('useComponentPerformance', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    ;(global.performance.now as jest.Mock).mockReturnValue(1000)
+    vi.clearAllMocks()
+    ;(global.performance.now as ReturnType<typeof vi.fn>).mockReturnValue(1000)
   })
 
   it('should track component lifetime', () => {
     let time = 1000
-    ;(global.performance.now as jest.Mock).mockImplementation(
+    ;(global.performance.now as ReturnType<typeof vi.fn>).mockImplementation(
       () => (time += 100)
     )
 
@@ -240,7 +243,7 @@ describe('useComponentPerformance', () => {
 
 describe('usePageTracking', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should track page view on mount', () => {
@@ -274,9 +277,9 @@ describe('usePageTracking', () => {
 
 describe('useFeatureTracking', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     let time = 1000
-    ;(global.performance.now as jest.Mock).mockImplementation(
+    ;(global.performance.now as ReturnType<typeof vi.fn>).mockImplementation(
       () => (time += 100)
     )
   })

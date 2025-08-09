@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {
-  Calendar,
+  Calendar as _Calendar,
   ChevronDown,
   Clock,
   Filter,
@@ -16,18 +16,18 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
+  DropdownMenuCheckboxItem as _DropdownMenuCheckboxItem,
+  DropdownMenuLabel as _DropdownMenuLabel,
+  DropdownMenuSeparator as _DropdownMenuSeparator,
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  Popover as _Popover,
+  PopoverContent as _PopoverContent,
+  PopoverTrigger as _PopoverTrigger,
 } from '@/components/ui/popover'
 import { useServerSearch } from '@/hooks/use-server-search'
 import { useSearchHistory } from '@/hooks/use-search-history'
@@ -88,8 +88,8 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
 
   // Search history
   const {
-    history: searchHistory,
-    suggestions,
+    history: _searchHistory,
+    suggestions: _suggestions,
     getRecentSearches,
     getSearchSuggestions,
   } = useSearchHistory({ limit: 20 })
@@ -225,7 +225,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
         <div className='absolute top-full z-50 mt-1 w-full rounded-md border bg-popover p-4 shadow-lg'>
           <div className='space-y-4'>
             <div>
-              <label className='text-sm font-medium'>Tags</label>
+              <div className='text-sm font-medium'>Tags</div>
               <div className='mt-1 flex flex-wrap gap-1'>
                 {availableTags.slice(0, 10).map((tag) => (
                   <Button
@@ -251,7 +251,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
             </div>
 
             <div>
-              <label className='text-sm font-medium'>Sort By</label>
+              <div className='text-sm font-medium'>Sort By</div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -387,7 +387,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
             {hasSearched && !isSearching && results.length === 0 && !error && (
               <div className='p-4 text-center text-sm text-muted-foreground'>
                 <Search className='mx-auto mb-2 h-8 w-8 opacity-50' />
-                <p>No notes found for "{query}"</p>
+                <p>No notes found for &quot;{query}&quot;</p>
                 <p className='mt-1 text-xs'>
                   Try adjusting your search terms or filters
                 </p>

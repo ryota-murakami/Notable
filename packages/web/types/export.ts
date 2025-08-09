@@ -105,7 +105,7 @@ export interface HTMLExportOptions extends ExportOptions {
 export interface ReactExportOptions extends ExportOptions {
   format: 'react'
   /** Use TypeScript */
-  useTypeScript?: boolean
+  typescript?: boolean
   /** Styling approach */
   styling?: 'css-modules' | 'styled-components' | 'tailwind' | 'css-in-js'
   /** Component name */

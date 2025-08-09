@@ -3,3 +3,9 @@
 *storybook.log
 storybook-static
 .env*.local
+.next_coverage/
+*.png
+coverage/
+.nyc_output/
+volumes/
+.env.supabase

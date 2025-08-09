@@ -8,25 +8,27 @@ export const useOfflineNotes = (_options: unknown = {}) => {
   const [onlineUsers] = useState<User[]>([])
   const [typingUsers] = useState<User[]>([])
 
-  const createNote = async (_noteData: Partial<Note>): Promise<Note | null> => {
+  const createNote = (_noteData: Partial<Note>): Promise<Note | null> => {
     // Mock implementation - return a basic note for development
-    return {
+    return Promise.resolve({
       id: Math.random().toString(36),
       title: _noteData.title || 'Untitled',
       content: _noteData.content || '',
       is_folder: _noteData.is_folder || false,
-    }
+    })
   }
 
-  const updateNote = async (
+  const updateNote = (
     _id: string,
     _data: Partial<Note>
   ): Promise<void> => {
     // Mock implementation
+    return Promise.resolve()
   }
 
-  const deleteNote = async (_id: string): Promise<void> => {
+  const deleteNote = (_id: string): Promise<void> => {
     // Mock implementation
+    return Promise.resolve()
   }
 
   const startTyping = () => {

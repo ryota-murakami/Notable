@@ -73,7 +73,7 @@ export class PluginAPIFactory {
       insertText: (text: string) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Integrate with actual editor instance
-        console.log(`[Plugin ${manifest.id}] Insert text:`, text)
+        console.info(`[Plugin ${manifest.id}] Insert text:`, text)
       },
 
       getSelection: (): string => {
@@ -85,19 +85,19 @@ export class PluginAPIFactory {
       replaceSelection: (text: string) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Replace actual editor selection
-        console.log(`[Plugin ${manifest.id}] Replace selection:`, text)
+        console.info(`[Plugin ${manifest.id}] Replace selection:`, text)
       },
 
       registerBlock: (block: any): PluginDisposable => {
         this.requirePermission(manifest, PluginPermission.UI_MODIFY)
 
         // TODO: Register block with actual editor
-        console.log(`[Plugin ${manifest.id}] Register block:`, block)
+        console.info(`[Plugin ${manifest.id}] Register block:`, block)
 
         const disposable = {
           dispose: () => {
             // TODO: Unregister block
-            console.log(`[Plugin ${manifest.id}] Dispose block:`, block.type)
+            console.info(`[Plugin ${manifest.id}] Dispose block:`, block.type)
           },
         }
 
@@ -109,41 +109,42 @@ export class PluginAPIFactory {
 
   private createNotesAPI(
     manifest: PluginManifest,
-    context: PluginContext
+    _context: PluginContext
   ): NotesAPI {
     this.requireAPIAccess(manifest, PluginAPIAccess.NOTES)
 
     return {
-      getActiveNote: async () => {
+      getActiveNote: () => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
         // TODO: Get actual active note
-        return null
+        return Promise.resolve(null)
       },
 
-      getAllNotes: async () => {
+      getAllNotes: () => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
         // TODO: Get all notes from database
-        return []
+        return Promise.resolve([])
       },
 
-      createNote: async (content: any) => {
+      createNote: (content: any) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Create note in database
-        console.log(`[Plugin ${manifest.id}] Create note:`, content)
-        return { id: 'new-note', content }
+        console.info(`[Plugin ${manifest.id}] Create note:`, content)
+        return Promise.resolve({ id: 'new-note', content })
       },
 
-      updateNote: async (id: string, content: any) => {
+      updateNote: (id: string, content: any) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Update note in database
-        console.log(`[Plugin ${manifest.id}] Update note ${id}:`, content)
-        return { id, content }
+        console.info(`[Plugin ${manifest.id}] Update note ${id}:`, content)
+        return Promise.resolve({ id, content })
       },
 
-      deleteNote: async (id: string) => {
+      deleteNote: (id: string) => {
         this.requirePermission(manifest, PluginPermission.WRITE_NOTES)
         // TODO: Delete note from database
-        console.log(`[Plugin ${manifest.id}] Delete note:`, id)
+        console.info(`[Plugin ${manifest.id}] Delete note:`, id)
+        return Promise.resolve()
       },
     }
   }
@@ -155,25 +156,25 @@ export class PluginAPIFactory {
     this.requireAPIAccess(manifest, PluginAPIAccess.SEARCH)
 
     return {
-      search: async (query: string) => {
+      search: (query: string) => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
         // TODO: Perform actual search
-        console.log(`[Plugin ${manifest.id}] Search:`, query)
-        return []
+        console.info(`[Plugin ${manifest.id}] Search:`, query)
+        return Promise.resolve([])
       },
 
       registerSearchProvider: (provider: any): PluginDisposable => {
         this.requirePermission(manifest, PluginPermission.READ_NOTES)
 
         // TODO: Register with actual search system
-        console.log(
+        console.info(
           `[Plugin ${manifest.id}] Register search provider:`,
           provider
         )
 
         const disposable = {
           dispose: () => {
-            console.log(`[Plugin ${manifest.id}] Dispose search provider`)
+            console.info(`[Plugin ${manifest.id}] Dispose search provider`)
           },
         }
 
@@ -183,33 +184,36 @@ export class PluginAPIFactory {
     }
   }
 
-  private createUIAPI(manifest: PluginManifest, context: PluginContext): UIAPI {
+  private createUIAPI(
+    manifest: PluginManifest,
+    _context: PluginContext
+  ): UIAPI {
     this.requireAPIAccess(manifest, PluginAPIAccess.UI)
 
     return {
-      showInformationMessage: async (message: string) => {
+      showInformationMessage: (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
         // TODO: Show actual notification
-        console.log(`[Plugin ${manifest.id}] Info:`, message)
-        return undefined
+        console.info(`[Plugin ${manifest.id}] Info:`, message)
+        return Promise.resolve(undefined)
       },
 
-      showWarningMessage: async (message: string) => {
+      showWarningMessage: (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
-        console.log(`[Plugin ${manifest.id}] Warning:`, message)
-        return undefined
+        console.info(`[Plugin ${manifest.id}] Warning:`, message)
+        return Promise.resolve(undefined)
       },
 
-      showErrorMessage: async (message: string) => {
+      showErrorMessage: (message: string) => {
         this.requirePermission(manifest, PluginPermission.NOTIFICATIONS)
-        console.log(`[Plugin ${manifest.id}] Error:`, message)
-        return undefined
+        console.info(`[Plugin ${manifest.id}] Error:`, message)
+        return Promise.resolve(undefined)
       },
 
       createPanel: (options: any) => {
         this.requirePermission(manifest, PluginPermission.UI_MODIFY)
         // TODO: Create actual UI panel
-        console.log(`[Plugin ${manifest.id}] Create panel:`, options)
+        console.info(`[Plugin ${manifest.id}] Create panel:`, options)
         return {}
       },
     }
@@ -229,12 +233,12 @@ export class PluginAPIFactory {
 
   private createNetworkAPI(
     manifest: PluginManifest,
-    context: PluginContext
+    _context: PluginContext
   ): NetworkAPI {
     this.requireAPIAccess(manifest, PluginAPIAccess.NETWORK)
 
     return {
-      fetch: async (url: string, options?: FetchInit) => {
+      fetch: (url: string, options?: FetchInit) => {
         this.requirePermission(manifest, PluginPermission.NETWORK_ACCESS)
 
         // TODO: Add rate limiting and security checks
@@ -244,7 +248,7 @@ export class PluginAPIFactory {
         }
 
         // TODO: Validate URL against allowed domains
-        console.log(`[Plugin ${manifest.id}] Fetch:`, url)
+        console.info(`[Plugin ${manifest.id}] Fetch:`, url)
 
         return fetch(url, options)
       },
@@ -260,16 +264,16 @@ export class PluginAPIFactory {
     return {
       register: (
         command: string,
-        callback: (...args: any[]) => any
+        _callback: (...args: any[]) => any
       ): PluginDisposable => {
         this.requirePermission(manifest, PluginPermission.COMMANDS)
 
         // TODO: Register with actual command system
-        console.log(`[Plugin ${manifest.id}] Register command:`, command)
+        console.info(`[Plugin ${manifest.id}] Register command:`, command)
 
         const disposable = {
           dispose: () => {
-            console.log(`[Plugin ${manifest.id}] Dispose command:`, command)
+            console.info(`[Plugin ${manifest.id}] Dispose command:`, command)
           },
         }
 
@@ -277,10 +281,10 @@ export class PluginAPIFactory {
         return disposable
       },
 
-      execute: async (command: string, ...args: any[]) => {
+      execute: (command: string, ...args: any[]) => {
         // TODO: Execute actual command
-        console.log(`[Plugin ${manifest.id}] Execute command:`, command, args)
-        return undefined
+        console.info(`[Plugin ${manifest.id}] Execute command:`, command, args)
+        return Promise.resolve(undefined)
       },
     }
   }
@@ -294,14 +298,14 @@ export class PluginAPIFactory {
     return {
       on: (
         event: string,
-        listener: (...args: any[]) => void
+        _listener: (...args: any[]) => void
       ): PluginDisposable => {
         // TODO: Register with actual event system
-        console.log(`[Plugin ${manifest.id}] Listen to event:`, event)
+        console.info(`[Plugin ${manifest.id}] Listen to event:`, event)
 
         const disposable = {
           dispose: () => {
-            console.log(
+            console.info(
               `[Plugin ${manifest.id}] Stop listening to event:`,
               event
             )
@@ -314,7 +318,7 @@ export class PluginAPIFactory {
 
       emit: (event: string, ...args: any[]) => {
         // TODO: Emit to actual event system
-        console.log(`[Plugin ${manifest.id}] Emit event:`, event, args)
+        console.info(`[Plugin ${manifest.id}] Emit event:`, event, args)
       },
     }
   }
@@ -333,7 +337,7 @@ export class PluginAPIFactory {
               if (typeof subValue === 'function') {
                 return (...args: any[]) => {
                   // Log API call
-                  console.log(
+                  console.info(
                     `[Plugin ${manifest.id}] API call: ${String(prop)}.${String(subProp)}`,
                     args
                   )
@@ -382,7 +386,7 @@ export class PluginAPIFactory {
     }
   }
 
-  private getRateLimiter(pluginId: string) {
+  private getRateLimiter(_pluginId: string) {
     // TODO: Implement actual rate limiting
     return {
       allow: () => true,

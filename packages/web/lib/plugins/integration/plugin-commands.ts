@@ -30,12 +30,15 @@ export class PluginCommandIntegration {
     this.commandPaletteIntegration = commandPalette
 
     // Register core plugin system commands
-    await this.registerCoreCommands()
+    this.registerCoreCommands()
 
     // Register commands from active plugins
-    await this.registerPluginCommands()
+    this.registerPluginCommands()
 
-    console.log('🎯 Plugin command integration initialized')
+    // Future: May need to await plugin system initialization
+    await Promise.resolve()
+
+    console.info('🎯 Plugin command integration initialized')
   }
 
   /**
@@ -62,7 +65,7 @@ export class PluginCommandIntegration {
       })
     }
 
-    console.log(`Registered plugin command: ${command.id}`)
+    console.info(`Registered plugin command: ${command.id}`)
   }
 
   /**
@@ -79,7 +82,7 @@ export class PluginCommandIntegration {
       this.commandPaletteIntegration.unregisterCommand(commandId)
     }
 
-    console.log(`Unregistered plugin command: ${commandId}`)
+    console.info(`Unregistered plugin command: ${commandId}`)
   }
 
   /**
@@ -116,7 +119,7 @@ export class PluginCommandIntegration {
   /**
    * Register core plugin system commands
    */
-  private async registerCoreCommands(): Promise<void> {
+  private registerCoreCommands(): void {
     const coreCommands: Omit<PluginCommand, 'pluginId'>[] = [
       {
         id: 'plugins.openManager',
@@ -127,7 +130,7 @@ export class PluginCommandIntegration {
         icon: 'puzzle',
         handler: () => {
           // This would trigger opening the plugin management panel
-          console.log('Opening plugin manager...')
+          console.info('Opening plugin manager...')
           // In a real implementation, this would dispatch an event or call a function
           // that opens the PluginManagementPanel component
         },
@@ -148,7 +151,7 @@ export class PluginCommandIntegration {
               await manager.activatePlugin(plugin.manifest.id)
             }
 
-            console.log(`Reloaded ${activePlugins.length} plugins`)
+            console.info(`Reloaded ${activePlugins.length} plugins`)
           } catch (error) {
             console.error('Failed to reload plugins:', error)
           }
@@ -171,7 +174,7 @@ export class PluginCommandIntegration {
               }
             }
 
-            console.log(`Enabled ${plugins.length} plugins`)
+            console.info(`Enabled ${plugins.length} plugins`)
           } catch (error) {
             console.error('Failed to enable all plugins:', error)
           }
@@ -192,7 +195,7 @@ export class PluginCommandIntegration {
               await manager.deactivatePlugin(plugin.manifest.id)
             }
 
-            console.log(`Disabled ${activePlugins.length} plugins`)
+            console.info(`Disabled ${activePlugins.length} plugins`)
           } catch (error) {
             console.error('Failed to disable all plugins:', error)
           }
@@ -206,7 +209,7 @@ export class PluginCommandIntegration {
         icon: 'bar-chart',
         handler: () => {
           const stats = notablePluginSystem.getStats()
-          console.log('Plugin System Statistics:', stats)
+          console.info('Plugin System Statistics:', stats)
 
           // In a real implementation, this would show a notification or modal
           // with the statistics
@@ -225,21 +228,19 @@ export class PluginCommandIntegration {
   /**
    * Register commands from all active plugins
    */
-  private async registerPluginCommands(): Promise<void> {
+  private registerPluginCommands(): void {
     const manager = notablePluginSystem.getPluginManager()
     const activePlugins = manager.getActivePlugins()
 
     for (const plugin of activePlugins) {
-      await this.registerPluginSpecificCommands(plugin.manifest.id)
+      this.registerPluginSpecificCommands(plugin.manifest.id)
     }
   }
 
   /**
    * Register commands for a specific plugin
    */
-  private async registerPluginSpecificCommands(
-    pluginId: string
-  ): Promise<void> {
+  private registerPluginSpecificCommands(pluginId: string): void {
     // This would query the plugin for its available commands
     // For now, we'll use the Hello World plugin as an example
 

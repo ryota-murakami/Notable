@@ -1,32 +1,19 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+const { useCallback, useEffect, useMemo, useRef, useState } = React
 import {
-  ArrowRight,
   BookOpen,
-  Circle,
   Copy,
-  Eye,
-  EyeOff,
-  Grid3X3,
   Hand,
-  Image as ImageIcon,
-  Layers,
   Link,
   Lock,
   Maximize2,
-  Minimize2,
   MousePointer,
-  Move,
   Palette,
   Pin,
   PinOff,
-  Plus,
   RotateCcw,
-  Save,
-  Settings,
-  Square,
   StickyNote,
   Trash2,
   Type,
@@ -38,27 +25,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Slider } from '@/components/ui/slider'
-import { Switch } from '@/components/ui/switch'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Card } from '@/components/ui/card'
 import {
   Tooltip,
   TooltipContent,
@@ -178,10 +145,10 @@ export function CanvasView({
   isFullscreen = false,
   readOnly = false,
   onNodeUpdate,
-  onNodesUpdate,
-  onConnectionUpdate,
-  onConnectionCreate,
-  onConnectionDelete,
+  onNodesUpdate: _onNodesUpdate,
+  onConnectionUpdate: _onConnectionUpdate,
+  onConnectionCreate: _onConnectionCreate,
+  onConnectionDelete: _onConnectionDelete,
   onViewportChange,
   onSelectionChange,
   onNodeClick,
@@ -194,7 +161,7 @@ export function CanvasView({
   const canvasRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<globalThis.SVGSVGElement>(null)
   const isDraggingRef = useRef(false)
-  const isConnectingRef = useRef(false)
+  const _isConnectingRef = useRef(false)
   const dragStartRef = useRef({ x: 0, y: 0 })
   const lastPanRef = useRef({ x: 0, y: 0 })
 
@@ -202,9 +169,9 @@ export function CanvasView({
   const [tool, setTool] = useState<
     'select' | 'pan' | 'connect' | 'note' | 'text'
   >('select')
-  const [isDragging, setIsDragging] = useState(false)
+  const [_isDragging, setIsDragging] = useState(false)
   const [isPanning, setIsPanning] = useState(false)
-  const [isConnecting, setIsConnecting] = useState(false)
+  const [_isConnecting, setIsConnecting] = useState(false)
   const [connectionPreview, setConnectionPreview] = useState<{
     sourceId: string
     sourceAnchor: string
@@ -217,7 +184,7 @@ export function CanvasView({
     endX: number
     endY: number
   } | null>(null)
-  const [showControls, setShowControls] = useState(true)
+  const [showControls, _setShowControls] = useState(true)
 
   // Computed values
   const transform = `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom}) rotate(${viewport.rotation}deg)`
@@ -538,24 +505,27 @@ export function CanvasView({
         case 'straight':
           return `M ${source.x} ${source.y} L ${target.x} ${target.y}`
 
-        case 'curved':
+        case 'curved': {
           const midX = (source.x + target.x) / 2
           const midY = (source.y + target.y) / 2
           const offset = 50
           return `M ${source.x} ${source.y} Q ${midX} ${midY - offset} ${target.x} ${target.y}`
+        }
 
-        case 'bezier':
+        case 'bezier': {
           const dx = target.x - source.x
-          const dy = target.y - source.y
+          const _dy = target.y - source.y
           const cp1x = source.x + dx * 0.3
           const cp1y = source.y
           const cp2x = target.x - dx * 0.3
           const cp2y = target.y
           return `M ${source.x} ${source.y} C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${target.x} ${target.y}`
+        }
 
-        case 'orthogonal':
+        case 'orthogonal': {
           const midXOrtho = (source.x + target.x) / 2
           return `M ${source.x} ${source.y} L ${midXOrtho} ${source.y} L ${midXOrtho} ${target.y} L ${target.x} ${target.y}`
+        }
 
         default:
           return `M ${source.x} ${source.y} L ${target.x} ${target.y}`
@@ -631,6 +601,15 @@ export function CanvasView({
           onMouseUp={handleMouseUp}
           onWheel={handleWheel}
           onClick={handleBackgroundClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleBackgroundClick()
+            }
+          }}
+          tabIndex={0}
+          role='button'
+          aria-label='Graph canvas for interaction'
         >
           {/* Grid and Connections SVG */}
           <svg
@@ -967,6 +946,13 @@ function CanvasNodeComponent({
           onMouseDown={onMouseDown}
           onClick={onClick}
           onDoubleClick={onDoubleClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              onClick?.(e as any)
+            }
+          }}
+          tabIndex={0}
+          role='button'
         >
           {/* Content */}
           <div className='p-3 h-full flex flex-col'>

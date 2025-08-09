@@ -7,6 +7,7 @@ import { Toaster } from 'sonner'
 import { Theme } from '@radix-ui/themes'
 import './globals.css'
 import '@radix-ui/themes/styles.css'
+// MSW initialization now happens in MSWProviderWrapper
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

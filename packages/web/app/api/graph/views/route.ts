@@ -107,9 +107,8 @@ export async function GET(request: NextRequest) {
     const includePublic = url.searchParams.get('includePublic') === 'true'
     const onlyPublic = url.searchParams.get('onlyPublic') === 'true'
     const viewType = url.searchParams.get('type')
-    const limit = url.searchParams.get('limit')
-      ? parseInt(url.searchParams.get('limit')!)
-      : 50
+    const limitParam = url.searchParams.get('limit')
+    const limit = limitParam ? parseInt(limitParam) : 50
 
     // Build query
     let query = supabase.from('graph_views').select('*')
@@ -196,7 +195,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the view
-    const { data: view, error } = await supabase
+    const { data, error } = await supabase
       .from('graph_views')
       .insert({
         user_id: user.id,
@@ -215,10 +214,17 @@ export async function POST(request: NextRequest) {
         viewport_config: validatedData.viewportConfig || {},
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Error creating graph view:', error)
+      return NextResponse.json(
+        { error: 'Failed to create graph view' },
+        { status: 500 }
+      )
+    }
+
+    const view = data?.[0]
+    if (!view) {
       return NextResponse.json(
         { error: 'Failed to create graph view' },
         { status: 500 }
@@ -333,15 +339,22 @@ export async function PUT(request: NextRequest) {
     if (validatedData.viewportConfig !== undefined)
       updatePayload.viewport_config = validatedData.viewportConfig
 
-    const { data: updatedView, error } = await supabase
+    const { data, error } = await supabase
       .from('graph_views')
       .update(updatePayload)
       .eq('id', id)
       .select()
-      .single()
 
     if (error) {
       console.error('Error updating graph view:', error)
+      return NextResponse.json(
+        { error: 'Failed to update graph view' },
+        { status: 500 }
+      )
+    }
+
+    const updatedView = data?.[0]
+    if (!updatedView) {
       return NextResponse.json(
         { error: 'Failed to update graph view' },
         { status: 500 }

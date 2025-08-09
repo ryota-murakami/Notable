@@ -5,10 +5,10 @@
  */
 
 import {
+  PluginContext as _PluginContext,
   type PluginAPI,
   type PluginAPIAccess,
   type PluginCategory,
-  PluginContext,
   type PluginDisposable,
   type PluginManifest,
   type PluginPermission,
@@ -165,7 +165,7 @@ export class CommandBuilder {
     })
   }
 
-  async execute(command: string, ...args: any[]): Promise<any> {
+  execute(command: string, ...args: any[]): Promise<any> {
     return this.api.commands.execute(command, ...args)
   }
 }
@@ -194,16 +194,16 @@ export class UIBuilder {
     }
   }
 
-  async showProgress<T>(
+  showProgress<T>(
     title: string,
     task: (progress: ProgressReporter) => Promise<T>
   ): Promise<T> {
     // TODO: Implement actual progress UI
-    console.log(`Progress: ${title}`)
+    console.info(`Progress: ${title}`)
 
     const reporter: ProgressReporter = {
       report: (message: string, increment?: number) => {
-        console.log(
+        console.info(
           `Progress: ${message}${increment ? ` (${increment}%)` : ''}`
         )
       },
@@ -274,10 +274,10 @@ export const PluginUtils = {
     const prefix = `[Plugin ${pluginId}]`
 
     return {
-      info: (...args: any[]) => console.log(prefix, ...args),
+      info: (...args: any[]) => console.info(prefix, ...args),
       warn: (...args: any[]) => console.warn(prefix, ...args),
       error: (...args: any[]) => console.error(prefix, ...args),
-      debug: (...args: any[]) => console.debug(prefix, ...args),
+      debug: (...args: any[]) => console.info(prefix, ...args),
     }
   },
 

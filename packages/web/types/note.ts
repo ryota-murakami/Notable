@@ -4,4 +4,6 @@ export interface Note extends SyncNote {
   userId: string
   tags?: string[]
   isHidden?: boolean
+  is_daily_note?: boolean
+  custom_id?: string
 }

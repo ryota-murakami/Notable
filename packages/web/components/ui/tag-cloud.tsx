@@ -1,10 +1,10 @@
 'use client'
 
 import * as React from 'react'
-import { Eye, Filter, Hash, TrendingUp } from 'lucide-react'
+import { Eye as _Eye, Filter as _Filter, Hash, TrendingUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Badge as _Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Tooltip,
@@ -152,7 +152,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
   }
 
   // Render individual tag
-  const renderTag = (tag: EnhancedTag, index: number) => {
+  const renderTag = (tag: EnhancedTag, _index: number) => {
     const isSelected = selectedTags.includes(tag.name)
     const tagSize = getTagSize(tag)
     const tagOpacity = getTagOpacity(tag)
@@ -178,6 +178,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
           layout === 'grid' && 'w-full'
         )}
         disabled={!interactive}
+        data-testid={`tag-cloud-item-${tag.name}`}
       >
         <Hash className='mr-1 h-3 w-3' />
         <span>{tag.name}</span>
@@ -197,7 +198,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
         <TooltipProvider key={tag.id}>
           <Tooltip>
             <TooltipTrigger asChild>{tagElement}</TooltipTrigger>
-            <TooltipContent side='top'>
+            <TooltipContent side='top' data-testid="tag-tooltip">
               <div className='text-center'>
                 <div className='font-medium'>{tag.name}</div>
                 <div className='text-xs text-muted-foreground'>
@@ -243,7 +244,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
   // Cloud layout
   if (layout === 'cloud') {
     return (
-      <div className={cn('w-full', className)}>
+      <div className={cn('w-full cloud-layout', className)} data-testid="tag-cloud">
         <div className='flex flex-wrap items-center justify-center p-4 text-center leading-relaxed'>
           {processedTags.map(renderTag)}
         </div>
@@ -254,7 +255,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
   // List layout
   if (layout === 'list') {
     return (
-      <div className={cn('w-full space-y-1', className)}>
+      <div className={cn('w-full space-y-1 list-layout', className)} data-testid="tag-cloud">
         {processedTags.map(renderTag)}
       </div>
     )
@@ -264,7 +265,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
   return (
     <div
       className={cn(
-        'grid gap-2 w-full',
+        'grid gap-2 w-full grid-layout',
         size === 'sm'
           ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6'
           : size === 'lg'
@@ -272,6 +273,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
             : 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5',
         className
       )}
+      data-testid="tag-cloud"
     >
       {processedTags.map(renderTag)}
     </div>
@@ -353,30 +355,30 @@ export const TagCloudWithAnalytics: React.FC<TagCloudAnalyticsProps> = ({
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-2 sm:grid-cols-4 gap-4 text-center'>
-              <div>
+              <div data-testid="total-tags-count">
                 <div className='text-2xl font-bold text-primary'>
                   {analytics.totalTags}
                 </div>
                 <div className='text-xs text-muted-foreground'>Total Tags</div>
               </div>
-              <div>
+              <div data-testid="active-tags-count">
                 <div className='text-2xl font-bold text-green-600'>
                   {analytics.usedTags}
                 </div>
                 <div className='text-xs text-muted-foreground'>Active Tags</div>
               </div>
-              <div>
+              <div data-testid="total-usage-count">
                 <div className='text-2xl font-bold text-blue-600'>
                   {analytics.totalUsage}
                 </div>
                 <div className='text-xs text-muted-foreground'>Total Usage</div>
               </div>
-              <div>
+              <div data-testid="trending-tags-count">
                 <div className='flex items-center justify-center gap-1'>
                   <div className='text-2xl font-bold text-orange-600'>
                     {analytics.trendingTags}
                   </div>
-                  <TrendingUp className='h-4 w-4 text-orange-600' />
+                  <TrendingUp className='h-4 w-4 text-orange-600' data-testid="trending-tag-indicator" />
                 </div>
                 <div className='text-xs text-muted-foreground'>Trending</div>
               </div>

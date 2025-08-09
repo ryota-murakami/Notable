@@ -390,7 +390,7 @@ async function createRelationship(supabase: any, userId: string, body: any) {
     }
 
     // Create relationship
-    const { data: relationship, error } = await supabase
+    const { data, error } = await supabase
       .from('note_relationships')
       .insert({
         source_note_id: sourceId,
@@ -403,10 +403,17 @@ async function createRelationship(supabase: any, userId: string, body: any) {
         created_by: userId,
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Error creating relationship:', error)
+      return NextResponse.json(
+        { error: 'Failed to create relationship' },
+        { status: 500 }
+      )
+    }
+
+    const relationship = data?.[0]
+    if (!relationship) {
       return NextResponse.json(
         { error: 'Failed to create relationship' },
         { status: 500 }
@@ -443,7 +450,7 @@ async function updateCanvasPosition(supabase: any, userId: string, body: any) {
     }
 
     // Update or insert canvas position
-    const { data: position, error } = await supabase
+    const { data, error } = await supabase
       .from('note_canvas_positions')
       .upsert({
         note_id: noteId,
@@ -459,10 +466,17 @@ async function updateCanvasPosition(supabase: any, userId: string, body: any) {
         updated_at: new Date().toISOString(),
       })
       .select()
-      .single()
 
     if (error) {
       console.error('Error updating canvas position:', error)
+      return NextResponse.json(
+        { error: 'Failed to update position' },
+        { status: 500 }
+      )
+    }
+
+    const position = data?.[0]
+    if (!position) {
       return NextResponse.json(
         { error: 'Failed to update position' },
         { status: 500 }

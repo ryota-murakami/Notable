@@ -15,7 +15,7 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "types": ["node"],
+    "types": ["node", "@testing-library/jest-dom"],
     "plugins": [
       {
         "name": "next"
@@ -44,5 +44,5 @@
     "tests/**/*.tsx",
     "e2e/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist", "out", ".next"]
+  "exclude": ["node_modules", "dist", "out", ".next", "volumes/functions/**/*"]
 }

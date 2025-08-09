@@ -58,16 +58,15 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({
   // This is used after removing real Supabase integration from the mobile package.
   const mockSupabase: MockSupabase = {
     auth: {
-      signInWithPassword: async (_credentials: {
+      signInWithPassword: (_credentials: {
         email: string
         password: string
-      }) => ({ error: null }),
+      }) => Promise.resolve({ error: null }),
 
-      signInWithOAuth: async (_options: { provider: string }) => ({
-        error: null,
-      }),
+      signInWithOAuth: (_options: { provider: string }) =>
+        Promise.resolve({ error: null }),
 
-      signUp: async (_options: SignUpOptions) => ({ error: null }),
+      signUp: (_options: SignUpOptions) => Promise.resolve({ error: null }),
     },
   }
 

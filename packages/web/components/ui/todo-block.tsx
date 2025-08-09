@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useCallback, useState } from 'react'
+const { useCallback, useState } = React
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

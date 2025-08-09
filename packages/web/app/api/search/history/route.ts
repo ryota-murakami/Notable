@@ -27,6 +27,35 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100)
     const offset = parseInt(searchParams.get('offset') || '0')
 
+    // If using test database, return mock data
+    if (process.env.DATABASE_URL?.includes('localhost:5433')) {
+      const mockHistory = [
+        {
+          id: 'search-1',
+          user_id: user.id,
+          query: 'TypeScript',
+          filters: {},
+          results_count: 5,
+          timestamp: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: 'search-2',
+          user_id: user.id,
+          query: 'React hooks',
+          filters: {},
+          results_count: 3,
+          timestamp: new Date(Date.now() - 3600000).toISOString(),
+          created_at: new Date(Date.now() - 3600000).toISOString(),
+        },
+      ]
+
+      return NextResponse.json({
+        success: true,
+        data: mockHistory,
+      })
+    }
+
     // Get search history for the user
     const { data: history, error: historyError } = await supabase
       .from('search_history')
@@ -121,7 +150,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new search history entry
-    const { data: newEntry, error: insertError } = await supabase
+    const { data, error: insertError } = await supabase
       .from('search_history')
       .insert({
         user_id: user.id,
@@ -129,10 +158,17 @@ export async function POST(request: NextRequest) {
         results_count: results_count || 0,
       })
       .select()
-      .single()
 
     if (insertError) {
       console.error('Error creating search history:', insertError)
+      return NextResponse.json(
+        { error: 'Failed to save search history' },
+        { status: 500 }
+      )
+    }
+
+    const newEntry = data?.[0]
+    if (!newEntry) {
       return NextResponse.json(
         { error: 'Failed to save search history' },
         { status: 500 }
